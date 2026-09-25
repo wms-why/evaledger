@@ -131,10 +131,6 @@ export function AppShell({
               <MessageSquare size={18} className="shrink-0" />
               {label(t('admin.feedbackAdmin'))}
             </Link>
-            <Link to="/{-$locale}/admin/ai-providers" activeProps={{}} className={item(active === 'admin-ai-providers')} title={t('admin.aiProviders')}>
-              <Sparkles size={18} className="shrink-0" />
-              {label(t('admin.aiProviders'))}
-            </Link>
           </>
         )}
         <div className="flex-1" />

@@ -27,9 +27,9 @@ npx wrangler login
 应用要用到三种存储资源,逐条创建:
 
 ```bash
-npx wrangler d1 create flarestarter-db-prod          # D1 数据库
+npx wrangler d1 create aibookplanner-db-prod          # D1 数据库
 npx wrangler kv namespace create CACHE               # KV(会话/缓存)
-npx wrangler r2 bucket create flarestarter-files-prod # R2 对象存储(头像上传)
+npx wrangler r2 bucket create aibookplanner-files-prod # R2 对象存储(头像上传)
 ```
 
 <Callout type="info">
@@ -84,8 +84,8 @@ npx wrangler secret put SENTRY_DSN --env production
 - `TURNSTILE_SITE_KEY`(Turnstile 站点 key)
 - `CF_ANALYTICS_TOKEN`(Web Analytics beacon token)
 - `STRIPE_PRICE_PRO_MONTHLY/YEARLY`(线上 price ID;写 `vars` 或 `secret put` 均可)
-- `BETTER_AUTH_URL` —— 设为你的线上域名,例如 `https://flarestarter.example.com`。首次只发
-  workers.dev 时还没有自定义域,可先填可预测的 `https://flarestarter-production.<你的子域>.workers.dev`,
+- `BETTER_AUTH_URL` —— 设为你的线上域名,例如 `https://tokencalculator.example.com`。首次只发
+  workers.dev 时还没有自定义域,可先填可预测的 `https://tokencalculator-production.<你的子域>.workers.dev`,
   之后绑定自定义域再改回来。
 
 <Callout type="warn">
@@ -108,7 +108,7 @@ SEO 输出的链接会错(详见 [国际化与 SEO](/docs/features/i18n))。
 
 ```bash
 pnpm db:migrate:prod
-# 等价于:npx wrangler d1 migrations apply flarestarter-db-prod --env production --remote
+# 等价于:npx wrangler d1 migrations apply aibookplanner-db-prod --env production --remote
 ```
 
 这会在线上库建好所有表(含 auth 表)。
@@ -116,7 +116,7 @@ pnpm db:migrate:prod
 <Callout type="warn">
 **必须先迁移、再部署**(第 6 步)。worker 有启动期环境校验,且业务代码一上线就会查表——
 表没建好会直接报错。注意别用 `pnpm db:migrate:remote`(旧脚本已移除),它指向的是默认库
-`flarestarter-db` 而非生产库。
+`aibookplanner-db` 而非生产库。
 </Callout>
 
 ## 6. 构建并部署
@@ -134,7 +134,7 @@ pnpm deploy:prod
 
 <Callout type="warn">
 别直接 `npx wrangler deploy`(不先 `CLOUDFLARE_ENV=production` build):那样发出去的是**顶层
-默认环境**(worker 名 `flarestarter`、全 0 占位绑定),不是生产。环境是在 build 时烘进
+默认环境**(worker 名 `tokencalculator`、全 0 占位绑定),不是生产。环境是在 build 时烘进
 `dist` 的,deploy 只是把 build 产物推上去。用 `pnpm deploy:prod` / `pnpm deploy:staging` 即可。
 </Callout>
 

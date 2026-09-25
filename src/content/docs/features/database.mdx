@@ -3,7 +3,7 @@ title: 数据库操作
 description: 掌握使用 Drizzle ORM 和 Cloudflare D1 进行数据库增删改查的基础。
 ---
 
-FlareStarter 默认采用 **Cloudflare D1** (基于 SQLite) 作为关系型数据库，并使用 **Drizzle ORM** 作为数据库交互层。
+TokenCalculator 默认采用 **Cloudflare D1** (基于 SQLite) 作为关系型数据库，并使用 **Drizzle ORM** 作为数据库交互层。
 
 ## 目录与文件
 
@@ -63,7 +63,7 @@ export * from '@/features/posts/posts.schema'
 pnpm db:generate
 pnpm db:migrate:local
 ```
-如果要发布到线上，则运行 `pnpm db:migrate:prod`（对生产库 `flarestarter-db-prod` 应用迁移；staging 用 `pnpm db:migrate:staging`）。
+如果要发布到线上，则运行 `pnpm db:migrate:prod`（对生产库 `aibookplanner-db-prod` 应用迁移；staging 用 `pnpm db:migrate:staging`）。
 </Step>
 </Steps>
 

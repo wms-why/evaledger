@@ -27,17 +27,17 @@ const TOKENIZER_FAMILIES: TokenizerFamily[] = [
   'deepseek-r1',
 ]
 
-const FAMILY_LABELS: Record<TokenizerFamily, string> = {
-  'gpt-5': 'GPT-5',
-  'gpt-4': 'GPT-4',
-  'o-series': 'o-series',
-  'claude-opus': 'Claude Opus',
-  'claude-sonnet': 'Claude Sonnet',
-  'claude-haiku': 'Claude Haiku',
-  'gemini-2.5': 'Gemini 2.5',
-  'grok-4': 'Grok 4',
-  'deepseek-v3': 'DeepSeek V3',
-  'deepseek-r1': 'DeepSeek R1',
+const FAMILY_KEYS: Record<TokenizerFamily, string> = {
+  'gpt-5': 'calculator.familyGpt5',
+  'gpt-4': 'calculator.familyGpt4',
+  'o-series': 'calculator.familyOSeries',
+  'claude-opus': 'calculator.familyClaudeOpus',
+  'claude-sonnet': 'calculator.familyClaudeSonnet',
+  'claude-haiku': 'calculator.familyClaudeHaiku',
+  'gemini-2.5': 'calculator.familyGemini25',
+  'grok-4': 'calculator.familyGrok4',
+  'deepseek-v3': 'calculator.familyDeepSeekV3',
+  'deepseek-r1': 'calculator.familyDeepSeekR1',
 }
 
 type InputMode = 'paste' | 'manual'
@@ -170,6 +170,7 @@ export function Calculator(props: CalculatorProps) {
                   onText={setText}
                   tokenizerFamily={tokenizerFamily}
                   onFamily={setTokenizerFamily}
+                  familyLabel={(f) => t(FAMILY_KEYS[f])}
                   monthly={monthly}
                   onMonthly={setMonthly}
                   presetId={presetId}
@@ -204,7 +205,7 @@ export function Calculator(props: CalculatorProps) {
               onChange={(e) => setUseCached(e.target.checked)}
               className="size-3.5 cursor-pointer accent-foreground"
             />
-            Use cached input (Anthropic / OpenAI / DeepSeek)
+            {t('calculator.useCached')}
           </label>
           <span className="ml-auto text-fg-3">
             {monthly.toLocaleString()} × {singleInput.toLocaleString()}in + {singleOutput.toLocaleString()}out
@@ -243,6 +244,7 @@ function PasteTextPanel({
   onText,
   tokenizerFamily,
   onFamily,
+  familyLabel,
   monthly,
   onMonthly,
   presetId,
@@ -254,6 +256,7 @@ function PasteTextPanel({
   onText: (s: string) => void
   tokenizerFamily: TokenizerFamily
   onFamily: (f: TokenizerFamily) => void
+  familyLabel: (f: TokenizerFamily) => string
   monthly: number
   onMonthly: (n: number) => void
   presetId: string
@@ -280,7 +283,7 @@ function PasteTextPanel({
       <div className="flex flex-wrap items-end gap-4">
         <div className="min-w-[160px] flex-1">
           <label className="mb-1.5 block text-[12px] font-medium text-fg-2">
-            Tokenizer
+            {t('calculator.tokenizerLabel')}
           </label>
           <select
             value={tokenizerFamily}
@@ -289,7 +292,7 @@ function PasteTextPanel({
           >
             {TOKENIZER_FAMILIES.map((f) => (
               <option key={f} value={f}>
-                {FAMILY_LABELS[f]}
+                {familyLabel(f)}
               </option>
             ))}
           </select>

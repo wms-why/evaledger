@@ -1,6 +1,6 @@
 {
-  "short_name": "FlareStarter",
-  "name": "FlareStarter — Cloudflare-native SaaS starter",
+  "short_name": "TokenCalculator",
+  "name": "TokenCalculator — see what your LLM tokens actually cost",
   "icons": [
     {
       "src": "favicon.ico",

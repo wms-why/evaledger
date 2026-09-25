@@ -2,30 +2,55 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { useTranslation } from '@/features/i18n/provider'
 import { buttonVariants } from '@/components/ui/button'
+import { calculateCost } from '@/features/calculator/cost'
+import { REGISTRY } from '@/features/calculator/model-prices'
 import { cn } from '@/lib/utils'
 
-/** Static mockup of the calculator's results grid — used as the hero "what you get" visual. */
+/**
+ * Live "what you get" preview: takes the 6 cheapest active models from the
+ * registry, computes their monthly cost at the hero's default usage, and
+ * renders the count + provider count so the mockup can never drift from the
+ * real calculator.
+ */
 function CalculatorPreview() {
-  const rows = [
-    { provider: 'GPT-5 nano', cost: '0.42', badge: null },
-    { provider: 'Haiku 4.5', cost: '1.20', badge: null },
-    { provider: 'Gemini 2.5 Flash', cost: '2.65', badge: null },
-    { provider: 'Sonnet 4.5', cost: '5.40', badge: null },
-    { provider: 'Opus 4.5', cost: '9.80', badge: 'cheapest' as const },
-    { provider: 'GPT-5', cost: '12.30', badge: null },
-  ]
+  const { t } = useTranslation()
+  const activeModels = REGISTRY.models.filter((m) => m.status === 'active')
+  // 100k input × 40k output per request × 1k requests/mo → 100M in + 40M out tokens/month
+  const singleInput = 100_000
+  const singleOutput = 40_000
+  const monthly = 1_000
+  const totalInput = singleInput * monthly
+  const totalOutput = singleOutput * monthly
+
+  const rows = activeModels
+    .map((m) => ({
+      id: m.id,
+      name: m.displayName,
+      cost: calculateCost(m.id, totalInput, totalOutput).totalCost,
+    }))
+    .sort((a, b) => a.cost - b.cost)
+    .slice(0, 6)
+
+  const providers = new Set(activeModels.map((m) => m.provider))
+  const cheapestId = rows[0]?.id
+
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-bg-alt">
       <div className="space-y-4 p-6 md:p-8">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] uppercase tracking-[0.06em] text-fg-3">
-              100k input · 40k output · 10k req/mo
+              {t('marketing.heroPreviewVolume')}
             </div>
-            <div className="mt-1 text-base font-semibold text-foreground">6 of 24 models shown</div>
+            <div className="mt-1 text-base font-semibold text-foreground">
+              {t('marketing.heroPreviewShown', {
+                shown: rows.length,
+                total: activeModels.length,
+              })}
+            </div>
           </div>
           <div className="rounded-full bg-soft px-2.5 py-1 text-[11px] font-medium text-primary">
-            Updated weekly
+            {t('marketing.heroPreviewUpdated', { date: REGISTRY.fetchedAt })}
           </div>
         </div>
 
@@ -33,23 +58,25 @@ function CalculatorPreview() {
         <div className="overflow-hidden rounded-lg border border-border bg-bg">
           {rows.map((r, i) => (
             <div
-              key={r.provider}
+              key={r.id}
               className={cn(
                 'flex items-center justify-between border-border px-3.5 py-2.5 text-[13px]',
                 i > 0 && 'border-t',
               )}
             >
               <div className="flex items-center gap-2">
-                <span className="font-medium text-foreground">{r.provider}</span>
-                {r.badge === 'cheapest' && (
+                <span className="font-medium text-foreground">{r.name}</span>
+                {r.id === cheapestId && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-soft px-2 py-0.5 text-[10px] font-medium text-primary">
-                    <Sparkles size={10} /> Cheapest
+                    <Sparkles size={10} /> {t('marketing.heroPreviewCheapest')}
                   </span>
                 )}
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-semibold tabular-nums text-foreground">${r.cost}</span>
-                <span className="text-[11px] text-fg-3">/ mo</span>
+                <span className="font-semibold tabular-nums text-foreground">
+                  ${r.cost.toFixed(2)}
+                </span>
+                <span className="text-[11px] text-fg-3">{t('calculator.perMonth')}</span>
               </div>
             </div>
           ))}
@@ -57,8 +84,13 @@ function CalculatorPreview() {
 
         {/* mini footer */}
         <div className="flex items-center justify-between text-[11px] text-fg-3">
-          <span>Sorted by cheapest first · 24 models · 5 providers</span>
-          <span>Source: provider pricing pages</span>
+          <span>
+            {t('marketing.heroPreviewSorted', {
+              n: activeModels.length,
+              p: providers.size,
+            })}
+          </span>
+          <span>{t('marketing.heroPreviewSource')}</span>
         </div>
       </div>
     </div>

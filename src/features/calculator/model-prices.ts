@@ -280,8 +280,3 @@ export const REGISTRY: ModelRegistry = {
 export function findModel(id: string) {
   return REGISTRY.models.find((m) => m.id === id)
 }
-
-/** All distinct provider names present in the registry, sorted. */
-export function distinctProviders(): string[] {
-  return [...new Set(REGISTRY.models.map((m) => m.provider))].sort()
-}

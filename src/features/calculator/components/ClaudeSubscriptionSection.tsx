@@ -48,33 +48,42 @@ export function ClaudeSubscriptionSection() {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <div className="rounded-[14px] border border-border bg-card p-6">
             <h3 className="text-[18px] font-semibold tracking-[-0.3px]">
-              Claude Pro · $20/mo
+              {t('calculator.claudeProCardTitle')}
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
-              Break-even: ~{formatM(proInputM)}M input + {formatM(proOutputM)}M output per month
+              {t('calculator.claudeBreakEven', {
+                input: formatM(proInputM),
+                output: formatM(proOutputM),
+              })}
             </p>
             <p className="mt-3 text-[14px] leading-relaxed text-fg-2">
-              Below this combined usage the Pro plan is cheaper; above it the API starts winning.
+              {t('calculator.claudeProDescription')}
             </p>
           </div>
 
           <div className="rounded-[14px] border border-border bg-card p-6">
             <h3 className="text-[18px] font-semibold tracking-[-0.3px]">
-              Claude Max · $200/mo
+              {t('calculator.claudeMaxCardTitle')}
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
-              Break-even: ~{formatM(maxInputM)}M input + {formatM(maxOutputM)}M output per month
+              {t('calculator.claudeBreakEven', {
+                input: formatM(maxInputM),
+                output: formatM(maxOutputM),
+              })}
             </p>
             <p className="mt-3 text-[14px] leading-relaxed text-fg-2">
-              For sustained heavy usage, Max covers you up to roughly the API equivalent of $200/mo.
+              {t('calculator.claudeMaxDescription')}
             </p>
           </div>
         </div>
 
         <p className="mt-4 text-[13px] text-fg-3">
-          Sample reference: 1M input + 500K output tokens via the API costs{' '}
-          <strong className="tabular-nums text-fg-2">${api.totalCost.toFixed(2)}</strong> / month
-          ({api.totalCost === 0 ? 'no usage' : 'at current Sonnet 4.5 rates'}).
+          {t('calculator.claudeSampleReference', {
+            cost: api.totalCost.toFixed(2),
+            rate: api.totalCost === 0
+              ? t('calculator.claudeSampleNoUsage')
+              : t('calculator.claudeSampleRate'),
+          })}
         </p>
       </div>
     </section>

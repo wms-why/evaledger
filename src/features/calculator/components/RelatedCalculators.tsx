@@ -48,9 +48,11 @@ export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
   return (
     <section className="border-t border-border py-12">
       <div className="mx-auto max-w-7xl px-5 md:px-7">
-        <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-fg-3">More calculators</span>
+        <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-fg-3">
+          {t('calculator.relatedKicker')}
+        </span>
         <h2 className="mt-2.5 text-[22px] font-semibold tracking-[-0.4px]">
-          Pick the right page for your use case
+          {t('calculator.relatedTitle')}
         </h2>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           {items.map((item) => (
@@ -64,7 +66,7 @@ export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
               </h3>
               <p className="text-[13px] leading-relaxed text-fg-3">{t(item.descKey)}</p>
               <span className="mt-2 inline-flex items-center gap-1 text-[13px] font-medium text-primary">
-                Open <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                {t('calculator.relatedOpen')} <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>
           ))}

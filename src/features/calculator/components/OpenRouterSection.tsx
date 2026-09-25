@@ -20,8 +20,10 @@ export function OpenRouterSection() {
               {t('calculator.openrouterMarkupBody')}
             </p>
             <p className="mt-4 inline-flex items-center gap-2 rounded-md bg-bg-alt px-3 py-1.5 text-[12px] tabular-nums text-fg-2">
-              Current average markup: <strong className="text-foreground">×{REGISTRY.openRouterMarkup.toFixed(2)}</strong>
-              <span className="text-fg-3">({markupPct}%)</span>
+              {t('calculator.openrouterCurrentMarkup', {
+                multiplier: REGISTRY.openRouterMarkup.toFixed(2),
+                pct: markupPct,
+              })}
             </p>
           </div>
           <div className="rounded-[14px] border border-border bg-card p-6">

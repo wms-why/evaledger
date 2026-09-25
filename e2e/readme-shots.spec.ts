@@ -21,7 +21,7 @@ const ADMIN = { email: 'admin@example.com', password: 'password12345', name: 'Ad
 const OUT = 'e2e/screenshots/readme'
 
 function d1(command: string) {
-  execSync(`npx wrangler d1 execute flarestarter-db --local --command "${command}"`, {
+  execSync(`npx wrangler d1 execute aibookplanner-db --local --command "${command}"`, {
     stdio: 'ignore',
   })
 }

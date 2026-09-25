@@ -3,7 +3,7 @@ BETTER_AUTH_SECRET=replace-with-32+char-random-string
 BETTER_AUTH_URL=http://localhost:3000
 # Email (Resend) — blank keeps mail local: captured to the console, never sent
 RESEND_API_KEY=
-EMAIL_FROM=FlareStarter <onboarding@resend.dev>
+EMAIL_FROM=TokenCalculator <onboarding@resend.dev>
 # Optional: Resend audience id for the waitlist (and future newsletter).
 # Leave blank to disable audience sync — signups still save to D1.
 RESEND_AUDIENCE_ID=

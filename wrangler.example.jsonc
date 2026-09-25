@@ -56,7 +56,7 @@
 		}
 	],
 	// 对象存储（头像/文件上传）。本地 dev/test 由 miniflare 自动模拟，零配置即用。
-	// 部署前先建桶：`wrangler r2 bucket create flarestarter-files`（见 docs/storage.md）。
+	// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files`（见 docs/storage.md）。
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
@@ -69,11 +69,6 @@
 			"id": "00000000000000000000000000000000"
 		}
 	],
-	// AI providers are configured per-row in the `ai_provider` D1 table
-	// (admin → AI Providers); raw API keys are stored as wrangler secrets
-	// (mmx → MMX_API_KEY, deepseek → DEEPSEEK_API_KEY, replicate → REPLICATE_API_TOKEN).
-	// The selector picks a healthy, funded provider per call based on row.priority
-	// and KV-cached health snapshots. See src/features/ai-providers/.
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
@@ -141,7 +136,7 @@
 					"migrations_dir": "drizzle"
 				}
 			],
-			// 部署前先建桶：`wrangler r2 bucket create flarestarter-files-staging`。
+			// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files-staging`。
 			"r2_buckets": [
 				{
 					"binding": "BUCKET",
@@ -175,7 +170,7 @@
 					"migrations_dir": "drizzle"
 				}
 			],
-			// 部署前先建桶：`wrangler r2 bucket create flarestarter-files-prod`。
+			// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files-prod`。
 			"r2_buckets": [
 				{
 					"binding": "BUCKET",

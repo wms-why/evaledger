@@ -17,13 +17,17 @@ interface ResultsGridProps {
   copied: boolean
 }
 
-const PROVIDER_LABELS: Record<string, string> = {
-  openai: 'OpenAI',
-  anthropic: 'Anthropic',
-  google: 'Google',
-  deepseek: 'DeepSeek',
-  grok: 'Grok',
-  openrouter: 'OpenRouter',
+const PROVIDER_KEYS: Record<string, string> = {
+  openai: 'calculator.providerOpenai',
+  anthropic: 'calculator.providerAnthropic',
+  google: 'calculator.providerGoogle',
+  deepseek: 'calculator.providerDeepSeek',
+  grok: 'calculator.providerGrok',
+  openrouter: 'calculator.providerOpenRouter',
+}
+
+function providerLabel(t: (k: string) => string, key: string): string {
+  return t(PROVIDER_KEYS[key] ?? key)
 }
 
 export function ResultsGrid({
@@ -98,7 +102,7 @@ export function ResultsGrid({
               key={p}
               active={providerFilter === p}
               onClick={() => onProviderFilterChange(p)}
-              label={PROVIDER_LABELS[p] ?? p}
+              label={providerLabel(t, p)}
             />
           ))}
         </div>

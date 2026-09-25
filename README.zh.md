@@ -1,226 +1,137 @@
-<div align="center">
-  <h1>FlareStarter</h1>
-  <p>基于 <strong>TanStack Start</strong> + <strong>Cloudflare Workers</strong> 的全栈、边缘原生 SaaS 起步模板。</p>
-  <p>
-    <a href="https://github.com/FlareStarter/flarestarter/actions/workflows/ci.yml"><img src="https://github.com/FlareStarter/flarestarter/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-    <a href="https://github.com/FlareStarter/flarestarter/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-    <a href="https://developers.cloudflare.com/workers/"><img src="https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare Workers"></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white" alt="TypeScript"></a>
-  </p>
-  <p>
-    <i>认证、计费、邮件、i18n、SEO、运营后台——全部接好、有测试、fork 即用。</i>
-  </p>
-  <p>
-    <a href="https://flarestarter.com"><strong>在线 Demo</strong></a> ·
-    <a href="https://flarestarter.com/docs"><strong>文档</strong></a>
-  </p>
-  <a href="https://flarestarter.com"><img src=".github/assets/hero.png" alt="FlareStarter —— 克隆即用,今晚部署到 Cloudflare" width="100%"></a>
-</div>
+# TokenCalculator
+
+> **看清你的 LLM token 在每一家主流模型上到底多少钱。**
+
+一个跑在 **TanStack Start** + **Cloudflare Workers** 上的免费 token 成本计算器。粘贴提示词（或填每月用量）、选分词器家族，立刻拿到 OpenAI、Claude、Gemini、DeepSeek、Grok 的成本对比——同时给出 OpenRouter 加价系数,以及 Claude 订阅 vs API 的盈亏平衡点。
+
+定价 registry 在 [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts),每次刷新都会按文件头的「Refresh workflow」流程去各家厂商官方定价页核对。
+
+**线上:** [tokencalculator.com](https://tokencalculator.com) · **文档:** [tokencalculator.com/docs](https://tokencalculator.com/docs)
 
 ---
 
-[English](README.md) | **简体中文**
+## 功能
 
-FlareStarter 只交付能跑的东西：仓库里的每个功能都是真实实现，没有 mock、没有占位、没有为凑数而留空的 TODO。所有代码都跑在 Cloudflare 的低成本（乃至免费）技术栈上 (Workers + D1 + KV)。
+- **实时 token 计数** — OpenAI 系列用真实分词器(GPT-5 走 `o200k_base`,旧家族走 `cl100k_base`);Anthropic / Google / DeepSeek / Grok 走 CJK 感知的字符近似(英文误差 ~10%,中文 ~5%)。
+- **逐模型成本拆解** — registry 里的每一个活跃模型,默认从低到高排序。可切换「从高到低」,按厂商筛选,点按钮把估算复制到剪贴板。
+- **三个 SEO 落地页** — `/token-cost-calculator`、`/openrouter-pricing-calculator`、`/claude-token-cost-calculator`,各自配 Hero、TLDR、FAQ 与 Tips 区块。
+- **Claude 盈亏平衡** — Claude 页算出了 Pro($20/月)与 Max($200/月)不再比 API 划算的临界点,按 Sonnet 4.5 的实时单价计算。
+- **OpenRouter 加价系数** — registry 里存当前平均加价(默认 5%);每张对比卡都显示加价后的数字。
+- **机器可读** — 同份数据通过 [`/api/prices.json`](src/features/calculator/api/prices.json.ts) 暴露,给 AI agent 和程序化访问用。
 
-## 核心优势
+## 内置模块
 
-- **边缘原生计算**：基于 Cloudflare Workers，全球毫秒级响应，告别冷启动。
-- **极低的运维成本**：巧妙利用 CF 的免费额度，0 成本起步，应对突发流量也毫无压力。
-- **开箱即用**：鉴权、支付、邮件等 SaaS 必备模块全部内置，无需自己拼凑各种库。
-- **端到端类型安全**：从数据库 (Drizzle) 到前端 (TanStack Start) 的全链路 TypeScript 体验。
-
-## 预览
-
-暗色优先设计 + 终端美学。以下均为真实运行界面——运营后台基于真实数据、无任何虚构指标。可在 [在线 Demo](https://flarestarter.com) 亲自体验。
-
-**运营后台 · 统计仪表盘**（注册数 / 活跃 / 订阅，全部真实数据）
-
-<p align="center">
-  <img src=".github/assets/admin.png" alt="运营后台统计仪表盘" width="100%">
-</p>
-
-| 用户管理（角色 / 封禁 / 模拟登录 / 分页搜索） | 应用仪表盘（按 plan 解锁） |
-|:---:|:---:|
-| <img src=".github/assets/admin-users.png" alt="用户管理表" width="100%"> | <img src=".github/assets/app-dashboard.png" alt="应用仪表盘" width="100%"> |
-| **定价：开源核心 + Pro 终身买断** | **Pro 门禁演示（`requirePlan`）** |
-| <a href="https://flarestarter.com/pricing"><img src=".github/assets/pricing.png" alt="定价页" width="100%"></a> | <img src=".github/assets/app-pro.png" alt="Pro 专属内容" width="100%"> |
-| **反馈箱（提交 + 团队回复）** | **独立赞助页（PWYW 金额分层）** |
-| <img src=".github/assets/app-feedback.png" alt="反馈箱用户页" width="100%"> | <a href="https://flarestarter.com/sponsor"><img src=".github/assets/sponsor.png" alt="赞助页" width="100%"></a> |
-
-## 包含什么
-
-| 模块 | 能力 |
+| 模块 | 说明 |
 |------|------|
-| **认证** | 基于 [better-auth](https://better-auth.com) 的邮箱密码登录（强制邮箱验证）、找回密码、注销账号。Google 与 GitHub OAuth ——未配置环境变量时按钮自动隐藏（优雅降级）。会话以 D1 作为唯一数据源，并配合 cookie 缓存。 |
-| **计费** | [Stripe](https://stripe.com) 订阅（月付/年付）**以及**一次性终身买断、Customer Portal 入口、基于套餐的路由守卫 (`requirePlan`)、幂等 webhook 处理、可靠触发的计费事件钩子（例如「Pro 激活时发一封邮件」）。续费扣款失败时在 app 内提示更新支付方式（重试邮件交给 Stripe）——见 [计费文档](https://flarestarter.com/docs/features/billing)。 |
-| **存储** | [R2](https://developers.cloudflare.com/r2/) 对象存储，内置完整的头像上传功能（包含类型与大小校验）。R2 存储桶默认非公开，图片通过服务端路由以流式代理返回。本地开发经 miniflare 零配置即可使用。这可用作后续所有文件上传功能的参考实现——见 [存储文档](https://flarestarter.com/docs/features/storage)。 |
-| **邮件** | [Resend](https://resend.com) + 字符串模板（React Email 在 workerd 上不可用）。如果没配 API key，邮件会直接打印到控制台，确保本地开发不会被卡住。 |
-| **等待列表 (Waitlist)** | 完整的 pre-launch 报名闭环：公开报名页、Turnstile 防刷、后台管理页 + CSV 导出，报名邮箱自动同步到 [Resend](https://resend.com) audience（未配 key 时优雅跳过）。 |
-| **更新日志 (Changelog)** | MDX 驱动、按语言区分、带 `published` 开关的站内 `/changelog` 页——直接把版本记录做成产品页面，而不只是仓库里的 `CHANGELOG.md`。 |
-| **赞助 (Sponsor)** | 独立 `/sponsor` 页,演示真实 Stripe 收款闭环:**纯捐赠不解锁**（不碰 entitlement）。一次性与月度均为**金额驱动**（PWYW/自定义金额,通过 `price_data.recurring` 内联创建,无需预设 Price ID）。一次性赞助另提供**微信支付**（走 Stripe 的 `wechat_pay`,无需微信商户号;收款币种与固定汇率在 config 里配,USD 等值下单时冻结——见 [计费文档](https://flarestarter.com/docs/features/billing)）。GitHub 致谢头像墙**按金额分层展示**,支持公开留言。月度赞助可随时经 Stripe 门户取消。webhook 按 metadata 分流 + 幂等入库。未配 Stripe key 时显示「未配置」态（优雅降级）。定制赞助页改 `src/features/sponsor/sponsor.config.ts`（金额/档位/开关/阈值）与 i18n `sponsor.*` 文案,无需改组件。 |
-| **反馈箱 (Feedback)** | 登录用户提交反馈 +「我的反馈」列表（可删自己 `open` 状态的条目）；后台治理页做状态流转（open/planned/shipped/closed）与一句话回复；admin 提交的反馈带 Pro 徽章（演示 `hasProAccess`）。同时是**加你自己功能的教学范本**：一个纵向切片跑通归属过滤（`db/scope`）、纯函数层、两套门控与双池测试——见 [反馈文档](https://flarestarter.com/docs/features/feedback)。 |
-| **i18n** | 通过 TanStack 的 `{-$locale}` 可选前缀做路径式多语言路由——英文在 `/`，中文在 `/zh`。营销文案与 UI 字符串都已内置翻译。 |
-| **SEO** | 按语言生成的 sitemap、`hreflang`、canonical URL、OpenGraph 标签、`robots.txt`，以及需登录页面的 `noindex` 处理。 |
-| **AI 友好** | **部署侧**：内置 [`llms.txt`](https://flarestarter.com/llms.txt) 索引与 [`llms-full.txt`](https://flarestarter.com/llms-full.txt) 全文语料，每个文档页均可经 `/docs-md/*` 取到去除 frontmatter 的干净 Markdown，`robots.txt` 主动指向二者——便于 ChatGPT / Perplexity 等 AI 爬虫索引、引用你的内容。**代码侧**：[`AGENTS.md`](AGENTS.md)（+ 自动导入的 [`CLAUDE.md`](CLAUDE.md)）作为单一事实来源，让 Claude Code / Codex 等编码 agent 即刻读懂本仓库、直接在其上开发。 |
-| **后台** | better-auth admin 插件：角色管理、账号封禁、用户模拟登录 (Impersonation)、可搜索/分页的用户表，以及统计仪表盘（注册数 / 活跃数 / 订阅）——全部基于真实数据，无任何虚构指标。 |
-| **主题** | 暗色优先设计 + 亮/暗模式切换，用户偏好经 cookie 持久化。 |
-| **安全 & 可观测性** | Turnstile bot 防护、安全响应头 + 生产环境 CSP、认证端点限流（D1 存储）、启动期环境变量校验（fail-fast）；CF Web Analytics（无 cookie）与 Sentry 错误上报——均可选，留空即关。见 [安全文档](https://flarestarter.com/docs/platform/security) / [可观测性文档](https://flarestarter.com/docs/platform/observability)。 |
-| **运维 (Dev/Ops)** | Cron Triggers 定时任务参考实现（每日清理过期 session/token/限流行）、local/staging/prod 多环境分离、GitHub Actions CI（lint + typecheck + 构建）。 |
+| **计算器** | 产品本体。两种输入模式(粘贴 / 手工填)、实时分词、OpenRouter 感知成本网格、三个 SEO 路由。源码:[`src/features/calculator/`](src/features/calculator/)。 |
+| **赞助** | 独立 `/sponsor` 页面,真实 Stripe 收款闭环(一次性 + 月度,WeChat Pay 走 Stripe)。自定义金额(PWYW)走 `price_data.recurring`。GitHub 头像墙按金额分层。 |
+| **反馈箱** | 应用内反馈 + 后台治理(open / planned / shipped / closed + 一句话回复)。是任何新功能可参照的纵向切片范本。 |
+| **认证** | 邮箱密码 + Google OAuth([better-auth](https://better-auth.com))。OAuth 按钮在 env 缺位时自动隐藏。 |
+| **国际化** | 路径式语言路由(`/` = 英文,`/zh` = 中文)。字典在 [`src/features/i18n/dictionaries/`](src/features/i18n/dictionaries/)。 |
+| **SEO** | 按语言生成 sitemap、`hreflang`、canonical URL、OpenGraph、`robots.txt`、JSON-LD(`Organization` + `SoftwareApplication/FinanceApplication` + `FAQPage`)。 |
+| **后台** | 仅管理员可见的控制台:数据看板、用户搜索/封禁/模拟登录、候补名单 + 赞助 + 反馈治理。 |
+| **主题** | 浅色/深色跟随系统偏好,cookie 持久化。 |
 
 ## 技术栈
 
-- **[TanStack Start](https://tanstack.com/start)**（React 19、文件式路由、Server Functions）
-- **[Cloudflare Workers](https://workers.cloudflare.com)** 运行时，经 `@cloudflare/vite-plugin` 部署
-- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)** + 数据迁移
-- **[KV](https://developers.cloudflare.com/kv/)** 做缓存，**[R2](https://developers.cloudflare.com/r2/)** 做对象存储——已端到端接通（校验上传 + 私有服务路由），头像上传作参考实现
-- **[better-auth](https://better-auth.com)**、**[Stripe](https://stripe.com)**、**[Resend](https://resend.com)**
-- **[Tailwind CSS v4](https://tailwindcss.com)**
-- **[Vitest](https://vitest.dev)**（Node 单测 + 经 `@cloudflare/vitest-pool-workers` 的 Workers/D1 集成测试）
-
-## 前置依赖 (Prerequisites)
-
-- **Node.js** >= 22 (推荐使用 [nvm](https://github.com/nvm-sh/nvm) 或 [volta](https://volta.sh/))
-- **pnpm** >= 9
-- 一个 **Cloudflare** 账号（免费档足够起步）
-- `wrangler` CLI（已作为项目 dev 依赖安装，无需全局安装）
+- **[TanStack Start](https://tanstack.com/start)** (React 19,基于文件的路由,server functions)
+- **[Cloudflare Workers](https://workers.cloudflare.com)** 运行时,通过 `@cloudflare/vite-plugin` 部署
+- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)**(账号、赞助、反馈、候补名单)
+- **[KV](https://developers.cloudflare.com/kv/)** 缓存、**[R2](https://developers.cloudflare.com/r2/)** 头像存储
+- **[better-auth](https://better-auth.com)** + **[Stripe](https://stripe.com)** + **[Resend](https://resend.com)**
+- **[Tailwind CSS v4](https://tailwindcss.com)** + **[Vitest](https://vitest.dev)**(Node 单元测试 + Workers/D1 集成测试)
 
 ## 快速开始
 
 ```bash
-# 1. 安装依赖
 pnpm install
-
-# 2. 生成本地 Wrangler 配置 (含 D1/KV id 等，git 忽略；参考模板已提交)
 cp wrangler.example.jsonc wrangler.jsonc
-
-# 3. 配置本地环境变量 (复制示例，按需填写)
-cp .dev.vars.example .dev.vars
-# 本地一切都可选 —— Stripe/Resend key 留空会优雅降级
-# (无计费入口、邮件直接打印到控制台)。
-
-# 4. 建立本地 D1 表结构
-pnpm db:migrate:local
-
-# 5. 跑起来！
-pnpm dev          # 访问 http://localhost:3000
+cp .dev.vars.example .dev.vars       # 本地全可选
+pnpm db:migrate:local                # 应用 D1 迁移
+pnpm dev                             # http://localhost:3000
 ```
 
 ### 常用脚本
 
 ```bash
-pnpm dev               # 启动开发服务器 (:3000)
-pnpm build             # 生产环境构建
-pnpm test              # 全量测试 (Vitest)
-pnpm typecheck         # 运行 tsc --noEmit
-pnpm lint              # 运行 eslint
-pnpm db:generate       # 从 schema 变更生成 Drizzle 迁移文件
-pnpm db:migrate:local  # 对本地 D1 应用迁移
-pnpm db:reset:local    # 清空 + 重新迁移 + 重新填充测试数据 (seed), 本地 D1
-pnpm cf-typegen        # 从 wrangler.jsonc 重新生成 worker-configuration.d.ts
+pnpm dev               # vite dev,端口 3000
+pnpm typecheck         # fumadocs-mdx && tsc --noEmit
+pnpm test              # vitest run(node + workers 双池)
+pnpm build             # vite build
+pnpm db:generate       # 从 schema 变更生成 Drizzle 迁移
+pnpm db:migrate:local  # 本地 D1 应用迁移
+pnpm db:migrate:prod   # 生产 D1 应用迁移(见 docs/getting-started/deploy)
+pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 ```
 
-## 目录结构
+## 刷新价格
 
-```text
+计算器想保持准确,registry 必须跟上。流程写在 [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts) 文件头:
+
+1. 打开每条记录的 `sourceUrl`,核对 `inputPricePer1M` / `outputPricePer1M`。
+2. 把 `lastVerified` 改成今天的 ISO 日期。
+3. 更新 `REGISTRY.fetchedAt`,让页面显示「更新于 YYYY-MM-DD」。
+4. 重跑 `pnpm test && pnpm typecheck`。
+
+## 项目结构
+
+```
 src/
-  features/        # 按业务逻辑纵向切片，每个模块自包含
-    auth/          # better-auth 配置、中间件、社交登录按钮
-    billing/       # Stripe provider、权益控制、webhook、事件钩子
-    storage/       # R2 对象存储：校验上传 + 服务路由 (如头像)
+  features/
+    calculator/    # 产品本体 — 定价 registry、成本计算、分词器、三个 SEO 路由
+    auth/          # better-auth + 邮箱密码 + Google OAuth
+    billing/       # Stripe 订阅 + 终身买断 + webhook
+    sponsor/       # 一次性/月度 Stripe + GitHub 头像墙 + WeChat Pay
+    feedback/      # 提交 + 后台治理 — 教学范本纵向切片
+    i18n/          # en/zh 字典 + provider
+    seo/           # sitemap、robots、locale head、JSON-LD 工具
+    docs/          # fumadocs 源/布局 + llms.txt 生成
+    admin/         # admin 插件接线 + 看板
+    analytics/     # CF Web Analytics(可选)
+    audience/      # Resend audience 同步(waitlist 复用)
+    waitlist/      # 上线前候补登记 + Turnstile + Resend 同步
+    changelog/     # 应用内 changelog 页面(MDX,按语言)
+    storage/       # R2 上传 + serving route(头像上传参考实现)
     email/         # Resend 客户端 + 字符串模板
-    waitlist/      # 报名页 + Turnstile + 后台管理 + CSV 导出 + Resend audience 同步
-    audience/      # Resend 联系人/受众同步（waitlist 复用，未来 newsletter）
-    changelog/     # MDX 驱动的站内更新日志页 (/changelog)
-    sponsor/       # 独立赞助页:一次性/月度 Stripe 收款 + GitHub 致谢墙
-    feedback/      # 示例反馈箱:提交/我的列表/后台治理 —— 加自己功能的教学范本
-    i18n/          # 语言字典 (en/zh) + provider
-    seo/           # sitemap、robots、多语言 head 标签
-    docs/          # fumadocs 源/布局配置 + llms.txt 文本生成
-    admin/         # admin 插件接线 + 仪表盘
-    analytics/     # CF Web Analytics beacon (可选)
-    maintenance/   # Cron 定时清理任务 (过期 session/token/限流行)
-    theme/         # 暗色优先的主题切换
+    maintenance/   # Cron 清理任务(过期会话/token/限流记录)
+    theme/         # 浅色/深色主题切换
   routes/
-    {-$locale}/    # 带可选语言前缀的页面：/、/zh、/admin、/app …
-    api/, docs/, docs-md/, llms.txt, robots.txt, sitemap.xml   # 顶级路由（locale 组之外）
-  content/docs/    # 站内文档内容 (fumadocs 的 mdx 源)
-  db/              # Drizzle schema barrel + client + 迁移逻辑
-drizzle/           # 生成的 SQL 迁移文件（仓库根，与 src/ 同级）
+    {-$locale}/    # 带语言前缀的页面:/、/zh、/admin、/app、/token-cost-calculator ...
+    api/, docs/, docs-md/, llms.txt, robots.txt, sitemap.xml
+  content/docs/    # 应用内文档(fumadocs mdx 源)
+  db/              # Drizzle schema barrel + client + migrations
+drizzle/           # 生成的 SQL 迁移
 ```
-
-## 环境变量
-
-完整清单见 [`.dev.vars.example`](.dev.vars.example)。本地开发时一切可选，支持优雅降级。生产环境所需的 secrets 及配置方式见 [部署文档](https://flarestarter.com/docs/getting-started/deploy)：
-
-- `BETTER_AUTH_SECRET`、`BETTER_AUTH_URL`（同时决定 canonical / sitemap origin）—— **必填**；启动时校验（见 [安全文档](https://flarestarter.com/docs/platform/security)）。
-- `RESEND_API_KEY`、`EMAIL_FROM`（邮件服务；留空则由控制台捕获）。
-- `GOOGLE_CLIENT_ID/SECRET`、`GITHUB_CLIENT_ID/SECRET`（可选社交登录）。
-- `STRIPE_SECRET_KEY`、`STRIPE_WEBHOOK_SECRET`、`STRIPE_PRICE_PRO_*`（计费服务）；`STRIPE_WECHAT_PAY_ENABLED`（可选,设 `false` 关掉赞助页的微信支付入口）。
-- `ADMIN_EMAILS`（管理员邮箱）。
-- `TURNSTILE_SITE_KEY`、`TURNSTILE_SECRET_KEY`（可选的 bot 防护——见 [安全文档](https://flarestarter.com/docs/platform/security)）。
-- `CF_ANALYTICS_TOKEN`、`SENTRY_DSN`（可选的数据分析 + 错误上报——见 [可观测性文档](https://flarestarter.com/docs/platform/observability)）。
-
-**优雅降级机制**：每个可选集成均支持优雅降级。如果留空对应的 key，该功能即自动关闭。启动期的环境变量校验会拦截错误的配置（如缺失必填项、OAuth/Turnstile 配置不全等），并触发快速失败 (fail-fast)，避免在运行时产生意料之外的错误。
-
-## 部署
-
-资源与 secrets 配好后，上线只需两步：
-
-```bash
-CLOUDFLARE_ENV=production pnpm build   # 环境在构建时选定（见下）
-wrangler deploy
-```
-
-> Cloudflare 运行环境在**构建时**通过 `CLOUDFLARE_ENV` 选定（而不是在部署时通过 `wrangler deploy --env`），因为 Vite 插件会将选定环境的 bindings 直接注入到构建产物中。
-
-首次部署的**完整流程**——创建 D1/KV、设置 secrets、执行远程数据迁移、配置 Stripe webhook 等——请参阅 **[部署文档](https://flarestarter.com/docs/getting-started/deploy)**。
-
-> **提示**：R2 (对象存储) 已在 `wrangler.jsonc` 中默认启用并接入代码（头像上传参考实现）。部署前先在 Cloudflare 建桶：`wrangler r2 bucket create flarestarter-files`（见 [存储文档](https://flarestarter.com/docs/features/storage)）。
 
 ## 文档
 
-项目文档已内置于主应用，访问 `/docs` 即可阅读（基于 [Fumadocs](https://fumadocs.dev)，随应用一同部署）。
-文档源文件存放在 [`src/content/docs/`](src/content/docs/) (中文版)：
+文档随主应用一起发布——访问 `/docs` 即可阅读(基于 [Fumadocs](https://fumadocs.dev)):
 
-- [`install.mdx`](src/content/docs/getting-started/install.mdx) —— 本地环境安装
-- [`deploy.mdx`](src/content/docs/getting-started/deploy.mdx) —— 生产环境部署
-- [`billing.mdx`](src/content/docs/features/billing.mdx) —— 计费与订阅、扣款失败（dunning）处理
-- [`security.mdx`](src/content/docs/platform/security.mdx) —— 安全响应头/CSP、环境变量校验、接口限流、按 plan 配额、Turnstile 验证码
-- [`observability.mdx`](src/content/docs/platform/observability.mdx) —— 访问分析 + Sentry 接入
-- [`storage.mdx`](src/content/docs/features/storage.mdx) —— R2 对象存储与文件上传
-- [`migrations.mdx`](src/content/docs/getting-started/migrations.mdx) —— D1 数据库迁移流程
-- [`i18n.mdx`](src/content/docs/features/i18n.mdx) —— 语言路由 & SEO origin 处理
-- [`admin.mdx`](src/content/docs/features/admin.mdx) —— 运营后台引导 & 角色权限
-- [`feedback.mdx`](src/content/docs/features/feedback.mdx) —— 反馈箱示例域:垂直切片解剖 + 照抄清单（加你自己的功能）
-- [`cf-gotchas.mdx`](src/content/docs/platform/cf-gotchas.mdx) —— Cloudflare / workerd 踩坑记录
+- [`install.mdx`](src/content/docs/getting-started/install.mdx) — 本地启动
+- [`deploy.mdx`](src/content/docs/getting-started/deploy.mdx) — 生产部署
+- [`migrations.mdx`](src/content/docs/getting-started/migrations.mdx) — D1 迁移流程
+- [`codebase.mdx`](src/content/docs/getting-started/codebase.mdx) — 目录结构
+- [`environment.mdx`](src/content/docs/getting-started/environment.mdx) — 环境变量
+- [`calculator.mdx`](src/content/docs/features/calculator.mdx) — 计算器内部
+- [`billing.mdx`](src/content/docs/features/billing.mdx) — Stripe + 赞助循环
+- [`storage.mdx`](src/content/docs/features/storage.mdx) — R2 对象存储
+- [`cf-gotchas.mdx`](src/content/docs/platform/cf-gotchas.mdx) — Cloudflare/workerd 坑
+- [`security.mdx`](src/content/docs/platform/security.mdx) — 安全头/CSP、env 校验、限流
 
-> **建议**：上线后，可以将这些内容替换为你自己的产品文档（或者继续用它来记录你的项目开发心得）。
+## 致谢
 
-## 社区与贡献
+本项目 fork 自 [FlareStarter](https://github.com/FlareStarter/flarestarter)——一个 Cloudflare-native SaaS starter,为我们提供了 auth、billing、i18n、admin 外壳与 Workers/D1 接线。本仓库目前大部分逻辑围绕计算器产品,但 auth/billing/sponsor/admin 这些横切模块基本是原版 FlareStarter + 品牌替换。
 
-- **交流群**：加入 [Telegram 交流群](https://t.me/+coaN5Ihjte9jNzZl)，或扫码加入微信群「FlareStarter & 出海 SaaS 交流」，一起讨论使用与二次开发。
-- **关注作者**：[X (Twitter) @0xdinglv](https://x.com/0xdinglv)、[小红书](https://xhslink.com/m/19FI1djnItu)，获取更新与出海 SaaS 分享。
-- **遇到问题？** 本地运行或部署遇到问题，欢迎在 [GitHub Issues](https://github.com/FlareStarter/flarestarter/issues) 讨论。
+## 贡献与支持
 
-<p>
-  <img src=".github/assets/wechat-group.jpg" alt="微信群：FlareStarter & 出海 SaaS 交流" width="240">
-</p>
+- **遇到问题?** [GitHub Issues](https://github.com/ymk/tokencalculator/issues)
+- **本地启动 / 约定:** [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- **变更记录:** [`CHANGELOG.md`](CHANGELOG.md)
 
-> 微信群二维码定期更新；若已过期，请加入 [Telegram 群](https://t.me/+coaN5Ihjte9jNzZl)，或添加作者微信 `hansenones`，拉你进群。
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) —— 本地开发环境搭建、检查项与代码约定
-- [`CHANGELOG.md`](CHANGELOG.md) —— 版本变更记录
+## 赞助
 
-## 赞助 / Sponsor
-
-❤️ 觉得这个项目有用？[赞助我们](https://flarestarter.com/sponsor)——你的头像会实时出现在官网赞助墙。
-
-也可以微信扫码赞赏，支持作者持续维护：
-
-<p>
-  <img src=".github/assets/wechat-sponsor.jpg" alt="微信赞赏码" width="240">
-</p>
+❤️ [赞助本项目](https://tokencalculator.com/sponsor)——你的头像会出现在官网赞助墙,并用于支持价格刷新、新计算器开发与维持免费服务的基础设施。
 
 ## 许可证
 
-本项目基于 [Apache License 2.0](LICENSE) 开源协议。Copyright 2026 FlareStarter。
+[Apache License 2.0](LICENSE)。Copyright 2026 TokenCalculator.

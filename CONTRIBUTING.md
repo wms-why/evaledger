@@ -1,8 +1,8 @@
-# Contributing to FlareStarter
+# Contributing to TokenCalculator
 
-Thanks for your interest in improving FlareStarter! This is a starter template, so
-the bar is: changes should keep it **honest** (no mocked/stubbed features), lean,
-and runnable on the Cloudflare free-to-cheap stack.
+Thanks for your interest in improving TokenCalculator! The bar is: changes
+should keep it **honest** (no mocked/stubbed features), lean, and runnable on
+the Cloudflare free-to-cheap stack.
 
 ## Prerequisites
 
@@ -57,7 +57,8 @@ See [`src/content/docs/platform/cf-gotchas.mdx`](src/content/docs/platform/cf-go
 ## Reporting bugs / proposing features
 
 Open an issue with repro steps (bugs) or the problem you're solving (features). For
-security issues, **do not** open a public issue — see [`SECURITY.md`](SECURITY.md).
+security issues, **do not** open a public issue — reach the maintainers via
+GitHub Issues marked "security" or via the contact in the README.
 
 ## License
 

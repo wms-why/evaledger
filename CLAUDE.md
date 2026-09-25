@@ -4,7 +4,7 @@ Guide for AI coding agents (Claude Code, Codex, etc.) working in this repo.
 
 ## What this is
 
-FlareStarter — a Cloudflare-native SaaS starter on **TanStack Start + Cloudflare Workers**, with D1 (SQLite) + KV, Drizzle ORM, better-auth, Stripe, Resend, and Tailwind v4. Clone it and build your product on top.
+TokenCalculator — a free token cost calculator built on **TanStack Start + Cloudflare Workers**, with D1 (SQLite) + KV, Drizzle ORM, better-auth, Stripe, Resend, and Tailwind v4. Compares LLM pricing across OpenAI, Claude, Gemini, DeepSeek, and Grok, plus an OpenRouter-aware markup factor and a Claude subscription-vs-API break-even block.
 
 ## Structure
 
@@ -25,7 +25,7 @@ FlareStarter — a Cloudflare-native SaaS starter on **TanStack Start + Cloudfla
 - **Wrangler pin:** `wrangler` in package.json must be exactly `4.95.0` (not `^4.95.0`). `@cloudflare/vite-plugin@1.39.0` calls `wrangler.unstable_getWorkerNameFromProject`, removed in later 4.x — `pnpm build` fails with `TypeError: wrangler.unstable_getWorkerNameFromProject is not a function` if pnpm resolves to 4.106+. Bump vite-plugin first and re-check before touching the pin.
 - **SEO structured data (JSON-LD):** use `jsonLd(obj)` from `@/features/seo/seo` and pass the result via `scripts[]` to `localeHead()`. TanStack Router's head() returns `{ meta, links, scripts }` and renders scripts as `<script type="application/ld+json">` in `<head>`. Reference impl: `src/routes/{-$locale}/index.tsx` (Organization + SoftwareApplication + FAQPage).
 - **Rebrand gotchas:** marketing components carry hardcoded brand strings (GitHub URLs, `<span className="kicker">` copy, aria-labels) that are NOT in i18n dictionaries. When rebranding: `grep -rln -E "(OldBrand|oldbrand)" src` catches i18n + hardcoded + package.json + wrangler in one pass. Also `grep` old strings in `*.node.test.ts` — i18n-key assertions break silently.
-- **Project context (TokenCalculator):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then here). Some leftover template docs in `src/content/docs/*` still describe the original starter — out of scope until you decide to rewrite them. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is not renamed in this rebrand.
+- **Project context (TokenCalculator):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then here). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the in-app docs under `src/content/docs/*` and the root README are now also rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is not renamed in this rebrand.
 
 ## Commands
 
