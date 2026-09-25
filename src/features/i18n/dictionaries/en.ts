@@ -156,6 +156,8 @@ export const en = {
     ctaTitle: 'Ready to compare your LLM bill?',
     ctaBody: 'Paste your prompt, set your usage, see the cost across every model — in seconds. No signup.',
     ctaButton: 'Open the calculator',
+    homeMetaDescription:
+      'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
     footerTagline: 'TokenCalculator — see what your LLM tokens actually cost, across every major model.',
     footerProduct: 'Product', footerResources: 'Resources', footerLegal: 'Legal',
     footerFeatures: 'Features', footerPricing: 'Pricing',

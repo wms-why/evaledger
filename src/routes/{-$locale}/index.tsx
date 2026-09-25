@@ -1,7 +1,7 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
-import { dictionaries } from '@/features/i18n/locale'
+import { dictionaries, translate } from '@/features/i18n/locale'
 import type { Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Hero } from '@/components/marketing/hero'
@@ -26,12 +26,10 @@ export const Route = createFileRoute('/{-$locale}/')({
       en: 'TokenCalculator — Compare LLM Prices Across OpenAI, Claude, Gemini & DeepSeek',
       zh: 'TokenCalculator — 一站式比对 OpenAI、Claude、Gemini、DeepSeek 的 LLM 价格',
     }
-    const descByLocale: Record<Locale, string> = {
-      en: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated ' + REGISTRY.fetchedAt + '.',
-      zh: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 ' + REGISTRY.fetchedAt + '。',
-    }
+    const description = translate(dictionaries[locale], 'marketing.homeMetaDescription', {
+      date: REGISTRY.fetchedAt,
+    })
     const title = titleByLocale[locale]
-    const description = descByLocale[locale]
     const { meta, links, scripts } = localeHead({
       origin,
       locale,

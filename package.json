@@ -21,7 +21,8 @@
     "db:migrate:staging": "wrangler d1 migrations apply aibookplanner-db-staging --env staging --remote",
     "db:migrate:prod": "wrangler d1 migrations apply aibookplanner-db-prod --env production --remote",
     "db:seed:local": "wrangler d1 execute aibookplanner-db --local --file=./scripts/seed.sql",
-    "db:reset:local": "rm -rf .wrangler/state/v3/d1 && pnpm db:migrate:local && pnpm db:seed:local"
+    "db:reset:local": "rm -rf .wrangler/state/v3/d1 && pnpm db:migrate:local && pnpm db:seed:local",
+    "prices:fetch": "node --experimental-strip-types --no-warnings scripts/prices/fetch.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",

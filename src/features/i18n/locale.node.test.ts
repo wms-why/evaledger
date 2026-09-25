@@ -1,6 +1,7 @@
 import { test, expect } from 'vitest'
 import { translate, negotiateLocale, locales, defaultLocale, stripDefaultLocalePrefix } from '@/features/i18n/locale'
 import { en } from '@/features/i18n/dictionaries/en'
+import { zh } from '@/features/i18n/dictionaries/zh'
 
 test('stripDefaultLocalePrefix：去掉 /en 前缀且保留 query 和 hash', () => {
   expect(stripDefaultLocalePrefix('/en/pricing?ref=x')).toBe('/pricing?ref=x')
@@ -19,6 +20,15 @@ test('translate 插值 {name}', () => {
 })
 test('translate 缺失 key 回退为 key 本身', () => {
   expect(translate(en, 'home.nope')).toBe('home.nope')
+})
+test('translate 插值 marketing.homeMetaDescription 的 {date}', () => {
+  // i18n key symmetry + interpolation — both locales must interpolate {date}
+  // so the home meta description can carry REGISTRY.fetchedAt through dicts.
+  const date = '2026-09-25'
+  expect(translate(en, 'marketing.homeMetaDescription', { date })).toContain(date)
+  expect(translate(zh, 'marketing.homeMetaDescription', { date })).toContain(date)
+  expect(translate(en, 'marketing.homeMetaDescription', { date })).not.toBe('marketing.homeMetaDescription')
+  expect(translate(zh, 'marketing.homeMetaDescription', { date })).not.toBe('marketing.homeMetaDescription')
 })
 test('negotiateLocale：cookie 优先', () => {
   expect(negotiateLocale('zh', 'en-US,en')).toBe('zh')

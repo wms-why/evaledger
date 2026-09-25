@@ -37,3 +37,12 @@ pnpm build             # vite build
 pnpm db:migrate:local  # apply D1 migrations locally
 pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy (staging: deploy:staging)
 ```
+
+## Model price refresh
+
+- Source: `src/features/calculator/model-prices.ts` (REGISTRY, hand-curated)
+- Local fetch: `pnpm prices:fetch` (Playwright + Node 22 strip-types, no CI yet)
+- Output: `data/last-fetch.json` + stdout summary
+- Workflow: run fetch → diff JSON against REGISTRY → manually update REGISTRY
+- Never auto-merge prices. `cacheWrite` / `longContext` / `peakOffPeak` / `promo` / `status` are human-only.
+- See `scripts/prices/README.md` for selector-debugging workflow and provider mapping.

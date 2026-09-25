@@ -34,5 +34,12 @@ playwright-report/
 .playwright-mcp/
 .source/
 
+# Price-fetch script artifacts (`pnpm prices:fetch`).
+# `.tmp/` carries the screenshot + HTML dump on per-provider failure.
+# `data/last-fetch.json` is the most recent scrape — diff it locally,
+# don't commit it.
+.tmp/
+data/last-fetch.json
+
 # Claude Code session config (local)
 .claude/

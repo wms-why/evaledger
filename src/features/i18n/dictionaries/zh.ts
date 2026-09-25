@@ -143,6 +143,8 @@ export const zh: Dict = {
     ctaTitle: '准备好比对你的 LLM 账单了吗?',
     ctaBody: '粘贴你的提示词、填上用量,几秒看清每个模型的价格——无需注册。',
     ctaButton: '打开计算器',
+    homeMetaDescription:
+      '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 {date}。',
     footerTagline: 'TokenCalculator——看清你的 LLM token 在每一家主流模型上到底多少钱。',
     footerProduct: '产品', footerResources: '资源', footerLegal: '法律',
     footerFeatures: '功能', footerPricing: '定价',

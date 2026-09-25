@@ -88,6 +88,14 @@ export interface ModelPrice {
 
 /** Top-level registry shipped to the client + API. */
 export interface ModelRegistry {
+  /**
+   * Semver of the REGISTRY contents. Bumped by hand when the registry changes
+   * (new active model added, status flipped, prices re-verified, etc.). The
+   * `pnpm prices:fetch` script reads this and warns at the end if it drifts
+   * from the script's own version — the two should move together in the same
+   * commit.
+   */
+  registryVersion: string
   /** ISO date the registry was last assembled. */
   fetchedAt: string
   /** Source attribution shown to humans. */
