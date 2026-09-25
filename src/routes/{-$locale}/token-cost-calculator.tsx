@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { FAQ } from '@/components/marketing/faq'
@@ -24,16 +24,10 @@ export const Route = createFileRoute('/{-$locale}/token-cost-calculator')({
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const titleByLocale: Record<Locale, string> = {
-      en: 'Token Cost Calculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
-      zh: 'Token 成本计算器 — 比对 OpenAI、Claude、Gemini 与 DeepSeek',
-    }
-    const descByLocale: Record<Locale, string> = {
-      en: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated ' + REGISTRY.fetchedAt + '.',
-      zh: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 ' + REGISTRY.fetchedAt + '。',
-    }
-    const title = titleByLocale[locale]
-    const description = descByLocale[locale]
+    const title = dict.home.title
+    const description = translate(dict, 'marketing.homeMetaDescription', {
+      date: REGISTRY.fetchedAt,
+    })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/token-cost-calculator`
 
     const app = {

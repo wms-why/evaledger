@@ -4,6 +4,8 @@ export const zh: Dict = {
   common: { appName: 'TokenCalculator', toggleTheme: '切换主题', language: '语言' },
   home: {
     title: 'Token 成本计算器 — 比对 OpenAI、Claude、Gemini 与 DeepSeek',
+    openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
+    claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
     greeting: '你好，{name}！',
   },
   changelog: {
@@ -145,11 +147,18 @@ export const zh: Dict = {
     ctaButton: '打开计算器',
     homeMetaDescription:
       '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 {date}。',
+    openrouterMetaDescription:
+      '看清 OpenRouter 加价后实际收多少——以及什么时候直连 OpenAI、Claude、Gemini 或 DeepSeek 反而更划算。更新于 {date}。',
+    claudeMetaDescription:
+      '看清 Claude Opus 4.5、Sonnet 4.5、Haiku 4.5 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 {date}。',
+    brandTitle: 'TokenCalculator — 一站式比对 OpenAI、Claude、Gemini、DeepSeek 与 Grok 的 LLM 价格',
+    brandDescription: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。',
+    brandOgDescription: '给工程师用的 LLM 价格比对计算器。免费,无需注册。',
     footerTagline: 'TokenCalculator——看清你的 LLM token 在每一家主流模型上到底多少钱。',
     footerProduct: '产品', footerResources: '资源', footerLegal: '法律',
-    footerFeatures: '功能', footerPricing: '定价',
+    footerProductToken: 'Token 计算器', footerPricing: '定价',
     footerDocs: '文档', footerChangelog: '更新日志',
-    footerGithub: 'GitHub', footerTwitter: 'X (Twitter)', footerDiscord: 'Discord',
+    footerTwitter: 'X (Twitter)',
     footerTerms: '服务条款', footerPrivacy: '隐私政策', footerContact: '联系我们',
     footerRights: '© 2026 TokenCalculator 版权所有。',
   },

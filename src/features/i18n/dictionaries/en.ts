@@ -2,6 +2,8 @@ export const en = {
   common: { appName: 'TokenCalculator', toggleTheme: 'Toggle theme', language: 'Language' },
   home: {
     title: 'Token Cost Calculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
+    openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
+    claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
     greeting: 'Hello, {name}!',
   },
   changelog: {
@@ -158,11 +160,18 @@ export const en = {
     ctaButton: 'Open the calculator',
     homeMetaDescription:
       'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
+    openrouterMetaDescription:
+      'See what OpenRouter really charges after the markup — and when going direct to OpenAI, Claude, Gemini, or DeepSeek is cheaper. Updated {date}.',
+    claudeMetaDescription:
+      'See what Claude Opus 4.5, Sonnet 4.5, and Haiku 4.5 cost per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated {date}.',
+    brandTitle: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
+    brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
+    brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
     footerTagline: 'TokenCalculator — see what your LLM tokens actually cost, across every major model.',
     footerProduct: 'Product', footerResources: 'Resources', footerLegal: 'Legal',
-    footerFeatures: 'Features', footerPricing: 'Pricing',
+    footerProductToken: 'Token Calculator', footerPricing: 'Pricing',
     footerDocs: 'Docs', footerChangelog: 'Changelog',
-    footerGithub: 'GitHub', footerTwitter: 'X (Twitter)', footerDiscord: 'Discord',
+    footerTwitter: 'X (Twitter)',
     footerTerms: 'Terms', footerPrivacy: 'Privacy', footerContact: 'Contact',
     footerRights: '© 2026 TokenCalculator. All rights reserved.',
   },

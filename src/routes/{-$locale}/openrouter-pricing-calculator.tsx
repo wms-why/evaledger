@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { FAQ } from '@/components/marketing/faq'
@@ -25,16 +25,10 @@ export const Route = createFileRoute('/{-$locale}/openrouter-pricing-calculator'
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const titleByLocale: Record<Locale, string> = {
-      en: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
-      zh: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
-    }
-    const descByLocale: Record<Locale, string> = {
-      en: 'See what OpenRouter really charges after the markup — and when going direct to OpenAI, Claude, Gemini, or DeepSeek is cheaper. Updated ' + REGISTRY.fetchedAt + '.',
-      zh: '看清 OpenRouter 加价后实际收多少——以及什么时候直连 OpenAI、Claude、Gemini 或 DeepSeek 反而更划算。更新于 ' + REGISTRY.fetchedAt + '。',
-    }
-    const title = titleByLocale[locale]
-    const description = descByLocale[locale]
+    const title = dict.home.openrouterTitle
+    const description = translate(dict, 'marketing.openrouterMetaDescription', {
+      date: REGISTRY.fetchedAt,
+    })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/openrouter-pricing-calculator`
 
     const app = {

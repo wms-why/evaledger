@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { FAQ } from '@/components/marketing/faq'
@@ -25,16 +25,10 @@ export const Route = createFileRoute('/{-$locale}/claude-token-cost-calculator')
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const titleByLocale: Record<Locale, string> = {
-      en: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
-      zh: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
-    }
-    const descByLocale: Record<Locale, string> = {
-      en: 'See what Claude Opus 4.5, Sonnet 4.5, and Haiku 4.5 cost per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated ' + REGISTRY.fetchedAt + '.',
-      zh: '看清 Claude Opus 4.5、Sonnet 4.5、Haiku 4.5 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 ' + REGISTRY.fetchedAt + '。',
-    }
-    const title = titleByLocale[locale]
-    const description = descByLocale[locale]
+    const title = dict.home.claudeTitle
+    const description = translate(dict, 'marketing.claudeMetaDescription', {
+      date: REGISTRY.fetchedAt,
+    })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/claude-token-cost-calculator`
 
     const app = {

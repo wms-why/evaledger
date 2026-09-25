@@ -26,6 +26,17 @@ export function translate(dict: Dict, key: string, params?: Params): string {
   )
 }
 
+/**
+ * 按点路径取**原始值**（不插值），用于字典里数组/嵌套对象的取数。
+ * 缺失返回 undefined。调用方负责按预期形态断言/收敛。
+ */
+export function lookup<T = unknown>(dict: Dict, key: string): T {
+  return key.split('.').reduce<unknown>((acc, part) => {
+    if (acc && typeof acc === 'object' && part in acc) return (acc as Record<string, unknown>)[part]
+    return undefined
+  }, dict) as T
+}
+
 /** 从完整 href 上剥掉冗余的 /en 前缀，保留 query 和 hash——
  *  规范化重定向用（`/en/pricing?ref=x` → `/pricing?ref=x`）。 */
 export function stripDefaultLocalePrefix(href: string): string {

@@ -7,16 +7,9 @@ import { Sparkles } from 'lucide-react'
  * sentence that answers one specific question.
  */
 export function PricingTLDR() {
-  const { t } = useTranslation()
-  const items = t('calculator.tldrItems') as unknown as string[]
+  const { t, lookup } = useTranslation()
+  const items = lookup<string[]>('calculator.tldrItems') ?? []
   const title = t('calculator.tldrTitle')
-
-  // translate() always returns a string; for arrays we hand-flatten via key
-  // lookups since the dict has `tldrItems: string[]`. Falling back to the
-  // raw string is safe.
-  const list = Array.isArray(items)
-    ? items
-    : (t('calculator.tldrItems') as string).split('|')
 
   return (
     <section className="border-t border-border py-12">
@@ -25,7 +18,7 @@ export function PricingTLDR() {
           <Sparkles size={12} aria-hidden="true" /> {title}
         </span>
         <ul className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          {list.map((line, i) => (
+          {items.map((line, i) => (
             <li
               key={i}
               className="flex gap-3 rounded-[12px] border border-border bg-card p-4 text-[14px] leading-relaxed text-fg-2"

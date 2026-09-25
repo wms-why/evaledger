@@ -6,11 +6,8 @@ import { useTranslation } from '@/features/i18n/provider'
  * quotable on its own and useful in featured snippets.
  */
 export function Tips() {
-  const { t } = useTranslation()
-  const raw = t('calculator.tips') as unknown
-  const items: string[] = Array.isArray(raw)
-    ? (raw as string[])
-    : (t('calculator.tips') as string).split('|')
+  const { t, lookup } = useTranslation()
+  const items: string[] = lookup<string[]>('calculator.tips') ?? []
 
   return (
     <section className="border-t border-border py-12">

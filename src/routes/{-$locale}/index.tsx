@@ -22,14 +22,10 @@ export const Route = createFileRoute('/{-$locale}/')({
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const titleByLocale: Record<Locale, string> = {
-      en: 'TokenCalculator — Compare LLM Prices Across OpenAI, Claude, Gemini & DeepSeek',
-      zh: 'TokenCalculator — 一站式比对 OpenAI、Claude、Gemini、DeepSeek 的 LLM 价格',
-    }
     const description = translate(dictionaries[locale], 'marketing.homeMetaDescription', {
       date: REGISTRY.fetchedAt,
     })
-    const title = titleByLocale[locale]
+    const title = dict.home.title
     const { meta, links, scripts } = localeHead({
       origin,
       locale,

@@ -1,5 +1,5 @@
 import { createRootRoute, HeadContent, Outlet, Scripts, useParams, useRouterState } from '@tanstack/react-router'
-import { isLocale, defaultLocale } from '@/features/i18n/locale'
+import { dictionaries, isLocale, locales, defaultLocale, type Locale } from '@/features/i18n/locale'
 import { getPreferences } from '@/server/preferences'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { getAnalyticsToken } from '@/features/analytics/analytics'
@@ -8,24 +8,31 @@ import { useResolvedTheme } from '@/features/theme/use-resolved-theme'
 import appCss from '@/styles/app.css?url'
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek' },
-      { name: 'description', content: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.' },
-      { property: 'og:title', content: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek' },
-      { property: 'og:description', content: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.' },
-      { property: 'og:type', content: 'website' },
-    ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-      { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
-      { rel: 'icon', type: 'image/png', href: '/logo192.png', sizes: '192x192' },
-      { rel: 'apple-touch-icon', href: '/logo192.png' },
-      { rel: 'manifest', href: '/manifest.json' },
-    ],
-  }),
+  head: ({ params }) => {
+    const raw = (params as { locale?: string }).locale
+    const locale: Locale = (locales as readonly string[]).includes(raw ?? '')
+      ? (raw as Locale)
+      : defaultLocale
+    const dict = dictionaries[locale]
+    return {
+      meta: [
+        { charSet: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { title: dict.marketing.brandTitle },
+        { name: 'description', content: dict.marketing.brandDescription },
+        { property: 'og:title', content: dict.marketing.brandTitle },
+        { property: 'og:description', content: dict.marketing.brandOgDescription },
+        { property: 'og:type', content: 'website' },
+      ],
+      links: [
+        { rel: 'stylesheet', href: appCss },
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', type: 'image/png', href: '/logo192.png', sizes: '192x192' },
+        { rel: 'apple-touch-icon', href: '/logo192.png' },
+        { rel: 'manifest', href: '/manifest.json' },
+      ],
+    }
+  },
   loader: async () => {
     // Never throw here: if the root loader errors, the error page replaces
     // RootComponent — i.e. the <html>/<head> shell and stylesheet — and every
