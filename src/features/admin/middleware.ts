@@ -17,6 +17,15 @@ export type { WaitlistRow }
 export type { AdminSponsorRow }
 export type { AdminFeedbackRow }
 
+export {
+  listAiProvidersFn,
+  upsertAiProviderFn,
+  deleteAiProviderFn,
+  setAiProviderEnabledFn,
+  reorderAiProviderFn,
+  pingAiProviderFn,
+} from '@/features/ai-providers/ai-providers.actions'
+
 /** 仅管理员可过；非管理员 → 404（不泄露 admin 存在）。返回 admin user。 */
 export const requireAdmin = createServerFn({ method: 'GET' }).handler(() => assertAdmin())
 

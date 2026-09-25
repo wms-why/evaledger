@@ -130,7 +130,7 @@ function UsersPage() {
             </select>
           </label>
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[13px] text-fg-3">{t('admin.pageOf', { page: String(currentPage), total: String(totalPages) })}</span>
+            <span className="text-[13px] text-fg-3">{t('admin.pageOf', { page: String(currentPage), total: String(totalPages) })}</span>
             <div className="flex gap-1.5">
               <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setSearch({ page: 0 })}><ChevronsLeft size={15} /></Button>
               <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setSearch({ page: page - 1 })}><ChevronLeft size={15} /></Button>

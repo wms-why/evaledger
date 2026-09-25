@@ -2,7 +2,7 @@
 title: "主题"
 ---
 
-明暗主题切换与配色。解析顺序:**显式选择(cookie)> 系统偏好 > 深色**(品牌默认),
+明暗主题切换与配色。解析顺序:**显式选择 (cookie) > 系统偏好 (浅色/深色)**,
 配色用 CSS 变量集中管理。
 
 > **fork 后你要改哪:** 换配色改 `src/styles/app.css` 的 CSS 变量;改兜底明暗改
@@ -11,9 +11,9 @@ title: "主题"
 ## 工作原理
 
 - **偏好**:主题存在 `theme` cookie 里。`getPreferences`(`src/server/preferences.ts`)读取
-  它,SSR 按 cookie 渲染,无 cookie 时兜底深色。
-- **系统偏好**:`__root.tsx` 的 `<head>` 里有一段首绘前的内联脚本——**没有 cookie** 且
-  `prefers-color-scheme: light` 时把 `<html>` 翻成浅色(无闪烁)。它刻意不写 cookie:
+  它,SSR 按 cookie 渲染;无 cookie 时 SSR 兜底深色,客户端 boot script 按系统偏好翻面。
+- **系统偏好**:`__root.tsx` 的 `<head>` 里有一段首绘前的内联脚本——**没有 cookie** 时按
+  `prefers-color-scheme` 把 `<html>` 翻成对应主题(无闪烁)。它刻意不写 cookie:
   没做过选择的访客持续跟随系统,点过切换按钮才锁定。
 - **应用**:`__root.tsx` 把主题作为 class 加到 `<html class={theme}>`(带
   `suppressHydrationWarning`,因为脚本可能在水合前改过 class)。
@@ -24,15 +24,41 @@ title: "主题"
 
 ## 改配色
 
-配色集中在 `src/styles/app.css` 的 CSS 变量:
+配色集中在 `src/styles/app.css` 的 CSS 变量,Apple 风格浅色/深色双调:
 
-- `:root` 定义浅色令牌(`--bg`、`--fg`、`--accent` 等);
-- `:root.dark, .dark` 覆盖为深色值;
-- `@theme inline` 把这些变量映射成 Tailwind v4 的 `--color-*`,组件里就能用
-  `bg-background`、`text-fg-2` 这类类名。
+**浅色 (`:root`)** — 默认当系统偏好为浅色:
+
+| 变量 | 值 |
+|------|----|
+| `--background` | `#FFFFFF` |
+| `--bg-alt` | `#F5F5F7` |
+| `--foreground` | `#1D1D1F` |
+| `--fg-2` | `#424245` |
+| `--fg-3` | `#6E6E73` |
+| `--border` | `#D2D2D7` |
+| `--primary` | `#0071E3` |
+| `--destructive` | `#FF3B30` |
+| `--radius` | `0.875rem` |
+
+**深色 (`:root.dark, .dark`)** — 默认当系统偏好为深色:
+
+| 变量 | 值 |
+|------|----|
+| `--background` | `#000000` |
+| `--bg-alt` | `#1D1D1F` |
+| `--foreground` | `#F5F5F7` |
+| `--fg-2` | `#A1A1A6` |
+| `--fg-3` | `#86868B` |
+| `--border` | `#38383A` |
+| `--primary` | `#0A84FF` |
+| `--destructive` | `#FF453A` |
+
+`@theme inline` 把这些变量映射成 Tailwind v4 的 `--color-*`,组件里就能用
+`bg-background`、`text-fg-2` 这类类名。
 
 改品牌色只需动这几处变量,明暗两套各改一遍即可。
 
 <Callout type="info">
-想默认浅色?把 `getPreferences` 里的判断反过来(默认 `light`,仅显式 `dark` cookie 才深色)。
+想强制默认深色(忽略系统偏好)?改 `__root.tsx` 的 boot script,让 cookie-less 访客
+直接走 `dark` 分支;或反过来,把 SSR 兜底 + boot 默认改成浅色,只让显式 cookie 进入深色。
 </Callout>

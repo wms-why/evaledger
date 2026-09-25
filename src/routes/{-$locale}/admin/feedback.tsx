@@ -55,7 +55,7 @@ function Row({ r, onSaved }: { r: AdminFeedbackRow; onSaved: () => void }) {
             {r.isPro && <Badge variant="pro">Pro</Badge>}
           </div>
           {r.body && <p className="mb-0 mt-1.5 max-w-[60ch] text-sm text-fg-2 line-clamp-3">{r.body}</p>}
-          <div className="mt-2 font-mono text-xs text-fg-3">
+          <div className="mt-2 text-xs text-fg-3">
             {r.name || '—'} · {r.email || '—'} · {fmtDateTime(r.createdAt)}
           </div>
         </div>

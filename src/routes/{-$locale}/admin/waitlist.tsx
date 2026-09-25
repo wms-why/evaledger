@@ -69,7 +69,7 @@ function WaitlistAdmin() {
             {rows.map((r) => (
               <tr key={r.email} className="border-t border-border">
                 <td className="px-4 py-2">{r.email}</td>
-                <td className="px-4 py-2"><span className="font-mono text-xs text-fg-2">{r.source}</span></td>
+                <td className="px-4 py-2"><span className="text-xs text-fg-2">{r.source}</span></td>
                 <td className="px-4 py-2">{r.locale}</td>
                 <td className="px-4 py-2">{fmtDateTime(r.createdAt)}</td>
               </tr>

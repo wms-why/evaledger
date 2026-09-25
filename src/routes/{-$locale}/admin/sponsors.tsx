@@ -69,18 +69,18 @@ function SponsorsAdmin() {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-t border-border">
-                <td className="px-4 py-2 font-mono text-xs">{r.github || '—'}</td>
-                <td className="px-4 py-2 font-mono text-xs">{r.email || '—'}</td>
+                <td className="px-4 py-2 text-xs">{r.github || '—'}</td>
+                <td className="px-4 py-2 text-xs">{r.email || '—'}</td>
                 {/* Charged currency first — that reconciles against Stripe. For non-USD
                     rows the frozen USD equivalent follows, since that is what tiers use. */}
-                <td className="px-4 py-2 font-mono whitespace-nowrap">
+                <td className="px-4 py-2 whitespace-nowrap">
                   {formatMinor(r.amount, r.currency)}{r.mode === 'recurring' ? t('sponsor.perMo') : ''}
                   {r.currency.toLowerCase() !== 'usd' && (
                     <span className="ml-1.5 text-xs text-fg-3">≈ {formatMinor(r.amountUsd ?? r.amount, 'usd')}</span>
                   )}
                 </td>
                 <td className="px-4 py-2">
-                  <span className="font-mono text-xs text-fg-2">{r.status}</span>
+                  <span className="text-xs text-fg-2">{r.status}</span>
                   {r.hidden && <Badge variant="warn" className="ml-2">{t('admin.hiddenBadge')}</Badge>}
                 </td>
                 <td className="max-w-[220px] truncate px-4 py-2 text-fg-2">{r.message || '—'}</td>

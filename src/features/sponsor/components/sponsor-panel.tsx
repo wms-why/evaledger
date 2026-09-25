@@ -107,13 +107,13 @@ export function SponsorPanel({ wechatEnabled = false }: { wechatEnabled?: boolea
               )}
             >
               {tier.popular && (
-                <span className="absolute right-3 top-3 rounded-md bg-primary/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary">
+                <span className="absolute right-3 top-3 rounded-md bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
                   {t('sponsor.popular')}
                 </span>
               )}
-              <div className="font-mono text-sm text-fg-2">{name}</div>
+              <div className="text-sm text-fg-2">{name}</div>
               <div className="mt-1">
-                <span className="font-mono text-3xl font-semibold">
+                <span className="text-3xl font-semibold tabular-nums">
                   ${tier.amountCents / 100}
                 </span>
                 <span className="text-sm text-fg-3">
@@ -142,7 +142,7 @@ export function SponsorPanel({ wechatEnabled = false }: { wechatEnabled?: boolea
           isCustom ? 'border-primary bg-primary/5' : 'border-border',
         )}
       >
-        <span className="font-mono text-sm">{t('sponsor.customLabel')}</span>
+        <span className="text-sm">{t('sponsor.customLabel')}</span>
         <span className="flex items-center rounded-md border border-border bg-background px-2">
           <span className="text-fg-3">$</span>
           <input
@@ -244,21 +244,21 @@ export function SponsorPanel({ wechatEnabled = false }: { wechatEnabled?: boolea
               {t('sponsor.payWithWechat')}
               {canSubmit ? ` ${wechatCharge}` : ''}
             </button>
-            <p className="mt-1.5 text-center font-mono text-xs text-fg-3">
+            <p className="mt-1.5 text-center text-xs tabular-nums text-fg-3">
               {t('sponsor.wechatNote')}
             </p>
           </>
         )}
 
-        <p className="mt-2 text-center font-mono text-xs text-fg-3">
+        <p className="mt-2 text-center text-xs text-fg-3">
           {t('sponsor.secure')}
         </p>
-        <p className="mt-1 text-center font-mono text-xs text-fg-3">
+        <p className="mt-1 text-center text-xs text-fg-3">
           {period === 'monthly' ? `${t('sponsor.autoRenewNote')} · ` : ''}
           {t('sponsor.nonRefundNote')}
         </p>
         {/* the one perk with real monetary value — keep it visible at the decision point */}
-        <p className="mt-1 text-center font-mono text-xs text-primary">
+        <p className="mt-1 text-center text-xs text-primary">
           {t('sponsor.earlyPerkNote')}
         </p>
       </div>

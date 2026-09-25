@@ -85,7 +85,7 @@ export function UserDetailDrawer({ row, open, onOpenChange, currentUserId, onCha
           <div className="grid gap-1">
             <span className="text-fg-3 text-xs">{t('admin.email')}</span>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[13px] break-all">{row.email}</span>
+              <span className="text-[13px] break-all">{row.email}</span>
               <Button
                 size="sm"
                 variant="ghost"
@@ -105,7 +105,7 @@ export function UserDetailDrawer({ row, open, onOpenChange, currentUserId, onCha
           {row.stripeUrl && (
             <div className="grid gap-1">
               <span className="text-fg-3 text-xs">{t('admin.customerId')}</span>
-              <a href={row.stripeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-mono text-[13px] text-primary hover:underline">
+              <a href={row.stripeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[13px] text-primary hover:underline">
                 {row.customerId} <ExternalLink size={13} />
               </a>
             </div>

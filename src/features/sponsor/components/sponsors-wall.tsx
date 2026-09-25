@@ -13,7 +13,7 @@ export function SponsorsWall({ sponsors }: { sponsors: PublicSponsor[] }) {
   return (
     <section className="mt-16 border-t border-border pt-16">
       <div className="mx-auto max-w-2xl text-center">
-        <span className="font-mono text-sm text-primary">// {t('sponsor.wallTitle')}</span>
+        <span className="text-sm text-primary">{t('sponsor.wallTitle')}</span>
         <h2 className="mt-2 text-3xl font-semibold">{t('sponsor.wallTitle')}</h2>
         <p className="mt-2 text-fg-2">{t('sponsor.wallSub')}</p>
       </div>
@@ -32,7 +32,7 @@ export function SponsorsWall({ sponsors }: { sponsors: PublicSponsor[] }) {
                 {notes.map((s) => (
                   <div key={s.github} className="rounded-lg border border-border bg-card p-4">
                     <p className="text-sm text-fg-2">"{s.message}"</p>
-                    <a href={`https://github.com/${s.github}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 font-mono text-xs text-fg-3">
+                    <a href={`https://github.com/${s.github}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-xs text-fg-3">
                       <img src={`https://github.com/${s.github}.png?size=48`} alt={s.github} width={22} height={22} className="rounded-full" />@{s.github}
                     </a>
                   </div>
@@ -49,8 +49,8 @@ export function SponsorsWall({ sponsors }: { sponsors: PublicSponsor[] }) {
 function WallHead({ label, note }: { label: string; note?: string }) {
   return (
     <div className="mb-3 flex items-baseline justify-between">
-      <span className="font-mono text-sm text-fg-2">{label}</span>
-      {note && <span className="font-mono text-xs text-fg-3">{note}</span>}
+      <span className="text-sm text-fg-2">{label}</span>
+      {note && <span className="text-xs text-fg-3">{note}</span>}
     </div>
   )
 }
@@ -65,7 +65,7 @@ function WallRow({ label, note, sponsors, size, t }: { label: string; note: stri
           <a key={s.github} href={`https://github.com/${s.github}`} target="_blank" rel="noopener noreferrer" title={'@' + s.github} className="relative">
             <img src={`https://github.com/${s.github}.png?size=96`} alt={s.github} width={size} height={size} className="rounded-full border border-border" />
             {s.mode === 'recurring' && (
-              <span className="absolute -bottom-1 -right-1 rounded-full bg-primary px-1 py-0.5 font-mono text-[9px] text-white">
+              <span className="absolute -bottom-1 -right-1 rounded-full bg-primary px-1 py-0.5 text-[9px] text-white">
                 {t('sponsor.perMo')}
               </span>
             )}

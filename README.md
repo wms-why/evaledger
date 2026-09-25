@@ -32,7 +32,7 @@ FlareStarter ships only what actually works: every feature in this repo is a rea
 
 ## Preview
 
-Dark-first design with a terminal aesthetic. Every shot below is a real running screen — the admin console runs on real data, no fabricated metrics. Try it live on the [demo](https://flarestarter.com).
+Clean, Apple-inspired design with system fonts (SF Pro / PingFang). Light and dark themes follow system preference, with explicit cookie override. Every shot below is a real running screen — the admin console runs on real data, no fabricated metrics. Try it live on the [demo](https://flarestarter.com).
 
 **Admin console · stats dashboard** (registrations / active / subscriptions, all real)
 
@@ -64,7 +64,7 @@ Dark-first design with a terminal aesthetic. Every shot below is a real running 
 | **SEO** | Per-locale sitemap, `hreflang`, canonical URLs, OpenGraph tags, `robots.txt`, and `noindex` on authenticated pages. |
 | **AI-ready** | **Runtime:** built-in [`llms.txt`](https://flarestarter.com/llms.txt) index and [`llms-full.txt`](https://flarestarter.com/llms-full.txt) full corpus, clean frontmatter-stripped Markdown for any doc page via `/docs-md/*`, and a `robots.txt` pointing to both — so AI crawlers and answer engines (ChatGPT, Perplexity, …) can index and cite your content. **Codebase:** [`AGENTS.md`](AGENTS.md) (auto-imported into [`CLAUDE.md`](CLAUDE.md)) is a single source of truth that lets coding agents like Claude Code / Codex understand this repo and build on it right away. |
 | **Admin** | better-auth admin plugin: roles, ban, user impersonation, a searchable/paginated user table, and a stats dashboard (registrations / active / subscriptions) — all built on real data, no fabricated metrics. |
-| **Theme** | Dark-first design with a light/dark toggle persisted via cookie. |
+| **Theme** | Apple-inspired design with light and dark themes that follow system preference and persist via cookie. |
 | **Security & observability** | Turnstile bot protection, security headers + production CSP, auth-endpoint rate limiting (D1-backed), startup env validation (fail-fast); CF Web Analytics (cookieless) and Sentry error reporting — all optional, off when their keys are blank. See [security](https://flarestarter.com/docs/platform/security) / [observability](https://flarestarter.com/docs/platform/observability). |
 | **Dev/Ops** | A Cron Triggers reference implementation (daily cleanup of expired sessions/tokens/rate-limit rows), local/staging/prod environment separation, and GitHub Actions CI (lint + typecheck + build). |
 
@@ -141,7 +141,7 @@ src/
     admin/         # admin plugin wiring + dashboard
     analytics/     # CF Web Analytics beacon (optional)
     maintenance/   # Cron cleanup task (expired sessions/tokens/rate-limit rows)
-    theme/         # dark-first theme toggle
+    theme/         # light/dark theme toggle, follows system preference
   routes/
     {-$locale}/    # locale-prefixed pages: /, /zh, /admin, /app, ...
     api/, docs/, docs-md/, llms.txt, robots.txt, sitemap.xml   # top-level routes (outside the locale group)

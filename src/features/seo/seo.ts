@@ -1,6 +1,17 @@
 import { locales, defaultLocale, localizePath, type Locale } from '@/features/i18n/locale'
 
-const PUBLIC_PATHS = ['/', '/pricing', '/changelog', '/sponsor', '/waitlist'] as const
+const PUBLIC_PATHS = [
+  '/',
+  '/pricing',
+  '/changelog',
+  '/sponsor',
+  '/waitlist',
+  '/terms',
+  '/privacy',
+  '/token-cost-calculator',
+  '/openrouter-pricing-calculator',
+  '/claude-token-cost-calculator',
+] as const
 
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' }
@@ -55,14 +66,27 @@ export interface HeadMeta {
   content?: string
 }
 
+/** JSON-LD structured-data script — returned alongside meta/links from head() so
+ *  the framework can render `<script type="application/ld+json">` in <head>. */
+export interface HeadScript {
+  type?: string
+  innerHTML: string
+}
+
+/** JSON-LD helpers — wrap objects so they can ride the HeadScript[] channel. */
+export function jsonLd(obj: unknown): HeadScript {
+  return { type: 'application/ld+json', innerHTML: JSON.stringify(obj) }
+}
+
 export function localeHead(input: {
   origin: string
   locale: Locale
   path: string
   title: string
   description: string
-}): { meta: HeadMeta[]; links: HeadLink[] } {
-  const { origin, locale, path, title, description } = input
+  scripts?: HeadScript[]
+}): { meta: HeadMeta[]; links: HeadLink[]; scripts?: HeadScript[] } {
+  const { origin, locale, path, title, description, scripts } = input
   const canonical = `${origin}${localizePath(locale, path)}`
   const links: HeadLink[] = [{ rel: 'canonical', href: canonical }]
   for (const l of locales) {
@@ -83,5 +107,5 @@ export function localeHead(input: {
     { property: 'og:image', content: `${origin}/logo512.png` },
     { name: 'twitter:card', content: 'summary_large_image' },
   ]
-  return { meta, links }
+  return { meta, links, scripts }
 }

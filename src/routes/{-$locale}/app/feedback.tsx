@@ -111,7 +111,7 @@ function FeedbackPage() {
                       {f.adminNote}
                     </div>
                   )}
-                  <div className="mt-2 font-mono text-xs text-fg-3">{fmtDate(f.createdAt)}</div>
+                  <div className="mt-2 text-xs text-fg-3">{fmtDate(f.createdAt)}</div>
                 </div>
                 {f.status === 'open' && (
                   <Button variant="ghost" size="sm" aria-label={t('feedback.deleteBtn')} onClick={() => remove(f.id)}>

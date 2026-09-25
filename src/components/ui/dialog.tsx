@@ -44,7 +44,7 @@ export function DialogTitle({ className, ...props }: React.ComponentProps<typeof
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn('font-display text-xl font-semibold tracking-[-0.3px]', className)}
+      className={cn('text-xl font-semibold tracking-[-0.3px]', className)}
       {...props}
     />
   )

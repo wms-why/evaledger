@@ -4,6 +4,5 @@ export function baseOptions(): BaseLayoutProps {
   return {
     nav: { title: 'FlareStarter 文档' },
     links: [{ text: '首页', url: '/' }],
-    githubUrl: 'https://github.com/FlareStarter/flarestarter',
   }
 }

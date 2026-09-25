@@ -16,7 +16,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "flarestarter",
+	"name": "aibookplanner",
 	"compatibility_date": "2026-05-30",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -50,7 +50,7 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "flarestarter-db",
+			"database_name": "aibookplanner-db",
 			"database_id": "00000000-0000-0000-0000-000000000000",
 			"migrations_dir": "drizzle"
 		}
@@ -60,7 +60,7 @@
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
-			"bucket_name": "flarestarter-files"
+			"bucket_name": "aibookplanner-files"
 		}
 	],
 	"kv_namespaces": [
@@ -69,6 +69,11 @@
 			"id": "00000000000000000000000000000000"
 		}
 	],
+	// AI providers are configured per-row in the `ai_provider` D1 table
+	// (admin → AI Providers); raw API keys are stored as wrangler secrets
+	// (mmx → MMX_API_KEY, deepseek → DEEPSEEK_API_KEY, replicate → REPLICATE_API_TOKEN).
+	// The selector picks a healthy, funded provider per call based on row.priority
+	// and KV-cached health snapshots. See src/features/ai-providers/.
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
@@ -97,7 +102,13 @@
 		"TURNSTILE_SECRET_KEY": "",
 		"CF_ANALYTICS_TOKEN": "",
 		"SENTRY_DSN": "",
-		"RESEND_AUDIENCE_ID": ""
+		"RESEND_AUDIENCE_ID": "",
+		// AI provider raw API keys (secrets in production; empty locally).
+		// Selector resolves by row.kind: mmx → MMX_API_KEY, deepseek → DEEPSEEK_API_KEY,
+		// replicate → REPLICATE_API_TOKEN. Missing keys are silently skipped with a warn.
+		"MMX_API_KEY": "",
+		"DEEPSEEK_API_KEY": "",
+		"REPLICATE_API_TOKEN": ""
 	},
 	/**
 	 * Static Assets
@@ -116,7 +127,7 @@
 	 */
 	"env": {
 		"staging": {
-			"name": "flarestarter-staging",
+			"name": "aibookplanner-staging",
 			"triggers": {
 				"crons": [
 					"0 3 * * *"
@@ -125,7 +136,7 @@
 			"d1_databases": [
 				{
 					"binding": "DB",
-					"database_name": "flarestarter-db-staging",
+					"database_name": "aibookplanner-db-staging",
 					"database_id": "00000000-0000-0000-0000-000000000000",
 					"migrations_dir": "drizzle"
 				}
@@ -134,7 +145,7 @@
 			"r2_buckets": [
 				{
 					"binding": "BUCKET",
-					"bucket_name": "flarestarter-files-staging"
+					"bucket_name": "aibookplanner-files-staging"
 				}
 			],
 			"kv_namespaces": [
@@ -142,10 +153,15 @@
 					"binding": "CACHE",
 					"id": "00000000000000000000000000000000"
 				}
-			]
+			],
+			"vars": {
+				"MMX_API_KEY": "",
+				"DEEPSEEK_API_KEY": "",
+				"REPLICATE_API_TOKEN": ""
+			}
 		},
 		"production": {
-			"name": "flarestarter-production",
+			"name": "aibookplanner-production",
 			"triggers": {
 				"crons": [
 					"0 3 * * *"
@@ -154,7 +170,7 @@
 			"d1_databases": [
 				{
 					"binding": "DB",
-					"database_name": "flarestarter-db-prod",
+					"database_name": "aibookplanner-db-prod",
 					"database_id": "00000000-0000-0000-0000-000000000000",
 					"migrations_dir": "drizzle"
 				}
@@ -163,7 +179,7 @@
 			"r2_buckets": [
 				{
 					"binding": "BUCKET",
-					"bucket_name": "flarestarter-files-prod"
+					"bucket_name": "aibookplanner-files-prod"
 				}
 			],
 			"kv_namespaces": [
@@ -171,7 +187,12 @@
 					"binding": "CACHE",
 					"id": "00000000000000000000000000000000"
 				}
-			]
+			],
+			"vars": {
+				"MMX_API_KEY": "",
+				"DEEPSEEK_API_KEY": "",
+				"REPLICATE_API_TOKEN": ""
+			}
 		}
 	}
 }

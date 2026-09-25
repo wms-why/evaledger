@@ -24,7 +24,7 @@ export function StatsCards({ stats }: { stats: AdminStats }) {
             <div className="flex items-center gap-2 text-[13px] text-fg-3">
               <Icon size={16} /> {label}
             </div>
-            <div className="font-display text-[30px] font-semibold tabular-nums tracking-[-0.8px] my-2 mb-1">
+            <div className="text-[30px] font-semibold tabular-nums tracking-[-0.8px] my-2 mb-1">
               {value.toLocaleString()}
             </div>
           </Card>
@@ -44,7 +44,7 @@ export function StatsCards({ stats }: { stats: AdminStats }) {
                 aria-label={`${t('admin.pro')} ${proPct}%`}
               />
             ) : (
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-dashed border-border font-mono text-sm text-fg-3">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-sm tabular-nums text-fg-3">
                 0
               </div>
             )}
@@ -66,11 +66,11 @@ export function StatsCards({ stats }: { stats: AdminStats }) {
           <h3 className="m-0 mb-4 text-[15px] font-semibold">{t('admin.status')}</h3>
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
             <dt className="text-fg-3">{t('admin.active')}</dt>
-            <dd className="text-right font-mono font-semibold tabular-nums">{subs.active}</dd>
+            <dd className="text-right font-semibold tabular-nums">{subs.active}</dd>
             <dt className="text-fg-3">{t('admin.pastDue')}</dt>
-            <dd className="text-right font-mono font-semibold tabular-nums">{subs.pastDue}</dd>
+            <dd className="text-right font-semibold tabular-nums">{subs.pastDue}</dd>
             <dt className="text-fg-3">{t('admin.canceled')}</dt>
-            <dd className="text-right font-mono font-semibold tabular-nums">{subs.canceled}</dd>
+            <dd className="text-right font-semibold tabular-nums">{subs.canceled}</dd>
           </dl>
         </Card>
       </div>

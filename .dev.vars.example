@@ -8,6 +8,8 @@ EMAIL_FROM=FlareStarter <onboarding@resend.dev>
 # Leave blank to disable audience sync — signups still save to D1.
 RESEND_AUDIENCE_ID=
 # Social OAuth — blank hides that provider's button
+# 本地开发: http://localhost:3000/api/auth/callback/google
+# 生产: https://你的域名/api/auth/callback/google
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GITHUB_CLIENT_ID=
@@ -35,3 +37,16 @@ TURNSTILE_SECRET_KEY=
 CF_ANALYTICS_TOKEN=
 # Sentry server-side error reporting. Blank = off. DSN is in the Sentry project settings.
 SENTRY_DSN=
+# AI provider raw API keys — the selector resolves these lazily by row.kind.
+# Set only the vendors you use; the provider registry (admin → AI Providers)
+# picks the right one per row. Leave blank locally to keep AI features off
+# without crashing startup (env-validate treats all three as optional).
+# mmx — domestic vendor; the adapter uses header `x-api-key`, NOT Bearer.
+# Get one at https://api.minimax.io (global) or https://api.minimaxi.com (CN).
+MMX_API_KEY=
+# DeepSeek — domestic; Bearer-auth chat completions, model `deepseek-chat`.
+# Get one at https://platform.deepseek.com → API Keys.
+DEEPSEEK_API_KEY=
+# Replicate — foreign; Bearer-auth async predictions.
+# Get one at https://replicate.com/account/api-tokens.
+REPLICATE_API_TOKEN=

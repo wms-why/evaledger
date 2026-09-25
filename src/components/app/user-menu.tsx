@@ -61,7 +61,7 @@ export function UserMenu({ user, rail }: { user: ShellUser; rail: boolean }) {
             </>
           )}
         </PopoverTrigger>
-        <PopoverContent side="top" align="start" className="w-[220px] p-1.5">
+        <PopoverContent side="top" align="start" className="w-55 p-1.5">
           <div className="px-2 pb-1.5 pt-1">
             <div className="truncate text-[13px] font-semibold text-foreground">{primary}</div>
             <div className="truncate text-xs text-fg-3">{user.email}</div>

@@ -46,6 +46,13 @@ const envSchema = z
     TURNSTILE_SECRET_KEY: optional,
     CF_ANALYTICS_TOKEN: optional,
     SENTRY_DSN: optional,
+    // AI provider raw API keys — the selector resolves these lazily by row.kind
+    // (mmx → MMX_API_KEY, deepseek → DEEPSEEK_API_KEY, replicate → REPLICATE_API_TOKEN).
+    // All optional: rows with no secret present are silently skipped at runtime
+    // (with a console.warn) and admin UI shows the gap. Never write these to D1.
+    MMX_API_KEY: optional,
+    DEEPSEEK_API_KEY: optional,
+    REPLICATE_API_TOKEN: optional,
   })
   .superRefine((env, ctx) => {
     // OAuth: half a pair is always a misconfiguration.

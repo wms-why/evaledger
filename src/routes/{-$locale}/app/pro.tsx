@@ -25,9 +25,9 @@ export const Route = createFileRoute('/{-$locale}/app/pro')({
 function ProContent({ text }: { text: string }) {
   return (
     <Card className="flex flex-col items-center gap-3.5 p-12 text-center">
-      <span className="icon-tile" style={{ width: 52, height: 52, borderRadius: 14 }}>
+      <div className="flex items-center justify-center rounded-xl bg-soft text-primary" style={{ width: 52, height: 52 }}>
         <Sparkles size={24} />
-      </span>
+      </div>
       <p className="m-0 text-base text-fg-2">{text}</p>
     </Card>
   )
@@ -53,9 +53,9 @@ function Pro() {
             <ProContent text={t('billing.proOnly')} />
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3.5 text-center">
-            <span className="icon-tile" style={{ width: 52, height: 52, borderRadius: 14 }}>
+            <div className="flex items-center justify-center rounded-xl bg-soft text-primary" style={{ width: 52, height: 52 }}>
               <Lock size={24} />
-            </span>
+            </div>
             <p className="m-0 max-w-[26em] text-base text-fg-2">{t('billing.proPeekBody')}</p>
             <Link to="/{-$locale}/pricing">
               <Button>{t('billing.upgrade')}</Button>

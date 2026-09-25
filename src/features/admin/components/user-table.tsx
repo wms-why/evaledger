@@ -72,7 +72,7 @@ export function UserTable({ rows, sortBy, sortDir, onSort, onRowClick }: Props) 
                 <span className="font-semibold text-foreground">{u.name}</span>
               </div>
             </TableCell>
-            <TableCell><span className="font-mono text-[12.5px] text-fg-3">{u.email}</span></TableCell>
+            <TableCell><span className="text-[12.5px] text-fg-3">{u.email}</span></TableCell>
             <TableCell>{u.role === 'admin' ? <Badge variant="pro">{t('admin.roleAdmin')}</Badge> : <span className="text-fg-2">{u.role ?? 'user'}</span>}</TableCell>
             <TableCell className="hidden md:table-cell">{u.plan === 'pro' ? <Badge variant="pro">{t('admin.pro')}</Badge> : <span className="text-fg-3">{u.plan ? t('admin.free') : '—'}</span>}</TableCell>
             <TableCell>{u.banned ? <Badge variant="warn" dot>{t('admin.banned')}</Badge> : <Badge variant="ok" dot>{t('admin.active')}</Badge>}</TableCell>

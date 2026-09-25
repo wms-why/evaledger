@@ -31,7 +31,7 @@ e2e/screenshots/
 test-results/
 playwright-report/
 .playwright/
-
+.playwright-mcp/
 .source/
 
 # Claude Code session config (local)

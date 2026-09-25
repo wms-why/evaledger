@@ -6,7 +6,7 @@ export function Avatar({ className, ...props }: React.ComponentProps<typeof Avat
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
-      className={cn('relative flex size-[30px] shrink-0 overflow-hidden rounded-full', className)}
+      className={cn('relative flex size-7.5 shrink-0 overflow-hidden rounded-full', className)}
       {...props}
     />
   )

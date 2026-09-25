@@ -34,15 +34,15 @@ function Section({
 }) {
   return (
     <Card
-      className="mb-[18px] overflow-hidden p-0"
+      className="mb-4.5 overflow-hidden p-0"
       style={danger ? { borderColor: 'color-mix(in srgb, var(--destructive) 45%, var(--border))' } : undefined}
     >
-      <div className="border-b border-border px-[22px] py-[18px]">
+      <div className="border-b border-border px-5.5 py-4.5">
         <h3 className="m-0 text-base font-semibold" style={{ color: danger ? 'var(--destructive)' : 'var(--foreground)' }}>
           {title}
         </h3>
       </div>
-      <div className="p-[22px]">{children}</div>
+      <div className="p-5.5">{children}</div>
     </Card>
   )
 }
@@ -101,10 +101,10 @@ function AccountPage() {
     <AppShell user={user} isPro={ent.plan === 'pro'} active="account" crumb={t('app.account')} paymentFailed={ent.paymentFailed}>
       <div className="mb-6">
         <h1 className="page-h">{t('app.account')}</h1>
-        <p className="mt-1.5 font-mono text-[13.5px] text-fg-3">{user.email}</p>
+        <p className="mt-1.5 text-[13.5px] text-fg-3">{user.email}</p>
       </div>
 
-      <div className="max-w-[640px]">
+      <div className="max-w-160">
         <Section title={t('storage.avatar')}>
           <AvatarUploader image={user.image} name={user.name} />
         </Section>
