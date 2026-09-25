@@ -1,3 +1,16 @@
+/**
+ * Shared sidebar + topbar shell for every signed-in surface. One unified nav:
+ * Workspace + Account for everyone, plus an Admin group rendered only for
+ * `role === 'admin'` (non-admins get no hint the console exists). Admin routes
+ * stay under /admin with their own gate — only the navigation is merged.
+ *
+ * Desktop sidebar collapses to an icon rail; the choice sticks across pages
+ * via localStorage (applied after mount so SSR markup stays deterministic).
+ *
+ * Styling lives in app.css under `.app-side` / `.app-nav-item` / `.app-topbar`
+ * / `.app-crumb` / `.app-main` / `.page-h` — system fonts, Apple-blue active
+ * state, hairline borders, no shadows.
+ */
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
 import { Home, Sparkles, Settings, Gauge, Users, Menu, ClipboardList, PanelLeftClose, PanelLeftOpen, Heart, MessageSquare } from 'lucide-react'
@@ -28,6 +41,10 @@ export interface ShellUser {
  *
  * Desktop sidebar collapses to an icon rail; the choice sticks across pages
  * via localStorage (applied after mount so SSR markup stays deterministic).
+ *
+ * Styling lives in app.css under `.app-side` / `.app-nav-item` / `.app-topbar`
+ * / `.app-crumb` / `.app-main` / `.page-h` — system fonts, Apple-blue active
+ * state, hairline borders, no shadows.
  */
 export function AppShell({
   user,
@@ -70,7 +87,7 @@ export function AppShell({
     return (
       <>
         <div className={rail ? 'brand justify-center' : 'brand'}>
-          <Logo compact={rail} />
+          <Logo compact={rail} asLink={false} />
         </div>
         {grp(t('app.navWorkspace'))}
         <Link to="/{-$locale}/app" activeProps={{}} className={item(active === 'dashboard')} title={t('app.dashboard')}>
@@ -114,6 +131,10 @@ export function AppShell({
               <MessageSquare size={18} className="shrink-0" />
               {label(t('admin.feedbackAdmin'))}
             </Link>
+            <Link to="/{-$locale}/admin/ai-providers" activeProps={{}} className={item(active === 'admin-ai-providers')} title={t('admin.aiProviders')}>
+              <Sparkles size={18} className="shrink-0" />
+              {label(t('admin.aiProviders'))}
+            </Link>
           </>
         )}
         <div className="flex-1" />
@@ -137,7 +158,7 @@ export function AppShell({
       {open && (
         <div className="md:hidden">
           <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setOpen(false)} aria-hidden="true" />
-          <aside className="app-side fixed inset-y-0 left-0 z-50 w-[248px]" onClick={() => setOpen(false)}>
+          <aside className="app-side fixed inset-y-0 left-0 z-50 w-62" onClick={() => setOpen(false)}>
             {sidebar(false)}
           </aside>
         </div>
@@ -147,7 +168,7 @@ export function AppShell({
         <div className="app-topbar">
           <button
             type="button"
-            className="inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-lg text-fg-2 hover:bg-bg-alt hover:text-foreground md:hidden"
+            className="inline-flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-lg text-fg-2 hover:bg-bg-alt hover:text-foreground md:hidden"
             aria-label="Menu"
             onClick={() => setOpen(true)}
           >
@@ -155,7 +176,7 @@ export function AppShell({
           </button>
           <button
             type="button"
-            className="hidden h-[38px] w-[38px] shrink-0 items-center justify-center rounded-lg text-fg-2 hover:bg-bg-alt hover:text-foreground md:inline-flex"
+            className="hidden h-9.5 w-9.5 shrink-0 items-center justify-center rounded-lg text-fg-2 hover:bg-bg-alt hover:text-foreground md:inline-flex"
             aria-label={collapsed ? t('app.expandSidebar') : t('app.collapseSidebar')}
             title={collapsed ? t('app.expandSidebar') : t('app.collapseSidebar')}
             onClick={toggleCollapsed}
@@ -164,7 +185,7 @@ export function AppShell({
           </button>
           <span className="app-crumb">
             <span className="hidden md:inline">
-              FlareStarter <span className="mx-1.5 text-fg-3">/</span>
+              TokenCalculator <span className="mx-1.5 text-fg-3">/</span>
             </span>
             <b>{crumb}</b>
           </span>

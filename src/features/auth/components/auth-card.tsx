@@ -10,8 +10,8 @@ import { Label } from '@/components/ui/label'
 
 const rootRoute = getRouteApi('__root__')
 
-/** Edge-Terminal auth shell: dotted-grid backdrop, logo-is-home header
- *  (a back-chevron slides in on hover/focus), centered terminal card. */
+/** Apple-minimalist auth shell: logo-is-home header (a back-chevron slides
+ *  in on hover/focus), centered card on a soft alt background. */
 export function AuthCard({
   title,
   subtitle,
@@ -23,15 +23,14 @@ export function AuthCard({
 }) {
   const { theme } = rootRoute.useLoaderData()
   return (
-    <div className="auth-wrap grid-bg">
-      <div className="flex h-16 items-center gap-3 border-b border-border px-4 md:px-7">
-        <Link to="/{-$locale}" className="auth-home" aria-label="FlareStarter">
+    <div className="auth-wrap">
+      <div className="flex h-14 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-md">
+        <Link to="/{-$locale}" className="auth-home" aria-label="TokenCalculator">
           <span className="auth-back" aria-hidden="true">
             <ChevronLeft size={16} />
           </span>
           <Logo />
         </Link>
-        <div className="flex-1" />
         <div className="flex items-center gap-1">
           <ThemeToggle theme={theme} />
           <LangSwitch />
@@ -39,7 +38,7 @@ export function AuthCard({
       </div>
       <div className="auth-body">
         <div className="auth-card">
-          <h1 className="m-0 mb-1.5 font-display text-2xl font-semibold tracking-[-0.5px]">{title}</h1>
+          <h1 className="m-0 mb-1.5 text-[28px] font-semibold tracking-tight">{title}</h1>
           {subtitle && <p className="m-0 mb-6 text-[14.5px] text-fg-2">{subtitle}</p>}
           {children}
         </div>

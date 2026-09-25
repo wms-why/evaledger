@@ -28,8 +28,8 @@ export const Route = createFileRoute('/{-$locale}/waitlist')({
       origin,
       locale,
       path: '/waitlist',
-      title: `${dict} — FlareStarter`,
-      description: locale === 'zh' ? '我们一上线就第一时间通知你。' : "We'll let you know the moment we launch.",
+      title: `${dict} — TokenCalculator`,
+      description: locale === 'zh' ? '抢先体验 TokenCalculator，第一时间获得通知。' : 'Be the first to try TokenCalculator — get notified the moment we launch.',
     })
     return { meta, links }
   },

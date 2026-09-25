@@ -12,10 +12,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'FlareStarter — Cloudflare-native SaaS starter' },
-      { name: 'description', content: 'The open-source, Cloudflare-native SaaS starter. Clone it and ship on Workers.' },
-      { property: 'og:title', content: 'FlareStarter' },
-      { property: 'og:description', content: 'The open-source, Cloudflare-native SaaS starter. Clone it and ship on Workers.' },
+      { title: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek' },
+      { name: 'description', content: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.' },
+      { property: 'og:title', content: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek' },
+      { property: 'og:description', content: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.' },
       { property: 'og:type', content: 'website' },
     ],
     links: [
@@ -44,11 +44,11 @@ export const Route = createRootRoute({
   component: RootComponent,
 })
 
-/* Pre-paint theme resolution for cookie-less visitors: SSR defaults to dark
- * (brand), this flips to light when the OS prefers it — before first paint, so
- * there is no flash. It deliberately does NOT write a cookie: visitors keep
- * following their system until they click the toggle (which does write one). */
-const THEME_BOOT_SCRIPT = `(function(){try{if(!/(?:^|;\\s*)theme=/.test(document.cookie)&&matchMedia('(prefers-color-scheme: light)').matches){document.documentElement.classList.replace('dark','light')}}catch(e){}})()`
+/* Pre-paint theme resolution: cookie → respect explicit choice; cookie-less →
+ * follow the OS via `prefers-color-scheme` (light or dark). Runs before first
+ * paint so there is no flash. Deliberately does NOT write a cookie: visitors
+ * keep following their system until they click the toggle (which does). */
+const THEME_BOOT_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)theme=(light|dark)/);var theme=m?m[1]:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.toggle('dark',theme==='dark');document.documentElement.classList.toggle('light',theme==='light')}catch(e){}})()`
 
 function RootComponent() {
   const { theme, analyticsToken } = Route.useLoaderData()

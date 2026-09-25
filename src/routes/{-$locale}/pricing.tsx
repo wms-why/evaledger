@@ -25,11 +25,11 @@ export const Route = createFileRoute('/{-$locale}/pricing')({
       origin,
       locale,
       path: '/pricing',
-      title: locale === 'zh' ? '定价 — FlareStarter' : 'Pricing — FlareStarter',
+      title: locale === 'zh' ? '定价 — TokenCalculator' : 'Pricing — TokenCalculator',
       description:
         locale === 'zh'
-          ? '开源核心（Apache 2.0）。Pro 一次买断、终身可用，即将推出。'
-          : 'Open source core (Apache 2.0). Pro — a one-time lifetime license — is coming soon.',
+          ? '免费版永久可用——无功能限制。Pro 解锁高级 AI 服务商路由与白标 API。'
+          : 'Free forever — no usage limits. Pro unlocks multi-provider LLM routing and a whitelabel API.',
     })
     return { meta, links }
   },

@@ -4,17 +4,15 @@ import { Logo } from '@/components/brand/logo'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
 import { LangSwitch } from '@/features/i18n/lang-switch'
 
-const GITHUB_URL = 'https://github.com/flarestarter/flarestarter'
-const TELEGRAM_URL = 'https://t.me/+coaN5Ihjte9jNzZl'
-const X_URL = 'https://x.com/0xdinglv'
-const XHS_URL = 'https://xhslink.com/m/19FI1djnItu'
+const X_URL = 'https://x.com/tokencalculator'
 
 export function Footer({ theme }: { theme: 'light' | 'dark' }) {
   const { t } = useTranslation()
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-border bg-bg-alt px-5 md:px-7 py-10">
+    <footer className="border-t border-border bg-bg-alt py-10">
+      <div className="mx-auto max-w-7xl px-5 md:px-7">
       <div className="grid gap-7 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         {/* Brand */}
         <div className="col-span-2 md:col-span-1">
@@ -28,25 +26,21 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
         <FooterCol title={t('marketing.footerProduct')}>
           <Link className="foot-link" to="/{-$locale}" hash="features">{t('marketing.navFeatures')}</Link>
           <Link className="foot-link" to="/{-$locale}/pricing">{t('marketing.footerPricing')}</Link>
-          <Link className="foot-link" to="/{-$locale}/waitlist">{t('marketing.footerWaitlist')}</Link>
-          <Link className="foot-link" to="/{-$locale}/changelog">{t('marketing.footerChangelog')}</Link>
-          <Link className="foot-link" to="/{-$locale}/sponsor">{t('sponsor.footerSponsor')}</Link>
+          <Link className="foot-link" to="/{-$locale}/token-cost-calculator">Token Calculator</Link>
           <a className="foot-link" href="/docs">{t('marketing.footerDocs')}</a>
         </FooterCol>
 
         {/* Resources */}
         <FooterCol title={t('marketing.footerResources')}>
-          <a className="foot-link" href={GITHUB_URL}>{t('marketing.footerGithub')}</a>
-          <a className="foot-link" href={TELEGRAM_URL} target="_blank" rel="noreferrer">{t('marketing.footerTelegram')}</a>
-          <a className="foot-link" href={X_URL} target="_blank" rel="noreferrer">{t('marketing.footerX')}</a>
-          <a className="foot-link" href={XHS_URL} target="_blank" rel="noreferrer">{t('marketing.footerXhs')}</a>
+          <a className="foot-link" href={X_URL} target="_blank" rel="noreferrer">{t('marketing.footerTwitter')}</a>
+          <Link className="foot-link" to="/{-$locale}/changelog">{t('marketing.footerChangelog')}</Link>
         </FooterCol>
 
         {/* Legal */}
         <FooterCol title={t('marketing.footerLegal')}>
           <Link className="foot-link" to="/{-$locale}/terms">{t('marketing.footerTerms')}</Link>
           <Link className="foot-link" to="/{-$locale}/privacy">{t('marketing.footerPrivacy')}</Link>
-          <a className="foot-link" href={`${GITHUB_URL}/blob/main/LICENSE`}>{t('marketing.footerLicense')}</a>
+          <a className="foot-link" href="mailto:hello@tokencalculator.com">{t('marketing.footerContact')}</a>
         </FooterCol>
       </div>
 
@@ -58,6 +52,7 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
           <ThemeToggle theme={theme} />
           <LangSwitch />
         </div>
+      </div>
       </div>
     </footer>
   )

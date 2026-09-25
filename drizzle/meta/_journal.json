@@ -127,6 +127,27 @@
       "when": 1785331714270,
       "tag": "0017_far_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1786550683170,
+      "tag": "0018_marvelous_mikhail_rasputin",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1786618963100,
+      "tag": "0019_messy_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1786700000000,
+      "tag": "0020_drop_books",
+      "breakpoints": true
     }
   ]
 }

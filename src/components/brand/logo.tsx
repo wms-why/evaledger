@@ -1,28 +1,45 @@
-/** FlareStarter wordmark — 4-point spark mark + "Flare" (bold) + "Starter" (58%). `compact` renders the mark only. */
-export function Logo({ size = 18, compact = false }: { size?: number; compact?: boolean }) {
-  return (
+import { Link } from '@tanstack/react-router'
+
+/** TokenCalculator wordmark — coin-stack mark + "TokenCalculator". `compact` renders the mark only. */
+export function Logo({
+  size = 17,
+  compact = false,
+  asLink = true,
+}: {
+  size?: number
+  compact?: boolean
+  /** Wrap in a locale-aware link to the home route. Disable for in-app brand marks (e.g. workspace sidebar). */
+  asLink?: boolean
+}) {
+  const content = (
     <span
-      className="inline-flex items-center gap-[9px] font-display font-semibold tracking-[-0.3px] text-foreground"
+      className="inline-flex items-center gap-2 font-semibold tracking-[-0.02em] text-foreground"
       style={{ fontSize: size }}
     >
-      <span
-        className="inline-flex shrink-0 items-center justify-center rounded-lg"
-        style={{
-          width: 28,
-          height: 28,
-          background: 'var(--primary)',
-          color: 'var(--primary-foreground)',
-        }}
+      <svg
+        width={size + 4}
+        height={size + 4}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
       >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 1.5 14.2 9.8 22.5 12 14.2 14.2 12 22.5 9.8 14.2 1.5 12 9.8 9.8Z" />
-        </svg>
-      </span>
-      {!compact && (
-        <span>
-          Flare<span className="font-medium opacity-[0.58]">Starter</span>
-        </span>
-      )}
+        <ellipse cx="12" cy="5.5" rx="7" ry="2.5" />
+        <path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6" />
+        <path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6" />
+      </svg>
+      {!compact && <span>TokenCalculator</span>}
     </span>
+  )
+
+  if (!asLink) return content
+
+  return (
+    <Link to="/{-$locale}" aria-label="TokenCalculator" className="shrink-0">
+      {content}
+    </Link>
   )
 }

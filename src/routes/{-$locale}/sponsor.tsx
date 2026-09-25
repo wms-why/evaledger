@@ -29,7 +29,7 @@ export const Route = createFileRoute('/{-$locale}/sponsor')({
       origin,
       locale,
       path: '/sponsor',
-      title: locale === 'zh' ? '赞助 — FlareStarter' : 'Sponsor — FlareStarter',
+      title: locale === 'zh' ? '支持 TokenCalculator' : 'Support TokenCalculator',
       description:
         locale === 'zh'
           ? '赞助这个开源项目，一次性或按月均可。'
@@ -64,7 +64,7 @@ function SponsorPage() {
             <h1 className="text-2xl font-semibold">{t('sponsor.successTitle')}</h1>
             <p className="mt-2 text-fg-2">{t('sponsor.successBody')}</p>
             {manageUrl && (
-              <a href={manageUrl} className="mt-4 inline-block font-mono text-sm text-primary underline">
+              <a href={manageUrl} className="mt-4 inline-block text-sm text-primary underline">
                 {t('sponsor.manageLink')}
               </a>
             )}
@@ -72,7 +72,7 @@ function SponsorPage() {
         ) : (
           <>
             <div className="mx-auto max-w-2xl text-center">
-              <span className="font-mono text-sm text-primary">{t('sponsor.kicker')}</span>
+              <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-primary">{t('sponsor.kicker')}</span>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight">
                 {(() => {
                   const title = t('sponsor.title')

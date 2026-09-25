@@ -1,96 +1,44 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ── Self-hosted fonts (latin subset, /public/fonts) ─────────────────────────
-   Served same-origin instead of fonts.googleapis.com: no render-blocking
-   third-party request, and reachable for visitors in mainland China.
-   CJK text falls back to system fonts (see font stacks below). */
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(/fonts/space-grotesk-latin-400-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url(/fonts/space-grotesk-latin-500-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src: url(/fonts/space-grotesk-latin-600-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 700;
-  src: url(/fonts/space-grotesk-latin-700-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url(/fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src: url(/fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2");
-}
-
 /* ── Dark-mode variant: triggered by .dark class on any ancestor ─────────── */
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   FlareStarter — "Edge Terminal" design language
-   Ember accent #E2531C · cool-graphite neutrals · dark-first.
-   Display: Space Grotesk · mono: JetBrains Mono · CJK: system fonts.
+   TokenCalculator — "Apple" minimalist design language
+   Apple blue accent #0071E3 · near-black text · true-black dark mode.
+   System fonts only: SF Pro / PingFang SC / Segoe UI; mono = SF Mono / Consolas.
+   Depth is conveyed by hairline borders + bg steps, never by shadows.
    ========================================================================== */
 
 /* ── LIGHT (default token set) ───────────────────────────────────────────── */
 :root {
   --background: #ffffff;
-  --bg-alt: #f7f8fa;
-  --bg-inset: #f2f3f7;
+  --bg-alt: #f5f5f7;
+  --bg-inset: #f5f5f7;
   --card: #ffffff;
-  --card-2: #f7f8fa;
-  --foreground: #0f1117;
-  --fg-2: #4a5160;
-  --fg-3: #8a92a3;
-  --border: #e6e8ee;
-  --border-2: #eff1f5;
-  --border-strong: #c7ccd6;
-  --primary: #e2531c;
-  --primary-hover: #c2410c;
+  --card-2: #f5f5f7;
+  --foreground: #1d1d1f;
+  --fg-2: #424245;
+  --fg-3: #6e6e73;
+  --border: #d2d2d7;
+  --border-2: #e5e5e7;
+  --border-strong: #86868b;
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
   --primary-foreground: #ffffff;
-  --soft: #fce9e0;
-  --muted: #f7f8fa;
-  --muted-foreground: #8a92a3;
-  --success: #15a05a;
-  --destructive: #e5484d;
-  --ring: rgba(226, 83, 28, 0.4);
+  --soft: rgba(0, 113, 227, 0.08);
+  --muted: #f5f5f7;
+  --muted-foreground: #6e6e73;
+  --success: #008009;
+  --destructive: #ff3b30;
+  --ring: rgba(0, 113, 227, 0.4);
   /* Flat surfaces: no elevation shadows — depth is conveyed by background steps + 1px borders. */
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
-  --dot: rgba(74, 81, 96, 0.16);
+  --dot: rgba(0, 0, 0, 0.04);
+  --radius: 0.875rem;
 }
 
 /* ── shadcn standard tokens (mapped to brand values; var() re-resolves per theme) ── */
@@ -103,36 +51,35 @@
   --accent: var(--bg-alt);
   --accent-foreground: var(--foreground);
   --input: var(--border-strong);
-  --radius: 0.625rem;
 }
 
-/* ── DARK (graphite, cool) — default theme for new visitors ──────────────── */
+/* ── DARK (true black, Apple-style) ──────────────────────────────────────── */
 :root.dark,
 .dark {
-  --background: #0b0d12;
-  --bg-alt: #11141b;
-  --bg-inset: #14171f;
-  --card: #14171f;
-  --card-2: #191d26;
-  --foreground: #f3f5f9;
-  --fg-2: #b4bbc9;
-  --fg-3: #7c8499;
-  --border: #232733;
-  --border-2: #1a1e27;
-  --border-strong: #353b4a;
-  --primary: #f2661e;
-  --primary-hover: #fb7a33;
+  --background: #000000;
+  --bg-alt: #1d1d1f;
+  --bg-inset: #2c2c2e;
+  --card: #1d1d1f;
+  --card-2: #2c2c2e;
+  --foreground: #f5f5f7;
+  --fg-2: #a1a1a6;
+  --fg-3: #86868b;
+  --border: #38383a;
+  --border-2: #2c2c2e;
+  --border-strong: #424245;
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
   --primary-foreground: #ffffff;
-  --soft: rgba(242, 102, 30, 0.16);
-  --muted: #11141b;
-  --muted-foreground: #7c8499;
-  --success: #34d399;
-  --destructive: #ff6166;
-  --ring: rgba(242, 102, 30, 0.5);
+  --soft: rgba(10, 132, 255, 0.15);
+  --muted: #1d1d1f;
+  --muted-foreground: #86868b;
+  --success: #30d158;
+  --destructive: #ff453a;
+  --ring: rgba(10, 132, 255, 0.5);
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
-  --dot: rgba(180, 187, 201, 0.1);
+  --dot: rgba(255, 255, 255, 0.04);
 }
 
 /* ── Tailwind token bridge (shadcn-compatible utilities) ──────────────────── */
@@ -172,11 +119,13 @@
 }
 
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei UI",
-    "Microsoft YaHei", "Segoe UI", "HarmonyOS Sans SC", "Noto Sans CJK SC", Roboto, Arial, sans-serif;
-  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "PingFang SC",
-    "Microsoft YaHei UI", "Segoe UI", "HarmonyOS Sans SC", "Noto Sans CJK SC", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, Consolas,
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI",
+    "HarmonyOS Sans SC", "Noto Sans CJK SC", Roboto, Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "PingFang SC", "Microsoft YaHei UI", "Segoe UI", "HarmonyOS Sans SC",
+    "Noto Sans CJK SC", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 }
 
@@ -224,7 +173,7 @@ body {
 
 code {
   font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-size: 0.875em;
   border: 1px solid var(--border);
   background: var(--bg-inset);
   border-radius: 5px;
@@ -254,42 +203,32 @@ input {
   font-family: var(--font-mono);
 }
 
-/* dotted-grid section background */
+/* ── Legacy Edge-Terminal utility classes — kept as no-ops so old call sites
+     do not break layouts; the new design intentionally drops mono/dot visuals. */
 .grid-bg {
-  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: none;
 }
 
-/* mono kicker label */
 .kicker {
-  font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--primary);
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  color: var(--fg-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* mono metric pill */
 .metric {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--primary);
-  background: var(--soft);
-  border-radius: 6px;
-  padding: 3px 8px;
 }
 
-/* ==========================================================================
-   terminal card (landing hero + pricing cards)
-   ========================================================================== */
 .term {
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 16px;
   overflow: hidden;
   background: var(--card);
-  box-shadow: var(--shadow-lg);
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14px;
 }
 .term-bar {
   display: flex;
@@ -300,15 +239,14 @@ input {
   background: var(--bg-alt);
 }
 .term-dot {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
 }
 .term-body {
-  padding: 16px;
-  line-height: 1.7;
+  padding: 18px;
+  line-height: 1.6;
   color: var(--fg-2);
-  /* terminals don't wrap — long commands scroll inside the card on narrow screens */
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -323,8 +261,8 @@ input {
 }
 .term-cursor {
   display: inline-block;
-  width: 8px;
-  height: 15px;
+  width: 7px;
+  height: 14px;
   background: var(--primary);
   vertical-align: -2px;
   animation: term-blink 1.1s steps(1) infinite;
@@ -335,19 +273,18 @@ input {
   }
 }
 
-/* feature rows */
 .feat-row {
   display: flex;
-  gap: 16px;
-  padding: 22px 0;
+  gap: 20px;
+  padding: 28px 0;
   border-top: 1px solid var(--border);
 }
 .icon-tile {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   background: var(--soft);
   color: var(--primary);
@@ -357,39 +294,39 @@ input {
 /* ==========================================================================
    app / admin shell
    ========================================================================== */
-/* (layout lives on the AppShell component via utilities; only the skins live here) */
 .app-side {
   border-right: 1px solid var(--border);
-  background: var(--bg-alt);
-  padding: 16px 12px;
+  background: color-mix(in srgb, var(--bg-alt) 60%, transparent);
+  padding: 18px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 .app-side .brand {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 6px 8px 16px;
+  padding: 4px 8px 18px;
 }
 .app-side .grp {
-  font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--fg-3);
-  padding: 14px 10px 6px;
+  padding: 16px 10px 6px;
 }
 .app-nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 9px 10px;
-  border-radius: 7px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--fg-2);
   cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 .app-nav-item:hover {
   background: var(--bg-inset);
@@ -398,7 +335,7 @@ input {
 .app-nav-item.active {
   background: var(--soft);
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 500;
 }
 .app-topbar {
   display: flex;
@@ -406,10 +343,12 @@ input {
   gap: 14px;
   flex-wrap: nowrap;
   min-width: 0;
-  height: 60px;
+  height: 56px;
   padding: 0 24px;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--background) 86%, transparent);
+  background: color-mix(in srgb, var(--background) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 .app-topbar.compact {
   gap: 8px;
@@ -425,23 +364,22 @@ input {
 }
 .app-crumb b {
   color: var(--foreground);
-  font-weight: 600;
+  font-weight: 500;
 }
 .app-main {
-  /* tighter gutters on phones — content width beats whitespace in the app/admin views */
-  padding: 20px 16px;
+  padding: 24px 16px;
 }
 @media (min-width: 768px) {
   .app-main {
-    padding: 28px 32px;
+    padding: 32px 40px;
   }
 }
 .page-h {
-  font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 600;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.015em;
   margin: 0;
+  color: var(--foreground);
 }
 
 /* ==========================================================================
@@ -450,7 +388,7 @@ input {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
 }
 .req {
   color: var(--destructive);
@@ -460,7 +398,7 @@ input {
 }
 .field-wrap .lead {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--fg-3);
@@ -476,8 +414,8 @@ input {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 5px;
+  padding: 6px;
+  border-radius: 6px;
   display: inline-flex;
 }
 .field-wrap .trail:hover {
@@ -485,11 +423,54 @@ input {
   background: var(--bg-alt);
 }
 .field-hint {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--fg-3);
 }
 .field-hint.err {
   color: var(--destructive);
+}
+
+/* Native input restyling — Apple-style with subtle ring */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  font-family: inherit;
+  font-size: 15px;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+textarea {
+  height: auto;
+  min-height: 96px;
+  padding: 12px 14px;
+  line-height: 1.5;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--fg-3);
 }
 
 .social-btn {
@@ -500,24 +481,25 @@ input {
   width: 100%;
   height: 44px;
   font-family: inherit;
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--foreground);
   background: var(--background);
-  border: 1px solid var(--border-strong);
-  border-radius: 7px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
 }
 .social-btn:hover {
   background: var(--bg-alt);
-  border-color: var(--fg-3);
+  border-color: var(--border-strong);
 }
 .divider {
   display: flex;
   align-items: center;
   gap: 14px;
   color: var(--fg-3);
-  font-size: 12.5px;
+  font-size: 13px;
 }
 .divider::before,
 .divider::after {
@@ -534,22 +516,22 @@ input {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  background: var(--bg-alt);
 }
 .auth-body {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 56px 24px;
 }
 .auth-card {
   width: 100%;
   max-width: 420px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-lg);
-  padding: 32px;
+  border-radius: 18px;
+  padding: 36px;
 }
 /* logo IS the home link; a back-chevron slides in on hover/focus */
 .auth-home {
@@ -607,7 +589,7 @@ input {
 }
 .compare-table th,
 .compare-table td {
-  padding: 13px 18px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: middle;
@@ -632,17 +614,17 @@ input {
   color: var(--foreground);
 }
 .compare-table .grp td {
-  font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
   color: var(--fg-3);
   background: var(--bg-alt);
-  padding: 9px 18px;
+  padding: 10px 18px;
 }
 .compare-table th.pro,
 .compare-table td.pro {
-  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  background: var(--soft);
 }
 
 /* animated price swap */
@@ -669,4 +651,3 @@ input {
     animation: none;
   }
 }
-

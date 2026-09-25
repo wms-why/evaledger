@@ -10,38 +10,41 @@
  * contain secrets or internals; sanitize before throwing.
  */
 import { useEffect } from 'react'
+import { buttonVariants } from '@/components/ui/button'
 export function ErrorPage({ error, reset }: { error: Error; reset: () => void }) {
   // document.title, not a rendered <title>: the root head() already emits one,
   // and React 19 hoisting would append a second (invalid, and browsers keep the first).
   useEffect(() => {
-    document.title = 'Something went wrong — FlareStarter'
+    document.title = 'Something went wrong — TokenCalculator'
   }, [])
   return (
-    <main className="grid-bg flex min-h-screen flex-col items-center justify-center gap-[18px] p-8 text-center">
-      <span className="kicker">// unexpected error</span>
-      <div className="font-display text-[120px] font-bold leading-none tracking-[-4px] text-primary">500</div>
-      <h1 className="font-display text-[28px] font-semibold tracking-[-0.6px]">Something went wrong</h1>
-      <p className="m-0 max-w-[30em] text-base leading-relaxed text-fg-2">
-        An unexpected error occurred. Try again, or head back to safe harbor.
-      </p>
-      {import.meta.env.DEV && (
-        <pre className="max-w-[40em] overflow-auto rounded-[6px] bg-bg-2 p-4 text-left text-[13px] text-fg-2">
-          {error.message}
-        </pre>
-      )}
-      <div className="flex gap-3">
-        <button
-          onClick={reset}
-          className="inline-flex h-13 items-center gap-2 rounded-[6px] border border-border px-6 text-base font-semibold transition-colors hover:bg-bg-2"
-        >
-          Try again
-        </button>
-        <a
-          href="/"
-          className="inline-flex h-13 items-center gap-2 rounded-[6px] bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
-        >
-          Back to home
-        </a>
+    <main className="bg-background py-24 md:py-32">
+      <div className="mx-auto max-w-xl px-5 text-center md:px-7">
+        <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-fg-3">
+          unexpected error
+        </span>
+        <div className="mt-4 text-[64px] font-semibold leading-none tracking-[-0.02em] text-primary md:text-[80px]">
+          500
+        </div>
+        <h1 className="mt-4 text-[28px] font-semibold tracking-tight md:text-[32px]">
+          Something went wrong
+        </h1>
+        <p className="mt-4 text-[17px] text-fg-2">
+          An unexpected error occurred. Try again, or head back to safe harbor.
+        </p>
+        {import.meta.env.DEV && (
+          <pre className="mx-auto mt-6 max-w-[40em] overflow-auto rounded-[10px] border border-border p-4 text-left text-[13px] text-fg-2">
+            {error.message}
+          </pre>
+        )}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <button onClick={reset} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+            Try again
+          </button>
+          <a href="/" className={buttonVariants({ size: 'lg' })}>
+            Back to home
+          </a>
+        </div>
       </div>
     </main>
   )
