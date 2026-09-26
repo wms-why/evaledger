@@ -21,7 +21,7 @@ export const checkout = createServerFn({ method: 'POST' })
       user,
       priceId,
       `${base}/app?checkout=success`,
-      `${base}/pricing`,
+      `${base}/`,
       Date.now(),
     )
   })
@@ -44,7 +44,7 @@ export const checkoutLifetime = createServerFn({ method: 'POST' }).handler(async
     user,
     priceId,
     `${base}/app?checkout=success`,
-    `${base}/pricing`,
+    `${base}/`,
     Date.now(),
     'payment',
   )

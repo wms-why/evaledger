@@ -11,8 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
-import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
 import { Route as Char123LocaleChar125WaitlistRouteImport } from './routes/{-$locale}/waitlist'
@@ -20,13 +18,9 @@ import { Route as Char123LocaleChar125TokenCostCalculatorRouteImport } from './r
 import { Route as Char123LocaleChar125TermsRouteImport } from './routes/{-$locale}/terms'
 import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
 import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
-import { Route as Char123LocaleChar125PricingRouteImport } from './routes/{-$locale}/pricing'
 import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
 import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
-import { Route as DocsSplatRouteImport } from './routes/docs/$'
-import { Route as DocsMdSplatRouteImport } from './routes/docs-md/$'
-import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json'
 import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
 import { Route as AdminSponsorsDotcsvRouteImport } from './routes/admin/sponsors[.]csv'
@@ -57,16 +51,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
-  id: '/llms.txt',
-  path: '/llms.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
-  id: '/llms-full.txt',
-  path: '/llms-full.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125RouteRoute =
@@ -111,12 +95,6 @@ const Char123LocaleChar125PrivacyRoute =
     path: '/privacy',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const Char123LocaleChar125PricingRoute =
-  Char123LocaleChar125PricingRouteImport.update({
-    id: '/pricing',
-    path: '/pricing',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
 const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
   Char123LocaleChar125OpenrouterPricingCalculatorRouteImport.update({
     id: '/openrouter-pricing-calculator',
@@ -135,21 +113,6 @@ const Char123LocaleChar125ChangelogRoute =
     path: '/changelog',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const DocsSplatRoute = DocsSplatRouteImport.update({
-  id: '/docs/$',
-  path: '/docs/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DocsMdSplatRoute = DocsMdSplatRouteImport.update({
-  id: '/docs-md/$',
-  path: '/docs-md/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSearchRoute = ApiSearchRouteImport.update({
-  id: '/api/search',
-  path: '/api/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPricesDotjsonRoute = ApiPricesDotjsonRouteImport.update({
   id: '/api/prices.json',
   path: '/api/prices.json',
@@ -273,21 +236,15 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
-  '/api/search': typeof ApiSearchRoute
-  '/docs-md/$': typeof DocsMdSplatRoute
-  '/docs/$': typeof DocsSplatRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
-  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
   '/{-$locale}/terms': typeof Char123LocaleChar125TermsRoute
@@ -313,20 +270,14 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
 }
 export interface FileRoutesByTo {
-  '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
-  '/api/search': typeof ApiSearchRoute
-  '/docs-md/$': typeof DocsMdSplatRoute
-  '/docs/$': typeof DocsSplatRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
-  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
   '/{-$locale}/terms': typeof Char123LocaleChar125TermsRoute
@@ -354,21 +305,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
-  '/api/search': typeof ApiSearchRoute
-  '/docs-md/$': typeof DocsMdSplatRoute
-  '/docs/$': typeof DocsSplatRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
-  '/{-$locale}/pricing': typeof Char123LocaleChar125PricingRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
   '/{-$locale}/terms': typeof Char123LocaleChar125TermsRoute
@@ -397,21 +342,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
-    | '/llms-full.txt'
-    | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/{-$locale}/admin'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
     | '/api/prices.json'
-    | '/api/search'
-    | '/docs-md/$'
-    | '/docs/$'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/openrouter-pricing-calculator'
-    | '/{-$locale}/pricing'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
     | '/{-$locale}/terms'
@@ -437,20 +376,14 @@ export interface FileRouteTypes {
     | '/{-$locale}/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/llms-full.txt'
-    | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
     | '/api/prices.json'
-    | '/api/search'
-    | '/docs-md/$'
-    | '/docs/$'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/openrouter-pricing-calculator'
-    | '/{-$locale}/pricing'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
     | '/{-$locale}/terms'
@@ -477,21 +410,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/{-$locale}'
-    | '/llms-full.txt'
-    | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/{-$locale}/admin'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
     | '/api/prices.json'
-    | '/api/search'
-    | '/docs-md/$'
-    | '/docs/$'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/openrouter-pricing-calculator'
-    | '/{-$locale}/pricing'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
     | '/{-$locale}/terms'
@@ -519,16 +446,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
-  LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
-  LlmsDottxtRoute: typeof LlmsDottxtRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminSponsorsDotcsvRoute: typeof AdminSponsorsDotcsvRoute
   AdminWaitlistDotcsvRoute: typeof AdminWaitlistDotcsvRoute
   ApiPricesDotjsonRoute: typeof ApiPricesDotjsonRoute
-  ApiSearchRoute: typeof ApiSearchRoute
-  DocsMdSplatRoute: typeof DocsMdSplatRoute
-  DocsSplatRoute: typeof DocsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarsSplatRoute: typeof ApiAvatarsSplatRoute
   ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
@@ -548,20 +470,6 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/llms.txt': {
-      id: '/llms.txt'
-      path: '/llms.txt'
-      fullPath: '/llms.txt'
-      preLoaderRoute: typeof LlmsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/llms-full.txt': {
-      id: '/llms-full.txt'
-      path: '/llms-full.txt'
-      fullPath: '/llms-full.txt'
-      preLoaderRoute: typeof LlmsFullDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}': {
@@ -613,13 +521,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125PrivacyRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/{-$locale}/pricing': {
-      id: '/{-$locale}/pricing'
-      path: '/pricing'
-      fullPath: '/{-$locale}/pricing'
-      preLoaderRoute: typeof Char123LocaleChar125PricingRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
     '/{-$locale}/openrouter-pricing-calculator': {
       id: '/{-$locale}/openrouter-pricing-calculator'
       path: '/openrouter-pricing-calculator'
@@ -640,27 +541,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/{-$locale}/changelog'
       preLoaderRoute: typeof Char123LocaleChar125ChangelogRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/docs/$': {
-      id: '/docs/$'
-      path: '/docs/$'
-      fullPath: '/docs/$'
-      preLoaderRoute: typeof DocsSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/docs-md/$': {
-      id: '/docs-md/$'
-      path: '/docs-md/$'
-      fullPath: '/docs-md/$'
-      preLoaderRoute: typeof DocsMdSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/search': {
-      id: '/api/search'
-      path: '/api/search'
-      fullPath: '/api/search'
-      preLoaderRoute: typeof ApiSearchRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/api/prices.json': {
       id: '/api/prices.json'
@@ -842,7 +722,6 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   Char123LocaleChar125OpenrouterPricingCalculatorRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
-  Char123LocaleChar125PricingRoute: typeof Char123LocaleChar125PricingRoute
   Char123LocaleChar125PrivacyRoute: typeof Char123LocaleChar125PrivacyRoute
   Char123LocaleChar125SponsorRoute: typeof Char123LocaleChar125SponsorRoute
   Char123LocaleChar125TermsRoute: typeof Char123LocaleChar125TermsRoute
@@ -869,7 +748,6 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125ClaudeTokenCostCalculatorRoute,
     Char123LocaleChar125OpenrouterPricingCalculatorRoute:
       Char123LocaleChar125OpenrouterPricingCalculatorRoute,
-    Char123LocaleChar125PricingRoute: Char123LocaleChar125PricingRoute,
     Char123LocaleChar125PrivacyRoute: Char123LocaleChar125PrivacyRoute,
     Char123LocaleChar125SponsorRoute: Char123LocaleChar125SponsorRoute,
     Char123LocaleChar125TermsRoute: Char123LocaleChar125TermsRoute,
@@ -899,16 +777,11 @@ const Char123LocaleChar125RouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
-  LlmsFullDottxtRoute: LlmsFullDottxtRoute,
-  LlmsDottxtRoute: LlmsDottxtRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminSponsorsDotcsvRoute: AdminSponsorsDotcsvRoute,
   AdminWaitlistDotcsvRoute: AdminWaitlistDotcsvRoute,
   ApiPricesDotjsonRoute: ApiPricesDotjsonRoute,
-  ApiSearchRoute: ApiSearchRoute,
-  DocsMdSplatRoute: DocsMdSplatRoute,
-  DocsSplatRoute: DocsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarsSplatRoute: ApiAvatarsSplatRoute,
   ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,

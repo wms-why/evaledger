@@ -21,23 +21,11 @@ export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean 
         {t('marketing.navFeatures')}
       </Link>
       <Link
-        to="/{-$locale}/pricing"
-        className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
-      >
-        {t('marketing.navPricing')}
-      </Link>
-      <Link
         to="/{-$locale}/changelog"
         className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
       >
         {t('marketing.navChangelog')}
       </Link>
-      <a
-        href="/docs"
-        className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
-      >
-        {t('marketing.navDocs')}
-      </a>
     </>
   )
 

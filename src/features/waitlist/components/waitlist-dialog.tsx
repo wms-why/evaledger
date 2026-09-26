@@ -7,7 +7,7 @@ export function WaitlistDialog({
   open,
   onOpenChange,
   turnstileSiteKey,
-  source = 'pricing',
+  source = 'waitlist',
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void

@@ -2,7 +2,6 @@ import { locales, defaultLocale, localizePath, type Locale } from '@/features/i1
 
 const PUBLIC_PATHS = [
   '/',
-  '/pricing',
   '/changelog',
   '/sponsor',
   '/waitlist',
@@ -26,9 +25,6 @@ export function buildRobots(origin: string): string {
     'Disallow: /admin',
     'Disallow: /api',
     `Sitemap: ${origin}/sitemap.xml`,
-    // LLM-friendly docs (no standard robots directive — comment for discovery).
-    `# llms.txt: ${origin}/llms.txt`,
-    `# llms-full.txt: ${origin}/llms-full.txt`,
     '',
   ].join('\n')
 }

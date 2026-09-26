@@ -12,7 +12,7 @@ import { Card } from '@/components/ui/card'
 /* Soft-gated Pro area: free users may enter and get a blurred preview with an
  * upgrade CTA (a real "peek" converts better than a redirect). For routes that
  * must never render for free users, use the hard gate instead:
- * `loader: () => requirePlan('pro')()` — it redirects to /pricing. */
+ * `loader: () => requirePlan('pro')()` — it redirects to /. */
 export const Route = createFileRoute('/{-$locale}/app/pro')({
   head: () => ({ meta: [{ name: 'robots', content: 'noindex' }] }),
   loader: async ({ params }) => {
@@ -57,7 +57,7 @@ function Pro() {
               <Lock size={24} />
             </div>
             <p className="m-0 max-w-[26em] text-base text-fg-2">{t('billing.proPeekBody')}</p>
-            <Link to="/{-$locale}/pricing">
+            <Link to="/{-$locale}">
               <Button>{t('billing.upgrade')}</Button>
             </Link>
           </div>

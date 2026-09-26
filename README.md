@@ -6,7 +6,7 @@ A free token cost calculator built on **TanStack Start** + **Cloudflare Workers*
 
 The pricing registry lives in [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts) and is re-verified against each provider's official pricing page on every refresh — see the "Refresh workflow" comment at the top of that file.
 
-**Live:** [tokencalculator.com](https://tokencalculator.com) · **Docs:** [tokencalculator.com/docs](https://tokencalculator.com/docs)
+**Live:** [tokencalculator.com](https://tokencalculator.com)
 
 ---
 
@@ -60,7 +60,7 @@ pnpm test              # vitest run (node pool + workers pool)
 pnpm build             # vite build
 pnpm db:generate       # generate a Drizzle migration from schema changes
 pnpm db:migrate:local  # apply migrations to local D1
-pnpm db:migrate:prod   # apply migrations to the prod D1 (see docs/getting-started/deploy)
+pnpm db:migrate:prod   # apply migrations to the prod D1
 pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 ```
 
@@ -85,7 +85,6 @@ src/
     feedback/      # submit + admin governance — the teach-by-example vertical slice
     i18n/          # en/zh dictionaries + provider
     seo/           # sitemap, robots, locale head tags, JSON-LD helpers
-    docs/          # fumadocs source/layout + llms.txt generator
     admin/         # admin plugin wiring + dashboard
     analytics/     # CF Web Analytics (optional)
     audience/      # Resend audience sync (reused by waitlist)
@@ -97,26 +96,11 @@ src/
     theme/         # light/dark theme toggle
   routes/
     {-$locale}/    # locale-prefixed pages: /, /zh, /admin, /app, /token-cost-calculator, ...
-    api/, docs/, docs-md/, llms.txt, robots.txt, sitemap.xml
-  content/docs/    # in-app docs content (fumadocs mdx sources)
+    api/, robots.txt, sitemap.xml
+  content/changelog/  # in-app changelog content (fumadocs mdx sources)
   db/              # Drizzle schema barrel + client + migrations
 drizzle/           # generated SQL migrations
 ```
-
-## Documentation
-
-Docs are built into the main app — visit `/docs` to read them (powered by [Fumadocs](https://fumadocs.dev)):
-
-- [`install.mdx`](src/content/docs/getting-started/install.mdx) — local setup
-- [`deploy.mdx`](src/content/docs/getting-started/deploy.mdx) — production deployment
-- [`migrations.mdx`](src/content/docs/getting-started/migrations.mdx) — D1 migration workflow
-- [`codebase.mdx`](src/content/docs/getting-started/codebase.mdx) — directory structure
-- [`environment.mdx`](src/content/docs/getting-started/environment.mdx) — env vars
-- [`calculator.mdx`](src/content/docs/features/calculator.mdx) — calculator internals
-- [`billing.mdx`](src/content/docs/features/billing.mdx) — Stripe + sponsor loops
-- [`storage.mdx`](src/content/docs/features/storage.mdx) — R2 object storage
-- [`cf-gotchas.mdx`](src/content/docs/platform/cf-gotchas.mdx) — Cloudflare/workerd pitfalls
-- [`security.mdx`](src/content/docs/platform/security.mdx) — security headers/CSP, env validation, rate limiting
 
 ## Credits
 

@@ -1,7 +1,5 @@
-import { defineDocs, defineCollections } from 'fumadocs-mdx/config'
+import { defineCollections } from 'fumadocs-mdx/config'
 import { z } from 'zod'
-
-export const docs = defineDocs({ dir: 'src/content/docs' })
 
 export const changelog = defineCollections({
   type: 'doc',

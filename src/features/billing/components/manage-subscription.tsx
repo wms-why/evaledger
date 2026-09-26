@@ -57,7 +57,7 @@ export function ManageSubscription({
           </Button>
         </div>
       ) : (
-        <Link to="/{-$locale}/pricing" className={buttonVariants()}>
+        <Link to="/{-$locale}" className={buttonVariants()}>
           {t('billing.upgrade')}
         </Link>
       )}

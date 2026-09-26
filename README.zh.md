@@ -6,7 +6,7 @@
 
 定价 registry 在 [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts),每次刷新都会按文件头的「Refresh workflow」流程去各家厂商官方定价页核对。
 
-**线上:** [tokencalculator.com](https://tokencalculator.com) · **文档:** [tokencalculator.com/docs](https://tokencalculator.com/docs)
+**线上:** [tokencalculator.com](https://tokencalculator.com)
 
 ---
 
@@ -60,7 +60,7 @@ pnpm test              # vitest run(node + workers 双池)
 pnpm build             # vite build
 pnpm db:generate       # 从 schema 变更生成 Drizzle 迁移
 pnpm db:migrate:local  # 本地 D1 应用迁移
-pnpm db:migrate:prod   # 生产 D1 应用迁移(见 docs/getting-started/deploy)
+pnpm db:migrate:prod   # 生产 D1 应用迁移
 pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 ```
 
@@ -85,7 +85,6 @@ src/
     feedback/      # 提交 + 后台治理 — 教学范本纵向切片
     i18n/          # en/zh 字典 + provider
     seo/           # sitemap、robots、locale head、JSON-LD 工具
-    docs/          # fumadocs 源/布局 + llms.txt 生成
     admin/         # admin 插件接线 + 看板
     analytics/     # CF Web Analytics(可选)
     audience/      # Resend audience 同步(waitlist 复用)
@@ -97,26 +96,11 @@ src/
     theme/         # 浅色/深色主题切换
   routes/
     {-$locale}/    # 带语言前缀的页面:/、/zh、/admin、/app、/token-cost-calculator ...
-    api/, docs/, docs-md/, llms.txt, robots.txt, sitemap.xml
-  content/docs/    # 应用内文档(fumadocs mdx 源)
+    api/, robots.txt, sitemap.xml
+  content/changelog/  # 应用内 changelog 内容(fumadocs mdx 源)
   db/              # Drizzle schema barrel + client + migrations
 drizzle/           # 生成的 SQL 迁移
 ```
-
-## 文档
-
-文档随主应用一起发布——访问 `/docs` 即可阅读(基于 [Fumadocs](https://fumadocs.dev)):
-
-- [`install.mdx`](src/content/docs/getting-started/install.mdx) — 本地启动
-- [`deploy.mdx`](src/content/docs/getting-started/deploy.mdx) — 生产部署
-- [`migrations.mdx`](src/content/docs/getting-started/migrations.mdx) — D1 迁移流程
-- [`codebase.mdx`](src/content/docs/getting-started/codebase.mdx) — 目录结构
-- [`environment.mdx`](src/content/docs/getting-started/environment.mdx) — 环境变量
-- [`calculator.mdx`](src/content/docs/features/calculator.mdx) — 计算器内部
-- [`billing.mdx`](src/content/docs/features/billing.mdx) — Stripe + 赞助循环
-- [`storage.mdx`](src/content/docs/features/storage.mdx) — R2 对象存储
-- [`cf-gotchas.mdx`](src/content/docs/platform/cf-gotchas.mdx) — Cloudflare/workerd 坑
-- [`security.mdx`](src/content/docs/platform/security.mdx) — 安全头/CSP、env 校验、限流
 
 ## 致谢
 

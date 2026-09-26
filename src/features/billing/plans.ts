@@ -1,6 +1,6 @@
-/* DORMANT until Pro launch: the pricing page pivoted to "coming soon + waitlist",
- * so nothing calls this module (or checkoutLifetime) right now. It is the tested,
- * working purchase pipeline to re-wire when Pro goes on sale — do not delete. */
+/* DORMANT until Pro launch: the public pricing surface is removed, so nothing
+ * calls this module (or checkoutLifetime) right now. It is the tested, working
+ * purchase pipeline to re-wire when Pro goes on sale — do not delete. */
 export type Interval = 'monthly' | 'yearly'
 
 export interface PlanPrices {

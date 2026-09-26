@@ -12,7 +12,7 @@ export const getEntitlement = createServerFn({ method: 'GET' }).handler(async ()
   return getEntitlementFor(createDb(env.DB), user.id)
 })
 
-/** Guard: require Pro access. Redirects to /pricing if not Pro (admins pass — role outranks the paywall). */
+/** Guard: require Pro access. Redirects to home if not Pro (admins pass — role outranks the paywall). */
 export const requireProPlan = createServerFn({ method: 'GET' }).handler(async (): Promise<Entitlement> => {
   const { readUser } = await import('@/features/auth/readUser.server')
   const { getEntitlementFor } = await import('./billing.server')
@@ -22,7 +22,7 @@ export const requireProPlan = createServerFn({ method: 'GET' }).handler(async ()
   const user = await readUser()
   if (!user) throw redirect({ to: '/{-$locale}/login' })
   const ent = await getEntitlementFor(createDb(env.DB), user.id)
-  if (!hasProAccess(user.role, ent)) throw redirect({ to: '/{-$locale}/pricing' })
+  if (!hasProAccess(user.role, ent)) throw redirect({ to: '/{-$locale}' })
   return ent
 })
 

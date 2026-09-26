@@ -37,7 +37,7 @@ pnpm build       # production build
 - **Code style**: match the surrounding file. Features live as self-contained vertical slices under `src/features/<name>/`; never hand-write owner filters — use `scopeFromUser`/`ownedBy`/`withOwner` from `src/db/scope.ts`.
 - **Env access**: only via `src/lib/env.ts` (never `process.env`). New vars go in `wrangler.jsonc` vars, `.dev.vars.example`, and the zod schema in `src/lib/env-validate.ts`.
 - **Tests**: name them `*.node.test.ts` (pure/node pool) or `*.workers.test.ts` (real D1/R2 via miniflare). Add tests for new logic.
-- **Docs**: if you change setup/deploy/behaviour, update the relevant file in `src/content/docs/`.
+- **Docs**: if you change setup/deploy/behaviour, update the relevant section of the README.
 
 ## Database gotcha
 
@@ -52,7 +52,7 @@ pnpm db:reset:local   # wipe + re-migrate + re-seed
 ## Cloudflare/workerd notes
 
 The runtime is workerd, not Node — some npm packages won't work (e.g. React Email).
-See [`src/content/docs/platform/cf-gotchas.mdx`](src/content/docs/platform/cf-gotchas.mdx) before reaching for a dependency.
+Reach for a dependency carefully: confirm it has no Node-only imports before adding it.
 
 ## Reporting bugs / proposing features
 

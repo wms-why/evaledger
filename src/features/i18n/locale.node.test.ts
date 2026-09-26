@@ -4,9 +4,9 @@ import { en } from '@/features/i18n/dictionaries/en'
 import { zh } from '@/features/i18n/dictionaries/zh'
 
 test('stripDefaultLocalePrefix：去掉 /en 前缀且保留 query 和 hash', () => {
-  expect(stripDefaultLocalePrefix('/en/pricing?ref=x')).toBe('/pricing?ref=x')
+  expect(stripDefaultLocalePrefix('/en/sponsor?ref=x')).toBe('/sponsor?ref=x')
   expect(stripDefaultLocalePrefix('/en/sponsor?status=success&session_id=cs_1')).toBe('/sponsor?status=success&session_id=cs_1')
-  expect(stripDefaultLocalePrefix('/en/docs#setup')).toBe('/docs#setup')
+  expect(stripDefaultLocalePrefix('/en/waitlist#setup')).toBe('/waitlist#setup')
   expect(stripDefaultLocalePrefix('/en')).toBe('/')
   expect(stripDefaultLocalePrefix('/en?a=1')).toBe('/?a=1')
   expect(stripDefaultLocalePrefix('/en/')).toBe('/')

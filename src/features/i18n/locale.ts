@@ -38,7 +38,7 @@ export function lookup<T = unknown>(dict: Dict, key: string): T {
 }
 
 /** 从完整 href 上剥掉冗余的 /en 前缀，保留 query 和 hash——
- *  规范化重定向用（`/en/pricing?ref=x` → `/pricing?ref=x`）。 */
+ *  规范化重定向用（`/en/sponsor?ref=x` → `/sponsor?ref=x`）。 */
 export function stripDefaultLocalePrefix(href: string): string {
   const stripped = href.replace(/^\/en(?=[/?#]|$)/, '')
   if (stripped === '') return '/'
