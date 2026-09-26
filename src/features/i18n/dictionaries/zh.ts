@@ -8,6 +8,7 @@ export const zh: Dict = {
     openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
     claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
     deepseekTitle: 'DeepSeek API 价格 — V4 与 V3 每 token 单价',
+    chatgptTitle: 'ChatGPT API 价格 — GPT-5/5.6/6 每 token 单价',
     greeting: '你好，{name}！',
   },
   changelog: {
@@ -159,6 +160,8 @@ export const zh: Dict = {
       '看清 OpenRouter 加价后实际收多少——以及什么时候直连 OpenAI、Claude、Gemini 或 DeepSeek 反而更划算。更新于 {date}。',
     claudeMetaDescription:
       '看清 Claude Opus 4.5、Sonnet 4.5、Haiku 4.5 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 {date}。',
+    chatgptMetaDescription:
+      'ChatGPT API 价格——GPT-6 astra 每 1M 输入 $10 / 输出 $50,GPT-5 缓存输入 $0.125/M(打 1 折),Batch API 5 折。更新于 {date}。',
     brandTitle: 'TokenCalculator — 一站式比对 OpenAI、Claude、Gemini、DeepSeek 与 Grok 的 LLM 价格',
     brandDescription: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。',
     brandOgDescription: '给工程师用的 LLM 价格比对计算器。免费,无需注册。',
@@ -232,6 +235,8 @@ export const zh: Dict = {
     subtitleClaude: 'Claude Opus、Sonnet、Haiku 的每 token 成本与月度估算——走 Anthropic API。',
     h1Deepseek: 'DeepSeek API 价格',
     subtitleDeepseek: 'V4-Pro 与 V4.1-Flash 每 token 单价、非高峰时段与 prompt cache 省费——对比 Claude、GPT、Gemini。',
+    h1Chatgpt: 'ChatGPT API 价格',
+    subtitleChatgpt: 'GPT-6 与 GPT-5 每 token 单价、Batch API 5 折与 prompt cache 省费——对比 Claude、Gemini 与 DeepSeek。',
 
     // Input form
     tabPaste: '粘贴文本',
@@ -424,6 +429,24 @@ export const zh: Dict = {
     deepseekFaq8Q: '怎么拿 DeepSeek API key?',
     deepseekFaq8A: '在 platform.deepseek.com 注册、最低充值 $5,在控制台 API Keys 页生成 key。上方计算器随时显示当前每百万 token 单价,/api/prices.json 以机器可读形式暴露同一份数据,给 AI agent 用。',
 
+    // ChatGPT 专属 FAQ(8 条)
+    chatgptFaq1Q: 'ChatGPT API 每 1M token 多少钱?',
+    chatgptFaq1A: 'GPT-6 astra 每 1M 输入 $10 / 输出 $50;GPT-6 sol 是 $2 / $10;GPT-6 luna 是 $0.10 / $0.50。GPT-5(已下架)原本是 $1.25 / $10,缓存输入 $0.125/M。用上方计算器按你的实际用量比一遍所有在售模型。',
+    chatgptFaq2Q: '$5 在 ChatGPT 上能换多少 token?',
+    chatgptFaq2A: '$5 在 GPT-6 astra 上大约能换 50 万输入 token(或 10 万输出)。GPT-6 sol 同样 $5 是 250 万输入 / 50 万输出。GPT-6 luna 是 5000 万输入 / 1000 万输出。GPT-5 nano 是 1 亿输入 / 1250 万输出。',
+    chatgptFaq3Q: 'ChatGPT 20 万 token 多少钱?',
+    chatgptFaq3A: '20 万输入 token 在 GPT-6 astra 上 $2.00;GPT-6 sol $0.40;GPT-6 luna $0.02。同样 20 万输出 token:astra $10.00,sol $2.00,luna $0.10。GPT-5 nano:20 万输入 $0.01,20 万输出 $0.08。',
+    chatgptFaq4Q: '该用 GPT-5 mini 还是 GPT-5 nano?',
+    chatgptFaq4A: 'GPT-5 mini(每 1M $0.25 输入 / $2.00 输出)用于对质量有要求的短答场景;GPT-5 nano($0.05 / $0.40)用于高并发路由 / 分类——输出比 mini 便宜 5 倍。多数生产栈用 nano 做路由,难的提示词留给 mini。',
+    chatgptFaq5Q: 'ChatGPT prompt cache 怎么工作的?',
+    chatgptFaq5A: 'OpenAI 自动缓存 1024 token 以上的 prompt 前缀,持续 5–10 分钟(GPT-5/6 更长)。缓存读按标准输入价约 10% 计费——GPT-5 上 $0.125/M 对标准 $1.25/M,GPT-6 astra 上 $1/M 对 $10/M。重复前缀工作负载下的最大单一省费项。',
+    chatgptFaq6Q: '谁该用 OpenAI Batch API?',
+    chatgptFaq6A: 'Batch API 适合能等 24 小时内的非紧急任务——评测、批量摘要、数据集生成、embedding 回填。输入与输出均按标准价 5 折计费;提交一个 JSONL 请求文件再轮询结果即可。低延迟场景请用实时 API。',
+    chatgptFaq7Q: 'OpenRouter 比直连 OpenAI 便宜吗?',
+    chatgptFaq7A: '对大部分单模型、高并发的负载,直连 platform.openai.com 稍便宜——少了 OpenRouter 加价(约 5%)。OpenRouter 赢在:跨厂商自动 fallback、一个账单管多个模型、或本地区无法直接访问的模型。',
+    chatgptFaq8Q: '这个计算器准吗?',
+    chatgptFaq8A: 'ChatGPT 模型 token 数完全精确(GPT-5/6 用 OpenAI 的 o200k_base 分词器,旧家族用 cl100k_base)。价格取自 platform.openai.com/docs/pricing,定期复核。要对账前请点每张卡的源链接核对。',
+
     // DeepSeek 专属 TLDR + Tips(独立数组,不和跨厂商页混)
     deepseekTldrItems: [
       'DeepSeek V4.1-Flash 单价 $0.30 输入 / $1.20 输出每 1M token——比 GPT-5 输出便宜约 8 倍。',
@@ -439,11 +462,33 @@ export const zh: Dict = {
       '直连 DeepSeek 官方 API 比 OpenRouter 便宜几个百分点;OpenRouter 赢在跨厂商 fallback + 单一发票。',
     ],
 
+    // ChatGPT 专属 TLDR + Tips(独立数组,不和跨厂商页混)
+    chatgptTldrItems: [
+      'GPT-5 缓存输入降至 $0.125/M——比标准价 $1.25/M 打 1 折。',
+      'Batch API 5 折 + 24 小时 SLA——适合评测、批量摘要、数据集生成。',
+      'GPT-6 astra 最贵,每 1M token 输入 $10 / 输出 $50。',
+      'GPT-6 luna 最便宜,每 1M token 输入 $0.10 / 输出 $0.50。',
+    ],
+    chatgptTips: [
+      '路由 / 分类用 GPT-5 nano 或 GPT-6 luna——输出比旗舰便宜 8–20 倍。',
+      '启用缓存输入——OpenAI 自动缓存重复前缀,比标准输入价便宜约 90%。',
+      '非紧急任务走 Batch API,5 折(24 小时 SLA,队列不限速)。',
+      '显式设 max_tokens——输出是贵的,封顶防止回复失控。',
+      'ChatGPT Plus($20/月)不能代替 API——高负载工作流还是得用 API。',
+    ],
+
     // DeepSeekSection 文案
     deepseekOffPeakTitle: '非高峰时段说明',
     deepseekOffPeakBody: '周一至周五(不含中国法定假日),DeepSeek 仅在 UTC 01:00–04:00 与 06:00–10:00 按全高峰计费;其余时段——含周末全天——按高峰 50% 计费。输入与输出都打 5 折。',
     deepseekOffPeakBadge: '非高峰 = 高峰 5 折 · 周一至周五 · 周末与全部中国法定假日全天非高峰',
     deepseekCacheTitle: 'Prompt cache 价格',
     deepseekCacheBody: 'DeepSeek 缓存 hit 折扣激进——V4.1-Flash 与 V4-Pro 的缓存输入都比标准输入便宜约 99%。任何带重复前缀(系统提示词、工具定义、文档上下文)的工作负载,缓存前缀都是最划算的省费手段。',
+
+    // ChatGPTSection 文案
+    chatgptBatchTitle: 'Batch API · 5 折',
+    chatgptBatchBody: 'OpenAI 的 Batch API 以异步方式处理请求,24 小时 SLA,输入与输出均按标准价 5 折计费。提交一个 JSONL 请求文件、轮询结果即可,队列不限速。最适合非紧急任务:评测、批量摘要、数据集生成与大规模回填。',
+    chatgptBatchBadge: '5 折 · 24 小时 SLA · 队列不限速',
+    chatgptCacheTitle: 'Prompt cache · 约 9 折',
+    chatgptCacheBody: 'OpenAI 自动缓存 1024 token 以上的 prompt 前缀,持续 5–10 分钟(GPT-5/6 更长)。缓存读按标准输入价约 10% 计费。任何带重复前缀(系统提示词、工具 schema、大文档上下文)的工作负载,缓存都是最大单一省费项——多数生产栈启用后输入开销直降 50–80%。',
   },
 }

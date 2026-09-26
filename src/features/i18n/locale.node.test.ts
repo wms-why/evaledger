@@ -38,11 +38,27 @@ test('translate 插值 marketing.openrouterMetaDescription / claudeMetaDescripti
   expect(translate(en, 'marketing.claudeMetaDescription', { date })).toContain(date)
   expect(translate(zh, 'marketing.claudeMetaDescription', { date })).toContain(date)
 })
+test('translate 插值 marketing.chatgptMetaDescription 的 {date}', () => {
+  // i18n key symmetry + interpolation for the ChatGPT sub-page meta description —
+  // both locales must interpolate {date} so REGISTRY.fetchedAt can flow through.
+  const date = '2026-09-25'
+  expect(translate(en, 'marketing.chatgptMetaDescription', { date })).toContain(date)
+  expect(translate(zh, 'marketing.chatgptMetaDescription', { date })).toContain(date)
+  expect(translate(en, 'marketing.chatgptMetaDescription', { date })).not.toBe('marketing.chatgptMetaDescription')
+  expect(translate(zh, 'marketing.chatgptMetaDescription', { date })).not.toBe('marketing.chatgptMetaDescription')
+})
 test('translate 解析 home.openrouterTitle / home.claudeTitle', () => {
   expect(translate(en, 'home.openrouterTitle')).toContain('OpenRouter')
   expect(translate(zh, 'home.openrouterTitle')).toContain('OpenRouter')
   expect(translate(en, 'home.claudeTitle')).toContain('Claude')
   expect(translate(zh, 'home.claudeTitle')).toContain('Claude')
+})
+test('translate 解析 home.chatgptTitle', () => {
+  // ChatGPT sub-page browser title — both locales must mention ChatGPT.
+  expect(translate(en, 'home.chatgptTitle')).toContain('ChatGPT')
+  expect(translate(zh, 'home.chatgptTitle')).toContain('ChatGPT')
+  expect(translate(en, 'home.chatgptTitle')).not.toBe('home.chatgptTitle')
+  expect(translate(zh, 'home.chatgptTitle')).not.toBe('home.chatgptTitle')
 })
 test('marketing.brandTitle / brandDescription / brandOgDescription 两语种都有非空值', () => {
   for (const key of ['brandTitle', 'brandDescription', 'brandOgDescription'] as const) {

@@ -6,6 +6,7 @@ export const en = {
     openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
     claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
     deepseekTitle: 'DeepSeek API Pricing — V4 & V3 Per-Token Rates',
+    chatgptTitle: 'ChatGPT API Pricing — GPT-5/5.6/6 Cost per Token',
     greeting: 'Hello, {name}!',
   },
   changelog: {
@@ -172,6 +173,8 @@ export const en = {
       'See what OpenRouter really charges after the markup — and when going direct to OpenAI, Claude, Gemini, or DeepSeek is cheaper. Updated {date}.',
     claudeMetaDescription:
       'See what Claude Opus 4.5, Sonnet 4.5, and Haiku 4.5 cost per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated {date}.',
+    chatgptMetaDescription:
+      'ChatGPT API pricing — GPT-6 astra at $10 input / $50 output per 1M, GPT-5 cached input at $0.125/M (90% off), and the Batch API at 50% off. Updated {date}.',
     brandTitle: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
     brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
     brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
@@ -245,6 +248,8 @@ export const en = {
     subtitleClaude: 'Cost per token and monthly estimates for Claude Opus, Sonnet, and Haiku — with the Anthropic API.',
     h1Deepseek: 'DeepSeek API Pricing',
     subtitleDeepseek: 'V4-Pro and V4.1-Flash per-token rates, off-peak hours, and prompt-cache savings — compared to Claude, GPT, and Gemini.',
+    h1Chatgpt: 'ChatGPT API Pricing',
+    subtitleChatgpt: 'GPT-6 and GPT-5 per-token rates, Batch API 50% off, and prompt-cache savings — compared to Claude, Gemini, and DeepSeek.',
 
     // Input form
     tabPaste: 'Paste text',
@@ -433,6 +438,24 @@ export const en = {
     deepseekFaq8Q: 'How do I get a DeepSeek API key?',
     deepseekFaq8A: 'Sign up at platform.deepseek.com, complete the minimum top-up (currently $5), and generate a key from the API Keys page in the console. The calculator above always shows the current per-million rates, and /api/prices.json exposes the same numbers in a machine-readable form for AI agents.',
 
+    // ChatGPT-specific FAQ (8 entries)
+    chatgptFaq1Q: 'How much does the ChatGPT API cost per million tokens?',
+    chatgptFaq1A: 'GPT-6 astra is $10 input / $50 output per 1M; GPT-6 sol is $2 / $10; GPT-6 luna is $0.10 / $0.50. Older GPT-5 (now delisted) was $1.25 / $10 with cached input at $0.125/M. Use the calculator above to compare every active model at your exact usage.',
+    chatgptFaq2Q: 'How many tokens does $5 get you in ChatGPT?',
+    chatgptFaq2A: '$5 buys you roughly 500K input tokens on GPT-6 astra (or 100K output). On GPT-6 sol the same $5 buys 2.5M input / 500K output. On GPT-6 luna it\'s 50M input / 10M output. On GPT-5 nano the same $5 buys 100M input / 12.5M output.',
+    chatgptFaq3Q: 'How much is 200,000 tokens in ChatGPT?',
+    chatgptFaq3A: '200,000 input tokens on GPT-6 astra cost $2.00; on GPT-6 sol $0.40; on GPT-6 luna $0.02. The same 200K output tokens cost $10.00 on astra, $2.00 on sol, $0.10 on luna. GPT-5 nano: 200K input is $0.01, 200K output is $0.08.',
+    chatgptFaq4Q: 'Should I use GPT-5 mini or GPT-5 nano?',
+    chatgptFaq4A: 'GPT-5 mini ($0.25 input / $2.00 output per 1M) is for short-answer workloads where quality matters. GPT-5 nano ($0.05 / $0.40) is for high-volume routing and classification — output is 5× cheaper than mini. Most production stacks use nano for routing and reserve mini for the harder prompts.',
+    chatgptFaq5Q: 'How does ChatGPT prompt caching work?',
+    chatgptFaq5A: 'OpenAI automatically caches prompt prefixes of 1,024 tokens or more for 5–10 minutes (longer on GPT-5/6). Cached reads bill at roughly 10% of the standard input rate — $0.125/M on GPT-5 vs $1.25/M standard, $1/M on GPT-6 astra vs $10/M. The single biggest cost saver for repeat-prefix workloads.',
+    chatgptFaq6Q: 'Who should use the OpenAI Batch API?',
+    chatgptFaq6A: 'The Batch API is for non-urgent jobs that can wait up to 24 hours — evals, bulk summarization, dataset generation, embedding backfills. Both input and output bill at 50% of standard rates; you submit a JSONL file of requests and poll for completion. Latency-sensitive workloads should use the real-time API.',
+    chatgptFaq7Q: 'Is OpenRouter cheaper than going direct to OpenAI?',
+    chatgptFaq7A: 'For most single-model, high-volume workloads, going direct to platform.openai.com is slightly cheaper — you skip the OpenRouter markup (~5%). OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
+    chatgptFaq8Q: 'How accurate is this calculator?',
+    chatgptFaq8A: 'Token counts are exact for ChatGPT models (the calculator uses OpenAI\'s o200k_base tokenizer for GPT-5/6, cl100k_base for older families). Prices are sourced from platform.openai.com/docs/pricing and re-verified regularly. Always check the source link on each card before relying on a number for billing.',
+
     // DeepSeek-specific TLDR + Tips (separate arrays so the page can quote
     // DeepSeek-specific numbers without diluting the cross-provider page).
     deepseekTldrItems: [
@@ -449,6 +472,22 @@ export const en = {
       'Going direct to DeepSeek\'s API beats OpenRouter by a few percent. OpenRouter wins on automatic fallback + a single invoice.',
     ],
 
+    // ChatGPT-specific TLDR + Tips (separate arrays so the page can quote
+    // ChatGPT-specific numbers without diluting the cross-provider page).
+    chatgptTldrItems: [
+      'GPT-5 cached input drops to $0.125/M — a 90% discount vs the $1.25/M standard rate.',
+      'The Batch API runs at 50% off with a 24-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
+      'GPT-6 astra is the most expensive active model at $10 input / $50 output per 1M tokens.',
+      'GPT-6 luna is the cheapest active model at $0.10 input / $0.50 output per 1M tokens.',
+    ],
+    chatgptTips: [
+      'Use GPT-5 nano or GPT-6 luna for routing / classification — output is roughly 8–20× cheaper than the flagship.',
+      'Enable cached input — OpenAI auto-caches prefix repeats for ~90% off the standard input rate.',
+      'Route non-urgent jobs through the Batch API for 50% off (24-hour SLA, no queue rate-limits).',
+      'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
+      'ChatGPT Plus ($20/mo) does NOT replace API access — high-volume workloads still need the API.',
+    ],
+
     // DeepSeekSection copy
     deepseekOffPeakTitle: 'Off-peak hours, explained',
     deepseekOffPeakBody:
@@ -457,6 +496,15 @@ export const en = {
     deepseekCacheTitle: 'Prompt-cache pricing',
     deepseekCacheBody:
       'DeepSeek cache hits are aggressive — both V4.1-Flash and V4-Pro drop cached input by ~99% from the standard rate. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
+
+    // ChatGPTSection copy
+    chatgptBatchTitle: 'Batch API · 50% off',
+    chatgptBatchBody:
+      "OpenAI's Batch API processes requests asynchronously with a 24-hour SLA at half the standard rate — both input and output bill at 50%. You submit a JSONL file of requests, poll for completion, and there are no rate limits on the queue. Ideal for non-urgent workloads: evals, bulk summarization, dataset generation, and large backfills.",
+    chatgptBatchBadge: '50% off · 24-hour SLA · no queue rate-limits',
+    chatgptCacheTitle: 'Prompt caching · ~90% off',
+    chatgptCacheBody:
+      'OpenAI automatically caches prompt prefixes (≥1,024 tokens) for 5–10 minutes (longer on GPT-5/6). Cached reads bill at roughly 10% of the standard input rate. For repeat-prefix workloads (system prompts, tool schemas, large documents) caching is the single biggest cost lever — most production stacks see a 50–80% input reduction once caching is on.',
 
     // Data freshness + API link
     freshness: 'Prices verified {date}. Source: official provider pricing pages.',

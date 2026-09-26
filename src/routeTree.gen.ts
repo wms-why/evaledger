@@ -21,6 +21,7 @@ import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$loc
 import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
 import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
+import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './routes/{-$locale}/chatgpt-api-pricing'
 import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
 import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json'
 import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
@@ -112,6 +113,12 @@ const Char123LocaleChar125ClaudeTokenCostCalculatorRoute =
   Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport.update({
     id: '/claude-token-cost-calculator',
     path: '/claude-token-cost-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ChatgptApiPricingRoute =
+  Char123LocaleChar125ChatgptApiPricingRouteImport.update({
+    id: '/chatgpt-api-pricing',
+    path: '/chatgpt-api-pricing',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125ChangelogRoute =
@@ -250,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
+  '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
@@ -284,6 +292,7 @@ export interface FileRoutesByTo {
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
+  '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
@@ -321,6 +330,7 @@ export interface FileRoutesById {
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
+  '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin/waitlist.csv'
     | '/api/prices.json'
     | '/{-$locale}/changelog'
+    | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/admin/waitlist.csv'
     | '/api/prices.json'
     | '/{-$locale}/changelog'
+    | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
@@ -429,6 +441,7 @@ export interface FileRouteTypes {
     | '/admin/waitlist.csv'
     | '/api/prices.json'
     | '/{-$locale}/changelog'
+    | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       path: '/claude-token-cost-calculator'
       fullPath: '/{-$locale}/claude-token-cost-calculator'
       preLoaderRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/chatgpt-api-pricing': {
+      id: '/{-$locale}/chatgpt-api-pricing'
+      path: '/chatgpt-api-pricing'
+      fullPath: '/{-$locale}/chatgpt-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125ChatgptApiPricingRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/changelog': {
@@ -740,6 +760,7 @@ const Char123LocaleChar125AdminRouteRouteWithChildren =
 interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125AdminRouteRoute: typeof Char123LocaleChar125AdminRouteRouteWithChildren
   Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
+  Char123LocaleChar125ChatgptApiPricingRoute: typeof Char123LocaleChar125ChatgptApiPricingRoute
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   Char123LocaleChar125DeepseekApiPricingRoute: typeof Char123LocaleChar125DeepseekApiPricingRoute
   Char123LocaleChar125OpenrouterPricingCalculatorRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
@@ -765,6 +786,8 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125AdminRouteRoute:
       Char123LocaleChar125AdminRouteRouteWithChildren,
     Char123LocaleChar125ChangelogRoute: Char123LocaleChar125ChangelogRoute,
+    Char123LocaleChar125ChatgptApiPricingRoute:
+      Char123LocaleChar125ChatgptApiPricingRoute,
     Char123LocaleChar125ClaudeTokenCostCalculatorRoute:
       Char123LocaleChar125ClaudeTokenCostCalculatorRoute,
     Char123LocaleChar125DeepseekApiPricingRoute:

@@ -13,7 +13,7 @@ interface RelatedItem {
 
 interface RelatedCalculatorsProps {
   /** Exclude the current page from the list. */
-  exclude?: 'token' | 'openrouter' | 'claude' | 'deepseek'
+  exclude?: 'token' | 'openrouter' | 'claude' | 'deepseek' | 'chatgpt'
 }
 
 /**
@@ -23,7 +23,7 @@ interface RelatedCalculatorsProps {
 export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
   const { t } = useTranslation()
 
-  const all: Record<'token' | 'openrouter' | 'claude' | 'deepseek', RelatedItem> = {
+  const all: Record<'token' | 'openrouter' | 'claude' | 'deepseek' | 'chatgpt', RelatedItem> = {
     token: {
       titleKey: 'calculator.h1Token',
       descKey: 'calculator.subtitleToken',
@@ -44,10 +44,15 @@ export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
       descKey: 'calculator.subtitleDeepseek',
       to: '/{-$locale}/deepseek-api-pricing',
     },
+    chatgpt: {
+      titleKey: 'calculator.h1Chatgpt',
+      descKey: 'calculator.subtitleChatgpt',
+      to: '/{-$locale}/chatgpt-api-pricing',
+    },
   }
 
   const items = (Object.entries(all) as [
-    'token' | 'openrouter' | 'claude' | 'deepseek',
+    'token' | 'openrouter' | 'claude' | 'deepseek' | 'chatgpt',
     RelatedItem,
   ][])
     .filter(([k]) => k !== exclude)
