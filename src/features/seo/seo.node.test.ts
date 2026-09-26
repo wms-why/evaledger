@@ -11,12 +11,15 @@ test('localizePath: en no prefix, zh prefixed', () => {
   expect(localizePath('zh', '/sponsor')).toBe('/zh/sponsor')
 })
 
-test('robots disallows app/admin/api + lists sitemap', () => {
+test('robots disallows app/admin/api + allows prices.json + lists sitemap', () => {
   const r = buildRobots(origin)
   expect(r).toContain('Disallow: /*/app')
   expect(r).toContain('Disallow: /app')
   expect(r).toContain('Disallow: /*/admin')
-  expect(r).toContain('Disallow: /api')
+  expect(r).toContain('Disallow: /api/')
+  // /api/prices.json is the agent-facing price feed — must remain crawlable
+  // so GPTBot / ClaudeBot / PerplexityBot can ingest it.
+  expect(r).toContain('Allow: /api/prices.json')
   expect(r).toContain(`Sitemap: ${origin}/sitemap.xml`)
 })
 
@@ -34,6 +37,9 @@ test('sitemap lists both locales of public pages with hreflang', () => {
   expect(xml).toContain(`<loc>${origin}/zh/changelog</loc>`)
   expect(xml).toContain(`<loc>${origin}/sponsor</loc>`)
   expect(xml).toContain(`<loc>${origin}/zh/sponsor</loc>`)
+  // DeepSeek long-tail page — must be in the sitemap for indexing.
+  expect(xml).toContain(`<loc>${origin}/deepseek-api-pricing</loc>`)
+  expect(xml).toContain(`<loc>${origin}/zh/deepseek-api-pricing</loc>`)
   expect(xml).not.toContain(`${origin}/pricing`)
   expect(xml).not.toContain(`${origin}/zh/pricing`)
 })

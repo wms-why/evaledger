@@ -483,6 +483,13 @@ export const REGISTRY: ModelRegistry = {
     },
 
     // ───────────────────────── DeepSeek ─────────────────────────
+    // Off-peak schedule: Mon–Fri (excluding Chinese public holidays). Peak
+    // hours are 01:00–04:00 and 06:00–10:00 UTC; all other times are
+    // off-peak. Off-peak rates are 50% of peak (NOT 10× — that was the old
+    // copy and was wrong).
+    // TODO: re-verify off-peak window + multiplier at
+    // https://platform.deepseek.com/api-docs/pricing/quick_start/pricing
+    // before next REGISTRY bump.
     {
       id: 'deepseek-flash',
       provider: 'deepseek',
@@ -496,7 +503,8 @@ export const REGISTRY: ModelRegistry = {
       peakOffPeak: {
         peak: { inputPricePer1M: 0.3, outputPricePer1M: 1.2 },
         offPeak: { inputPricePer1M: 0.15, outputPricePer1M: 0.6 },
-        offPeakNote: '16:30–00:30 UTC, daily',
+        offPeakNote:
+          'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times. // TODO re-verify',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
       lastVerified: '2026-09-26',
@@ -514,7 +522,8 @@ export const REGISTRY: ModelRegistry = {
       peakOffPeak: {
         peak: { inputPricePer1M: 1.32, outputPricePer1M: 3.96 },
         offPeak: { inputPricePer1M: 0.66, outputPricePer1M: 1.98 },
-        offPeakNote: '16:30–00:30 UTC, daily',
+        offPeakNote:
+          'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times. // TODO re-verify',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
       lastVerified: '2026-09-26',
@@ -532,7 +541,8 @@ export const REGISTRY: ModelRegistry = {
       peakOffPeak: {
         peak: { inputPricePer1M: 0.28, outputPricePer1M: 0.42 },
         offPeak: { inputPricePer1M: 0.028, outputPricePer1M: 0.042 },
-        offPeakNote: '16:30–00:30 UTC, daily',
+        offPeakNote:
+          'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times. // TODO re-verify',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
       lastVerified: '2026-09-26',
@@ -551,7 +561,8 @@ export const REGISTRY: ModelRegistry = {
       peakOffPeak: {
         peak: { inputPricePer1M: 0.55, outputPricePer1M: 2.19 },
         offPeak: { inputPricePer1M: 0.14, outputPricePer1M: 0.55 },
-        offPeakNote: '16:30–00:30 UTC, daily',
+        offPeakNote:
+          'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times. // TODO re-verify',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
       lastVerified: '2026-09-26',

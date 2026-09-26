@@ -1,9 +1,11 @@
 export const en = {
   common: { appName: 'TokenCalculator', toggleTheme: 'Toggle theme', language: 'Language' },
   home: {
-    title: 'Token Cost Calculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
+    title: 'TokenCalculator — Free LLM Token Cost Calculator',
+    calculatorTitle: 'Token Cost Calculator — Compare Every LLM',
     openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
     claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
+    deepseekTitle: 'DeepSeek API Pricing — V4 & V3 Per-Token Rates',
     greeting: 'Hello, {name}!',
   },
   changelog: {
@@ -158,6 +160,12 @@ export const en = {
     ctaTitle: 'Ready to compare your LLM bill?',
     ctaBody: 'Paste your prompt, set your usage, see the cost across every model — in seconds. No signup.',
     ctaButton: 'Open the calculator',
+    brandMetaDescription:
+      'TokenCalculator is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
+    calculatorMetaDescription:
+      'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
+    deepseekMetaDescription:
+      'DeepSeek V4-Pro ($1.32 input / $3.96 output per 1M) and V4.1-Flash ($0.30 / $1.20) pricing — plus V3.2, off-peak hours, prompt cache, and comparison to GPT-5 / Claude / Gemini. Updated {date}.',
     homeMetaDescription:
       'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
     openrouterMetaDescription:
@@ -235,6 +243,8 @@ export const en = {
     subtitleOpenrouter: 'See what your tokens actually cost after the OpenRouter markup — and when going direct to the provider is cheaper.',
     h1Claude: 'Claude Token Cost Calculator',
     subtitleClaude: 'Cost per token and monthly estimates for Claude Opus, Sonnet, and Haiku — with the Anthropic API.',
+    h1Deepseek: 'DeepSeek API Pricing',
+    subtitleDeepseek: 'V4-Pro and V4.1-Flash per-token rates, off-peak hours, and prompt-cache savings — compared to Claude, GPT, and Gemini.',
 
     // Input form
     tabPaste: 'Paste text',
@@ -317,7 +327,7 @@ export const en = {
     tldrItems: [
       'Output tokens usually cost 4–8× more than input — keeping replies short is the highest-leverage cost saver.',
       'Anthropic prompt caching drops repeat-input cost by ~90%; OpenAI cached input drops it by ~90% on GPT-5.',
-      'DeepSeek off-peak hours (16:30–00:30 UTC) are 10× cheaper than peak — schedule batch jobs accordingly.',
+      'DeepSeek off-peak hours are ~50% cheaper than peak — schedule batch jobs accordingly.',
       'Gemini 2.5 Pro doubles its input price above 200K context — large-context calls cost roughly twice as much.',
     ],
 
@@ -346,7 +356,7 @@ export const en = {
       'Use a smaller model for routing / classification — Haiku 4.5 / GPT-5 nano cost roughly 5–10× less than the flagship.',
       'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached input drops the rate by ~90%.',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
-      'Batch non-urgent jobs into DeepSeek off-peak hours (16:30–00:30 UTC) for ~10× cheaper inference.',
+      'Batch non-urgent jobs into DeepSeek off-peak hours for ~50% cheaper inference.',
       'Trim long context — Gemini 2.5 Pro doubles its input rate above 200K; chunk documents that don\'t need the rest.',
     ],
 
@@ -404,6 +414,49 @@ export const en = {
     claudeFaq7A: 'Claude Haiku 4.5 is the cheapest at $1 / $5 per 1M tokens. For most classification and short-answer workloads it matches Sonnet 4.5 on quality at a third of the price. Sonnet 4.5 ($3 / $15) is the mid-tier; Opus 4.5 ($5 / $25) is the flagship.',
     claudeFaq8Q: 'How accurate is this calculator?',
     claudeFaq8A: 'Token counts are approximated (the Claude tokenizer is not yet bundled with this tool — counts use a CJK-aware character heuristic, accurate to within ~10% for English, ~5% for Chinese). Prices are sourced from claude.com/pricing and re-verified regularly. Always check the source link on each card before relying on a number for billing.',
+
+    // DeepSeek-specific FAQ (8 entries)
+    deepseekFaq1Q: 'How much does the DeepSeek API cost?',
+    deepseekFaq1A: 'DeepSeek V4-Pro is $1.32 per 1M input tokens / $3.96 per 1M output tokens. DeepSeek V4.1-Flash is $0.30 / $1.20. New accounts get a small free credit to start; top-up minimums start at $5. Numbers above are re-verified against platform.deepseek.com/api-docs/pricing.',
+    deepseekFaq2Q: 'When is DeepSeek off-peak?',
+    deepseekFaq2A: 'Off-peak runs Monday through Friday outside the peak windows (UTC 01:00–04:00 and 06:00–10:00) and all day on weekends and Chinese public holidays. During off-peak, both input and output are billed at 50% of the peak rate. The schedule is published at platform.deepseek.com.',
+    deepseekFaq3Q: 'Is DeepSeek cheaper than GPT-5?',
+    deepseekFaq3A: 'Yes — at peak, DeepSeek V4.1-Flash output is $1.20 per 1M tokens versus GPT-5 output at roughly $10 per 1M (~8× cheaper on output). V4-Pro output at $3.96 is roughly 2.5× cheaper than GPT-5 output. For high-volume workloads the difference dominates every other cost lever.',
+    deepseekFaq4Q: 'What is DeepSeek V4.1-Flash?',
+    deepseekFaq4A: 'V4.1-Flash is the fast non-reasoning model in the V4 family: 1M context window, $0.30 / $1.20 per 1M, with a $0.003 cache-hit price on input. It is the cheapest model in the active registry — input is roughly 17× cheaper than Claude Opus 4.5 and output is roughly 21× cheaper.',
+    deepseekFaq5Q: 'What is DeepSeek V4-Pro?',
+    deepseekFaq5A: 'V4-Pro is the flagship reasoning model: 1M context window, $1.32 / $3.96 per 1M, with a $0.022 cache-hit price. It benchmarks in the same tier as Claude Sonnet 4.5 on most reasoning evals while costing roughly 2.3× less. Use it when you need Sonnet-class reasoning at sub-Haiku price.',
+    deepseekFaq6Q: 'Does DeepSeek have prompt caching?',
+    deepseekFaq6A: 'Yes. V4.1-Flash cache hits are $0.003 per 1M input tokens — a 99% drop from $0.30/M standard. V4-Pro cache hits are $0.022 per 1M, a 98% drop from $1.32/M. For repeat-prefix workloads (system prompts, tool schemas, large document context) caching is the single biggest cost lever.',
+    deepseekFaq7Q: 'Is the DeepSeek API the same as OpenRouter?',
+    deepseekFaq7A: 'No — going direct to platform.deepseek.com bills at the official rate; OpenRouter adds a small markup (typically ~5%) for routing, billing, and automatic fallback. For single-model high-volume workloads direct is cheaper; OpenRouter wins when you need fallback across providers or a single invoice for many models.',
+    deepseekFaq8Q: 'How do I get a DeepSeek API key?',
+    deepseekFaq8A: 'Sign up at platform.deepseek.com, complete the minimum top-up (currently $5), and generate a key from the API Keys page in the console. The calculator above always shows the current per-million rates, and /api/prices.json exposes the same numbers in a machine-readable form for AI agents.',
+
+    // DeepSeek-specific TLDR + Tips (separate arrays so the page can quote
+    // DeepSeek-specific numbers without diluting the cross-provider page).
+    deepseekTldrItems: [
+      'DeepSeek V4.1-Flash is $0.30 input / $1.20 output per 1M tokens — roughly 8× cheaper than GPT-5 on output.',
+      'V4-Pro is $1.32 / $3.96 per 1M — comparable to Claude Sonnet 4.5 on benchmarks, ~2.3× cheaper on output.',
+      'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is 50% of peak — schedule batch jobs accordingly.',
+      'Cache hits drop V4.1-Flash input from $0.30/M to $0.003/M — 99% off. Cache aggressively when the system prompt or tool schema repeats.',
+    ],
+    deepseekTips: [
+      'Use V4.1-Flash for routing / classification — output is $1.20/M vs $3.96/M on V4-Pro, ~3.3× cheaper.',
+      'Cache repeat prefixes — V4.1-Flash cache hit is $0.003/M, a 99% drop from $0.30/M. The single biggest cost saver for repeat-prompt workloads.',
+      'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC) for ~50% cheaper inference.',
+      'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
+      'Going direct to DeepSeek\'s API beats OpenRouter by a few percent. OpenRouter wins on automatic fallback + a single invoice.',
+    ],
+
+    // DeepSeekSection copy
+    deepseekOffPeakTitle: 'Off-peak hours, explained',
+    deepseekOffPeakBody:
+      'Mon–Fri (excluding Chinese public holidays), DeepSeek bills at the full peak rate only during 01:00–04:00 and 06:00–10:00 UTC. All other times — including all weekend hours — are off-peak and bill at 50% of peak for both input and output.',
+    deepseekOffPeakBadge: 'Off-peak = 50% of peak · Mon–Fri · weekends & Chinese holidays all-day off-peak',
+    deepseekCacheTitle: 'Prompt-cache pricing',
+    deepseekCacheBody:
+      'DeepSeek cache hits are aggressive — both V4.1-Flash and V4-Pro drop cached input by ~99% from the standard rate. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
 
     // Data freshness + API link
     freshness: 'Prices verified {date}. Source: official provider pricing pages.',

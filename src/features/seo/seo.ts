@@ -10,20 +10,26 @@ const PUBLIC_PATHS = [
   '/token-cost-calculator',
   '/openrouter-pricing-calculator',
   '/claude-token-cost-calculator',
+  '/deepseek-api-pricing',
 ] as const
 
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' }
 
 export function buildRobots(origin: string): string {
+  // /api/prices.json is the machine-readable price feed advertised on every
+  // page's FAQ — it MUST stay crawlable for GPTBot / ClaudeBot / PerplexityBot,
+  // so we explicitly Allow it before the broader /api/ Disallow.
+  // Specific Allow beats broader Disallow per the robots.txt spec.
   return [
     'User-agent: *',
     'Allow: /',
+    'Allow: /api/prices.json',
     'Disallow: /*/app',
     'Disallow: /app',
     'Disallow: /*/admin',
     'Disallow: /admin',
-    'Disallow: /api',
+    'Disallow: /api/',
     `Sitemap: ${origin}/sitemap.xml`,
     '',
   ].join('\n')

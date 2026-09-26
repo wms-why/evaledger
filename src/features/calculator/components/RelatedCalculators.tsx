@@ -13,17 +13,17 @@ interface RelatedItem {
 
 interface RelatedCalculatorsProps {
   /** Exclude the current page from the list. */
-  exclude?: 'token' | 'openrouter' | 'claude'
+  exclude?: 'token' | 'openrouter' | 'claude' | 'deepseek'
 }
 
 /**
- * Internal cross-linking between the three calculator URLs. Renders only
- * the links relevant to the current page so we don't link to ourselves.
+ * Internal cross-linking between the calculator URLs. Renders only the links
+ * relevant to the current page so we don't link to ourselves.
  */
 export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
   const { t } = useTranslation()
 
-  const all: Record<'token' | 'openrouter' | 'claude', RelatedItem> = {
+  const all: Record<'token' | 'openrouter' | 'claude' | 'deepseek', RelatedItem> = {
     token: {
       titleKey: 'calculator.h1Token',
       descKey: 'calculator.subtitleToken',
@@ -39,9 +39,17 @@ export function RelatedCalculators({ exclude }: RelatedCalculatorsProps) {
       descKey: 'calculator.subtitleClaude',
       to: '/{-$locale}/claude-token-cost-calculator',
     },
+    deepseek: {
+      titleKey: 'calculator.h1Deepseek',
+      descKey: 'calculator.subtitleDeepseek',
+      to: '/{-$locale}/deepseek-api-pricing',
+    },
   }
 
-  const items = (Object.entries(all) as ['token' | 'openrouter' | 'claude', RelatedItem][])
+  const items = (Object.entries(all) as [
+    'token' | 'openrouter' | 'claude' | 'deepseek',
+    RelatedItem,
+  ][])
     .filter(([k]) => k !== exclude)
     .map(([, v]) => v)
 

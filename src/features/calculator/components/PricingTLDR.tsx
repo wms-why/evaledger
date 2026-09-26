@@ -1,14 +1,20 @@
 import { useTranslation } from '@/features/i18n/provider'
 import { Sparkles } from 'lucide-react'
 
+interface PricingTLDRProps {
+  /** Override the i18n key for the bullet list. Defaults to
+   *  'calculator.tldrItems' (the shared TLDR used by every calculator page). */
+  itemsKey?: string
+}
+
 /**
  * 3-5 bullet "quick takeaways" strip. Designed to be quoted verbatim by
  * Google for the featured-snippet position — keep each item a complete
  * sentence that answers one specific question.
  */
-export function PricingTLDR() {
+export function PricingTLDR({ itemsKey = 'calculator.tldrItems' }: PricingTLDRProps = {}) {
   const { t, lookup } = useTranslation()
-  const items = lookup<string[]>('calculator.tldrItems') ?? []
+  const items = lookup<string[]>(itemsKey) ?? []
   const title = t('calculator.tldrTitle')
 
   return (

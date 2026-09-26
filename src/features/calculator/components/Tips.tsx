@@ -1,13 +1,19 @@
 import { useTranslation } from '@/features/i18n/provider'
 
+interface TipsProps {
+  /** Override the i18n key for the bullet list. Defaults to 'calculator.tips'
+   *  (the shared money-saving tips used by every calculator page). */
+  itemsKey?: string
+}
+
 /**
  * "How to bring the bill down" — numbered tips. Each line must contain a
  * concrete number (cache-hit %, model price, hour window) so the tip is
  * quotable on its own and useful in featured snippets.
  */
-export function Tips() {
+export function Tips({ itemsKey = 'calculator.tips' }: TipsProps = {}) {
   const { t, lookup } = useTranslation()
-  const items: string[] = lookup<string[]>('calculator.tips') ?? []
+  const items: string[] = lookup<string[]>(itemsKey) ?? []
 
   return (
     <section className="border-t border-border py-12">

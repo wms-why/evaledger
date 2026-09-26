@@ -24,8 +24,8 @@ export const Route = createFileRoute('/{-$locale}/token-cost-calculator')({
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const title = dict.home.title
-    const description = translate(dict, 'marketing.homeMetaDescription', {
+    const title = dict.home.calculatorTitle
+    const description = translate(dict, 'marketing.calculatorMetaDescription', {
       date: REGISTRY.fetchedAt,
     })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/token-cost-calculator`

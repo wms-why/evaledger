@@ -13,7 +13,8 @@ test('stripDefaultLocalePrefix：去掉 /en 前缀且保留 query 和 hash', () 
 })
 
 test('translate 解析嵌套 key', () => {
-  expect(translate(en, 'home.title')).toBe('Token Cost Calculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek')
+  expect(translate(en, 'home.title')).toBe('TokenCalculator — Free LLM Token Cost Calculator')
+  expect(translate(en, 'home.calculatorTitle')).toBe('Token Cost Calculator — Compare Every LLM')
 })
 test('translate 插值 {name}', () => {
   expect(translate(en, 'home.greeting', { name: 'Yang' })).toBe('Hello, Yang!')

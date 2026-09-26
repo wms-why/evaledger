@@ -1,8 +1,7 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
-import { dictionaries, translate } from '@/features/i18n/locale'
-import type { Locale } from '@/features/i18n/locale'
+import { dictionaries, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Hero } from '@/components/marketing/hero'
 import { FAQ } from '@/components/marketing/faq'
@@ -12,7 +11,6 @@ import { Calculator } from '@/features/calculator/calculator'
 import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { REGISTRY } from '@/features/calculator/model-prices'
 
 const rootRoute = getRouteApi('__root__')
 
@@ -22,9 +20,7 @@ export const Route = createFileRoute('/{-$locale}/')({
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const description = translate(dictionaries[locale], 'marketing.homeMetaDescription', {
-      date: REGISTRY.fetchedAt,
-    })
+    const description = dict.marketing.brandMetaDescription
     const title = dict.home.title
     const { meta, links, scripts } = localeHead({
       origin,

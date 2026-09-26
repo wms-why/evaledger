@@ -3,9 +3,11 @@ import type { Dict } from './en'
 export const zh: Dict = {
   common: { appName: 'TokenCalculator', toggleTheme: '切换主题', language: '语言' },
   home: {
-    title: 'Token 成本计算器 — 比对 OpenAI、Claude、Gemini 与 DeepSeek',
+    title: 'TokenCalculator — 免费 LLM Token 成本计算器',
+    calculatorTitle: 'Token 成本计算器 — 一站比对所有 LLM',
     openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
     claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
+    deepseekTitle: 'DeepSeek API 价格 — V4 与 V3 每 token 单价',
     greeting: '你好，{name}！',
   },
   changelog: {
@@ -145,6 +147,12 @@ export const zh: Dict = {
     ctaTitle: '准备好比对你的 LLM 账单了吗?',
     ctaBody: '粘贴你的提示词、填上用量,几秒看清每个模型的价格——无需注册。',
     ctaButton: '打开计算器',
+    brandMetaDescription:
+      'TokenCalculator 是一个免费 LLM token 成本计算器,覆盖 OpenAI、Claude、Gemini、DeepSeek 与 Grok。OpenAI 用真实分词器,其余高精度近似估算。无需注册。',
+    calculatorMetaDescription:
+      '免费计算器,一站比对 OpenAI、Claude、Gemini、DeepSeek 与 Grok 的 token 价格。粘贴提示词,几秒看清每个模型的成本。更新于 {date}。',
+    deepseekMetaDescription:
+      'DeepSeek V4-Pro($1.32 输入 / $3.96 输出 每 1M)、V4.1-Flash($0.30 / $1.20) 价格——含 V3.2、非高峰时段、prompt cache,并对比 GPT-5 / Claude / Gemini。更新于 {date}。',
     homeMetaDescription:
       '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 {date}。',
     openrouterMetaDescription:
@@ -222,6 +230,8 @@ export const zh: Dict = {
     subtitleOpenrouter: '看清 OpenRouter 加价后你的 token 实际成本——以及什么时候直连官方反而更划算。',
     h1Claude: 'Claude Token 成本计算器',
     subtitleClaude: 'Claude Opus、Sonnet、Haiku 的每 token 成本与月度估算——走 Anthropic API。',
+    h1Deepseek: 'DeepSeek API 价格',
+    subtitleDeepseek: 'V4-Pro 与 V4.1-Flash 每 token 单价、非高峰时段与 prompt cache 省费——对比 Claude、GPT、Gemini。',
 
     // Input form
     tabPaste: '粘贴文本',
@@ -304,7 +314,7 @@ export const zh: Dict = {
     tldrItems: [
       '输出 token 通常比输入贵 4–8 倍——压缩回复长度是最划算的省钱方式。',
       'Anthropic prompt cache 让重复输入便宜约 90%;OpenAI GPT-5 缓存输入也便宜约 90%。',
-      'DeepSeek 非高峰时段(UTC 16:30–00:30)比高峰便宜约 10 倍——批量任务排进去。',
+      'DeepSeek 非高峰时段比高峰便宜约 50%——批量任务排进去。',
       'Gemini 2.5 Pro 在上下文超过 200K 后输入价翻倍——大上下文调用成本大约翻一番。',
     ],
 
@@ -333,7 +343,7 @@ export const zh: Dict = {
       '路由 / 分类用小模型——Haiku 4.5 / GPT-5 nano 比旗舰便宜 5–10 倍。',
       '缓存重复前缀(系统提示词、工具 schema)——Anthropic 缓存读便宜约 90%。',
       '显式设 max_tokens——输出是贵的,封顶防止回复失控。',
-      '非紧急任务排进 DeepSeek 非高峰(UTC 16:30–00:30),推理便宜约 10 倍。',
+      '非紧急任务排进 DeepSeek 非高峰时段,推理便宜约 50%。',
       '砍长上下文——Gemini 2.5 Pro 输入在 200K 以上翻倍;不需要的全部分块丢掉。',
     ],
 
@@ -395,5 +405,45 @@ export const zh: Dict = {
     claudeFaq7A: 'Claude Haiku 4.5 最便宜,$1 / $5 每 1M token。绝大多数分类和短答工作负载上,Haiku 4.5 的质量对得起 Sonnet 4.5 三分之一的价。Sonnet 4.5($3 / $15)是中间档;Opus 4.5($5 / $25)是旗舰。',
     claudeFaq8Q: '这个计算器准吗?',
     claudeFaq8A: 'Token 数是近似(Claude 分词器还没集成到这个工具——CJK 字符启发式,英文误差 ~10% 内,中文 ~5% 内)。价格取自 claude.com/pricing,定期复核。要对账前请点每张卡的源链接核对。',
+
+    // DeepSeek 专属 FAQ(8 条)
+    deepseekFaq1Q: 'DeepSeek API 多少钱?',
+    deepseekFaq1A: 'DeepSeek V4-Pro $1.32 每 1M 输入 / $3.96 每 1M 输出;V4.1-Flash $0.30 / $1.20。新账号有少量免费额度起步;最低充值 $5。上方数字按 platform.deepseek.com/api-docs/pricing 定期复核。',
+    deepseekFaq2Q: 'DeepSeek 非高峰是什么时段?',
+    deepseekFaq2A: '周一至周五(不含中国法定假日),高峰时段为 UTC 01:00–04:00 与 06:00–10:00,其余时段按高峰价 50% 收费。周末与所有中国法定假日全天按非高峰计费。时段表发布在 platform.deepseek.com。',
+    deepseekFaq3Q: 'DeepSeek 比 GPT-5 便宜吗?',
+    deepseekFaq3A: '便宜——按高峰价,DeepSeek V4.1-Flash 输出 $1.20/M 对 GPT-5 输出约 $10/M,输出便宜约 8 倍。V4-Pro 输出 $3.96 比 GPT-5 输出便宜约 2.5 倍。高并发负载下,这一项差距压过所有其他省费手段。',
+    deepseekFaq4Q: 'DeepSeek V4.1-Flash 是什么?',
+    deepseekFaq4A: 'V4.1-Flash 是 V4 系列里的快速非推理模型:1M 上下文、$0.30 / $1.20 每 1M,缓存命中 $0.003。是当前在册模型里最便宜的——输入比 Claude Opus 4.5 便宜约 17 倍,输出便宜约 21 倍。',
+    deepseekFaq5Q: 'DeepSeek V4-Pro 是什么?',
+    deepseekFaq5A: 'V4-Pro 是旗舰推理模型:1M 上下文、$1.32 / $3.96 每 1M,缓存命中 $0.022。多数推理基准上和 Claude Sonnet 4.5 同档,价格却便宜约 2.3 倍——用 Sonnet 级的推理能力、付 Haiku 级的钱。',
+    deepseekFaq6Q: 'DeepSeek 有 prompt cache 吗?',
+    deepseekFaq6A: '有。V4.1-Flash cache hit $0.003 每 1M 输入——比 $0.30/M 标准输入便宜 99%。V4-Pro cache hit $0.022 每 1M,比 $1.32/M 便宜 98%。重复前缀(系统提示词、工具 schema、大文档)的工作负载,缓存是最大的单一省费项。',
+    deepseekFaq7Q: 'DeepSeek 和 OpenRouter 一样吗?',
+    deepseekFaq7A: '不一样——直连 platform.deepseek.com 按官方价计费;OpenRouter 在之上加少量加价(典型约 5%)以提供路由、计费、自动 fallback。单模型高并发负载直连更便宜;需要跨厂商 fallback 或单一发票管多模型时,OpenRouter 赢。',
+    deepseekFaq8Q: '怎么拿 DeepSeek API key?',
+    deepseekFaq8A: '在 platform.deepseek.com 注册、最低充值 $5,在控制台 API Keys 页生成 key。上方计算器随时显示当前每百万 token 单价,/api/prices.json 以机器可读形式暴露同一份数据,给 AI agent 用。',
+
+    // DeepSeek 专属 TLDR + Tips(独立数组,不和跨厂商页混)
+    deepseekTldrItems: [
+      'DeepSeek V4.1-Flash 单价 $0.30 输入 / $1.20 输出每 1M token——比 GPT-5 输出便宜约 8 倍。',
+      'V4-Pro $1.32 输入 / $3.96 输出——综合能力对标 Claude Sonnet 4.5,输出便宜约 2.3 倍。',
+      '非高峰(周一至周五 UTC 01:00–04:00 与 06:00–10:00 之外 + 周末与全部中国法定假日)按高峰 50% 计费——批量任务排进去。',
+      'V4.1-Flash 缓存命中 $0.003/M,比标准 $0.30/M 便宜 99%——系统提示词、工具 schema 能缓存就缓存。',
+    ],
+    deepseekTips: [
+      '路由 / 分类用 V4.1-Flash——输出 $1.20/M 对 V4-Pro 的 $3.96/M,便宜约 3.3 倍。',
+      '缓存重复前缀——V4.1-Flash cache hit $0.003/M,比 $0.30/M 标准输入便宜 99%。重复提示词的最大单一省费项。',
+      '非紧急任务排进非高峰(周一至周五 UTC 01:00–04:00 与 06:00–10:00 之外),推理便宜约 50%。',
+      '显式设 max_tokens——输出是贵的,封顶防止回复失控。',
+      '直连 DeepSeek 官方 API 比 OpenRouter 便宜几个百分点;OpenRouter 赢在跨厂商 fallback + 单一发票。',
+    ],
+
+    // DeepSeekSection 文案
+    deepseekOffPeakTitle: '非高峰时段说明',
+    deepseekOffPeakBody: '周一至周五(不含中国法定假日),DeepSeek 仅在 UTC 01:00–04:00 与 06:00–10:00 按全高峰计费;其余时段——含周末全天——按高峰 50% 计费。输入与输出都打 5 折。',
+    deepseekOffPeakBadge: '非高峰 = 高峰 5 折 · 周一至周五 · 周末与全部中国法定假日全天非高峰',
+    deepseekCacheTitle: 'Prompt cache 价格',
+    deepseekCacheBody: 'DeepSeek 缓存 hit 折扣激进——V4.1-Flash 与 V4-Pro 的缓存输入都比标准输入便宜约 99%。任何带重复前缀(系统提示词、工具定义、文档上下文)的工作负载,缓存前缀都是最划算的省费手段。',
   },
 }

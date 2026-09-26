@@ -19,6 +19,7 @@ import { Route as Char123LocaleChar125TermsRouteImport } from './routes/{-$local
 import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
 import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
 import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
+import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
 import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
 import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json'
@@ -99,6 +100,12 @@ const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
   Char123LocaleChar125OpenrouterPricingCalculatorRouteImport.update({
     id: '/openrouter-pricing-calculator',
     path: '/openrouter-pricing-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125DeepseekApiPricingRoute =
+  Char123LocaleChar125DeepseekApiPricingRouteImport.update({
+    id: '/deepseek-api-pricing',
+    path: '/deepseek-api-pricing',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125ClaudeTokenCostCalculatorRoute =
@@ -244,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -313,6 +322,7 @@ export interface FileRoutesById {
   '/api/prices.json': typeof ApiPricesDotjsonRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/api/prices.json'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/api/prices.json'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -418,6 +430,7 @@ export interface FileRouteTypes {
     | '/api/prices.json'
     | '/{-$locale}/changelog'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -526,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/openrouter-pricing-calculator'
       fullPath: '/{-$locale}/openrouter-pricing-calculator'
       preLoaderRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/deepseek-api-pricing': {
+      id: '/{-$locale}/deepseek-api-pricing'
+      path: '/deepseek-api-pricing'
+      fullPath: '/{-$locale}/deepseek-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125DeepseekApiPricingRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/claude-token-cost-calculator': {
@@ -721,6 +741,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125AdminRouteRoute: typeof Char123LocaleChar125AdminRouteRouteWithChildren
   Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  Char123LocaleChar125DeepseekApiPricingRoute: typeof Char123LocaleChar125DeepseekApiPricingRoute
   Char123LocaleChar125OpenrouterPricingCalculatorRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   Char123LocaleChar125PrivacyRoute: typeof Char123LocaleChar125PrivacyRoute
   Char123LocaleChar125SponsorRoute: typeof Char123LocaleChar125SponsorRoute
@@ -746,6 +767,8 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125ChangelogRoute: Char123LocaleChar125ChangelogRoute,
     Char123LocaleChar125ClaudeTokenCostCalculatorRoute:
       Char123LocaleChar125ClaudeTokenCostCalculatorRoute,
+    Char123LocaleChar125DeepseekApiPricingRoute:
+      Char123LocaleChar125DeepseekApiPricingRoute,
     Char123LocaleChar125OpenrouterPricingCalculatorRoute:
       Char123LocaleChar125OpenrouterPricingCalculatorRoute,
     Char123LocaleChar125PrivacyRoute: Char123LocaleChar125PrivacyRoute,
