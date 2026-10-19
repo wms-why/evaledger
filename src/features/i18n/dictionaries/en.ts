@@ -653,7 +653,7 @@ export const en = {
     deepseekOffPeakBadge: 'Off-peak = 50% of peak · Mon–Fri · weekends & Chinese holidays all-day off-peak',
     deepseekCacheTitle: 'Prompt-cache pricing',
     deepseekCacheBody:
-      'DeepSeek cache hits are aggressive — both V4.1-Flash and V4-Pro drop cached input by ~99% from the standard rate. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
+      'DeepSeek cache hits are aggressive — V4.1-Flash drops cached input by 98% from the standard rate, V4-Pro by 97%. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
 
     // ChatGPTSection copy
     chatgptBatchTitle: 'Batch API · 50% off',

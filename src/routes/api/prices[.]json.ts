@@ -21,7 +21,12 @@ const handler = () => {
         sourceNote: REGISTRY.sourceNote,
         openRouterMarkup: REGISTRY.openRouterMarkup,
         modelCount: REGISTRY.models.length,
-        schemaVersion: 1,
+        // 2 = `pricingPeriod` added to every model entry, making explicit
+        // whether the top-level `inputPricePer1M` / `outputPricePer1M` are
+        // peak rates (DeepSeek) or flat rates (everyone else). Bump this
+        // whenever the payload shape changes — agents cache this feed for an
+        // hour and branch on the version.
+        schemaVersion: 2,
       },
       models: REGISTRY.models,
     },

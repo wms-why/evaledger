@@ -36,10 +36,22 @@ export interface LongContextTier {
   outputMultiplier: number
 }
 
+/** One period's rates within a peak/off-peak schedule. */
+export interface PeakOffPeakPrices {
+  inputPricePer1M: number
+  outputPricePer1M: number
+  /**
+   * Cache-hit rate for THIS period. Omitted when it is the same as the
+   * model's top-level `cachedInputPricePer1M` — which is the peak rate, so
+   * the peak period never needs to repeat it.
+   */
+  cachedInputPricePer1M?: number
+}
+
 /** DeepSeek-style peak/off-peak pricing. */
 export interface PeakOffPeakTier {
-  peak: { inputPricePer1M: number; outputPricePer1M: number }
-  offPeak: { inputPricePer1M: number; outputPricePer1M: number }
+  peak: PeakOffPeakPrices
+  offPeak: PeakOffPeakPrices
   /** Human-readable description of when off-peak applies (e.g. "16:30–00:30 UTC, daily"). */
   offPeakNote: string
 }

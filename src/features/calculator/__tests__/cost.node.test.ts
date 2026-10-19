@@ -72,6 +72,26 @@ describe('calculateCost', () => {
     expect(off.appliedRule).toBe('off-peak hours')
   })
 
+  it('prices cached input inside the period it is billed in', () => {
+    // DeepSeek publishes a cache-hit rate per period: $0.006 peak / $0.003
+    // off-peak for V4.1-Flash. The off-peak tier carries its own cache rate,
+    // so an off-peak cached quote is no longer billed at the peak cache rate.
+    const peak = calculateCost('deepseek-flash', 1_000_000, 1_000_000, {
+      peakHour: true,
+      useCachedInput: true,
+      now: NOW,
+    })
+    const off = calculateCost('deepseek-flash', 1_000_000, 1_000_000, {
+      peakHour: false,
+      useCachedInput: true,
+      now: NOW,
+    })
+    expect(peak.effectiveInputPricePer1M).toBeCloseTo(0.006, 4)
+    expect(off.effectiveInputPricePer1M).toBeCloseTo(0.003, 4)
+    expect(peak.totalCost).toBeCloseTo(1.206, 4) // 0.006 + 1.2
+    expect(off.totalCost).toBeCloseTo(0.603, 4) // 0.003 + 0.6
+  })
+
   it('throws for unknown model id', () => {
     expect(() => calculateCost('totally-fake-model', 1, 1)).toThrow(/Unknown model/)
   })

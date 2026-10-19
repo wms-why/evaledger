@@ -1,5 +1,5 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { jsonLd, localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, type Locale } from '@/features/i18n/locale'
@@ -25,14 +25,34 @@ export const Route = createFileRoute('/{-$locale}/token-calculator')({
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const { meta, links } = localeHead({
+    // This route renders a 5-pair subset of the shared FAQ list (see the
+    // <FAQ> call below) — the JSON-LD must carry exactly those pairs, in the
+    // same order, so the structured data and the visible copy agree.
+    const faqPairs: [string, string][] = [
+      [dict.calculator.faq1Q, dict.calculator.faq1A],
+      [dict.calculator.faq3Q, dict.calculator.faq3A],
+      [dict.calculator.faq4Q, dict.calculator.faq4A],
+      [dict.calculator.faq5Q, dict.calculator.faq5A],
+      [dict.calculator.faq8Q, dict.calculator.faq8A],
+    ]
+    const faq = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqPairs.map(([q, a]) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    }
+    const { meta, links, scripts } = localeHead({
       origin,
       locale,
       path: '/token-calculator',
       title: dict.leaderboard.tokenCalculator.title,
       description: dict.leaderboard.tokenCalculator.metaDescription,
+      scripts: [jsonLd(faq)],
     })
-    return { meta, links }
+    return { meta, links, scripts }
   },
   component: TokenCalculatorPage,
 })

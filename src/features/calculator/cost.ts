@@ -86,8 +86,15 @@ export function calculateCost(
   }
 
   // 4. Cached input replaces input rate (still subject to long-context / promo).
+  //    A peak/off-peak tier may carry its own cache-hit rate; when it does not,
+  //    fall back to the model's top-level rate, which is the peak rate.
   if (options.useCachedInput && model.cachedInputPricePer1M !== undefined) {
-    inputPrice = model.cachedInputPricePer1M
+    const tierCachePrice = model.peakOffPeak
+      ? (options.peakHour !== false
+          ? model.peakOffPeak.peak.cachedInputPricePer1M
+          : model.peakOffPeak.offPeak.cachedInputPricePer1M)
+      : undefined
+    inputPrice = tierCachePrice ?? model.cachedInputPricePer1M
     appliedRule = appliedRule === 'standard' ? 'cached input' : `${appliedRule} + cached input`
   }
 

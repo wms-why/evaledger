@@ -494,10 +494,11 @@ export const REGISTRY: ModelRegistry = {
     //     the 50% rule.
     //   - Top-level `inputPricePer1M` / `outputPricePer1M` are PEAK rates;
     //     `pricingPeriod: 'peak'` makes that explicit for the JSON API.
-    //   - `cachedInputPricePer1M` is also the PEAK cache-hit rate. calculateCost
-    //     does NOT switch it on peak/off-peak, so a flat peak-rate estimate is
-    //     the least-wrong choice: peak users are quoted exactly, off-peak users
-    //     are over-quoted rather than under-quoted.
+    //   - `cachedInputPricePer1M` is the PEAK cache-hit rate. The off-peak tier
+    //     carries its own `cachedInputPricePer1M` so a cached quote is priced
+    //     within the period it is billed in. The two delisted entries have no
+    //     verified off-peak cache rate, so they fall back to the peak rate —
+    //     which over-quotes them off-peak rather than under-quoting.
     {
       id: 'deepseek-flash',
       provider: 'deepseek',
@@ -511,7 +512,12 @@ export const REGISTRY: ModelRegistry = {
       pricingPeriod: 'peak',
       peakOffPeak: {
         peak: { inputPricePer1M: 0.3, outputPricePer1M: 1.2 },
-        offPeak: { inputPricePer1M: 0.15, outputPricePer1M: 0.6 },
+        // Off-peak cache hit is $0.003 (half the peak $0.006).
+        offPeak: {
+          inputPricePer1M: 0.15,
+          outputPricePer1M: 0.6,
+          cachedInputPricePer1M: 0.003,
+        },
         offPeakNote:
           'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.',
       },
@@ -531,7 +537,12 @@ export const REGISTRY: ModelRegistry = {
       pricingPeriod: 'peak',
       peakOffPeak: {
         peak: { inputPricePer1M: 1.32, outputPricePer1M: 3.96 },
-        offPeak: { inputPricePer1M: 0.66, outputPricePer1M: 1.98 },
+        // Off-peak cache hit is $0.022 (half the peak $0.044).
+        offPeak: {
+          inputPricePer1M: 0.66,
+          outputPricePer1M: 1.98,
+          cachedInputPricePer1M: 0.022,
+        },
         offPeakNote:
           'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.',
       },

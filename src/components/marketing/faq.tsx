@@ -18,10 +18,10 @@ const DEFAULT_FAQS: FAQItem[] = [
 
 /**
  * FAQ list — answers are rendered visible (not collapsed) so crawlers and
- * screen readers can index every answer without a click. The route-level
- * JSON-LD `FAQPage` schema carries the same Q/A pairs for rich results;
- * keeping the on-page copy un-collapsed ensures the indexed copy and the
- * visible copy match.
+ * screen readers can index every answer without a click. Each route's
+ * JSON-LD `FAQPage` schema carries the same Q/A pairs that route renders,
+ * for rich results; keeping the on-page copy un-collapsed ensures the
+ * indexed copy and the visible copy match.
  */
 export function FAQ({
   id,

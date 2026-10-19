@@ -626,7 +626,7 @@ export const zh: Dict = {
     deepseekOffPeakBody: '周一至周五(不含中国法定假日),DeepSeek 仅在 UTC 01:00–04:00 与 06:00–10:00 按全高峰计费;其余时段——含周末全天——按高峰 50% 计费。输入与输出都打 5 折。',
     deepseekOffPeakBadge: '非高峰 = 高峰 5 折 · 周一至周五 · 周末与全部中国法定假日全天非高峰',
     deepseekCacheTitle: 'Prompt cache 价格',
-    deepseekCacheBody: 'DeepSeek 缓存 hit 折扣激进——V4.1-Flash 与 V4-Pro 的缓存输入都比标准输入便宜约 99%。任何带重复前缀(系统提示词、工具定义、文档上下文)的工作负载,缓存前缀都是最划算的省费手段。',
+    deepseekCacheBody: 'DeepSeek 缓存 hit 折扣激进——V4.1-Flash 与 V4-Pro 的缓存输入分别比标准输入便宜 98% 与 97%。任何带重复前缀(系统提示词、工具定义、文档上下文)的工作负载,缓存前缀都是最划算的省费手段。',
 
     // ChatGPTSection 文案
     chatgptBatchTitle: 'Batch API · 5 折',
