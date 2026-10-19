@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
 import { useTranslation } from '@/features/i18n/provider'
 
 export interface FAQItem {
@@ -18,6 +16,13 @@ const DEFAULT_FAQS: FAQItem[] = [
   { qKey: 'calculator.faq8Q', aKey: 'calculator.faq8A' },
 ]
 
+/**
+ * FAQ list — answers are rendered visible (not collapsed) so crawlers and
+ * screen readers can index every answer without a click. The route-level
+ * JSON-LD `FAQPage` schema carries the same Q/A pairs for rich results;
+ * keeping the on-page copy un-collapsed ensures the indexed copy and the
+ * visible copy match.
+ */
 export function FAQ({
   id,
   faqs = DEFAULT_FAQS,
@@ -30,7 +35,6 @@ export function FAQ({
   titleKey?: string
 }) {
   const { t } = useTranslation()
-  const [open, setOpen] = useState<number | null>(0)
   return (
     <section id={id} className="border-t border-border py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-5 md:px-7">
@@ -40,31 +44,18 @@ export function FAQ({
         <h2 className="m-0 mt-3 max-w-[24em] text-[28px] sm:text-[36px] md:text-[40px] font-semibold tracking-[-0.015em]">
           {t(titleKey)}
         </h2>
-        <div className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-border bg-card divide-y divide-border">
-          {faqs.map(({ qKey, aKey }, i) => {
-            const expanded = open === i
-            return (
-              <div key={qKey}>
-                <button
-                  type="button"
-                  onClick={() => setOpen(expanded ? null : i)}
-                  aria-expanded={expanded}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left text-[17px] font-medium transition-colors hover:bg-bg-alt"
-                >
-                  <span>{t(qKey)}</span>
-                  <ChevronDown
-                    size={18}
-                    className={`shrink-0 text-fg-3 transition-transform ${expanded ? 'rotate-180' : ''}`}
-                    aria-hidden="true"
-                  />
-                </button>
-                {expanded && (
-                  <div className="px-6 pb-5 text-[15px] leading-relaxed text-fg-2">{t(aKey)}</div>
-                )}
-              </div>
-            )
-          })}
-        </div>
+        <dl className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-border bg-card divide-y divide-border">
+          {faqs.map(({ qKey, aKey }) => (
+            <div key={qKey} className="px-6 py-5">
+              <dt className="text-[17px] font-medium leading-snug text-foreground">
+                {t(qKey)}
+              </dt>
+              <dd className="mt-2 text-[15px] leading-relaxed text-fg-2">
+                {t(aKey)}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   )

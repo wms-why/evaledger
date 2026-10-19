@@ -395,6 +395,10 @@ export const en = {
     // Shared SEO blocks
     kicker: 'Token Cost Calculator',
     h1Token: 'Token Cost Calculator',
+    // Heading above the per-route FAQ list. Rendered visible (not collapsed) so
+    // crawlers can index the answer copy — overrides the marketing.faqTitle
+    // default which is a generic landing-page phrasing.
+    faqTitle: 'Frequently asked questions',
     subtitleToken: 'Compare prices across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest.',
     h1Openrouter: 'OpenRouter Pricing Calculator',
     subtitleOpenrouter: 'See what your tokens actually cost after the OpenRouter markup — and when going direct to the provider is cheaper.',

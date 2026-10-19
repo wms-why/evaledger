@@ -65,8 +65,9 @@ describe('calculateCost', () => {
   it('applies DeepSeek peak vs off-peak', () => {
     const peak = calculateCost('deepseek-chat', 1_000_000, 1_000_000, { peakHour: true, now: NOW })
     const off = calculateCost('deepseek-chat', 1_000_000, 1_000_000, { peakHour: false, now: NOW })
-    expect(peak.totalCost).toBeCloseTo(0.7, 3) // 0.28 + 0.42
-    expect(off.totalCost).toBeCloseTo(0.07, 3)  // 0.028 + 0.042
+    // V3.2 peak 0.28 + 0.42 = 0.70; off-peak is 50% of peak = 0.35.
+    expect(peak.totalCost).toBeCloseTo(0.7, 3)
+    expect(off.totalCost).toBeCloseTo(0.35, 3) // 0.14 + 0.21
     expect(peak.appliedRule).toBe('peak hours')
     expect(off.appliedRule).toBe('off-peak hours')
   })

@@ -369,6 +369,9 @@ export const zh: Dict = {
     // Shared SEO blocks
     kicker: 'Token 成本计算器',
     h1Token: 'Token 成本计算器',
+    // 与 FAQ 组件配套的标题：列表始终展开(便于搜索引擎抓取答案正文)，
+    // 这里用中性措辞,不要像 marketing.faqTitle 那样指向「计算器」整体。
+    faqTitle: '常见问题',
     subtitleToken: '对比 OpenAI、Claude、Gemini、DeepSeek 与 Grok 的价格。OpenAI 用真实分词器,其余模型用高精度近似估算。',
     h1Openrouter: 'OpenRouter 价格计算器',
     subtitleOpenrouter: '看清 OpenRouter 加价后你的 token 实际成本——以及什么时候直连官方反而更划算。',

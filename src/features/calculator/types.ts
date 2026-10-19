@@ -44,6 +44,21 @@ export interface PeakOffPeakTier {
   offPeakNote: string
 }
 
+/**
+ * What the top-level `inputPricePer1M` / `outputPricePer1M` represent.
+ *
+ * - `peak` (default for DeepSeek): the top-level price is the peak-hours rate;
+ *   callers wanting off-peak must consult `peakOffPeak.offPeak`.
+ * - `standard`: the top-level price is flat (no peak/off-peak distinction),
+ *   which is the case for every non-DeepSeek provider. Field is left undefined
+ *   for those to keep the schema sparse.
+ *
+ * Exists so the JSON API at `/api/prices.json` is unambiguous: an AI agent
+ * reading `inputPricePer1M` without checking this field will mis-quote DeepSeek
+ * rates by up to 2× when the user is asking about an off-peak workload.
+ */
+export type PricingPeriod = 'peak' | 'standard'
+
 /** Promotional pricing — explicitly time-bounded so we never silently apply an old promo. */
 export interface PromoPricing {
   /** ISO date the promo ends (inclusive). */
@@ -76,6 +91,12 @@ export interface ModelPrice {
   longContext?: LongContextTier[]
   /** DeepSeek-style peak/off-peak scheduling. */
   peakOffPeak?: PeakOffPeakTier
+  /**
+   * What the top-level `inputPricePer1M` / `outputPricePer1M` represent.
+   * Set to `'peak'` for DeepSeek entries so the JSON API is unambiguous.
+   * Omitted for flat-rate providers.
+   */
+  pricingPeriod?: PricingPeriod
   /** Time-bounded promo — replaces input/output if `Date.now() <= promo.untilDate`. */
   promo?: PromoPricing
   /** Canonical URL of the official pricing page this entry was sourced from. */
