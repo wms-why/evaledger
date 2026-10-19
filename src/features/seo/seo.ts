@@ -11,6 +11,9 @@ const PUBLIC_PATHS = [
   '/openrouter-pricing-calculator',
   '/claude-token-cost-calculator',
   '/deepseek-api-pricing',
+  '/token-calculator',
+  '/leaderboard-history',
+  '/compare',
 ] as const
 
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
@@ -45,9 +48,13 @@ function alternates(origin: string, path: string): string {
   return links.join('')
 }
 
-export function buildSitemap(origin: string, singleLocalePaths: string[] = []): string {
+export function buildSitemap(
+  origin: string,
+  singleLocalePaths: string[] = [],
+  extraBilingualPaths: string[] = [],
+): string {
   const bilingual = locales.flatMap((l) =>
-    PUBLIC_PATHS.map(
+    [...PUBLIC_PATHS, ...extraBilingualPaths].map(
       (p) => `<url><loc>${origin}${localizePath(l, p)}</loc>${alternates(origin, p)}</url>`,
     ),
   )

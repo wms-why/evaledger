@@ -15,6 +15,8 @@ interface ResultsGridProps {
   onProviderFilterChange: (p: string) => void
   onCopy: () => void
   copied: boolean
+  /** Model id to visually highlight and scroll into view (from `?model=`). */
+  highlightId?: string
 }
 
 const PROVIDER_KEYS: Record<string, string> = {
@@ -38,6 +40,7 @@ export function ResultsGrid({
   onProviderFilterChange,
   onCopy,
   copied,
+  highlightId,
 }: ResultsGridProps) {
   const { t } = useTranslation()
 
@@ -114,6 +117,7 @@ export function ResultsGrid({
             key={b.modelId}
             breakdown={b}
             rank={i === 0 && sortBy === 'cheapest' ? 0 : undefined}
+            highlight={b.modelId === highlightId}
           />
         ))}
       </div>

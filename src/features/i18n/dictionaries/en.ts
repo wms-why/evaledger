@@ -9,6 +9,160 @@ export const en = {
     chatgptTitle: 'ChatGPT API Pricing — GPT-5/5.6/6 Cost per Token',
     greeting: 'Hello, {name}!',
   },
+  leaderboard: {
+    navBoard: 'Leaderboard',
+    navCompare: 'Compare',
+    navCalculator: 'Token Calculator',
+    navHistory: 'Leaderboard history',
+    navBenchmarks: 'Benchmarks',
+    navBest: 'Best models',
+    perMonth: '/mo',
+    colRank: '#',
+    colModel: 'Model',
+    colScore: 'Score',
+    colAverage: 'Avg',
+    colPrice: 'Price /1M',
+    colObserved: 'Observed',
+    sourceVerified: 'Source · verified {date}',
+    vendorClaude: 'Anthropic',
+    vendorOpenai: 'OpenAI',
+    vendorGoogle: 'Google',
+    vendorGrok: 'xAI',
+    vendorDeepseek: 'DeepSeek',
+    vendorGlm: 'Zhipu',
+    vendorKimi: 'Moonshot',
+    home: {
+      title: 'LLM Leaderboard — Benchmark Scores & Token Prices in One Table',
+      metaDescription:
+        'Compare 9 frontier LLMs on GPQA, HLE, DeepSWE, and more — next to their per-token price. One table, one source of truth, updated by hand.',
+      h1: 'LLM Leaderboard',
+      updated: 'Updated',
+      positioning:
+        'Every score here is traceable to a named source, and every price to a provider page. No interpolation, no marketing charts — just the numbers you can defend.',
+      compareTitle: 'Compare two models',
+      compareBody:
+        'Put any two models head to head: benchmark deltas, price per blended million tokens, context window, and a monthly cost estimate for your usage.',
+      compareCta: 'Open the comparison',
+      browse: 'Browse',
+    },
+    compare: {
+      title: 'Compare LLMs',
+      metaDescription:
+        'Compare any two LLMs side by side — benchmark scores, per-token price, context window, and a monthly cost estimate for your usage.',
+      pairMetaDescription:
+        'How {a} and {b} compare on benchmarks and price — scores, context window, and what a month of your usage would cost.',
+      techKicker: 'Head to head',
+      vs: 'vs',
+      planKicker: 'Buying guide',
+      ecosystemKicker: 'Capability matrix',
+      ecosystemTitle: 'which ecosystem fits',
+      ecosystemNote:
+        'Raw benchmark parity rarely decides the pick — tooling, open weights, and provider reliability usually do.',
+      whichToBuy: 'which should you use?',
+      modelA: 'First model',
+      modelB: 'Second model',
+      swap: 'Swap models',
+      dimension: 'Dimension',
+      price: 'Blended price',
+      fullPrice: 'Full price',
+      context: 'Context window',
+      openWeights: 'Open weights',
+      coverage: 'Benchmarks covered',
+      input: 'Input',
+      output: 'Output',
+      cached: 'Cached input',
+      blended: 'Blended /1M',
+      leads: '{model} leads',
+      cheaperNote: '{model} is the cheaper option per blended million tokens.',
+      pickIf: 'Pick {n} if',
+      pickReasonA:
+        'You need the highest benchmark scores and can absorb the higher per-token price.',
+      pickReasonB:
+        'You are optimizing for cost at scale and your workloads tolerate the score gap.',
+      costTitle: 'What your usage would cost',
+      costSubtitle: 'Adjust the monthly volume — both models recompute instantly.',
+      callsPerMonth: 'Requests per month',
+      inputTokens: 'Input tokens / request',
+      outputTokens: 'Output tokens / request',
+      costNote:
+        'Estimates use list prices and ignore cached input, batch discounts, and off-peak rates.',
+      popularTitle: 'Popular comparisons',
+    },
+    model: {
+      metaTitleSuffix: 'Benchmarks & Token Pricing',
+      metaDescription:
+        '{model} benchmark scores and per-token API pricing, plus how it compares to the other frontier models.',
+      released: 'Released',
+      updated: 'Updated',
+      scores: 'Benchmark scores',
+      noScores: 'No verified benchmark scores for this model yet.',
+      pricing: 'Pricing',
+      runUsage: 'Run your usage',
+      related: 'Comparisons',
+    },
+    benchmark: {
+      kicker: 'Benchmark',
+      metaTitleSuffix: 'Leaderboard',
+      scores: 'Model scores',
+      historyLink: 'Score history',
+    },
+    history: {
+      title: 'Score history',
+      metaDescription:
+        'How a benchmark leaderboard has changed over time — every snapshot, plus overwritten scores.',
+      intro:
+        'Benchmark scores get restated when harnesses change or models are re-run. This page keeps the trail instead of quietly overwriting it.',
+      timeline: 'Timeline',
+      empty: 'No historical snapshots recorded yet — the current scores are shown below.',
+      snapshots: '{n} snapshots recorded.',
+      snapshotTable: 'Current snapshot',
+      overwritten: 'Overwritten scores',
+      overwrittenEmpty: 'Nothing has been overwritten yet.',
+      supersededOn: 'superseded on',
+    },
+    historyPage: {
+      title: 'Leaderboard history',
+      metaDescription:
+        'The archive of LLM leaderboard changes — per-benchmark leaders today and every score that has since been overwritten.',
+      intro:
+        'Leaderboards move. This is the archive: who leads each core benchmark right now, and which earlier scores have been replaced.',
+      timeline: 'Current leaders by benchmark',
+      topNow: 'top 3 now',
+      overwritten: 'Overwritten scores',
+      source:
+        'Scores are collected from named primary sources; see each model page for the exact citation.',
+    },
+    best: {
+      kicker: 'Best models',
+      metaDescription:
+        'Best LLMs by use case — Chinese models, open weights, and coding — ranked on the benchmarks that actually measure the job.',
+      scoredOn: 'Scored on',
+      fullBoard: 'See the full leaderboard',
+      'chinese-model': {
+        title: 'Best Chinese LLMs',
+        intro:
+          'DeepSeek, GLM, and Kimi ranked on reasoning, agentic coding, and automation benchmarks.',
+      },
+      'open-source': {
+        title: 'Best open-weight LLMs',
+        intro:
+          'Models you can self-host or route through any provider, ranked on coding and automation benchmarks.',
+      },
+      'for-coding': {
+        title: 'Best LLMs for coding',
+        intro:
+          'Ranked on real repository tasks, program synthesis, and command-line agent benchmarks.',
+      },
+    },
+    tokenCalculator: {
+      title: 'Token Calculator — Price Any LLM Prompt',
+      metaDescription:
+        'Paste a prompt or enter your usage and see the cost across every model in the leaderboard. Real tokenizer for OpenAI, accurate estimates for the rest.',
+      h1: 'Token Calculator',
+      subtitle:
+        'Cost any prompt across every model on the leaderboard — paste text or enter your monthly usage.',
+    },
+  },
   changelog: {
     title: 'Changelog',
     subtitle: 'Product updates and improvements.',

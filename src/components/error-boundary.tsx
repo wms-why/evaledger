@@ -11,12 +11,13 @@
  */
 import { useEffect } from 'react'
 import { buttonVariants } from '@/components/ui/button'
-export function ErrorPage({ error, reset }: { error: Error; reset: () => void }) {
+export function ErrorPage({ error, reset }: { error: unknown; reset: () => void }) {
   // document.title, not a rendered <title>: the root head() already emits one,
   // and React 19 hoisting would append a second (invalid, and browsers keep the first).
   useEffect(() => {
     document.title = 'Something went wrong — TokenCalculator'
   }, [])
+  const message = error instanceof Error ? error.message : String(error)
   return (
     <main className="bg-background py-24 md:py-32">
       <div className="mx-auto max-w-xl px-5 text-center md:px-7">
@@ -34,7 +35,7 @@ export function ErrorPage({ error, reset }: { error: Error; reset: () => void })
         </p>
         {import.meta.env.DEV && (
           <pre className="mx-auto mt-6 max-w-[40em] overflow-auto rounded-[10px] border border-border p-4 text-left text-[13px] text-fg-2">
-            {error.message}
+            {message}
           </pre>
         )}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

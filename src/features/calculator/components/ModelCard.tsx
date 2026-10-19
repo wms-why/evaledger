@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, ExternalLink, Sparkles } from 'lucide-react'
 import { useTranslation } from '@/features/i18n/provider'
 import { findModel } from '@/features/calculator/model-prices'
@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge'
 interface ModelCardProps {
   breakdown: CostBreakdown
   rank?: number
+  /** When true (deep link `?model=`), ring the card and scroll it into view. */
+  highlight?: boolean
 }
 
 /**
@@ -19,10 +21,15 @@ interface ModelCardProps {
  * pricing page via the `sourceUrl` on the registry entry — never to a
  * competitor or our own landing for the same number.
  */
-export function ModelCard({ breakdown, rank }: ModelCardProps) {
+export function ModelCard({ breakdown, rank, highlight }: ModelCardProps) {
   const { t } = useTranslation()
   const model = findModel(breakdown.modelId)
   const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (highlight) ref.current?.scrollIntoView({ block: 'center' })
+  }, [highlight])
 
   if (!model) return null
 
@@ -32,9 +39,11 @@ export function ModelCard({ breakdown, rank }: ModelCardProps) {
 
   return (
     <article
+      ref={ref}
       className={cn(
         'group flex flex-col rounded-[14px] border border-border bg-card p-5 transition-colors',
         rank === 0 && 'border-foreground/30 ring-1 ring-foreground/10',
+        highlight && 'border-primary/50 ring-2 ring-primary/20',
       )}
     >
       <header className="flex items-start justify-between gap-3">

@@ -15,10 +15,21 @@ export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean 
     <>
       <Link
         to="/{-$locale}"
-        hash="features"
         className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
       >
-        {t('marketing.navFeatures')}
+        {t('leaderboard.navBoard')}
+      </Link>
+      <Link
+        to="/{-$locale}/compare"
+        className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
+      >
+        {t('leaderboard.navCompare')}
+      </Link>
+      <Link
+        to="/{-$locale}/token-calculator"
+        className="rounded-md px-3 py-2 text-[14px] font-normal text-fg-2 transition-colors hover:text-foreground"
+      >
+        {t('leaderboard.navCalculator')}
       </Link>
       <Link
         to="/{-$locale}/changelog"

@@ -1,0 +1,294 @@
+import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit } from './types'
+
+/**
+ * Hand-curated leaderboard registry.
+ *
+ * Two provenance lanes:
+ *  - The DeepSeek family, GLM 5.3 and Kimi K3 scores come from the owner's
+ *    reference table (captured 2026-10-19), itself from the DeepSeek V4.1
+ *    Flash launch post — hence one shared `sourceUrl`.
+ *  - Gemini 3.1 Pro and Grok 4.7 were read from public benchmark sites /
+ *    the vendor model card; each score carries its own `sourceUrl` and a
+ *    `note` when the harness differs from the reference table.
+ *
+ * Never drop a caveat the source printed. Missing benchmarks are simply
+ * absent — no interpolation.
+ */
+export const REGISTRY_VERSION = '0.2.0'
+
+/** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
+const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
+/** Gemini 3.1 Pro model card. */
+const GEMINI_CARD = 'https://deepmind.google/models/model-cards/gemini-3-1-pro/'
+/** benchlm compare page (Vals harness figures). */
+const BENCHLM = 'https://benchlm.ai/compare/gemini-3-1-pro-vs-grok-4-7'
+/** BenchLeader compare page (Artificial Analysis figures). */
+const BENCHLEADER = 'https://www.benchleader.com/compare/gemini-3-1-pro-vs-grok-4-7'
+
+/** Timestamp of this collection run — becomes every model's `updatedAt`. */
+const COLLECTED_AT = '2026-10-19T15:56:11+08:00'
+/** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
+const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
+
+interface ScoreOptions {
+  unit?: ScoreUnit
+  source?: string
+  note?: string
+}
+
+function sc(benchmark: string, score: number, opts: ScoreOptions = {}): BenchmarkScore {
+  return {
+    benchmark,
+    score,
+    unit: opts.unit ?? 'percent',
+    sourceUrl: opts.source ?? SOURCE_URL,
+    observedAt: COLLECTED_AT,
+    note: opts.note,
+  }
+}
+
+const claudeOpus5: LeaderboardModel = {
+  id: 'claude-opus-5',
+  vendor: 'claude',
+  kind: 'opus',
+  version: 'opus-5',
+  displayName: 'Claude Opus 5',
+  priceId: 'claude-opus-5',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 93.4),
+    sc('hle', 56.3),
+    sc('terminal-bench-2.1', 89.1),
+    sc('terminal-bench-3.0', 43.3),
+    sc('terminal-bench-4.0', 51.8),
+    sc('deepswe-v1.1', 74.0),
+    sc('programbench', 37.0),
+    sc('nl2repo-bench', 75.3),
+    sc('exploitgym', 22.1),
+    sc('hle-tools', 63.6),
+    sc('automation-bench', 50.3),
+    sc('agents-last-exam', 28.6),
+    sc('chartography-tools', 84.0),
+    sc('babyvision-tools', 94.1),
+    sc('zerobench-main-tools', 52.0),
+  ],
+}
+
+const gpt56Sol: LeaderboardModel = {
+  id: 'gpt-5.6-sol',
+  vendor: 'openai',
+  kind: 'gpt',
+  version: '5.6-sol',
+  displayName: 'GPT 5.6-Sol',
+  priceId: 'gpt-5.6-sol',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 94.1),
+    sc('hle', 44.5),
+    sc('terminal-bench-2.1', 88.8),
+    sc('terminal-bench-3.0', 34.4),
+    sc('terminal-bench-4.0', 39.9),
+    sc('deepswe-v1.1', 73.0),
+    sc('programbench', 23.0),
+    sc('nl2repo-bench', 56.8),
+    sc('cybergym', 84.5),
+    sc('sec-bench-pro', 74.3),
+    sc('exploitgym', 33.7),
+    sc('automation-bench', 45.8),
+    sc('agents-last-exam', 26.7),
+    sc('chartography-tools', 79.9),
+    sc('babyvision-tools', 88.9),
+    sc('zerobench-main-tools', 53.0),
+  ],
+}
+
+const deepseekV41Flash: LeaderboardModel = {
+  id: 'deepseek-v4.1-flash',
+  vendor: 'deepseek',
+  kind: 'flash',
+  version: 'v4.1-flash',
+  displayName: 'DeepSeek V4.1-Flash',
+  priceId: 'deepseek-flash',
+  releaseDate: DEEPSEEK_FLASH_RELEASE,
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 90.9),
+    sc('hle', 36.8, { note: '39.1 on text-only subset' }),
+    sc('codeforces', 3471, { unit: 'rating' }),
+    sc('matharena-apex', 65.6),
+    sc('terminal-bench-2.1', 90.6),
+    sc('terminal-bench-3.0', 30.0),
+    sc('terminal-bench-4.0', 31.2),
+    sc('deepswe-v1.1', 74.2),
+    sc('programbench', 20.3),
+    sc('nl2repo-bench', 65.4),
+    sc('cybergym', 88.1),
+    sc('sec-bench-pro', 62.8),
+    sc('exploitgym', 15.3),
+    sc('hle-tools', 63.9),
+    sc('automation-bench', 54.8),
+    sc('agents-last-exam', 31.8),
+    sc('chartography-tools', 78.9),
+    sc('babyvision-tools', 89.6),
+    sc('zerobench-main-tools', 49.0),
+  ],
+}
+
+const deepseekV4Pro0813: LeaderboardModel = {
+  id: 'deepseek-v4-pro',
+  vendor: 'deepseek',
+  kind: 'pro',
+  version: 'v4-pro-0813',
+  displayName: 'DeepSeek V4-Pro 0813',
+  priceId: 'deepseek-v4-pro',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 92.4),
+    sc('hle', 42.7, { note: 'text-only subset only' }),
+    sc('codeforces', 3348, { unit: 'rating' }),
+    sc('matharena-apex', 65.3),
+    sc('terminal-bench-2.1', 87.9),
+    sc('terminal-bench-3.0', 11.8),
+    sc('terminal-bench-4.0', 12.4),
+    sc('deepswe-v1.1', 62.7),
+    sc('programbench', 15.5),
+    sc('nl2repo-bench', 61.5),
+    sc('cybergym', 83.3),
+    sc('sec-bench-pro', 56.4),
+    sc('exploitgym', 5.4),
+    sc('hle-tools', 60.0),
+    sc('automation-bench', 43.2),
+    sc('agents-last-exam', 25.7),
+  ],
+}
+
+const deepseekV4Flash0731: LeaderboardModel = {
+  id: 'deepseek-v4-flash-0731',
+  vendor: 'deepseek',
+  kind: 'flash',
+  version: 'v4-flash-0731',
+  displayName: 'DeepSeek V4-Flash 0731',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 89.9),
+    sc('hle', 37.8, { note: 'text-only subset only' }),
+    sc('codeforces', 3289, { unit: 'rating' }),
+    sc('matharena-apex', 58.6),
+    sc('terminal-bench-2.1', 82.7),
+    sc('terminal-bench-3.0', 7.6),
+    sc('terminal-bench-4.0', 7.0),
+    sc('deepswe-v1.1', 54.4),
+    sc('nl2repo-bench', 54.2),
+    sc('cybergym', 76.7),
+    sc('sec-bench-pro', 30.9),
+    sc('exploitgym', 1.8),
+    sc('hle-tools', 51.5),
+    sc('automation-bench', 37.7),
+    sc('agents-last-exam', 25.2),
+  ],
+}
+
+const glm53: LeaderboardModel = {
+  id: 'glm-5.3',
+  vendor: 'glm',
+  kind: 'other',
+  version: '5.3',
+  displayName: 'GLM 5.3',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 88.1),
+    sc('hle', 42.0, { note: 'text-only subset only' }),
+    sc('terminal-bench-2.1', 88.2),
+    sc('terminal-bench-3.0', 28.3),
+    sc('terminal-bench-4.0', 37.9),
+    sc('deepswe-v1.1', 66.9),
+    sc('programbench', 19.0),
+    sc('nl2repo-bench', 58.0),
+    sc('cybergym', 84.5),
+    sc('exploitgym', 15.0),
+    sc('hle-tools', 62.5),
+    sc('automation-bench', 48.8),
+    sc('agents-last-exam', 28.5),
+  ],
+}
+
+const kimiK3: LeaderboardModel = {
+  id: 'kimi-k3',
+  vendor: 'kimi',
+  kind: 'other',
+  version: 'k3',
+  displayName: 'Kimi K3',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 92.9),
+    sc('hle', 43.5),
+    sc('matharena-apex', 65.6),
+    sc('terminal-bench-2.1', 88.3),
+    sc('terminal-bench-3.0', 17.7),
+    sc('terminal-bench-4.0', 12.6),
+    sc('deepswe-v1.1', 67.5),
+    sc('programbench', 17.5),
+    sc('nl2repo-bench', 58.0),
+    sc('cybergym', 80.0),
+    sc('hle-tools', 59.8),
+    sc('automation-bench', 46.7),
+    sc('agents-last-exam', 27.6),
+    sc('chartography-tools', 68.1),
+    sc('babyvision-tools', 85.7),
+    sc('zerobench-main-tools', 41.0),
+  ],
+}
+
+const gemini31Pro: LeaderboardModel = {
+  id: 'gemini-3.1-pro',
+  vendor: 'google',
+  kind: 'pro',
+  version: '3.1-pro',
+  displayName: 'Gemini 3.1 Pro',
+  priceId: 'gemini-3.1-pro-preview',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('gpqa-diamond', 94.3, { source: GEMINI_CARD }),
+    sc('hle', 44.4, { source: GEMINI_CARD, note: 'no tools, full set (text + multimodal)' }),
+    sc('hle-tools', 51.4, { source: GEMINI_CARD, note: 'search (blocklist) + code' }),
+    sc('matharena-apex', 60.9, { source: BENCHLEADER }),
+    sc('automation-bench', 35.4, { source: BENCHLEADER }),
+  ],
+}
+
+const grok47: LeaderboardModel = {
+  id: 'grok-4.7',
+  vendor: 'grok',
+  kind: 'grok',
+  version: '4.7',
+  displayName: 'Grok 4.7',
+  priceId: 'grok-4.7',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('terminal-bench-4.0', 38.0, { source: BENCHLM }),
+    sc('deepswe-v1.1', 71.0, { source: BENCHLM, note: 'listed as "DeepSWE"' }),
+  ],
+}
+
+export const LEADERBOARD: LeaderboardRegistry = {
+  registryVersion: REGISTRY_VERSION,
+  fetchedAt: COLLECTED_AT,
+  sourceNote:
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ.',
+  models: [
+    claudeOpus5,
+    gpt56Sol,
+    gemini31Pro,
+    grok47,
+    deepseekV41Flash,
+    deepseekV4Pro0813,
+    deepseekV4Flash0731,
+    glm53,
+    kimiK3,
+  ],
+  history: [],
+}
+
+export function findLeaderboardModel(id: string): LeaderboardModel | undefined {
+  return LEADERBOARD.models.find((m) => m.id === id)
+}

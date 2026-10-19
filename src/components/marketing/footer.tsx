@@ -24,7 +24,8 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
 
         {/* Product */}
         <FooterCol title={t('marketing.footerProduct')}>
-          <Link className="foot-link" to="/{-$locale}" hash="features">{t('marketing.navFeatures')}</Link>
+          <Link className="foot-link" to="/{-$locale}">{t('leaderboard.navBoard')}</Link>
+          <Link className="foot-link" to="/{-$locale}/compare">{t('leaderboard.navCompare')}</Link>
           <Link className="foot-link" to="/{-$locale}/token-cost-calculator">{t('marketing.footerProductToken')}</Link>
         </FooterCol>
 

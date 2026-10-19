@@ -48,6 +48,8 @@ export interface CalculatorProps {
   initialInputTokens?: number
   initialOutputTokens?: number
   initialPresetId?: string
+  /** Price-registry model id to pre-filter and highlight (e.g. `?model=`). */
+  initialModelId?: string
 }
 
 /**
@@ -65,7 +67,14 @@ export function Calculator(props: CalculatorProps) {
     initialInputTokens = 2000,
     initialOutputTokens = 400,
     initialPresetId = DEFAULT_PRESET_ID,
+    initialModelId,
   } = props
+
+  // Highlighted model (from `?model=`) — validated so a stale id degrades to null.
+  const highlightId = useMemo(
+    () => (initialModelId && REGISTRY.models.some((m) => m.id === initialModelId) ? initialModelId : undefined),
+    [initialModelId],
+  )
 
   // ───── State ─────
   const [mode, setMode] = useState<InputMode>('manual')
@@ -81,7 +90,9 @@ export function Calculator(props: CalculatorProps) {
   const [useCached, setUseCached] = useState(false)
 
   const [sortBy, setSortBy] = useState<SortMode>('cheapest')
-  const [providerFilter, setProviderFilter] = useState('all')
+  const [providerFilter, setProviderFilter] = useState(
+    () => REGISTRY.models.find((m) => m.id === initialModelId)?.provider ?? 'all',
+  )
   const [copied, setCopied] = useState(false)
 
   // ───── Async tokenize on text change ─────
@@ -223,6 +234,7 @@ export function Calculator(props: CalculatorProps) {
         onProviderFilterChange={setProviderFilter}
         onCopy={handleCopy}
         copied={copied}
+        highlightId={highlightId}
       />
 
       <p className="text-center text-[12px] text-fg-3">

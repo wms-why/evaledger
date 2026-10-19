@@ -1,124 +1,121 @@
-import { createFileRoute, getRouteApi } from '@tanstack/react-router'
+import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
+import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
-import { Hero } from '@/components/marketing/hero'
-import { FAQ } from '@/components/marketing/faq'
-import { CTA } from '@/components/marketing/cta'
 import { Footer } from '@/components/marketing/footer'
-import { Calculator } from '@/features/calculator/calculator'
-import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
-import { Tips } from '@/features/calculator/components/Tips'
-import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
+import { buttonVariants } from '@/components/ui/button'
+import { LeaderboardTable } from '@/features/leaderboard/components/LeaderboardTable'
+import { PopularComparisons } from '@/features/leaderboard/components/CompareTool'
+import { LEADERBOARD } from '@/features/leaderboard/models'
 
 const rootRoute = getRouteApi('__root__')
 
 export const Route = createFileRoute('/{-$locale}/')({
-  loader: async () => ({ origin: await getOrigin() }),
+  loader: async () => {
+    const [origin, user] = await Promise.all([getOrigin(), getOptionalUser()])
+    return { origin, loggedIn: !!user }
+  },
   head: ({ loaderData, params }) => {
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
-    const description = dict.marketing.brandMetaDescription
-    const title = dict.home.title
+    const title = dict.leaderboard.home.title
+    const description = dict.leaderboard.home.metaDescription
+    const url = `${origin}${locale === 'en' ? '' : '/' + locale}`
+
+    const organization = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: dict.common.appName,
+      url,
+      logo: `${origin}/logo512.png`,
+      description,
+    }
+    const website = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: title,
+      url,
+      description,
+    }
     const { meta, links, scripts } = localeHead({
       origin,
       locale,
       path: '/',
       title,
       description,
-      scripts: buildStructuredData({ origin, locale, dict }),
+      scripts: [jsonLd(organization), jsonLd(website)],
     })
     return { meta, links, scripts }
   },
   component: Home,
 })
 
-interface StructuredDataInput {
-  origin: string
-  locale: Locale
-  dict: (typeof dictionaries)[Locale]
-}
-
-function buildStructuredData({ origin, locale, dict }: StructuredDataInput) {
-  const url = `${origin}${locale === 'en' ? '' : '/' + locale}`
-  const logoUrl = `${origin}/logo512.png`
-  // 1. Organization — gives the brand a Knowledge Graph entity.
-  const org = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'TokenCalculator',
-    url,
-    logo: logoUrl,
-    description: dict.marketing.footerTagline,
-    sameAs: [
-      'https://github.com/tokencalculator/tokencalculator',
-      'https://x.com/tokencalculator',
-    ],
-  }
-  // 2. SoftwareApplication — Google loves this for SaaS landing pages.
-  const app = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'TokenCalculator',
-    url,
-    applicationCategory: 'FinanceApplication',
-    operatingSystem: 'Web',
-    description: dict.marketing.heroSubtitle,
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-      category: 'Free',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '312',
-    },
-  }
-  // 3. FAQPage — 8 Q&A's, the most powerful SERP real-estate grab on the page.
-  const faq = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      dict.calculator.faq1Q, dict.calculator.faq1A,
-      dict.calculator.faq2Q, dict.calculator.faq2A,
-      dict.calculator.faq3Q, dict.calculator.faq3A,
-      dict.calculator.faq4Q, dict.calculator.faq4A,
-      dict.calculator.faq5Q, dict.calculator.faq5A,
-      dict.calculator.faq6Q, dict.calculator.faq6A,
-      dict.calculator.faq7Q, dict.calculator.faq7A,
-      dict.calculator.faq8Q, dict.calculator.faq8A,
-    ].reduce<{ q: string; a: string }[]>((acc, _, i, arr) => {
-      if (i % 2 === 0) acc.push({ q: arr[i] as string, a: arr[i + 1] as string })
-      return acc
-    }, []).map(({ q, a }) => ({
-      '@type': 'Question',
-      name: q,
-      acceptedAnswer: { '@type': 'Answer', text: a },
-    })),
-  }
-  return [jsonLd(org), jsonLd(app), jsonLd(faq)]
-}
-
 function Home() {
-  const { theme, user } = rootRoute.useLoaderData()
-  const loggedIn = !!user
+  const { theme } = rootRoute.useLoaderData()
+  const { loggedIn } = Route.useLoaderData()
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav theme={theme} loggedIn={loggedIn} />
-      <Hero loggedIn={loggedIn} />
-      <div id="features" className="mx-auto max-w-7xl px-5 py-10 md:px-7">
-        <Calculator />
-      </div>
-      <PricingTLDR />
-      <Tips />
-      <FAQ id="faq" />
-      <RelatedCalculators exclude="token" />
-      <CTA loggedIn={loggedIn} />
+      <main className="mx-auto max-w-7xl px-5 py-10 md:px-7 md:py-14">
+        <section id="leaderboard" className="space-y-4">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h1 className="text-[28px] font-semibold tracking-[-0.02em] md:text-[36px]">
+              {t('leaderboard.home.h1')}
+            </h1>
+            <span className="text-[12px] text-fg-3">
+              {t('leaderboard.home.updated')}: {LEADERBOARD.fetchedAt.slice(0, 10)}
+            </span>
+          </div>
+          <LeaderboardTable />
+        </section>
+
+        <p className="mx-auto mt-8 max-w-[720px] text-center text-[16px] text-fg-2">
+          {t('leaderboard.home.positioning')}
+        </p>
+
+        <section className="mt-12 grid gap-8 lg:grid-cols-2">
+          <div>
+            <h2 className="text-[18px] font-semibold">{t('leaderboard.home.compareTitle')}</h2>
+            <p className="mt-2 text-[14px] text-fg-2">{t('leaderboard.home.compareBody')}</p>
+            <Link to="/{-$locale}/compare" className={buttonVariants({ className: 'mt-4' })}>
+              {t('leaderboard.home.compareCta')}
+            </Link>
+          </div>
+          <PopularComparisons />
+        </section>
+
+        <section className="mt-14 border-t border-border pt-8">
+          <h2 className="text-[15px] font-semibold">{t('leaderboard.home.browse')}</h2>
+          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
+            <Link to="/{-$locale}/token-calculator" className="text-primary hover:text-foreground">
+              {t('leaderboard.navCalculator')}
+            </Link>
+            <Link to="/{-$locale}/leaderboard-history" className="text-fg-2 hover:text-primary">
+              {t('leaderboard.navHistory')}
+            </Link>
+            <Link
+              to="/{-$locale}/benchmarks/$slug"
+              params={{ slug: 'gpqa-diamond' }}
+              className="text-fg-2 hover:text-primary"
+            >
+              {t('leaderboard.navBenchmarks')}
+            </Link>
+            <Link
+              to="/{-$locale}/best/$category"
+              params={{ category: 'for-coding' }}
+              className="text-fg-2 hover:text-primary"
+            >
+              {t('leaderboard.navBest')}
+            </Link>
+          </div>
+        </section>
+      </main>
       <Footer theme={theme} />
     </div>
   )
