@@ -38,7 +38,13 @@ export function Logo({
   if (!asLink) return content
 
   return (
-    <Link to="/{-$locale}" aria-label="TokenCalculator" className="shrink-0">
+    <Link
+      to="/{-$locale}"
+      aria-label="TokenCalculator"
+      className="shrink-0"
+      // 只把首页当“当前页”：/zh 是 /zh/* 的父路径，不加 exact 会在所有中文页命中
+      activeOptions={{ exact: true }}
+    >
       {content}
     </Link>
   )
