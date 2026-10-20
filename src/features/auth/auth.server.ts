@@ -11,6 +11,8 @@ import { isAdminEmail } from '@/features/admin/is-admin'
 export interface AuthEnv {
   BETTER_AUTH_SECRET: string
   BETTER_AUTH_URL: string
+  /** Comma-separated extra origins allowed to call the auth endpoints. */
+  AUTH_TRUSTED_ORIGINS?: string
   GOOGLE_CLIENT_ID?: string
   GOOGLE_CLIENT_SECRET?: string
   GITHUB_CLIENT_ID?: string
@@ -18,6 +20,29 @@ export interface AuthEnv {
   ADMIN_EMAILS?: string
   TURNSTILE_SECRET_KEY?: string
   RESEND_API_KEY?: string
+}
+
+/**
+ * Origins allowed to call the auth endpoints.
+ *
+ * Better-Auth compares the request `Origin` header against its trusted origins
+ * (CSRF protection) and trusts the base URL's own origin out of the box. During
+ * a domain migration the previous host still serves the app, so it has to be
+ * listed explicitly or every sign-in from it is rejected. `AUTH_TRUSTED_ORIGINS`
+ * is a comma-separated list of extra origins; blank means "base URL only".
+ */
+export function trustedOrigins(e: AuthEnv): string[] {
+  const origins = new Set<string>()
+  for (const raw of [e.BETTER_AUTH_URL, ...(e.AUTH_TRUSTED_ORIGINS ?? '').split(',')]) {
+    const v = raw.trim()
+    if (!v) continue
+    try {
+      origins.add(new URL(v).origin)
+    } catch {
+      console.warn(`[auth] ignoring invalid trusted origin: ${v}`)
+    }
+  }
+  return [...origins]
 }
 
 /** Derive the user's preferred locale from an incoming Better-Auth hook request. */
@@ -46,6 +71,7 @@ export function createAuth(authEnv: AuthEnv, db: DB) {
   return betterAuth({
     secret: authEnv.BETTER_AUTH_SECRET,
     baseURL: authEnv.BETTER_AUTH_URL,
+    trustedOrigins: trustedOrigins(authEnv),
     database: drizzleAdapter(db, { provider: 'sqlite', schema }),
     emailAndPassword: {
       enabled: true,
@@ -69,7 +95,15 @@ export function createAuth(authEnv: AuthEnv, db: DB) {
     // sign-in/sign-up (3/10s) and send-verification/password-reset (3/60s).
     // On Workers: memory storage is per-isolate (useless), so persist in D1;
     // and the trusted client IP is cf-connecting-ip, not x-forwarded-for.
-    rateLimit: { enabled: true, storage: 'database' },
+    rateLimit: {
+      enabled: true,
+      storage: 'database',
+      // Every page load reads the session, so that read must not spend the
+      // sign-in budget: a burst of visitors from one IP (a crawler, a
+      // corporate NAT) would otherwise 429 the sign-in form itself. The
+      // endpoint only validates a cookie — it is not a brute-force surface.
+      customRules: { '/get-session': false },
+    },
     advanced: { ipAddress: { ipAddressHeaders: ['cf-connecting-ip'] } },
     socialProviders: socialProviders(authEnv),
     // Auto-link a social login to an existing account with the same email, but

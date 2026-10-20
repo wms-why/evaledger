@@ -4,7 +4,7 @@ Guide for AI coding agents (Claude Code, Codex, etc.) working in this repo.
 
 ## What this is
 
-TokenCalculator — a free token cost calculator built on **TanStack Start + Cloudflare Workers**, with D1 (SQLite) + KV, Drizzle ORM, better-auth, Stripe, Resend, and Tailwind v4. Compares LLM pricing across OpenAI, Claude, Gemini, DeepSeek, and Grok, plus an OpenRouter-aware markup factor and a Claude subscription-vs-API break-even block.
+EvalLedger — a free token cost calculator built on **TanStack Start + Cloudflare Workers**, with D1 (SQLite) + KV, Drizzle ORM, better-auth, Stripe, Resend, and Tailwind v4. Compares LLM pricing across OpenAI, Claude, Gemini, DeepSeek, and Grok, plus an OpenRouter-aware markup factor and a Claude subscription-vs-API break-even block.
 
 ## Structure
 
@@ -21,10 +21,12 @@ TokenCalculator — a free token cost calculator built on **TanStack Start + Clo
 - **No mock, graceful degradation:** optional integrations (Resend, Stripe, Turnstile, Sentry, analytics) switch off when their env keys are absent — keep that behavior.
 - **Routes:** after adding a route, run `pnpm build` before `pnpm typecheck` (the route tree is generated at build).
 - **Tests:** Vitest — node pool (`*.node.test.ts`) for pure logic, workers pool (`*.workers.test.ts`) for D1; the workers pool does NOT auto-apply migrations (hand-create tables in `beforeAll`).
+- **E2E (Playwright):** `e2e/` covers every public page with a real browser (`pnpm e2e`, needs `npx playwright install chromium`); it is NOT part of the CI gate. The route inventory in `e2e/helpers/routes.ts` derives the dynamic pages from the same registries the pages read (REGISTRY / LEADERBOARD / BENCHMARKS / SERIES) and reads the release posts from `src/content/releases/` — **a new model, benchmark, series or release post is covered by the suite the moment it lands**; never hand-list the slugs. Specs assert against the i18n dictionaries (`t('en', '…')` from `e2e/helpers/i18n.ts`), never against literal sentences. `/admin/*` is out of scope (no back office).
 - **Wrangler pin:** `wrangler` in package.json must be exactly `4.151.1` (not `^4.151.1`) to satisfy `@cloudflare/vite-plugin@1.64.0`'s peer range `^4.151.0`. The old `4.95.0` pin caused `pnpm dev`/`pnpm build` to fail with "The installed version of Wrangler (4.95.0) does not satisfy the peer dependency". When bumping vite-plugin, bump wrangler to its peer range and re-run `pnpm build`.
 - **SEO structured data (JSON-LD):** use `jsonLd(obj)` from `@/features/seo/seo` and pass the result through the `scripts` option of `localeHead()` — it folds them into `meta`. `head()` only renders `meta` and `links`; a `scripts[]` key in the returned head object is silently dropped (this used to break JSON-LD on every page — it now works). Reference impl: `src/routes/{-$locale}/index.tsx` (Organization + SoftwareApplication + FAQPage).
 - **Rebrand gotchas:** marketing components carry hardcoded brand strings (GitHub URLs, `<span className="kicker">` copy, aria-labels) that are NOT in i18n dictionaries. When rebranding: `grep -rln -E "(OldBrand|oldbrand)" src` catches i18n + hardcoded + package.json + wrangler in one pass. Also `grep` old strings in `*.node.test.ts` — i18n-key assertions break silently.
-- **Project context (TokenCalculator):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then here). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the root README is rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is not renamed in this rebrand.
+- **The domain is one variable:** `BETTER_AUTH_URL` is the origin every absolute URL is derived from — canonical + hreflang, `og:url`, `sitemap.xml`, `robots.txt`, `feed.xml`, the Stripe return URLs, and every auth/verification email link. Change it and the whole site follows; forget it and the site advertises URLs that don't resolve. The custom domains themselves live in `wrangler.jsonc` (`env.production.routes`, `custom_domain: true`) and, in CI, are injected from the repo variable `CF_PROD_DOMAIN` by `.github/scripts/gen-wrangler.mjs` — which also rewrites `BETTER_AUTH_URL` to `https://$CF_PROD_DOMAIN`, so the two can never drift. `AUTH_TRUSTED_ORIGINS` (comma-separated) is the escape hatch for a host that still serves the app but isn't the canonical one: without it better-auth's CSRF origin check rejects sign-ins from that host.
+- **Project context (EvalLedger):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then into TokenCalculator, now EvalLedger). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the root README is rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is **not** renamed in a rebrand — the worker name is load-bearing: renaming it deploys a *new* Worker that comes with none of the `wrangler secret put` values. Route slugs (`/token-calculator`, `/token-cost-calculator`) and the internal dict key `leaderboard.tokenCalculator` likewise stay: they describe the product, not the brand, and changing them breaks live URLs and every `t('en', …)` assertion.
 
 ## Commands
 
@@ -32,6 +34,7 @@ TokenCalculator — a free token cost calculator built on **TanStack Start + Clo
 pnpm dev               # vite dev on :3000
 pnpm typecheck         # fumadocs-mdx && tsc --noEmit
 pnpm test                  # vitest run
+pnpm e2e               # playwright run (browser e2e, not in CI)
 pnpm build             # vite build
 pnpm db:migrate:local  # apply D1 migrations locally
 pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy (staging: deploy:staging)

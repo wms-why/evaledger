@@ -1,6 +1,6 @@
 {
-  "short_name": "TokenCalculator",
-  "name": "TokenCalculator — see what your LLM tokens actually cost",
+  "short_name": "EvalLedger",
+  "name": "EvalLedger — see what your LLM tokens actually cost",
   "icons": [
     {
       "src": "favicon.ico",

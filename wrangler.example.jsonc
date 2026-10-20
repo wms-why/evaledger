@@ -81,6 +81,9 @@
 	"vars": {
 		"BETTER_AUTH_SECRET": "",
 		"BETTER_AUTH_URL": "",
+		// Comma-separated extra origins allowed to call the auth endpoints.
+		// Empty = only BETTER_AUTH_URL's own origin is trusted.
+		"AUTH_TRUSTED_ORIGINS": "",
 		"RESEND_API_KEY": "",
 		"EMAIL_FROM": "",
 		"GOOGLE_CLIENT_ID": "",
@@ -184,6 +187,14 @@
 				}
 			],
 			"vars": {
+				// The origin every absolute URL is derived from — canonical, og:url,
+				// sitemap.xml, robots.txt, feed.xml, Stripe return URLs, auth emails.
+				// Must equal the domain the worker is served on. CI overwrites this
+				// with https://${CF_PROD_DOMAIN} (see .github/scripts/gen-wrangler.mjs);
+				// fill it in by hand when deploying from a local checkout.
+				"BETTER_AUTH_URL": "",
+				// Extra origins allowed to call the auth endpoints (comma-separated).
+				"AUTH_TRUSTED_ORIGINS": "",
 				"MMX_API_KEY": "",
 				"DEEPSEEK_API_KEY": "",
 				"REPLICATE_API_TOKEN": ""

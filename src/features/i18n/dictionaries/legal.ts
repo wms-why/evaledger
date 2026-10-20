@@ -3,7 +3,7 @@
  * 正文是结构化段落数组，translate() 只取字符串路径，取不到数组。
  *
  * TODO(上线前)：
- *  - 把 "TokenCalculator, Inc." 换成实际注册主体全称与注册地址。
+ *  - 把 "EvalLedger, Inc." 换成实际注册主体全称与注册地址。
  *  - 接入 AI 供应商后，在 terms §4 / privacy §3 点名供应商，并核对其训练与留存政策。
  *  - 让法务过一遍仲裁条款与责任上限（各州对消费者合同的可执行性不同）。
  */
@@ -26,19 +26,19 @@ export interface LegalDocs {
   privacy: LegalDoc
 }
 
-const CONTACT = 'hello@tokencalculator.com'
+const CONTACT = 'hello@evaledger.com'
 
 const enDocs: LegalDocs = {
   terms: {
     title: 'Terms of Service',
     updated: 'Last updated: August 12, 2026',
     intro:
-      `These Terms of Service (the “Terms”) are an agreement between you and TokenCalculator, Inc., a Delaware corporation (“TokenCalculator”, “we”, “us”). They govern your use of tokencalculator.com and the TokenCalculator application (together, the “Service”). By creating an account or using the Service, you agree to these Terms. If you do not agree, please do not use the Service.`,
+      `These Terms of Service (the “Terms”) are an agreement between you and EvalLedger, Inc., a Delaware corporation (“EvalLedger”, “we”, “us”). They govern your use of evaledger.com and the EvalLedger application (together, the “Service”). By creating an account or using the Service, you agree to these Terms. If you do not agree, please do not use the Service.`,
     sections: [
       {
         heading: '1. The Service and who may use it',
         body: [
-          'TokenCalculator is an online token-cost calculator for LLM APIs. You paste prompts, set usage assumptions, and compare estimated cost across models and providers. We also publish a machine-readable price feed at /api/prices.json.',
+          'EvalLedger is an online token-cost calculator for LLM APIs. You paste prompts, set usage assumptions, and compare estimated cost across models and providers. We also publish a machine-readable price feed at /api/prices.json.',
           'You must be at least 13 years old (16 in the EEA and the UK) and able to form a binding contract where you live. If you use the Service on behalf of an organisation, you confirm you are authorised to bind it to these Terms.',
           `You are responsible for your credentials and for everything that happens under your account. Email ${CONTACT} promptly if you suspect unauthorised access.`,
         ],
@@ -103,7 +103,7 @@ const enDocs: LegalDocs = {
     title: 'Privacy Policy',
     updated: 'Last updated: August 12, 2026',
     intro:
-      `This Privacy Policy explains what TokenCalculator, Inc. (“TokenCalculator”, “we”, “us”) collects when you use tokencalculator.com and the TokenCalculator application, why we collect it, who we share it with, and the control you have. Questions? Email ${CONTACT}.`,
+      `This Privacy Policy explains what EvalLedger, Inc. (“EvalLedger”, “we”, “us”) collects when you use evaledger.com and the EvalLedger application, why we collect it, who we share it with, and the control you have. Questions? Email ${CONTACT}.`,
     sections: [
       {
         heading: '1. What we collect',
@@ -172,12 +172,12 @@ const zhDocs: LegalDocs = {
     title: '服务条款',
     updated: '最后更新：2026 年 8 月 12 日',
     intro:
-      '本《服务条款》（下称“本条款”）是你与美国特拉华州公司 TokenCalculator, Inc.（下称“TokenCalculator”“我们”）之间的协议，适用于你对 tokencalculator.com 及 TokenCalculator 应用（合称“本服务”）的使用。注册账号或使用本服务即表示你接受本条款；若不接受，请勿使用本服务。',
+      '本《服务条款》（下称“本条款”）是你与美国特拉华州公司 EvalLedger, Inc.（下称“EvalLedger”“我们”）之间的协议，适用于你对 evaledger.com 及 EvalLedger 应用（合称“本服务”）的使用。注册账号或使用本服务即表示你接受本条款；若不接受，请勿使用本服务。',
     sections: [
       {
         heading: '一、服务内容与使用资格',
         body: [
-          'TokenCalculator 是一款面向 LLM API 的在线 token 成本计算器。你可以粘贴提示词、设定用量假设，并对比各模型与厂商的预估成本。我们也在 /api/prices.json 上提供机器可读的价格数据。',
+          'EvalLedger 是一款面向 LLM API 的在线 token 成本计算器。你可以粘贴提示词、设定用量假设，并对比各模型与厂商的预估成本。我们也在 /api/prices.json 上提供机器可读的价格数据。',
           '你需年满 13 周岁（欧洲经济区与英国为 16 周岁），并在所在地具备订立合同的能力。若你代表机构使用本服务，即表示你已获授权使本条款对该机构生效。',
           `你需自行保管账号凭据，并对账号下发生的一切行为负责。如发现账号被未经授权访问，请尽快联系 ${CONTACT}。`,
         ],
@@ -242,7 +242,7 @@ const zhDocs: LegalDocs = {
     title: '隐私政策',
     updated: '最后更新：2026 年 8 月 12 日',
     intro:
-      `本《隐私政策》说明当你使用 tokencalculator.com 及 TokenCalculator 应用时，TokenCalculator, Inc.（下称“我们”）收集哪些信息、为何收集、与谁共享，以及你拥有哪些控制权。如有疑问，请联系 ${CONTACT}。`,
+      `本《隐私政策》说明当你使用 evaledger.com 及 EvalLedger 应用时，EvalLedger, Inc.（下称“我们”）收集哪些信息、为何收集、与谁共享，以及你拥有哪些控制权。如有疑问，请联系 ${CONTACT}。`,
     sections: [
       {
         heading: '一、我们收集哪些信息',

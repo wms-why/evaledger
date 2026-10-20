@@ -4,7 +4,7 @@ import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser, getTurnstileSiteKey } from '@/features/auth/middleware'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardDescription } from '@/components/ui/card'
 import { useTranslation } from '@/features/i18n/provider'
 import { WaitlistForm } from '@/features/waitlist/components/waitlist-form'
 import type { Locale } from '@/features/i18n/locale'
@@ -28,8 +28,8 @@ export const Route = createFileRoute('/{-$locale}/waitlist')({
       origin,
       locale,
       path: '/waitlist',
-      title: `${dict} — TokenCalculator`,
-      description: locale === 'zh' ? '抢先体验 TokenCalculator，第一时间获得通知。' : 'Be the first to try TokenCalculator — get notified the moment we launch.',
+      title: `${dict} — EvalLedger`,
+      description: locale === 'zh' ? '抢先体验 EvalLedger，第一时间获得通知。' : 'Be the first to try EvalLedger — get notified the moment we launch.',
     })
     return { meta, links }
   },
@@ -46,7 +46,11 @@ function WaitlistPage() {
       <main className="mx-auto flex max-w-md flex-col px-4 py-20">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">{t('waitlist.title')}</CardTitle>
+            {/* The page's one heading is an <h1> — a card title is an <h3>,
+                and the page needs a real top-level heading for its outline. */}
+            <h1 className="text-2xl font-semibold leading-tight tracking-tight">
+              {t('waitlist.title')}
+            </h1>
             <CardDescription>{t('waitlist.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent>

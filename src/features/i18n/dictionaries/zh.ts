@@ -1,9 +1,9 @@
 import type { Dict } from './en'
 
 export const zh: Dict = {
-  common: { appName: 'TokenCalculator', toggleTheme: '切换主题', language: '语言' },
+  common: { appName: 'EvalLedger', toggleTheme: '切换主题', language: '语言' },
   home: {
-    title: 'TokenCalculator — 免费 LLM Token 成本计算器',
+    title: 'EvalLedger — 免费 LLM Token 成本计算器',
     calculatorTitle: 'Token 成本计算器 — 一站比对所有 LLM',
     openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
     claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
@@ -353,7 +353,7 @@ export const zh: Dict = {
     collapseSidebar: '收起侧边栏', expandSidebar: '展开侧边栏',
     navAccount: '账号',
     userMenuLabel: '用户菜单',
-    welcomeSub: '这是你的 TokenCalculator 工作区。',
+    welcomeSub: '这是你的 EvalLedger 工作区。',
     quickActions: '快捷操作',
     openAccount: '账号设置',
     openAccountSub: '资料、密码、危险操作',
@@ -383,7 +383,7 @@ export const zh: Dict = {
     checkEmailReset: '如果该邮箱存在，重置链接已发送。',
     deleteAccount: '删除账号', deleteConfirm: '此操作将永久删除您的账号和数据，是否继续？',
     changePassword: '修改密码',
-    loginTitle: '欢迎回来', loginSub: '使用 Google 登录你的 TokenCalculator 工作区',
+    loginTitle: '欢迎回来', loginSub: '使用 Google 登录你的 EvalLedger 工作区',
     registerTitle: '创建你的账号', registerSub: '使用 Google 注册，无需密码',
     orContinue: '或使用以下方式',
     forgotTitle: '重置密码', forgotSub: '输入邮箱，我们会发送重置链接',
@@ -414,7 +414,7 @@ export const zh: Dict = {
   admin: {
     title: '管理后台', dashboard: '概览', users: '用户',
     navAdmin: '后台',
-    overviewSub: 'TokenCalculator 的注册、活跃与订阅情况。',
+    overviewSub: 'EvalLedger 的注册、活跃与订阅情况。',
     usersSub: '搜索、查看并管理每一个账号。',
     totalUsers: '用户数', activeUsers: '活跃用户', activeSubs: '活跃订阅', subscriptions: '订阅',
     active: '活跃', pastDue: '逾期', canceled: '已取消', pro: 'Pro', free: '免费',
@@ -459,7 +459,7 @@ export const zh: Dict = {
     ctaBody: '粘贴你的提示词、填上用量,几秒看清每个模型的价格——无需注册。',
     ctaButton: '打开计算器',
     brandMetaDescription:
-      'TokenCalculator 是一个免费 LLM token 成本计算器,覆盖 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok。OpenAI 用真实分词器,其余高精度近似估算。无需注册。',
+      'EvalLedger 是一个免费 LLM token 成本计算器,覆盖 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok。OpenAI 用真实分词器,其余高精度近似估算。无需注册。',
     calculatorMetaDescription:
       '免费计算器,一站比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 token 价格。粘贴提示词,几秒看清每个模型的成本。更新于 {date}。',
     deepseekMetaDescription:
@@ -472,16 +472,16 @@ export const zh: Dict = {
       '看清 Claude Opus 4.5、Sonnet 4.5、Haiku 4.5 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 {date}。',
     chatgptMetaDescription:
       'ChatGPT API 价格——GPT-6 astra 每 1M 输入 $10 / 输出 $50,GPT-5 缓存输入 $0.125/M(打 1 折),Batch API 5 折。更新于 {date}。',
-    brandTitle: 'TokenCalculator — 一站式比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 LLM 价格',
+    brandTitle: 'EvalLedger — 一站式比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 LLM 价格',
     brandDescription: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。',
     brandOgDescription: '给工程师用的 LLM 价格比对计算器。免费,无需注册。',
-    footerTagline: 'TokenCalculator——看清你的 LLM token 在每一家主流模型上到底多少钱。',
+    footerTagline: 'EvalLedger——看清你的 LLM token 在每一家主流模型上到底多少钱。',
     footerProduct: '产品', footerResources: '资源', footerLegal: '法律',
     footerProductToken: 'Token 计算器',
     footerChangelog: '更新日志',
     footerTwitter: 'X (Twitter)',
     footerTerms: '服务条款', footerPrivacy: '隐私政策', footerContact: '联系我们',
-    footerRights: '© 2026 TokenCalculator 版权所有。',
+    footerRights: '© 2026 EvalLedger 版权所有。',
   },
   feedback: {
     nav: '反馈',
@@ -502,8 +502,8 @@ export const zh: Dict = {
   sponsor: {
     navSponsor: '赞助', footerSponsor: '赞助',
     kicker: '支持这个项目',
-    title: '支持 TokenCalculator', titleHl: 'TokenCalculator',
-    subtitle: 'TokenCalculator 帮助工程师看清 LLM token 在每一家主流模型上的真实成本。你的赞助将用于价格核对、新计算器开发,以及让这个工具保持免费的服务器——同时把你的头像展示在官网赞助墙。',
+    title: '支持 EvalLedger', titleHl: 'EvalLedger',
+    subtitle: 'EvalLedger 帮助工程师看清 LLM token 在每一家主流模型上的真实成本。你的赞助将用于价格核对、新计算器开发,以及让这个工具保持免费的服务器——同时把你的头像展示在官网赞助墙。',
     monthly: '每月', once: '一次性', perMo: '/月',
     popular: '推荐',
     customLabel: '自定义', customHint: '输入任意金额',
@@ -521,7 +521,7 @@ export const zh: Dict = {
     autoRenewNote: '按月自动续费直至取消，可随时经 Stripe 门户管理',
     nonRefundNote: '赞助为自愿支持，不设退款',
     earlyPerkNote: '早期赞助者：Pro 上线时享专属优惠',
-    messageLabel: '公开留言', messageOptional: '可选', messagePlaceholder: '用 TokenCalculator 省下了我好几小时的对账工作',
+    messageLabel: '公开留言', messageOptional: '可选', messagePlaceholder: '用 EvalLedger 省下了我好几小时的对账工作',
     messageNote: '会作为引言展示在赞助墙上，附在你的名字旁。',
     sponsorBtn: '赞助', secure: '通过 Stripe 安全支付 · 可随时取消',
     payWithCard: '银行卡', payWithWechat: '微信支付',

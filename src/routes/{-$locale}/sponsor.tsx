@@ -29,7 +29,7 @@ export const Route = createFileRoute('/{-$locale}/sponsor')({
       origin,
       locale,
       path: '/sponsor',
-      title: locale === 'zh' ? '支持 TokenCalculator' : 'Support TokenCalculator',
+      title: locale === 'zh' ? '支持 EvalLedger' : 'Support EvalLedger',
       description:
         locale === 'zh'
           ? '赞助这个开源项目，一次性或按月均可。'

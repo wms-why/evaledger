@@ -7,6 +7,7 @@ interface __BaseEnv_Env {
 	DB: D1Database;
 	BETTER_AUTH_SECRET: string;
 	BETTER_AUTH_URL: string;
+	AUTH_TRUSTED_ORIGINS: string;
 	RESEND_API_KEY: string;
 	EMAIL_FROM: string;
 	GOOGLE_CLIENT_ID: string;
@@ -37,6 +38,7 @@ declare namespace Cloudflare {
 		DB: D1Database;
 		BETTER_AUTH_SECRET: string;
 		BETTER_AUTH_URL: string;
+	AUTH_TRUSTED_ORIGINS: string;
 		RESEND_API_KEY: string;
 		EMAIL_FROM: string;
 		GOOGLE_CLIENT_ID: string;
@@ -58,6 +60,7 @@ declare namespace Cloudflare {
 		DB: D1Database;
 		BETTER_AUTH_SECRET: string;
 		BETTER_AUTH_URL: string;
+	AUTH_TRUSTED_ORIGINS: string;
 		RESEND_API_KEY: string;
 		EMAIL_FROM: string;
 		GOOGLE_CLIENT_ID: string;
@@ -80,7 +83,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "BETTER_AUTH_SECRET" | "BETTER_AUTH_URL" | "RESEND_API_KEY" | "EMAIL_FROM" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "LINUXDO_CLIENT_ID" | "LINUXDO_CLIENT_SECRET" | "STRIPE_SECRET_KEY" | "STRIPE_WEBHOOK_SECRET" | "STRIPE_PRICE_PRO_MONTHLY" | "STRIPE_PRICE_PRO_YEARLY" | "STRIPE_PRICE_PRO_LIFETIME" | "ADMIN_EMAILS" | "TURNSTILE_SITE_KEY" | "TURNSTILE_SECRET_KEY" | "CF_ANALYTICS_TOKEN" | "SENTRY_DSN" | "RESEND_AUDIENCE_ID">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "BETTER_AUTH_SECRET" | "BETTER_AUTH_URL" | "AUTH_TRUSTED_ORIGINS" | "RESEND_API_KEY" | "EMAIL_FROM" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "LINUXDO_CLIENT_ID" | "LINUXDO_CLIENT_SECRET" | "STRIPE_SECRET_KEY" | "STRIPE_WEBHOOK_SECRET" | "STRIPE_PRICE_PRO_MONTHLY" | "STRIPE_PRICE_PRO_YEARLY" | "STRIPE_PRICE_PRO_LIFETIME" | "ADMIN_EMAILS" | "TURNSTILE_SITE_KEY" | "TURNSTILE_SECRET_KEY" | "CF_ANALYTICS_TOKEN" | "SENTRY_DSN" | "RESEND_AUDIENCE_ID">> {}
 }
 
 // Begin runtime types

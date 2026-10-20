@@ -11,7 +11,7 @@ interface CalculatorHeroProps {
 
 /**
  * Lightweight hero for the three calculator routes. The full `marketing/hero`
- * component is too TokenCalculator-specific (CalculatorPreview baked in) — this
+ * component is too EvalLedger-specific (CalculatorPreview baked in) — this
  * one is a thin copy that just shows H1 + subtitle + freshness stamp.
  */
 export function CalculatorHero({ h1Key, subtitleKey, fetchedAt }: CalculatorHeroProps) {

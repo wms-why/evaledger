@@ -15,7 +15,7 @@ export function ErrorPage({ error, reset }: { error: unknown; reset: () => void 
   // document.title, not a rendered <title>: the root head() already emits one,
   // and React 19 hoisting would append a second (invalid, and browsers keep the first).
   useEffect(() => {
-    document.title = 'Something went wrong — TokenCalculator'
+    document.title = 'Something went wrong — EvalLedger'
   }, [])
   const message = error instanceof Error ? error.message : String(error)
   return (

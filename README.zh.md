@@ -1,4 +1,4 @@
-# TokenCalculator
+# EvalLedger
 
 > **看清你的 LLM token 在每一家主流模型上到底多少钱。**
 
@@ -6,7 +6,7 @@
 
 定价 registry 在 [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts),每次刷新都会按文件头的「Refresh workflow」流程去各家厂商官方定价页核对。
 
-**线上:** [tokencalculator.com](https://tokencalculator.com)
+**线上:** [evaledger.com](https://evaledger.com)
 
 ---
 
@@ -149,8 +149,8 @@ drizzle/           # 生成的 SQL 迁移
 
 ## 赞助
 
-❤️ [赞助本项目](https://tokencalculator.com/sponsor)——你的头像会出现在官网赞助墙,并用于支持价格刷新、新计算器开发与维持免费服务的基础设施。
+❤️ [赞助本项目](https://evaledger.com/sponsor)——你的头像会出现在官网赞助墙,并用于支持价格刷新、新计算器开发与维持免费服务的基础设施。
 
 ## 许可证
 
-[Apache License 2.0](LICENSE)。Copyright 2026 TokenCalculator.
+[Apache License 2.0](LICENSE)。Copyright 2026 EvalLedger.

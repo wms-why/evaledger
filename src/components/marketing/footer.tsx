@@ -4,7 +4,7 @@ import { Logo } from '@/components/brand/logo'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
 import { LangSwitch } from '@/features/i18n/lang-switch'
 
-const X_URL = 'https://x.com/tokencalculator'
+const X_URL = 'https://x.com/evalledger'
 
 export function Footer({ theme }: { theme: 'light' | 'dark' }) {
   const { t } = useTranslation()
@@ -40,7 +40,7 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
         <FooterCol title={t('marketing.footerLegal')}>
           <Link className="foot-link" to="/{-$locale}/terms">{t('marketing.footerTerms')}</Link>
           <Link className="foot-link" to="/{-$locale}/privacy">{t('marketing.footerPrivacy')}</Link>
-          <a className="foot-link" href="mailto:hello@tokencalculator.com">{t('marketing.footerContact')}</a>
+          <a className="foot-link" href="mailto:hello@evaledger.com">{t('marketing.footerContact')}</a>
         </FooterCol>
       </div>
 

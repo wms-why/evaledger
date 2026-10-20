@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   TokenCalculator — "Apple" minimalist design language
+   EvalLedger — "Apple" minimalist design language
    Apple blue accent #0071E3 · near-black text · true-black dark mode.
    System fonts only: SF Pro / PingFang SC / Segoe UI; mono = SF Mono / Consolas.
    Depth is conveyed by hairline borders + bg steps, never by shadows.

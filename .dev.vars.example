@@ -1,9 +1,14 @@
 # Better-Auth
 BETTER_AUTH_SECRET=replace-with-32+char-random-string
 BETTER_AUTH_URL=http://localhost:3000
+# Extra origins allowed to call the auth endpoints (comma-separated).
+# Blank = only BETTER_AUTH_URL's origin is trusted. During a domain migration
+# list the old host here, otherwise sign-ins from it are rejected (CSRF origin
+# check). Ignored entirely when blank.
+AUTH_TRUSTED_ORIGINS=
 # Email (Resend) — blank keeps mail local: captured to the console, never sent
 RESEND_API_KEY=
-EMAIL_FROM=TokenCalculator <onboarding@resend.dev>
+EMAIL_FROM=EvalLedger <onboarding@resend.dev>
 # Optional: Resend audience id for the waitlist (and future newsletter).
 # Leave blank to disable audience sync — signups still save to D1.
 RESEND_AUDIENCE_ID=

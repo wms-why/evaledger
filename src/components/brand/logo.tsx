@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-/** TokenCalculator wordmark — coin-stack mark + "TokenCalculator". `compact` renders the mark only. */
+/** EvalLedger wordmark — coin-stack mark + "EvalLedger". `compact` renders the mark only. */
 export function Logo({
   size = 17,
   compact = false,
@@ -31,7 +31,7 @@ export function Logo({
         <path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6" />
         <path d="M5 11.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6" />
       </svg>
-      {!compact && <span>TokenCalculator</span>}
+      {!compact && <span>EvalLedger</span>}
     </span>
   )
 
@@ -40,7 +40,7 @@ export function Logo({
   return (
     <Link
       to="/{-$locale}"
-      aria-label="TokenCalculator"
+      aria-label="EvalLedger"
       className="shrink-0"
       // 只把首页当“当前页”：/zh 是 /zh/* 的父路径，不加 exact 会在所有中文页命中
       activeOptions={{ exact: true }}

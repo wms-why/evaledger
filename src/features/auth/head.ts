@@ -9,7 +9,7 @@ export function authPageHead(
   const locale: Locale = (params as { locale?: string })?.locale === 'zh' ? 'zh' : 'en'
   return {
     meta: [
-      { title: `${dictionaries[locale].auth[key]} — TokenCalculator` },
+      { title: `${dictionaries[locale].auth[key]} — EvalLedger` },
       { name: 'robots', content: 'noindex' },
     ],
   }

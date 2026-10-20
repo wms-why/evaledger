@@ -59,7 +59,7 @@ const handler = async () => {
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>TokenCalculator — Model Releases</title>
+    <title>EvalLedger — Model Releases</title>
     <link>${escapeXml(`${origin}/releases`)}</link>
     <atom:link href="${escapeXml(`${origin}/feed.xml`)}" rel="self" type="application/rss+xml"/>
     <description>Every major model launch, rewritten as a cost-and-switch analysis.</description>

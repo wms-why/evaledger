@@ -1,6 +1,6 @@
-# Contributing to TokenCalculator
+# Contributing to EvalLedger
 
-Thanks for your interest in improving TokenCalculator! The bar is: changes
+Thanks for your interest in improving EvalLedger! The bar is: changes
 should keep it **honest** (no mocked/stubbed features), lean, and runnable on
 the Cloudflare free-to-cheap stack.
 

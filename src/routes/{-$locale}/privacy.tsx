@@ -21,11 +21,11 @@ export const Route = createFileRoute('/{-$locale}/privacy')({
       origin,
       locale,
       path: '/privacy',
-      title: `${legalDocs[locale].privacy.title} — TokenCalculator`,
+      title: `${legalDocs[locale].privacy.title} — EvalLedger`,
       description:
         locale === 'zh'
-          ? 'TokenCalculator 隐私政策：我们收集哪些数据、如何使用、与哪些服务商共享，以及你的访问、导出与删除权利。'
-          : 'TokenCalculator Privacy Policy: what we collect, how we use it, who processes it, and your rights to access, export and delete your data.',
+          ? 'EvalLedger 隐私政策：我们收集哪些数据、如何使用、与哪些服务商共享，以及你的访问、导出与删除权利。'
+          : 'EvalLedger Privacy Policy: what we collect, how we use it, who processes it, and your rights to access, export and delete your data.',
     })
     return { meta, links }
   },

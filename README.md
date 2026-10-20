@@ -1,4 +1,4 @@
-# TokenCalculator
+# EvalLedger
 
 > **See what your LLM tokens actually cost — across every major model.**
 
@@ -6,7 +6,7 @@ A free token cost calculator built on **TanStack Start** + **Cloudflare Workers*
 
 The pricing registry lives in [`src/features/calculator/model-prices.ts`](src/features/calculator/model-prices.ts) and is re-verified against each provider's official pricing page on every refresh — see the "Refresh workflow" comment at the top of that file.
 
-**Live:** [tokencalculator.com](https://tokencalculator.com)
+**Live:** [evaledger.com](https://evaledger.com)
 
 ---
 
@@ -156,8 +156,8 @@ This project started as a fork of [FlareStarter](https://github.com/FlareStarter
 
 ## Sponsor
 
-❤️ [Sponsor the project](https://tokencalculator.com/sponsor) — your avatar shows up on the live sponsor wall, and it funds fresh price updates, new calculators, and the infra that keeps the tool free.
+❤️ [Sponsor the project](https://evaledger.com/sponsor) — your avatar shows up on the live sponsor wall, and it funds fresh price updates, new calculators, and the infra that keeps the tool free.
 
 ## License
 
-[Apache License 2.0](LICENSE). Copyright 2026 TokenCalculator.
+[Apache License 2.0](LICENSE). Copyright 2026 EvalLedger.

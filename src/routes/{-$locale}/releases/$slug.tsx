@@ -64,7 +64,7 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
             inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
             isBasedOn: entry.sourceUrl,
             url: `${origin}${locale === 'zh' ? `/zh${path}` : path}`,
-            publisher: { '@type': 'Organization', name: 'TokenCalculator', url: origin },
+            publisher: { '@type': 'Organization', name: 'EvalLedger', url: origin },
             about: model
               ? { '@type': 'Thing', name: model.displayName, description: `LLM pricing analysis` }
               : undefined,

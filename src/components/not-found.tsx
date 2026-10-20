@@ -9,7 +9,7 @@ export function NotFound() {
   // document.title, not a rendered <title>: the root head() already emits one,
   // and React 19 hoisting would append a second (invalid, and browsers keep the first).
   useEffect(() => {
-    document.title = 'Page not found — TokenCalculator'
+    document.title = 'Page not found — EvalLedger'
   }, [])
   return (
     <main className="bg-background py-24 md:py-32">

@@ -26,6 +26,8 @@ const envSchema = z
       .string({ error: 'BETTER_AUTH_SECRET is required' })
       .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
     BETTER_AUTH_URL: z.url({ error: 'BETTER_AUTH_URL must be a valid absolute URL' }),
+    // Extra origins allowed to call the auth endpoints (comma-separated).
+    AUTH_TRUSTED_ORIGINS: optional,
 
     RESEND_API_KEY: optional,
     RESEND_AUDIENCE_ID: optional,

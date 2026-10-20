@@ -25,7 +25,7 @@ export function AuthCard({
   return (
     <div className="auth-wrap">
       <div className="flex h-14 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-md">
-        <Link to="/{-$locale}" className="auth-home" aria-label="TokenCalculator">
+        <Link to="/{-$locale}" className="auth-home" aria-label="EvalLedger">
           <span className="auth-back" aria-hidden="true">
             <ChevronLeft size={16} />
           </span>

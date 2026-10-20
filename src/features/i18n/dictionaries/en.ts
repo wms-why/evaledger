@@ -1,7 +1,7 @@
 export const en = {
-  common: { appName: 'TokenCalculator', toggleTheme: 'Toggle theme', language: 'Language' },
+  common: { appName: 'EvalLedger', toggleTheme: 'Toggle theme', language: 'Language' },
   home: {
-    title: 'TokenCalculator — Free LLM Token Cost Calculator',
+    title: 'EvalLedger — Free LLM Token Cost Calculator',
     calculatorTitle: 'Token Cost Calculator — Compare Every LLM',
     openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
     claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
@@ -388,7 +388,7 @@ export const en = {
     collapseSidebar: 'Collapse sidebar', expandSidebar: 'Expand sidebar',
     navAccount: 'Account',
     userMenuLabel: 'User menu',
-    welcomeSub: "Here's your TokenCalculator workspace.",
+    welcomeSub: "Here's your EvalLedger workspace.",
     quickActions: 'Quick actions',
     openAccount: 'Account settings',
     openAccountSub: 'Profile, password, danger zone',
@@ -418,7 +418,7 @@ export const en = {
     checkEmailReset: 'If that email exists, a reset link has been sent.',
     deleteAccount: 'Delete account', deleteConfirm: 'This permanently deletes your account and data. Continue?',
     changePassword: 'Change password',
-    loginTitle: 'Welcome back', loginSub: 'Sign in with Google to your TokenCalculator workspace.',
+    loginTitle: 'Welcome back', loginSub: 'Sign in with Google to your EvalLedger workspace.',
     registerTitle: 'Create your account', registerSub: 'Sign up with Google — no password needed.',
     orContinue: 'or continue with',
     forgotTitle: 'Reset your password', forgotSub: "Enter your email and we'll send a reset link.",
@@ -449,7 +449,7 @@ export const en = {
   admin: {
     title: 'Admin', dashboard: 'Overview', users: 'Users',
     navAdmin: 'Admin',
-    overviewSub: 'Signups, activity and subscriptions across TokenCalculator.',
+    overviewSub: 'Signups, activity and subscriptions across EvalLedger.',
     usersSub: 'Search, inspect and manage every account.',
     totalUsers: 'Users', activeUsers: 'Active users', activeSubs: 'Active subs', subscriptions: 'Subscriptions',
     active: 'Active', pastDue: 'Past due', canceled: 'Canceled', pro: 'Pro', free: 'Free',
@@ -494,7 +494,7 @@ export const en = {
     ctaBody: 'Paste your prompt, set your usage, see the cost across every model — in seconds. No signup.',
     ctaButton: 'Open the calculator',
     brandMetaDescription:
-      'TokenCalculator is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
+      'EvalLedger is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
     calculatorMetaDescription:
       'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
     deepseekMetaDescription:
@@ -507,16 +507,16 @@ export const en = {
       'See what Claude Opus 4.5, Sonnet 4.5, and Haiku 4.5 cost per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated {date}.',
     chatgptMetaDescription:
       'ChatGPT API pricing — GPT-6 astra at $10 input / $50 output per 1M, GPT-5 cached input at $0.125/M (90% off), and the Batch API at 50% off. Updated {date}.',
-    brandTitle: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
+    brandTitle: 'EvalLedger — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
     brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
     brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
-    footerTagline: 'TokenCalculator — see what your LLM tokens actually cost, across every major model.',
+    footerTagline: 'EvalLedger — see what your LLM tokens actually cost, across every major model.',
     footerProduct: 'Product', footerResources: 'Resources', footerLegal: 'Legal',
     footerProductToken: 'Token Calculator',
     footerChangelog: 'Changelog',
     footerTwitter: 'X (Twitter)',
     footerTerms: 'Terms', footerPrivacy: 'Privacy', footerContact: 'Contact',
-    footerRights: '© 2026 TokenCalculator. All rights reserved.',
+    footerRights: '© 2026 EvalLedger. All rights reserved.',
   },
   feedback: {
     nav: 'Feedback',
@@ -537,8 +537,8 @@ export const en = {
   sponsor: {
     navSponsor: 'Sponsor', footerSponsor: 'Sponsor',
     kicker: 'support the project',
-    title: 'Sponsor TokenCalculator', titleHl: 'TokenCalculator',
-    subtitle: 'TokenCalculator helps engineers see what their LLM tokens actually cost, across every major model. Sponsorships fund fresh price updates, new calculators, and the infra that keeps the tool free — and put your avatar on the sponsor wall.',
+    title: 'Sponsor EvalLedger', titleHl: 'EvalLedger',
+    subtitle: 'EvalLedger helps engineers see what their LLM tokens actually cost, across every major model. Sponsorships fund fresh price updates, new calculators, and the infra that keeps the tool free — and put your avatar on the sponsor wall.',
     monthly: 'Monthly', once: 'One-time', perMo: '/mo',
     popular: 'Recommended',
     customLabel: 'Custom', customHint: 'Enter any amount',
@@ -556,7 +556,7 @@ export const en = {
     autoRenewNote: 'Renews monthly until canceled — manage anytime via the Stripe portal',
     nonRefundNote: 'Sponsorships are voluntary support and are non-refundable',
     earlyPerkNote: 'Early sponsors get an exclusive perk when Pro launches',
-    messageLabel: 'Public message', messageOptional: 'optional', messagePlaceholder: 'TokenCalculator saved me hours of API bill auditing',
+    messageLabel: 'Public message', messageOptional: 'optional', messagePlaceholder: 'EvalLedger saved me hours of API bill auditing',
     messageNote: 'Shown as a quote on the sponsor wall, next to your name.',
     sponsorBtn: 'Sponsor', secure: 'Secure checkout via Stripe · cancel anytime',
     payWithCard: 'Card', payWithWechat: 'WeChat Pay',
