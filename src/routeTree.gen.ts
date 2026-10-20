@@ -30,6 +30,7 @@ import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json
 import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
 import { Route as AdminSponsorsDotcsvRouteImport } from './routes/admin/sponsors[.]csv'
 import { Route as Char123LocaleChar125AdminRouteRouteImport } from './routes/{-$locale}/admin/route'
+import { Route as Char123LocaleChar125SeriesIndexRouteImport } from './routes/{-$locale}/series/index'
 import { Route as Char123LocaleChar125ReleasesIndexRouteImport } from './routes/{-$locale}/releases/index'
 import { Route as Char123LocaleChar125CompareIndexRouteImport } from './routes/{-$locale}/compare/index'
 import { Route as Char123LocaleChar125AppIndexRouteImport } from './routes/{-$locale}/app/index'
@@ -53,8 +54,11 @@ import { Route as Char123LocaleChar125authForgotPasswordRouteImport } from './ro
 import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
 import { Route as ApiAvatarsSplatRouteImport } from './routes/api/avatars/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as Char123LocaleChar125SeriesSlugRouteRouteImport } from './routes/{-$locale}/series/$slug/route'
 import { Route as Char123LocaleChar125BenchmarksSlugRouteRouteImport } from './routes/{-$locale}/benchmarks/$slug/route'
+import { Route as Char123LocaleChar125SeriesSlugIndexRouteImport } from './routes/{-$locale}/series/$slug/index'
 import { Route as Char123LocaleChar125BenchmarksSlugIndexRouteImport } from './routes/{-$locale}/benchmarks/$slug/index'
+import { Route as Char123LocaleChar125SeriesSlugPairRouteImport } from './routes/{-$locale}/series/$slug/$pair'
 import { Route as Char123LocaleChar125BenchmarksSlugHistoryRouteImport } from './routes/{-$locale}/benchmarks/$slug/history'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -175,6 +179,12 @@ const Char123LocaleChar125AdminRouteRoute =
   Char123LocaleChar125AdminRouteRouteImport.update({
     id: '/admin',
     path: '/admin',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125SeriesIndexRoute =
+  Char123LocaleChar125SeriesIndexRouteImport.update({
+    id: '/series/',
+    path: '/series/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125ReleasesIndexRoute =
@@ -312,17 +322,35 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char123LocaleChar125SeriesSlugRouteRoute =
+  Char123LocaleChar125SeriesSlugRouteRouteImport.update({
+    id: '/series/$slug',
+    path: '/series/$slug',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125BenchmarksSlugRouteRoute =
   Char123LocaleChar125BenchmarksSlugRouteRouteImport.update({
     id: '/benchmarks/$slug',
     path: '/benchmarks/$slug',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125SeriesSlugIndexRoute =
+  Char123LocaleChar125SeriesSlugIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => Char123LocaleChar125SeriesSlugRouteRoute,
+  } as any)
 const Char123LocaleChar125BenchmarksSlugIndexRoute =
   Char123LocaleChar125BenchmarksSlugIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => Char123LocaleChar125BenchmarksSlugRouteRoute,
+  } as any)
+const Char123LocaleChar125SeriesSlugPairRoute =
+  Char123LocaleChar125SeriesSlugPairRouteImport.update({
+    id: '/$pair',
+    path: '/$pair',
+    getParentRoute: () => Char123LocaleChar125SeriesSlugRouteRoute,
   } as any)
 const Char123LocaleChar125BenchmarksSlugHistoryRoute =
   Char123LocaleChar125BenchmarksSlugHistoryRouteImport.update({
@@ -354,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/waitlist': typeof Char123LocaleChar125WaitlistRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
   '/{-$locale}/benchmarks/$slug': typeof Char123LocaleChar125BenchmarksSlugRouteRouteWithChildren
+  '/{-$locale}/series/$slug': typeof Char123LocaleChar125SeriesSlugRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatars/$': typeof ApiAvatarsSplatRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
@@ -377,8 +406,11 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
+  '/{-$locale}/series/': typeof Char123LocaleChar125SeriesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
+  '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/series/$slug/': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/feed.xml': typeof FeedDotxmlRoute
@@ -423,8 +455,11 @@ export interface FileRoutesByTo {
   '/{-$locale}/app': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases': typeof Char123LocaleChar125ReleasesIndexRoute
+  '/{-$locale}/series': typeof Char123LocaleChar125SeriesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
+  '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/series/$slug': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -450,6 +485,7 @@ export interface FileRoutesById {
   '/{-$locale}/waitlist': typeof Char123LocaleChar125WaitlistRoute
   '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
   '/{-$locale}/benchmarks/$slug': typeof Char123LocaleChar125BenchmarksSlugRouteRouteWithChildren
+  '/{-$locale}/series/$slug': typeof Char123LocaleChar125SeriesSlugRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatars/$': typeof ApiAvatarsSplatRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
@@ -473,8 +509,11 @@ export interface FileRoutesById {
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
+  '/{-$locale}/series/': typeof Char123LocaleChar125SeriesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
+  '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/series/$slug/': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -501,6 +540,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/waitlist'
     | '/{-$locale}/'
     | '/{-$locale}/benchmarks/$slug'
+    | '/{-$locale}/series/$slug'
     | '/api/auth/$'
     | '/api/avatars/$'
     | '/api/webhooks/stripe'
@@ -524,8 +564,11 @@ export interface FileRouteTypes {
     | '/{-$locale}/app/'
     | '/{-$locale}/compare/'
     | '/{-$locale}/releases/'
+    | '/{-$locale}/series/'
     | '/{-$locale}/benchmarks/$slug/history'
+    | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug/'
+    | '/{-$locale}/series/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/feed.xml'
@@ -570,8 +613,11 @@ export interface FileRouteTypes {
     | '/{-$locale}/app'
     | '/{-$locale}/compare'
     | '/{-$locale}/releases'
+    | '/{-$locale}/series'
     | '/{-$locale}/benchmarks/$slug/history'
+    | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug'
+    | '/{-$locale}/series/$slug'
   id:
     | '__root__'
     | '/{-$locale}'
@@ -596,6 +642,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/waitlist'
     | '/{-$locale}/'
     | '/{-$locale}/benchmarks/$slug'
+    | '/{-$locale}/series/$slug'
     | '/api/auth/$'
     | '/api/avatars/$'
     | '/api/webhooks/stripe'
@@ -619,8 +666,11 @@ export interface FileRouteTypes {
     | '/{-$locale}/app/'
     | '/{-$locale}/compare/'
     | '/{-$locale}/releases/'
+    | '/{-$locale}/series/'
     | '/{-$locale}/benchmarks/$slug/history'
+    | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug/'
+    | '/{-$locale}/series/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -785,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AdminRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/series/': {
+      id: '/{-$locale}/series/'
+      path: '/series'
+      fullPath: '/{-$locale}/series/'
+      preLoaderRoute: typeof Char123LocaleChar125SeriesIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/releases/': {
       id: '/{-$locale}/releases/'
       path: '/releases'
@@ -946,6 +1003,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/{-$locale}/series/$slug': {
+      id: '/{-$locale}/series/$slug'
+      path: '/series/$slug'
+      fullPath: '/{-$locale}/series/$slug'
+      preLoaderRoute: typeof Char123LocaleChar125SeriesSlugRouteRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/benchmarks/$slug': {
       id: '/{-$locale}/benchmarks/$slug'
       path: '/benchmarks/$slug'
@@ -953,12 +1017,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/series/$slug/': {
+      id: '/{-$locale}/series/$slug/'
+      path: '/'
+      fullPath: '/{-$locale}/series/$slug/'
+      preLoaderRoute: typeof Char123LocaleChar125SeriesSlugIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125SeriesSlugRouteRoute
+    }
     '/{-$locale}/benchmarks/$slug/': {
       id: '/{-$locale}/benchmarks/$slug/'
       path: '/'
       fullPath: '/{-$locale}/benchmarks/$slug/'
       preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugIndexRouteImport
       parentRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRoute
+    }
+    '/{-$locale}/series/$slug/$pair': {
+      id: '/{-$locale}/series/$slug/$pair'
+      path: '/$pair'
+      fullPath: '/{-$locale}/series/$slug/$pair'
+      preLoaderRoute: typeof Char123LocaleChar125SeriesSlugPairRouteImport
+      parentRoute: typeof Char123LocaleChar125SeriesSlugRouteRoute
     }
     '/{-$locale}/benchmarks/$slug/history': {
       id: '/{-$locale}/benchmarks/$slug/history'
@@ -1013,6 +1091,24 @@ const Char123LocaleChar125BenchmarksSlugRouteRouteWithChildren =
     Char123LocaleChar125BenchmarksSlugRouteRouteChildren,
   )
 
+interface Char123LocaleChar125SeriesSlugRouteRouteChildren {
+  Char123LocaleChar125SeriesSlugPairRoute: typeof Char123LocaleChar125SeriesSlugPairRoute
+  Char123LocaleChar125SeriesSlugIndexRoute: typeof Char123LocaleChar125SeriesSlugIndexRoute
+}
+
+const Char123LocaleChar125SeriesSlugRouteRouteChildren: Char123LocaleChar125SeriesSlugRouteRouteChildren =
+  {
+    Char123LocaleChar125SeriesSlugPairRoute:
+      Char123LocaleChar125SeriesSlugPairRoute,
+    Char123LocaleChar125SeriesSlugIndexRoute:
+      Char123LocaleChar125SeriesSlugIndexRoute,
+  }
+
+const Char123LocaleChar125SeriesSlugRouteRouteWithChildren =
+  Char123LocaleChar125SeriesSlugRouteRoute._addFileChildren(
+    Char123LocaleChar125SeriesSlugRouteRouteChildren,
+  )
+
 interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125AdminRouteRoute: typeof Char123LocaleChar125AdminRouteRouteWithChildren
   Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
@@ -1029,6 +1125,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125WaitlistRoute: typeof Char123LocaleChar125WaitlistRoute
   Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
   Char123LocaleChar125BenchmarksSlugRouteRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRouteWithChildren
+  Char123LocaleChar125SeriesSlugRouteRoute: typeof Char123LocaleChar125SeriesSlugRouteRouteWithChildren
   Char123LocaleChar125authForgotPasswordRoute: typeof Char123LocaleChar125authForgotPasswordRoute
   Char123LocaleChar125authLoginRoute: typeof Char123LocaleChar125authLoginRoute
   Char123LocaleChar125authRegisterRoute: typeof Char123LocaleChar125authRegisterRoute
@@ -1044,6 +1141,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125AppIndexRoute: typeof Char123LocaleChar125AppIndexRoute
   Char123LocaleChar125CompareIndexRoute: typeof Char123LocaleChar125CompareIndexRoute
   Char123LocaleChar125ReleasesIndexRoute: typeof Char123LocaleChar125ReleasesIndexRoute
+  Char123LocaleChar125SeriesIndexRoute: typeof Char123LocaleChar125SeriesIndexRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
@@ -1072,6 +1170,8 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
     Char123LocaleChar125BenchmarksSlugRouteRoute:
       Char123LocaleChar125BenchmarksSlugRouteRouteWithChildren,
+    Char123LocaleChar125SeriesSlugRouteRoute:
+      Char123LocaleChar125SeriesSlugRouteRouteWithChildren,
     Char123LocaleChar125authForgotPasswordRoute:
       Char123LocaleChar125authForgotPasswordRoute,
     Char123LocaleChar125authLoginRoute: Char123LocaleChar125authLoginRoute,
@@ -1095,6 +1195,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125CompareIndexRoute,
     Char123LocaleChar125ReleasesIndexRoute:
       Char123LocaleChar125ReleasesIndexRoute,
+    Char123LocaleChar125SeriesIndexRoute: Char123LocaleChar125SeriesIndexRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =

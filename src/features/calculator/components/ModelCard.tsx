@@ -5,6 +5,7 @@ import { localeTag } from '@/features/i18n/locale'
 import { findModel } from '@/features/calculator/model-prices'
 import { modelNote } from '@/features/calculator/model-notes'
 import { providerLabel } from '@/features/calculator/provider-label'
+import { renderRuleKey } from '@/features/calculator/pricing-rule'
 import type { CostBreakdown } from '@/features/calculator/types'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -15,9 +16,6 @@ interface ModelCardProps {
   /** When true (deep link `?model=`), ring the card and scroll it into view. */
   highlight?: boolean
 }
-
-/** Translation function shape returned by `useTranslation()`. */
-type TFn = (key: string, params?: Record<string, string | number>) => string
 
 /**
  * Single model result card.
@@ -141,51 +139,6 @@ function Row({ label, value, sub }: { label: string; value: string; sub?: string
       </dd>
     </div>
   )
-}
-
-/**
- * Map an `appliedRule` string (English, built by `cost.ts`) to a localized
- * label. Combinations such as `promo (until 2026-12-31) + cached input` are
- * split on ` + `, translated part by part, and joined back together.
- * Unrecognised rules fall back to the raw string.
- */
-function renderRuleKey(rule: string, t: TFn, locale: string): string {
-  if (!rule) return rule
-  return rule
-    .split(' + ')
-    .map((part) => translateRulePart(part.trim(), t, locale))
-    .join(' + ')
-}
-
-/** Translate a single rule (no ` + ` combination). */
-function translateRulePart(rule: string, t: TFn, locale: string): string {
-  if (rule === 'standard') return t('calculator.ruleStandard')
-  if (rule.startsWith('promo')) {
-    // `promo (until 2026-12-31)` — the date must not swallow the closing paren.
-    const date = rule.match(/until ([^)]+)/)?.[1]
-    return date ? t('calculator.rulePromo', { date }) : rule
-  }
-  if (rule.startsWith('long-context')) {
-    const n = rule.match(/≥([\d.,\s]+)/)?.[1]
-    return n ? t('calculator.longContextLabel', { n: formatThreshold(n, locale) }) : rule
-  }
-  if (rule.startsWith('off-peak')) return t('calculator.offPeakLabel')
-  if (rule.startsWith('peak')) return t('calculator.peakLabel')
-  if (rule === 'cached input') return t('calculator.cachedInputLabel')
-  const cacheWrite = rule.match(/^cache write \((.+)\)$/)?.[1]
-  if (cacheWrite) return t('calculator.cacheWriteLabel', { window: cacheWrite })
-  return rule
-}
-
-/**
- * Re-format a long-context threshold that was stringified with the browser
- * locale (`cost.ts` builds the rule string) so the card shows the app locale.
- */
-function formatThreshold(raw: string, locale: string): string {
-  const digits = raw.replace(/[^\d]/g, '')
-  if (!digits) return raw.trim()
-  const n = Number(digits)
-  return Number.isFinite(n) ? n.toLocaleString(locale) : raw.trim()
 }
 
 /** Tiny USD formatter; large values use the APP locale, not the browser locale. */

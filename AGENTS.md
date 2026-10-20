@@ -63,7 +63,7 @@ The join keys:
 
 | Change | What must move with it |
 | --- | --- |
-| A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) |
+| A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) + a member row in the series it belongs to (`src/features/series/series.ts`) |
 | A checkpoint ships (same SKU, new weights) | **A separate record, never a merged one**: a new REGISTRY row (the old checkpoint flips to `status: 'delisted'` and keeps its price), a new LEADERBOARD row (the old row keeps its scores), and a new release page — the two pages cross-link. Never fold two checkpoints' scores into one row, and never let one article quote the other checkpoint's numbers |
 | A price changes | The REGISTRY price + `lastVerified` = today + `REGISTRY.fetchedAt` = today + every affected release page re-read with its `dataCheckedAt` bumped to today |
 | A score is corrected or added | The LEADERBOARD score (+ a `history` snapshot when it overwrites one) + every affected release page re-read with its `dataCheckedAt` bumped to today |
@@ -139,3 +139,37 @@ launch, rewritten as a cost-and-switch analysis. Full contract in
 - **Drafting:** `pnpm releases:fetch` scrapes the vendor announcement into
   `data/release-drafts/` — drafts only, never `src/content/releases/`, never
   prices or conclusions.
+
+## Model Series (`/series`)
+
+The fourth series: **every version of one vendor product line, side by side** —
+"is the new version worth switching to, and what actually changed?". The
+leaderboard ranks models across vendors, `/compare/$pair` pits two hand-picked
+models against each other, `/releases` analyses one launch; none of them
+answers "how does this line's new version compare with the one we already
+run?". Full contract in `src/features/series/README.md` — read it before
+adding a line or a member.
+
+- **A series stores keys, never numbers.** `src/features/series/series.ts` holds
+  the member list (`priceId` / `scoreId` only); every price, ratio, score and
+  cost on the page is resolved from REGISTRY / LEADERBOARD at render time by
+  `src/features/series/data.ts`. A price change updates every series page that
+  mentions it, and a series page can never contradict the calculator.
+- **Membership is curated, not derived.** `REGISTRY.models[].family` mixes
+  generations and tiers (`gpt-5` holds GPT-5, 5-mini, 5-nano *and* 5.6 sol /
+  cyber), so the lines, their members and their order are written down by hand
+  and held to the registries by the guard test.
+- **Never interpolate, never borrow.** A version without a traceable score
+  renders an honest empty state; a version's score row is only ever its own.
+- **Only compare what both versions report.** Version averages are computed
+  over the benchmarks *every* scored member of the line publishes, and the
+  "which version is strongest" claim disappears when that set is empty.
+- **Guard test:** `src/features/series/__tests__/series.node.test.ts` fails the
+  build if a member points at a missing registry/leaderboard row, if the
+  versions are not newest-first, if a registry model of a series' family is
+  missing from the line (or from `FAMILY_EXCLUSIONS`, with a reason), or if a
+  reported price/context change does not add up.
+- **URLs:** `/series` (index), `/series/$slug` (one line),
+  `/series/$slug/$pair` (two versions of that line, e.g.
+  `/series/claude-opus/opus-5.5-vs-opus-5`). Cross-line comparisons stay on
+  `/compare/$pair`.

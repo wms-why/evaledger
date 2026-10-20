@@ -19,6 +19,14 @@ import { REGISTRY } from './model-prices'
  * OpenRouter pricing: caller should pass a `modelOverride` produced from
  * `applyOpenRouterMarkup()` rather than mutating the registry.
  */
+/**
+ * The workload every cost sample on the site quotes: 1M input + 500K output
+ * tokens per month. It lives here — in the pricing domain — so the release
+ * posts and the series ladders quote the same workload.
+ */
+export const SAMPLE_INPUT_TOKENS = 1_000_000
+export const SAMPLE_OUTPUT_TOKENS = 500_000
+
 export interface CalculateOptions {
   /** Use cached input price (e.g. prompt caching hit). Off by default. */
   useCachedInput?: boolean

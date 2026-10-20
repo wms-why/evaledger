@@ -94,6 +94,24 @@ contain, or points at a model that no longer exists.
 Subscribe to the whole series over RSS at [`/feed.xml`](src/routes/feed[.]xml.ts)
 — one feed, both languages, one item per article.
 
+## The Model Series pages
+
+`/series` is the site's fourth series: **every version of one vendor line,
+side by side** — Claude Opus 5.5 vs Opus 5 vs Opus 4.8, GPT-6 astra vs sol vs
+luna, DeepSeek V4.1-Flash vs V4-Pro. The leaderboard ranks models across
+vendors, `/compare/$pair` pits two hand-picked models against each other and
+`/releases` analyses one launch; none of them answers *"the line shipped a new
+version — is the old one still worth running, and what actually changed?"*.
+
+Same rule as the release posts: a series stores only the **keys** of its
+versions. Every price, score, delta and monthly cost on the page is resolved
+from the pricing registry and the leaderboard when the page renders, so the
+pages cannot go stale and cannot contradict the calculator. Comparisons are
+only made over benchmarks **both** versions publish — a version with no
+verifiable score gets an honest empty state, never an estimate.
+
+The contract lives in [`src/features/series/README.md`](src/features/series/README.md).
+
 ## Project structure
 
 ```
@@ -112,6 +130,7 @@ src/
     waitlist/      # pre-launch signup + Turnstile + Resend sync
     changelog/     # in-app changelog page (MDX-driven, per-locale)
     releases/      # "Model Releases" series — launch posts rewritten as cost analyses
+    series/        # "Model Series" pages — every version of one vendor line, side by side
     storage/       # R2 upload + serving route (avatar upload reference)
     email/         # Resend client + string templates
     maintenance/   # Cron cleanup task (expired sessions/tokens/rate-limit rows)

@@ -90,6 +90,21 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 整个系列可以通过 RSS 订阅([`/feed.xml`](src/routes/feed[.]xml.ts)):
 一个 feed、中英都在、每篇文章一条。
 
+## 模型版本系列页
+
+`/series` 是站点的第四个系列:**同一条产品线的每个版本,并排看** ——
+Claude Opus 5.5 对 Opus 5 对 Opus 4.8,GPT-6 astra 对 sol 对 luna,
+DeepSeek V4.1-Flash 对 V4-Pro。榜单是跨厂商排名,`/compare/$pair` 是两个
+手挑模型的两两对比,发布解读一次只讲一次发布 —— 都没回答
+「这条线出了新版本,旧版还值得用吗,到底改了什么」。
+
+规矩和发布文章一样:一条产品线只存**键**。页面上的每个价格、跑分、差值、
+月度成本都在渲染时从定价 registry 和榜单里取,所以这些页面不会过期,
+也不会和计算器打架。比较只在**双方都公布**的基准上做 —— 没有可溯源
+跑分的版本渲染诚实的空状态,绝不给估算值。
+
+契约写在 [`src/features/series/README.md`](src/features/series/README.md)。
+
 ## 项目结构
 
 ```
@@ -108,6 +123,7 @@ src/
     waitlist/      # 上线前候补登记 + Turnstile + Resend 同步
     changelog/     # 应用内 changelog 页面(MDX,按语言)
     releases/      # 「新模型发布」系列 — 发布事件重写成的成本分析
+    series/        # 「模型版本系列」页 — 同一条产品线的各版本并排看
     storage/       # R2 上传 + serving route(头像上传参考实现)
     email/         # Resend 客户端 + 字符串模板
     maintenance/   # Cron 清理任务(过期会话/token/限流记录)

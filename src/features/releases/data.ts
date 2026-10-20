@@ -1,4 +1,4 @@
-import { calculateCost } from '@/features/calculator/cost'
+import { calculateCost, SAMPLE_INPUT_TOKENS, SAMPLE_OUTPUT_TOKENS } from '@/features/calculator/cost'
 import { REGISTRY } from '@/features/calculator/model-prices'
 import type { ModelPrice, ModelStatus, Provider } from '@/features/calculator/types'
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
@@ -140,9 +140,6 @@ export function releaseScoreTable(meta: ReleaseMeta): ReleaseScoreTable | null {
   }
 }
 
-/** The workload every release post quotes: 1M input + 500K output per month. */
-export const SAMPLE_INPUT_TOKENS = 1_000_000
-export const SAMPLE_OUTPUT_TOKENS = 500_000
 
 /**
  * Monthly cost of the sample workload for the subject model.
