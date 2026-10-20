@@ -138,8 +138,14 @@ export function Calculator(props: CalculatorProps) {
 
   // ───── Compute all model breakdowns ─────
   const breakdowns = useMemo(
-    () => calculateAll(totalInput, totalOutput, { useCachedInput: useCached }),
-    [totalInput, totalOutput, useCached],
+    () =>
+      calculateAll(totalInput, totalOutput, {
+        useCachedInput: useCached,
+        // The long-context band belongs to ONE request — the monthly total
+        // must not push a 2,400-token request into the long-context rate.
+        requestContextTokens: singleInput + singleOutput,
+      }),
+    [totalInput, totalOutput, singleInput, singleOutput, useCached],
   )
 
   // ───── Copy estimate to clipboard ─────

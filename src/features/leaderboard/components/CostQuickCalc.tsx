@@ -12,7 +12,11 @@ function monthlyCost(model: LeaderboardModel, calls: number, input: number, outp
   try {
     // Peak pricing (calculateCost default) so numbers match the calculator
     // page and the "off-peak ignored" note below.
-    return calculateCost(model.priceId, calls * input, calls * output).totalCost
+    return calculateCost(model.priceId, calls * input, calls * output, {
+      // The long-context band belongs to ONE request, not to the monthly
+      // total: 10,000 small requests are not one huge request.
+      requestContextTokens: input + output,
+    }).totalCost
   } catch {
     return undefined
   }

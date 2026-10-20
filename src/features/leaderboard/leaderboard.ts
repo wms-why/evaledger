@@ -63,7 +63,7 @@ export function sortRows(rows: LeaderboardRow[], key: SortKey, dir: 'asc' | 'des
   const value = (r: LeaderboardRow): number | string => {
     if (key === 'model') return r.model.displayName.toLowerCase()
     if (key === 'average') return r.average ?? -Infinity
-    if (key === 'price') return r.blendedPricePer1M ?? Infinity
+    if (key === 'price') return r.blendedPricePer1M ?? Number.NaN
     const s = scoreOf(r.model, key)
     return s ? s.score : -Infinity
   }
@@ -72,6 +72,13 @@ export function sortRows(rows: LeaderboardRow[], key: SortKey, dir: 'asc' | 'des
     const vb = value(b)
     if (typeof va === 'string' || typeof vb === 'string') {
       return String(va).localeCompare(String(vb)) * mul
+    }
+    // A model without a price has no place in the price ranking: it goes last
+    // in BOTH directions — "no price" is not "the most expensive", and a
+    // descending sort used to put every priceless model at the top.
+    if (Number.isNaN(va) || Number.isNaN(vb)) {
+      if (Number.isNaN(va) && Number.isNaN(vb)) return 0
+      return Number.isNaN(va) ? 1 : -1
     }
     return (va - vb) * mul
   })

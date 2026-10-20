@@ -27,7 +27,11 @@ export function SeriesCostCalc({ rows }: { rows: SeriesRow[] }) {
         try {
           // Peak pricing (calculateCost's default) so the numbers match the
           // calculator page and the note below.
-          return calculateCost(row.priceId, calls * input, calls * output).totalCost
+          return calculateCost(row.priceId, calls * input, calls * output, {
+            // The long-context band belongs to ONE request, not to the monthly
+            // total: 10,000 small requests are not one huge request.
+            requestContextTokens: input + output,
+          }).totalCost
         } catch {
           return undefined
         }

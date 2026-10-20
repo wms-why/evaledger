@@ -72,7 +72,9 @@ export interface LeaderboardTableProps {
 
 export function LeaderboardTable({
   rows,
-  limit = 20,
+  // No cap by default: this table IS the leaderboard, and a silent cut-off
+  // would drop models from the page without saying so.
+  limit = Number.POSITIVE_INFINITY,
   benchmarkIds = CORE_BENCHMARK_IDS,
 }: LeaderboardTableProps) {
   const { t } = useTranslation()

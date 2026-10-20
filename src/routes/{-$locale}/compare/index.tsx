@@ -3,6 +3,7 @@ import { localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { CompareTool } from '@/features/leaderboard/components/CompareTool'
@@ -49,6 +50,7 @@ export const Route = createFileRoute('/{-$locale}/compare/')({
 function ComparePage() {
   const { theme } = rootRoute.useLoaderData()
   const { loggedIn } = Route.useLoaderData()
+  const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
   const ids = resolveCompareIds(search)
@@ -72,6 +74,11 @@ function ComparePage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav theme={theme} loggedIn={loggedIn} />
       <div className="mx-auto max-w-5xl px-5 py-10 md:px-7 md:py-14">
+        {/* The page's headline — the tool itself renders no top-level heading,
+            and a crawler (and a screen reader) needs one. */}
+        <h1 className="mb-6 text-[28px] font-semibold tracking-[-0.02em] md:text-[36px]">
+          {t('leaderboard.compare.title')}
+        </h1>
         <CompareTool
           models={models}
           scoreIds={scoreIds}

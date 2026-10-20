@@ -45,8 +45,7 @@ describe('calculateCost', () => {
     expect(r.appliedRule).toContain('cache write (5min)')
   })
 
-  it('applies long-context surcharge for Gemini >200K', () => {
-    // gemini-2.5-pro: $1.25 / $10, threshold 200K with 2x / 1.5x multipliers.
+  it('applies long-context surcharge for Gemini >200K', () => {    // gemini-2.5-pro: $1.25 / $10, threshold 200K with 2x / 1.5x multipliers.
     // 250K input + 50K output = 300K ctx, crosses 200K.
     const r = calculateCost('gemini-2.5-pro', 250_000, 50_000, { now: NOW })
     // input=250k/1M*2.5 = 0.625 ; output=50k/1M*15 = 0.75
@@ -73,6 +72,31 @@ describe('calculateCost', () => {
       now: NOW,
     })
     expect(cached.effectiveInputPricePer1M).toBeCloseTo(0.4, 2)
+  })
+
+  it('prices a monthly total at the band of ONE request, not of the total', () => {
+    // gemini-2.5-pro: $1.25 / $10 up to 200K of context, $2.5 / $15 above.
+    // A month of 1,000 requests × 2,400 tokens is 2.4M tokens in total, but
+    // every single request is 2,400 tokens — so the long-context band must
+    // NOT apply. (It used to: the aggregate crossed the 200K threshold and
+    // the flagship models were quoted at up to 2x the real price.)
+    const monthly = calculateCost('gemini-2.5-pro', 2_000_000, 400_000, {
+      requestContextTokens: 2_400,
+      now: NOW,
+    })
+    expect(monthly.appliedRule).toBe('standard')
+    expect(monthly.effectiveInputPricePer1M).toBeCloseTo(1.25, 2)
+    expect(monthly.effectiveOutputPricePer1M).toBeCloseTo(10, 2)
+    // input = 2M * 1.25/1M = 2.5 ; output = 400k * 10/1M = 4
+    expect(monthly.totalCost).toBeCloseTo(6.5, 3)
+
+    // One request that really is that big still gets the band.
+    const single = calculateCost('gemini-2.5-pro', 2_000_000, 400_000, {
+      requestContextTokens: 2_400_000,
+      now: NOW,
+    })
+    expect(single.appliedRule).toContain('long-context')
+    expect(single.effectiveInputPricePer1M).toBeCloseTo(2.5, 2)
   })
 
   it('applies OpenAI long-context pricing above 272K', () => {

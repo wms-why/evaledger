@@ -6,9 +6,9 @@ import { REGISTRY } from './model-prices'
  *
  * Rules applied (in order):
  *  1. Promo — if `Date.now()` is on/before `promo.untilDate`, use promo.
- *  2. Long-context — pick the highest-threshold tier the total context
- *     (`inputTokens + outputTokens`) crosses; multiply base prices by the
- *     tier's multipliers. If the total is under all thresholds, skip.
+ *  2. Long-context — pick the highest-threshold tier the context of ONE
+ *     request crosses (see `requestContextTokens`); multiply base prices by
+ *     the tier's multipliers. If the request is under all thresholds, skip.
  *  3. Standard — base prices used as-is.
  *
  * Cache reads are NOT auto-applied: the user has to opt in via the form
@@ -40,6 +40,19 @@ export interface CalculateOptions {
   modelOverride?: ModelPrice
   /** "as of" date for promo evaluation — defaults to `new Date()`. Allows deterministic tests. */
   now?: Date
+  /**
+   * The context length of ONE request, in tokens — the only thing the
+   * long-context price band is about ("prompts over 200K tokens").
+   *
+   * A caller that prices a **monthly total** must pass the per-request
+   * context here: a 2,400-token request billed a million times a month is
+   * still a 2,400-token request, and pricing the aggregate at the
+   * long-context rate over-quotes the flagship models by up to 75%.
+   *
+   * Defaults to the token counts passed in, which is right for a caller that
+   * prices a single request.
+   */
+  requestContextTokens?: number
 }
 
 export function calculateCost(
@@ -52,7 +65,9 @@ export function calculateCost(
   if (!base) throw new Error(`Unknown model: ${modelId}`)
   const model = base
   const now = options.now ?? new Date()
-  const totalCtx = inputTokens + outputTokens
+  // The long-context band is a property of ONE request, not of the monthly
+  // total: `requestContextTokens` carries it when the caller prices a total.
+  const requestContext = options.requestContextTokens ?? inputTokens + outputTokens
 
   // 1. Pick the effective base price (promo > standard).
   let inputPrice = model.inputPricePer1M
@@ -69,11 +84,11 @@ export function calculateCost(
   // 2. Long-context surcharge.
   if (model.longContext && model.longContext.length > 0) {
     const sorted = [...model.longContext].sort((a, b) => a.threshold - b.threshold)
-    // Pick the highest-threshold tier the total context crosses. Manual reverse-find
-    // to keep the target lib es2022 (no Array.findLast).
+    // Pick the highest-threshold tier the request context crosses. Manual
+    // reverse-find to keep the target lib es2022 (no Array.findLast).
     let tier: (typeof sorted)[number] | undefined
     for (let i = sorted.length - 1; i >= 0; i--) {
-      if (totalCtx >= sorted[i]!.threshold) {
+      if (requestContext >= sorted[i]!.threshold) {
         tier = sorted[i]
         break
       }
