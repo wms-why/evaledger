@@ -14,6 +14,7 @@ const PUBLIC_PATHS = [
   '/token-calculator',
   '/leaderboard-history',
   '/compare',
+  '/releases',
 ] as const
 
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
@@ -73,18 +74,24 @@ export interface HeadMeta {
   name?: string
   property?: string
   content?: string
+  /**
+   * JSON-LD payload. TanStack Router renders a meta entry carrying this key
+   * as `<script type="application/ld+json">` in <head>.
+   *
+   * The payload is emitted as raw script text, so strings must not contain
+   * `<`, `>` or `&`.
+   */
+  'script:ld+json'?: unknown
 }
 
-/** JSON-LD structured-data script — returned alongside meta/links from head() so
- *  the framework can render `<script type="application/ld+json">` in <head>. */
-export interface HeadScript {
-  type?: string
-  innerHTML: string
-}
+/** @deprecated use `HeadMeta` — JSON-LD now travels through `meta`. */
+export type HeadJsonLd = HeadMeta
+/** @deprecated use `HeadMeta` — JSON-LD now travels through `meta`. */
+export type HeadScript = HeadMeta
 
-/** JSON-LD helpers — wrap objects so they can ride the HeadScript[] channel. */
-export function jsonLd(obj: unknown): HeadScript {
-  return { type: 'application/ld+json', innerHTML: JSON.stringify(obj) }
+/** JSON-LD structured data — pass the result through `meta` (see `localeHead`). */
+export function jsonLd(obj: Record<string, unknown>): HeadMeta {
+  return { 'script:ld+json': obj }
 }
 
 export function localeHead(input: {
@@ -93,8 +100,8 @@ export function localeHead(input: {
   path: string
   title: string
   description: string
-  scripts?: HeadScript[]
-}): { meta: HeadMeta[]; links: HeadLink[]; scripts?: HeadScript[] } {
+  scripts?: HeadMeta[]
+}): { meta: HeadMeta[]; links: HeadLink[]; scripts?: HeadMeta[] } {
   const { origin, locale, path, title, description, scripts } = input
   const canonical = `${origin}${localizePath(locale, path)}`
   const links: HeadLink[] = [{ rel: 'canonical', href: canonical }]
@@ -115,6 +122,8 @@ export function localeHead(input: {
     { property: 'og:locale', content: OG_LOCALE[locale] },
     { property: 'og:image', content: `${origin}/logo512.png` },
     { name: 'twitter:card', content: 'summary_large_image' },
+    // JSON-LD rides along in `meta` — a `scripts[]` array is not rendered.
+    ...(scripts ?? []),
   ]
   return { meta, links, scripts }
 }

@@ -13,6 +13,7 @@ export type Provider =
   | 'anthropic'
   | 'google'
   | 'deepseek'
+  | 'minimax'
   | 'grok'
   | 'openrouter'
 

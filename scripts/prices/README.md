@@ -109,9 +109,10 @@ openai     ✓  14 models    https://platform.openai.com/docs/pricing
 anthropic  ✓  12 models    https://claude.com/pricing#api
 google     ✓  29 models    https://ai.google.dev/gemini-api/docs/pricing
 deepseek   ✓   2 models    https://api-docs.deepseek.com/quick_start/pricing
+minimax    ✓   2 models    https://platform.minimax.io/docs/pricing/overview
 grok       ✓   1 models    https://docs.x.ai/docs/models
 
-Rows: 58 · Mapped: 35 / 58 (23 unmapped)
+Rows: 60 · Mapped: 37 / 60 (23 unmapped)
 Wrote: data/last-fetch.json
 
 Next: diff data/last-fetch.json against REGISTRY, then hand-edit

@@ -26,6 +26,7 @@ export type TokenizerFamily =
   | 'grok-4'       // approximation
   | 'deepseek-v3'  // approximation
   | 'deepseek-r1'
+  | 'minimax-m3'   // approximation
 
 export interface TokenCount {
   /** Token count (real for OpenAI-family, approximate otherwise). */

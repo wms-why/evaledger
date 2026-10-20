@@ -24,6 +24,7 @@ const PROVIDER_KEYS: Record<string, string> = {
   anthropic: 'calculator.providerAnthropic',
   google: 'calculator.providerGoogle',
   deepseek: 'calculator.providerDeepSeek',
+  minimax: 'calculator.providerMinimax',
   grok: 'calculator.providerGrok',
   openrouter: 'calculator.providerOpenRouter',
 }

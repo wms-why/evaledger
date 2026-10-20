@@ -7,7 +7,7 @@
  * and we'd rather record `raw` debugging fields than crash.
  */
 
-export type ProviderId = 'openai' | 'anthropic' | 'google' | 'deepseek' | 'grok'
+export type ProviderId = 'openai' | 'anthropic' | 'google' | 'deepseek' | 'minimax' | 'grok'
 
 /** A row as extracted by a single provider's scraper, before normalization. */
 export interface ScrapedModel {

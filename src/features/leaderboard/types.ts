@@ -21,6 +21,7 @@ export type Vendor =
   | 'google'
   | 'grok'
   | 'deepseek'
+  | 'minimax'
   | 'glm'
   | 'kimi'
 

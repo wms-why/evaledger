@@ -2,7 +2,7 @@
 
 > 范围：`src/features/calculator/model-prices.ts` 里 20 个 active 模型的价格，`src/features/leaderboard/models.ts` 里 13 个模型 / 135 条分数，以及受影响的 6 篇 release 文章（中英各一版，共 12 个文件）。
 >
-> 结论先说：**基础输入/输出单价没有一条是错的；不对的是“缺的字段”和“旧的门槛”**——4 个缓存读价没录、8 个上下文窗口偏小、5 个长上下文档位没建模；跑分方面，已有 110 条参考表分数逐条对上，没有抄错，缺的是 Claude Opus 5.5 / GPT-6 Astra 两行新分，以及 DeepSeek 1017 这个新 checkpoint 还没合并。
+> 结论先说：**基础输入/输出单价没有一条是错的；不对的是“缺的字段”和“旧的门槛”**——5 个缓存读价没录、8 个上下文窗口偏小、6 个长上下文档位没建模；跑分方面，已有 110 条参考表分数逐条对上，没有抄错，缺的是 Claude Opus 5.5 / GPT-6 Astra 两行新分，以及 DeepSeek 1017 这个新 checkpoint 还没合并。
 
 ---
 
@@ -11,9 +11,9 @@
 | 项目 | 结果 |
 | --- | --- |
 | 20 个 active 模型的基础 input/output 单价 | **全部与官方页一致**，没有涨价/降价漏更新 |
-| 缓存读价 | **补了 4 个**：GPT-5.6 Sol、GPT-5.6 Cyber、Gemini 3.1 Pro、Gemini 3.1 Flash-Lite |
+| 缓存读价 | **补了 5 个**：GPT-5.6 Sol、GPT-5.6 Cyber、Gemini 3.1 Pro、Gemini 3.1 Flash-Lite、Grok 4.7 |
 | 上下文窗口 | **改了 8 个**：4 个 OpenAI（400K → 1,050,000）、4 个 Claude（200K → 1M；其中 Opus 5 已 delisted） |
-| 长上下文档位 | **补了 5 个**：GPT-6 Astra / Sol / Luna、GPT-5.6 Sol（>272K，2× / 1.5×）、Gemini 3.1 Pro（>200K，2× / 1.5×） |
+| 长上下文档位 | **补了 6 个**：GPT-6 Astra / Sol / Luna、GPT-5.6 Sol（>272K，2× / 1.5×）、Gemini 3.1 Pro（>200K，2× / 1.5×）、Grok 4.7（≥200K，2× / 2×） |
 | 已有跑分 | **110 条参考表分数逐条核对，全部一致**（DeepSeek 三家 + GLM + Kimi + GPT-5.6 Sol + Claude Opus 5） |
 | 新增跑分 | **8 条**：Claude Opus 5.5 四项、GPT-6 Astra 四项 |
 | 没合并的 | DeepSeek V4.1-Flash-1017 新 checkpoint；GPT-6.1 Sol、Sonnet 5.5、Gemini 4 Argon 等新 SKU（见 §5） |
@@ -47,7 +47,7 @@
 | DeepSeek | V4-Pro（off-peak） | $0.66 | $1.98 | $0.022 | 1,000,000 | — | ✅ | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
 | MiniMax | M3.1 Flash | $0.15 | $0.60 | $0.015 | 1,000,000 | — | ✅ | [pricing](https://platform.minimax.io/docs/pricing/overview) |
 | MiniMax | M3 | $0.30 | $1.20 | $0.060 | 1,000,000 | >512K：2× / 2× | ✅ | [pricing](https://platform.minimax.io/docs/pricing/overview) |
-| xAI | Grok 4.7 | $2 | $6 | — | 500,000 | — | ✅ | [docs](https://docs.x.ai/docs/models) |
+| xAI | Grok 4.7 | $2 | $6 | $0.50 | 500,000 | ≥200K：2× / 2× | 🛠 补缓存价 + 档位 | [pricing](https://docs.x.ai/docs/pricing) |
 
 ### 2.1 本次价格/参数修正明细
 
@@ -63,6 +63,7 @@
 | GPT-5.6 sol | contextWindow | 400,000 | 1,050,000 | OpenAI model page |
 | GPT-5.6 sol | longContext | 无 | >272K，2× / 1.5× | OpenAI pricing 的 Long context 列 |
 | GPT-5.6 cyber | cachedInputPricePer1M | 未录 | 1.25 | OpenAI pricing |
+| GPT-5.6 sol | note | 无 | 促销价到至少 2026-11-21；此前价 $5 / $30 | OpenAI pricing 页脚注 + OrcaRouter |
 | Claude Fable 5.1 | contextWindow | 200,000 | 1,000,000 | Anthropic model card / help center |
 | Claude Opus 5.5 | contextWindow | 200,000 | 1,000,000 | Anthropic model card / help center |
 | Claude Sonnet 5 | contextWindow | 200,000 | 1,000,000 | Anthropic model card / help center |
@@ -71,17 +72,21 @@
 | Gemini 3.1 Pro | longContext | 无 | >200K，2× / 1.5× | Google pricing「prompts > 200k tokens」 |
 | Gemini 3.1 Flash-Lite | cachedInputPricePer1M | 未录 | 0.025 | Google pricing |
 | Gemini 3.8 Flash | note | 无 | 引入价到 2026-12-31，2027-01-01 起翻倍 | Google pricing |
+| Grok 4.7 | cachedInputPricePer1M | 未录 | 0.50 | xAI pricing「Cached」列 |
+| Grok 4.7 | longContext | 无 | ≥200K，2× / 2× | xAI pricing「Long context ≥ 200k」 |
 | DeepSeek V4.1-Flash | note | 无 | API 版本为 1017（2026-10-17） | DeepSeek pricing / 1017 公告 |
 
 > ⚠️ **口径提醒（不改数据，但要知道）**
-> - 计算器的长上下文判定用的是 **input + output 总长度**；OpenAI 的 272K 门槛官方写的是 **input tokens**。两者在“输出把总量推过线、输入没到线”的边界上会差一档。
-> - 长上下文下，**缓存读价也会翻倍**（OpenAI 与 Gemini 都是）。本次已把 `cost.ts` 的 input multiplier 同样应用到 cached input，并补了 GPT-6 Astra / Gemini 3.1 Pro / MiniMax M3 三个回归断言。
+> - 计算器的长上下文判定用的是 **input + output 总长度**；OpenAI 的 272K、Gemini 的 200K、Grok 的 200K、MiniMax 的 512K 门槛，官方写的都是 **input / prompt tokens**。两者在“输出把总量推过线、输入没到线”的边界上会差一档；本次没有改判定逻辑。
+> - 长上下文下，**缓存读价也会翻倍**（OpenAI、Gemini、Grok 都是）。本次已把 `cost.ts` 的 input multiplier 同样应用到 cached input，并补了四个回归断言（GPT-6 Astra / Gemini 3.1 Pro / Grok 4.7 / MiniMax M3）。
+> - Claude 4.x / Fable 5 的上下文按 chat / Claude Code / API 三种口径不一致（500K / 1M / 200K 都可能出现）。本次只订正 active 5.x 与 Opus 5；旧行保留原值，没有把某个 surface 的数字当成 API 唯一口径。
+> - **价格冲突（未改）**：Google Cloud 的 Sonnet 5 页面写「$2 / $10 是 2026-08-31 前的发布价，之后 $3 / $15」，但 Anthropic 当前定价页仍列 $2 / $10。本次以 Anthropic 官方页为准保留 $2 / $10；如果官方页跳价，需要同步。
 
 ---
 
 ## 3. 跑分核对
 
-### 3.1 已有 110 条：全部对上参考表
+### 3.1 已有跑分：110 条参考表分数全部对上
 
 参考表是 DeepSeek V4.1-Flash 发布公告里的 7 列对比表（[中文原文](https://api-docs.deepseek.com/zh-cn/news/news260910/)），覆盖 DeepSeek V4.1-Flash / V4-Pro 0813 / V4-Flash 0731、GLM 5.3、Kimi K3、GPT-5.6 Sol、Claude Opus 5。
 
@@ -99,7 +104,7 @@
 | MiniMax M3.1 Flash | 4 | 厂商发布稿 | ✅ 与现有来源一致 |
 | MiniMax M3 | 6 | 厂商发布稿 + model card | ✅ 与现有来源一致 |
 
-**没有发现任何一条“抄错”的分数。** 你感觉不对，更可能是因为下面这些“缺行/旧 checkpoint”，而不是数字抄错。
+**没有发现任何一条“抄错”的分数。** 表中另有 4 行（Gemini 3.1 Pro / Grok 4.7 / MiniMax M3.1 Flash / MiniMax M3）不在 DeepSeek 那张参考表里，按各自来源复核后数值未改。你感觉不对，更可能是因为下面这些“缺行/旧 checkpoint”，而不是数字抄错。
 
 ### 3.2 新增 8 条
 
@@ -157,16 +162,16 @@
 | `src/content/releases/gpt-6-astra.md` / `.zh.md` | 加 `modelSlug`、1,050,000 上下文、长上下文价、4 项跑分；`dataCheckedAt` 2026-10-20 |
 | `src/content/releases/gemini-3-1-pro.md` / `.zh.md` | 删掉“窗口是 OpenAI 2.5 倍 / 无长上下文档位”的错误结论；补 $4/$18、缓存 $0.20、GPQA 已被 GPT-6 Astra 超过 |
 | `src/content/releases/deepseek-v4-1-flash.md` / `.zh.md` | 补 1017 checkpoint 说明；日期 2026-10-20 |
-| `src/content/releases/grok-4-7.md` / `.zh.md` | 仅日期（价格/分数未变） |
+| `src/content/releases/grok-4-7.md` / `.zh.md` | 补缓存 $0.50、200K 长上下文档位、发布日期；`sourceUrl` 改为 pricing |
 | `src/content/releases/minimax-m3-1-flash.md` / `.zh.md` | 仅日期（价格/分数未变） |
-| `src/features/calculator/cost.ts` | 长上下文时把 input multiplier 同样应用到 cached input（OpenAI / Gemini / MiniMax 都适用） |
+| `src/features/calculator/cost.ts` | 长上下文时把 input multiplier 同样应用到 cached input（OpenAI / Gemini / Grok / MiniMax 都适用） |
 | `src/features/calculator/__tests__/cost.node.test.ts` | 新增长上下文 / 窗口回归测试，并在 MiniMax 用例里补缓存断言 |
 | `scripts/prices/version.ts` | `SCRIPT_VERSION` 0.5.0，与 REGISTRY 对齐 |
 
 验证命令（均已通过）：
 
 ```bash
-pnpm test       # 380 tests passed
+pnpm test       # 381 tests passed
 pnpm typecheck  # clean
 ```
 
@@ -205,7 +210,7 @@ pnpm typecheck  # clean
    - Gemini 3.1 Flash-Lite：`$0.25 / $1.50 / $0.025`。
 4. **DeepSeek** — [pricing](https://api-docs.deepseek.com/quick_start/pricing)。核对 peak/off-peak 四格 + MODEL VERSION `DeepSeek-V4.1-Flash-1017`；off-peak 是 peak 的一半是文档原文。
 5. **MiniMax** — [pricing](https://platform.minimax.io/docs/pricing/overview)。M3.1 Flash `$0.15 / $0.60 / $0.015`；M3 `$0.30 / $1.20 / $0.06`，>512K 翻倍。
-6. **xAI** — [models](https://docs.x.ai/docs/models)。Grok 4.7 `500k tokens`、`$2.00 / $6.00`。
+6. **xAI** — [pricing](https://docs.x.ai/docs/pricing)。Grok 4.7 `500k` 上下文；短上下文 `$2.00 / $0.50 / $6.00`；长上下文（≥200K）`$4.00 / $12.00`，缓存读也翻倍。
 
 ### 跑分
 
@@ -237,4 +242,4 @@ pnpm typecheck
 
 ---
 
-*报告生成时间：2026-10-20。价格/分数以文内链接的官方页为准；有冲突时，本报告在 §3.3 标了取舍理由。*
+*报告生成时间：2026-10-20。价格/分数以文内链接的官方页为准；有冲突时，本报告在 §3.4 标了取舍理由。*

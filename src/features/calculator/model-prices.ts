@@ -114,6 +114,7 @@ export const REGISTRY: ModelRegistry = {
       longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
       lastVerified: '2026-10-20',
+      note: 'Promotional pricing ($4 / $20 / $0.40) is available at least through 2026-11-21; the pre-promo rate was $5 / $30. Re-check after that date.',
     },
     {
       id: 'gpt-5',
@@ -675,7 +676,11 @@ export const REGISTRY: ModelRegistry = {
       contextWindow: 500_000,
       inputPricePer1M: 2.0,
       outputPricePer1M: 6.0,
-      sourceUrl: 'https://docs.x.ai/docs/models',
+      cachedInputPricePer1M: 0.5,
+      // xAI's pricing table: short context $2 / $0.50 / $6; long context
+      // (≥200K prompt tokens) $4 / $1 / $12 for the whole request.
+      longContext: [{ threshold: 200_000, inputMultiplier: 2, outputMultiplier: 2 }],
+      sourceUrl: 'https://docs.x.ai/docs/pricing',
       lastVerified: '2026-10-20',
     },
     {

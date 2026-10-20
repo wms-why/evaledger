@@ -8,7 +8,7 @@ TokenCalculator — a free token cost calculator built on **TanStack Start + Clo
 
 ## Structure
 
-- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `email`, `i18n`, `maintenance`, `notifications`, `seo`, `storage`, `theme`, `waitlist`.
+- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `email`, `i18n`, `leaderboard`, `maintenance`, `notifications`, `releases`, `seo`, `storage`, `theme`, `waitlist`.
 - `src/routes/{-$locale}/` — file-based routes with an optional locale prefix (`/` = en, `/zh` = zh). Top-level routes (`api`, `sitemap`, `robots`) live outside the locale group.
 - `src/components/` — `ui/` primitives + `marketing/` landing + `app/` shell.
 - `src/db/` — Drizzle client + `schema.ts` barrel; tables in `src/db/tables/` and feature `*.schema.ts`.
@@ -22,7 +22,7 @@ TokenCalculator — a free token cost calculator built on **TanStack Start + Clo
 - **Routes:** after adding a route, run `pnpm build` before `pnpm typecheck` (the route tree is generated at build).
 - **Tests:** Vitest — node pool (`*.node.test.ts`) for pure logic, workers pool (`*.workers.test.ts`) for D1; the workers pool does NOT auto-apply migrations (hand-create tables in `beforeAll`).
 - **Wrangler pin:** `wrangler` in package.json must be exactly `4.151.1` (not `^4.151.1`) to satisfy `@cloudflare/vite-plugin@1.64.0`'s peer range `^4.151.0`. The old `4.95.0` pin caused `pnpm dev`/`pnpm build` to fail with "The installed version of Wrangler (4.95.0) does not satisfy the peer dependency". When bumping vite-plugin, bump wrangler to its peer range and re-run `pnpm build`.
-- **SEO structured data (JSON-LD):** use `jsonLd(obj)` from `@/features/seo/seo` and pass the result via `scripts[]` to `localeHead()`. TanStack Router's head() returns `{ meta, links, scripts }` and renders scripts as `<script type="application/ld+json">` in `<head>`. Reference impl: `src/routes/{-$locale}/index.tsx` (Organization + SoftwareApplication + FAQPage).
+- **SEO structured data (JSON-LD):** use `jsonLd(obj)` from `@/features/seo/seo` and pass the result through the `scripts` option of `localeHead()` — it folds them into `meta`. `head()` only renders `meta` and `links`; a `scripts[]` key in the returned head object is silently dropped (this used to break JSON-LD on every page — it now works). Reference impl: `src/routes/{-$locale}/index.tsx` (Organization + SoftwareApplication + FAQPage).
 - **Rebrand gotchas:** marketing components carry hardcoded brand strings (GitHub URLs, `<span className="kicker">` copy, aria-labels) that are NOT in i18n dictionaries. When rebranding: `grep -rln -E "(OldBrand|oldbrand)" src` catches i18n + hardcoded + package.json + wrangler in one pass. Also `grep` old strings in `*.node.test.ts` — i18n-key assertions break silently.
 - **Project context (TokenCalculator):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then here). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the root README is rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is not renamed in this rebrand.
 
@@ -45,3 +45,65 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy (stag
 - Workflow: run fetch → diff JSON against REGISTRY → manually update REGISTRY
 - Never auto-merge prices. `cacheWrite` / `longContext` / `peakOffPeak` / `promo` / `status` are human-only.
 - See `scripts/prices/README.md` for selector-debugging workflow and provider mapping.
+
+## Data moves as one: prices + scores + release pages
+
+`src/features/calculator/model-prices.ts` (prices),
+`src/features/leaderboard/models.ts` (scores) and `src/content/releases/`
+(the release pages) are three surfaces of the same facts. **When one of them
+changes, the other two change in the same commit.** A price table that knows
+about a model the articles still describe the old way is worse than no price
+table at all.
+
+The join keys:
+
+- scores → prices: `LeaderboardModel.priceId` → `REGISTRY.models[].id`
+- release page → prices: `modelId` / `compareModelIds` → `REGISTRY.models[].id`
+- release page → scores: `modelSlug` / `compareSlugs` → `LEADERBOARD.models[].id`
+
+| Change | What must move with it |
+| --- | --- |
+| A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) |
+| A price changes | The REGISTRY price + `lastVerified` = today + `REGISTRY.fetchedAt` = today + every affected release page re-read with its `dataCheckedAt` bumped to today |
+| A score is corrected or added | The LEADERBOARD score (+ a `history` snapshot when it overwrites one) + every affected release page re-read with its `dataCheckedAt` bumped to today |
+| A model is retired | REGISTRY `status: 'delisted'` + the LEADERBOARD row + a line in the release page saying it is retired — **never delete the article**, it is a long-tail search entry |
+
+`src/features/releases/__tests__/integrity.node.test.ts` enforces this
+mechanically and fails the build on:
+
+- an article quoting a price or score of a model it does **not** depend on
+  (the tables moved, the prose did not),
+- a dependency whose data changed after the article's `dataCheckedAt`
+  (the article is older than the data it describes),
+- a leaderboard model with no release page and no `POST_EXEMPTIONS` entry,
+- a post that ships in one language only, or points at a model that is gone.
+
+So: **after touching prices or scores, re-read the affected articles and bump
+their `dataCheckedAt` to today**, then run `pnpm test`. Anything still red is
+a page you have not re-read yet.
+
+## Model Releases series (`/releases`)
+
+The third series, next to the leaderboard and the calculator: one post per model
+launch, rewritten as a cost-and-switch analysis. Full contract in
+`src/features/releases/README.md` — read it before adding a post.
+
+- **Articles carry no price tables.** A post stores only *keys* (`modelId`,
+  `modelSlug`, `compareModelIds`, `compareSlugs`); every price, ratio and score
+  on the page is resolved from REGISTRY / LEADERBOARD at render time by
+  `src/features/releases/data.ts`. The body may quote a price in prose (the
+  TL;DR usually does), but it must be a registry price or a multiple derived
+  from one — never a hand-copied table, never a number the registry does not
+  contain. The guard test enforces exactly that.
+- **Locale convention:** `<slug>.md` (en) + `<slug>.zh.md` (zh), one shared URL
+  slug. The zh file is a native rewrite, not a translation.
+- **Never borrow another SKU's scores.** A post without `modelSlug` renders an
+  honest empty state instead of a score table.
+- **Guard test:** `src/features/releases/__tests__/integrity.node.test.ts` fails
+  the build if an article quotes a price or score the registries do not contain
+  (or one of a model the article does not depend on), points at a missing
+  model, ships without its zh counterpart, is older than the data it quotes,
+  or leaves a leaderboard model without a release page.
+- **Drafting:** `pnpm releases:fetch` scrapes the vendor announcement into
+  `data/release-drafts/` — drafts only, never `src/content/releases/`, never
+  prices or conclusions.

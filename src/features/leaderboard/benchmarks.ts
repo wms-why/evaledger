@@ -5,8 +5,10 @@ import type { ScoreUnit } from './types'
  * the join key on every `BenchmarkScore.benchmark`.
  *
  * Keep this list hand-curated: a benchmark only earns a page if it has
- * meaningful search volume on its own. Everything here came from the owner's
- * reference table (2026-10-19), not from independent scraping yet.
+ * meaningful search volume on its own. Most entries came from the owner's
+ * reference table (2026-10-19); the MiniMax ones were added afterwards from
+ * the vendor's own launch posts and model cards, which publish a wider set of
+ * benchmarks than the reference table covers.
  */
 
 export type BenchmarkCategory =
@@ -78,6 +80,14 @@ export const BENCHMARKS: Benchmark[] = [
     description: 'End-to-end tasks completed in a real terminal environment (v4.0 task set).',
   },
   {
+    id: 'swe-bench-pro',
+    name: 'SWE-bench Pro',
+    category: 'coding',
+    unit: 'percent',
+    description:
+      'Long-horizon software-engineering tasks solved in a real repository, scored on held-out test suites.',
+  },
+  {
     id: 'deepswe-v1.1',
     name: 'DeepSWE v1.1',
     category: 'coding',
@@ -139,6 +149,27 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'agentic',
     unit: 'percent',
     description: 'Long-horizon agentic task benchmark.',
+  },
+  {
+    id: 'browsecompc',
+    name: 'BrowseComp',
+    category: 'agentic',
+    unit: 'percent',
+    description: 'Hard fact-seeking browsing tasks that need many retrieval steps to answer.',
+  },
+  {
+    id: 'mcp-atlas',
+    name: 'MCP Atlas',
+    category: 'agentic',
+    unit: 'percent',
+    description: 'Tool selection and multi-step use of Model Context Protocol servers.',
+  },
+  {
+    id: 'bankertoolbench',
+    name: 'BankerToolBench',
+    category: 'agentic',
+    unit: 'percent',
+    description: 'Multi-step finance work that chains document, spreadsheet and market-data tools.',
   },
   {
     id: 'chartography-tools',

@@ -1,4 +1,4 @@
-import { createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
+import { Link, createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
 import { localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
@@ -7,15 +7,23 @@ import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { ModelProfile } from '@/features/leaderboard/components/ModelProfile'
 import { findLeaderboardModel } from '@/features/leaderboard/models'
+import { getReleases } from '@/features/releases/releases.fns'
 
 const rootRoute = getRouteApi('__root__')
 
+/** Release posts — used to cross-link a model page with its launch analysis. */
 export const Route = createFileRoute('/{-$locale}/models/$slug')({
   loader: async ({ params }) => {
     const model = findLeaderboardModel(params.slug)
     if (!model) throw notFound()
-    const [origin, user] = await Promise.all([getOrigin(), getOptionalUser()])
-    return { origin, loggedIn: !!user, model }
+    const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
+    const [origin, user, entries] = await Promise.all([
+      getOrigin(),
+      getOptionalUser(),
+      getReleases({ data: locale }),
+    ])
+    const relatedRelease = entries.find((e) => e.modelSlug === model.id)
+    return { origin, loggedIn: !!user, model, relatedRelease }
   },
   head: ({ loaderData, params }) => {
     const origin = loaderData?.origin ?? ''
@@ -42,12 +50,33 @@ export const Route = createFileRoute('/{-$locale}/models/$slug')({
 
 function ModelPage() {
   const { theme } = rootRoute.useLoaderData()
-  const { loggedIn, model } = Route.useLoaderData()
+  const { loggedIn, model, relatedRelease } = Route.useLoaderData()
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav theme={theme} loggedIn={loggedIn} />
       <div className="mx-auto max-w-5xl px-5 py-12 md:px-7 md:py-16">
         <ModelProfile model={model} />
+        {relatedRelease && (
+          <aside className="mt-10 rounded-[12px] border border-border bg-bg-alt/40 p-5">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-fg-3">
+              {relatedRelease.releasedAt ? relatedRelease.releasedAt : relatedRelease.date}
+            </p>
+            <p className="mt-2 text-[15px] font-medium">
+              <Link
+                to="/{-$locale}/releases/$slug"
+                params={{ slug: relatedRelease.slug }}
+                className="hover:text-primary"
+              >
+                {relatedRelease.title}
+              </Link>
+            </p>
+            {relatedRelease.description && (
+              <p className="mt-1 text-[13px] leading-relaxed text-fg-2">
+                {relatedRelease.description}
+              </p>
+            )}
+          </aside>
+        )}
       </div>
       <Footer theme={theme} />
     </div>

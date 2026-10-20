@@ -60,6 +60,13 @@ export const DISPLAY_NAME_TO_ID: Record<string, string> = {
   'DeepSeek V3.2': 'deepseek-chat',
   'DeepSeek R1': 'deepseek-reasoner',
 
+  // ───────────────────────── MiniMax ─────────────────────────
+  // Pricing page labels; the M3 rows carry a "≤ 512k input tokens" suffix that
+  // the scraper strips before the join (the >512k row is a long-context tier
+  // and stays human-only).
+  'MiniMax-M3.1-Flash': 'minimax-m3.1-flash',
+  'MiniMax-M3': 'minimax-m3',
+
   // ───────────────────────── Grok ─────────────────────────
   'Grok 4.7': 'grok-4.7',
   'Grok 4': 'grok-4',

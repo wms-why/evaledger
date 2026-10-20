@@ -32,6 +32,7 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
         {/* Resources */}
         <FooterCol title={t('marketing.footerResources')}>
           <a className="foot-link" href={X_URL} target="_blank" rel="noreferrer">{t('marketing.footerTwitter')}</a>
+          <Link className="foot-link" to="/{-$locale}/releases">{t('releases.nav')}</Link>
           <Link className="foot-link" to="/{-$locale}/changelog">{t('marketing.footerChangelog')}</Link>
         </FooterCol>
 

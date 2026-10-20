@@ -25,6 +25,7 @@ const TOKENIZER_FAMILIES: TokenizerFamily[] = [
   'grok-4',
   'deepseek-v3',
   'deepseek-r1',
+  'minimax-m3',
 ]
 
 const FAMILY_KEYS: Record<TokenizerFamily, string> = {
@@ -38,6 +39,7 @@ const FAMILY_KEYS: Record<TokenizerFamily, string> = {
   'grok-4': 'calculator.familyGrok4',
   'deepseek-v3': 'calculator.familyDeepSeekV3',
   'deepseek-r1': 'calculator.familyDeepSeekR1',
+  'minimax-m3': 'calculator.familyMiniMaxM3',
 }
 
 type InputMode = 'paste' | 'manual'

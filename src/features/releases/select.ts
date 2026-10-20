@@ -1,0 +1,69 @@
+import type { ReleaseMeta, ReleaseRaw } from './types'
+
+export type { ReleaseMeta, ReleaseRaw, ReleaseVendor } from './types'
+
+/**
+ * Locale convention for the collection — same rule the changelog uses:
+ * the zh version of a post lives in `<slug>.zh.md` next to `<slug>.md`.
+ * Both share one URL slug.
+ */
+const ZH_SUFFIX = '.zh'
+
+/**
+ * Extract the URL slug from an MDX path.
+ * `releases/deepseek-v4-1-flash.zh.md` → `deepseek-v4-1-flash`
+ * `releases/deepseek-v4-1-flash.md`    → `deepseek-v4-1-flash`
+ */
+export function releaseSlugFromPath(path: string): string {
+  const base = path.split('/').pop() ?? path
+  return base.replace(/\.zh\.mdx?$/, '').replace(/\.mdx?$/, '')
+}
+
+/** True when the MDX path holds the Chinese version of a post. */
+export function isZhPath(path: string): boolean {
+  return path.includes(ZH_SUFFIX)
+}
+
+/**
+ * Filter a fumadocs releases collection by locale, drop unpublished entries,
+ * sort newest first, and flatten to the shape the routes consume.
+ */
+export function selectReleases(entries: ReleaseRaw[], locale: string): ReleaseMeta[] {
+  const zh = locale === 'zh'
+  return entries
+    .filter((e) => (zh ? isZhPath(e.info.path) : !isZhPath(e.info.path)))
+    .filter((e) => e.published !== false)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map((e) => ({
+      path: e.info.path,
+      slug: releaseSlugFromPath(e.info.path),
+      title: e.title,
+      description: e.description,
+      date: e.date,
+      checkedAt: e.checkedAt,
+      releasedAt: e.releasedAt,
+      vendor: e.vendor,
+      modelId: e.modelId,
+      modelSlug: e.modelSlug,
+      compareModelIds: e.compareModelIds ?? [],
+      compareSlugs: e.compareSlugs ?? [],
+      sourceUrl: e.sourceUrl,
+      sourceTitle: e.sourceTitle,
+    }))
+}
+
+/** Find one post by its URL slug inside an already-selected list. */
+export function findReleaseBySlug(entries: ReleaseMeta[], slug: string): ReleaseMeta | undefined {
+  return entries.find((e) => e.slug === slug)
+}
+
+/**
+ * Every distinct slug in the collection, regardless of locale.
+ * The en and the zh file of a post share one slug, so the sitemap lists each
+ * post once and lets the hreflang alternates cover both languages.
+ */
+export function uniqueReleaseSlugs(entries: ReleaseRaw[]): string[] {
+  const slugs = new Set<string>()
+  for (const e of entries) slugs.add(releaseSlugFromPath(e.info.path))
+  return [...slugs].sort()
+}

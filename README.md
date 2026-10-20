@@ -73,6 +73,27 @@ The calculator only stays honest if the registry stays current. The workflow liv
 3. Bump `REGISTRY.fetchedAt` so the page can render "Updated YYYY-MM-DD".
 4. Re-run `pnpm test && pnpm typecheck`.
 
+## The Model Releases series
+
+`/releases` is the site's third series, next to the leaderboard and the
+calculator. Each post covers one model launch, rewritten as a cost-and-switch
+analysis rather than a translation of the vendor's announcement.
+
+The rule that keeps it worth reading: **the articles carry no prices.** A post
+only stores the *keys* of the model it is about; every price, ratio and score
+on the rendered page is resolved from the pricing registry and the leaderboard
+when the page renders. A provider changes its prices, and every article that
+mentions that model updates itself — an article can never contradict the
+calculator.
+
+The contract (frontmatter schema, article template, per-post fact sheets) lives
+in [`src/features/releases/README.md`](src/features/releases/README.md). A
+guard test fails the build if an article quotes a price the registry does not
+contain, or points at a model that no longer exists.
+
+Subscribe to the whole series over RSS at [`/feed.xml`](src/routes/feed[.]xml.ts)
+— one feed, both languages, one item per article.
+
 ## Project structure
 
 ```
@@ -90,6 +111,7 @@ src/
     audience/      # Resend audience sync (reused by waitlist)
     waitlist/      # pre-launch signup + Turnstile + Resend sync
     changelog/     # in-app changelog page (MDX-driven, per-locale)
+    releases/      # "Model Releases" series — launch posts rewritten as cost analyses
     storage/       # R2 upload + serving route (avatar upload reference)
     email/         # Resend client + string templates
     maintenance/   # Cron cleanup task (expired sessions/tokens/rate-limit rows)
@@ -98,6 +120,7 @@ src/
     {-$locale}/    # locale-prefixed pages: /, /zh, /admin, /app, /token-cost-calculator, ...
     api/, robots.txt, sitemap.xml
   content/changelog/  # in-app changelog content (fumadocs mdx sources)
+  content/releases/  # "Model Releases" articles (fumadocs mdx sources, en + zh)
   db/              # Drizzle schema barrel + client + migrations
 drizzle/           # generated SQL migrations
 ```

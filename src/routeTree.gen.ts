@@ -9,59 +9,67 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
-import { Route as AdminSponsorsDotcsvRouteImport } from './routes/admin/sponsors[.]csv'
-import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
-import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
-import { Route as Char123LocaleChar125AdminRouteRouteImport } from './routes/{-$locale}/admin/route'
-import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
-import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './routes/{-$locale}/chatgpt-api-pricing'
-import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
-import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
-import { Route as Char123LocaleChar125LeaderboardHistoryRouteImport } from './routes/{-$locale}/leaderboard-history'
-import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
-import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
-import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
-import { Route as Char123LocaleChar125TermsRouteImport } from './routes/{-$locale}/terms'
-import { Route as Char123LocaleChar125TokenCalculatorRouteImport } from './routes/{-$locale}/token-calculator'
-import { Route as Char123LocaleChar125TokenCostCalculatorRouteImport } from './routes/{-$locale}/token-cost-calculator'
 import { Route as Char123LocaleChar125WaitlistRouteImport } from './routes/{-$locale}/waitlist'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as ApiAvatarsSplatRouteImport } from './routes/api/avatars/$'
-import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
-import { Route as Char123LocaleChar125authForgotPasswordRouteImport } from './routes/{-$locale}/(auth)/forgot-password'
-import { Route as Char123LocaleChar125authLoginRouteImport } from './routes/{-$locale}/(auth)/login'
-import { Route as Char123LocaleChar125authRegisterRouteImport } from './routes/{-$locale}/(auth)/register'
-import { Route as Char123LocaleChar125authResetPasswordRouteImport } from './routes/{-$locale}/(auth)/reset-password'
-import { Route as Char123LocaleChar125authVerifyEmailRouteImport } from './routes/{-$locale}/(auth)/verify-email'
-import { Route as Char123LocaleChar125AdminIndexRouteImport } from './routes/{-$locale}/admin/index'
-import { Route as Char123LocaleChar125AdminFeedbackRouteImport } from './routes/{-$locale}/admin/feedback'
-import { Route as Char123LocaleChar125AdminSponsorsRouteImport } from './routes/{-$locale}/admin/sponsors'
-import { Route as Char123LocaleChar125AdminUsersRouteImport } from './routes/{-$locale}/admin/users'
-import { Route as Char123LocaleChar125AdminWaitlistRouteImport } from './routes/{-$locale}/admin/waitlist'
-import { Route as Char123LocaleChar125AppIndexRouteImport } from './routes/{-$locale}/app/index'
-import { Route as Char123LocaleChar125AppAccountRouteImport } from './routes/{-$locale}/app/account'
-import { Route as Char123LocaleChar125AppFeedbackRouteImport } from './routes/{-$locale}/app/feedback'
-import { Route as Char123LocaleChar125AppProRouteImport } from './routes/{-$locale}/app/pro'
-import { Route as Char123LocaleChar125BenchmarksSlugRouteRouteImport } from './routes/{-$locale}/benchmarks/$slug/route'
-import { Route as Char123LocaleChar125BestCategoryRouteImport } from './routes/{-$locale}/best/$category'
+import { Route as Char123LocaleChar125TokenCostCalculatorRouteImport } from './routes/{-$locale}/token-cost-calculator'
+import { Route as Char123LocaleChar125TokenCalculatorRouteImport } from './routes/{-$locale}/token-calculator'
+import { Route as Char123LocaleChar125TermsRouteImport } from './routes/{-$locale}/terms'
+import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
+import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
+import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
+import { Route as Char123LocaleChar125LeaderboardHistoryRouteImport } from './routes/{-$locale}/leaderboard-history'
+import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
+import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
+import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './routes/{-$locale}/chatgpt-api-pricing'
+import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
+import { Route as ApiPricesDotjsonRouteImport } from './routes/api/prices[.]json'
+import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
+import { Route as AdminSponsorsDotcsvRouteImport } from './routes/admin/sponsors[.]csv'
+import { Route as Char123LocaleChar125AdminRouteRouteImport } from './routes/{-$locale}/admin/route'
+import { Route as Char123LocaleChar125ReleasesIndexRouteImport } from './routes/{-$locale}/releases/index'
 import { Route as Char123LocaleChar125CompareIndexRouteImport } from './routes/{-$locale}/compare/index'
-import { Route as Char123LocaleChar125ComparePairRouteImport } from './routes/{-$locale}/compare/$pair'
+import { Route as Char123LocaleChar125AppIndexRouteImport } from './routes/{-$locale}/app/index'
+import { Route as Char123LocaleChar125AdminIndexRouteImport } from './routes/{-$locale}/admin/index'
+import { Route as Char123LocaleChar125ReleasesSlugRouteImport } from './routes/{-$locale}/releases/$slug'
 import { Route as Char123LocaleChar125ModelsSlugRouteImport } from './routes/{-$locale}/models/$slug'
+import { Route as Char123LocaleChar125ComparePairRouteImport } from './routes/{-$locale}/compare/$pair'
+import { Route as Char123LocaleChar125BestCategoryRouteImport } from './routes/{-$locale}/best/$category'
+import { Route as Char123LocaleChar125AppProRouteImport } from './routes/{-$locale}/app/pro'
+import { Route as Char123LocaleChar125AppFeedbackRouteImport } from './routes/{-$locale}/app/feedback'
+import { Route as Char123LocaleChar125AppAccountRouteImport } from './routes/{-$locale}/app/account'
+import { Route as Char123LocaleChar125AdminWaitlistRouteImport } from './routes/{-$locale}/admin/waitlist'
+import { Route as Char123LocaleChar125AdminUsersRouteImport } from './routes/{-$locale}/admin/users'
+import { Route as Char123LocaleChar125AdminSponsorsRouteImport } from './routes/{-$locale}/admin/sponsors'
+import { Route as Char123LocaleChar125AdminFeedbackRouteImport } from './routes/{-$locale}/admin/feedback'
+import { Route as Char123LocaleChar125authVerifyEmailRouteImport } from './routes/{-$locale}/(auth)/verify-email'
+import { Route as Char123LocaleChar125authResetPasswordRouteImport } from './routes/{-$locale}/(auth)/reset-password'
+import { Route as Char123LocaleChar125authRegisterRouteImport } from './routes/{-$locale}/(auth)/register'
+import { Route as Char123LocaleChar125authLoginRouteImport } from './routes/{-$locale}/(auth)/login'
+import { Route as Char123LocaleChar125authForgotPasswordRouteImport } from './routes/{-$locale}/(auth)/forgot-password'
+import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
+import { Route as ApiAvatarsSplatRouteImport } from './routes/api/avatars/$'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as Char123LocaleChar125BenchmarksSlugRouteRouteImport } from './routes/{-$locale}/benchmarks/$slug/route'
 import { Route as Char123LocaleChar125BenchmarksSlugIndexRouteImport } from './routes/{-$locale}/benchmarks/$slug/index'
 import { Route as Char123LocaleChar125BenchmarksSlugHistoryRouteImport } from './routes/{-$locale}/benchmarks/$slug/history'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
+  id: '/feed.xml',
+  path: '/feed.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125RouteRoute =
@@ -70,97 +78,10 @@ const Char123LocaleChar125RouteRoute =
     path: '/{-$locale}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AdminSponsorsDotcsvRoute = AdminSponsorsDotcsvRouteImport.update({
-  id: '/admin/sponsors.csv',
-  path: '/admin/sponsors.csv',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminWaitlistDotcsvRoute = AdminWaitlistDotcsvRouteImport.update({
-  id: '/admin/waitlist.csv',
-  path: '/admin/waitlist.csv',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPricesDotjsonRoute = ApiPricesDotjsonRouteImport.update({
-  id: '/api/prices.json',
-  path: '/api/prices.json',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Char123LocaleChar125IndexRoute =
   Char123LocaleChar125IndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AdminRouteRoute =
-  Char123LocaleChar125AdminRouteRouteImport.update({
-    id: '/admin',
-    path: '/admin',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ChangelogRoute =
-  Char123LocaleChar125ChangelogRouteImport.update({
-    id: '/changelog',
-    path: '/changelog',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ChatgptApiPricingRoute =
-  Char123LocaleChar125ChatgptApiPricingRouteImport.update({
-    id: '/chatgpt-api-pricing',
-    path: '/chatgpt-api-pricing',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ClaudeTokenCostCalculatorRoute =
-  Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport.update({
-    id: '/claude-token-cost-calculator',
-    path: '/claude-token-cost-calculator',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DeepseekApiPricingRoute =
-  Char123LocaleChar125DeepseekApiPricingRouteImport.update({
-    id: '/deepseek-api-pricing',
-    path: '/deepseek-api-pricing',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125LeaderboardHistoryRoute =
-  Char123LocaleChar125LeaderboardHistoryRouteImport.update({
-    id: '/leaderboard-history',
-    path: '/leaderboard-history',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
-  Char123LocaleChar125OpenrouterPricingCalculatorRouteImport.update({
-    id: '/openrouter-pricing-calculator',
-    path: '/openrouter-pricing-calculator',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125PrivacyRoute =
-  Char123LocaleChar125PrivacyRouteImport.update({
-    id: '/privacy',
-    path: '/privacy',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125SponsorRoute =
-  Char123LocaleChar125SponsorRouteImport.update({
-    id: '/sponsor',
-    path: '/sponsor',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125TermsRoute =
-  Char123LocaleChar125TermsRouteImport.update({
-    id: '/terms',
-    path: '/terms',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125TokenCalculatorRoute =
-  Char123LocaleChar125TokenCalculatorRouteImport.update({
-    id: '/token-calculator',
-    path: '/token-calculator',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125TokenCostCalculatorRoute =
-  Char123LocaleChar125TokenCostCalculatorRouteImport.update({
-    id: '/token-cost-calculator',
-    path: '/token-cost-calculator',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125WaitlistRoute =
@@ -169,115 +90,97 @@ const Char123LocaleChar125WaitlistRoute =
     path: '/waitlist',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+const Char123LocaleChar125TokenCostCalculatorRoute =
+  Char123LocaleChar125TokenCostCalculatorRouteImport.update({
+    id: '/token-cost-calculator',
+    path: '/token-cost-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125TokenCalculatorRoute =
+  Char123LocaleChar125TokenCalculatorRouteImport.update({
+    id: '/token-calculator',
+    path: '/token-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125TermsRoute =
+  Char123LocaleChar125TermsRouteImport.update({
+    id: '/terms',
+    path: '/terms',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125SponsorRoute =
+  Char123LocaleChar125SponsorRouteImport.update({
+    id: '/sponsor',
+    path: '/sponsor',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125PrivacyRoute =
+  Char123LocaleChar125PrivacyRouteImport.update({
+    id: '/privacy',
+    path: '/privacy',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
+  Char123LocaleChar125OpenrouterPricingCalculatorRouteImport.update({
+    id: '/openrouter-pricing-calculator',
+    path: '/openrouter-pricing-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125LeaderboardHistoryRoute =
+  Char123LocaleChar125LeaderboardHistoryRouteImport.update({
+    id: '/leaderboard-history',
+    path: '/leaderboard-history',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125DeepseekApiPricingRoute =
+  Char123LocaleChar125DeepseekApiPricingRouteImport.update({
+    id: '/deepseek-api-pricing',
+    path: '/deepseek-api-pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ClaudeTokenCostCalculatorRoute =
+  Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport.update({
+    id: '/claude-token-cost-calculator',
+    path: '/claude-token-cost-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ChatgptApiPricingRoute =
+  Char123LocaleChar125ChatgptApiPricingRouteImport.update({
+    id: '/chatgpt-api-pricing',
+    path: '/chatgpt-api-pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ChangelogRoute =
+  Char123LocaleChar125ChangelogRouteImport.update({
+    id: '/changelog',
+    path: '/changelog',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const ApiPricesDotjsonRoute = ApiPricesDotjsonRouteImport.update({
+  id: '/api/prices.json',
+  path: '/api/prices.json',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAvatarsSplatRoute = ApiAvatarsSplatRouteImport.update({
-  id: '/api/avatars/$',
-  path: '/api/avatars/$',
+const AdminWaitlistDotcsvRoute = AdminWaitlistDotcsvRouteImport.update({
+  id: '/admin/waitlist.csv',
+  path: '/admin/waitlist.csv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWebhooksStripeRoute = ApiWebhooksStripeRouteImport.update({
-  id: '/api/webhooks/stripe',
-  path: '/api/webhooks/stripe',
+const AdminSponsorsDotcsvRoute = AdminSponsorsDotcsvRouteImport.update({
+  id: '/admin/sponsors.csv',
+  path: '/admin/sponsors.csv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char123LocaleChar125authForgotPasswordRoute =
-  Char123LocaleChar125authForgotPasswordRouteImport.update({
-    id: '/(auth)/forgot-password',
-    path: '/forgot-password',
+const Char123LocaleChar125AdminRouteRoute =
+  Char123LocaleChar125AdminRouteRouteImport.update({
+    id: '/admin',
+    path: '/admin',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const Char123LocaleChar125authLoginRoute =
-  Char123LocaleChar125authLoginRouteImport.update({
-    id: '/(auth)/login',
-    path: '/login',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125authRegisterRoute =
-  Char123LocaleChar125authRegisterRouteImport.update({
-    id: '/(auth)/register',
-    path: '/register',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125authResetPasswordRoute =
-  Char123LocaleChar125authResetPasswordRouteImport.update({
-    id: '/(auth)/reset-password',
-    path: '/reset-password',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125authVerifyEmailRoute =
-  Char123LocaleChar125authVerifyEmailRouteImport.update({
-    id: '/(auth)/verify-email',
-    path: '/verify-email',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AdminIndexRoute =
-  Char123LocaleChar125AdminIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
-  } as any)
-const Char123LocaleChar125AdminFeedbackRoute =
-  Char123LocaleChar125AdminFeedbackRouteImport.update({
-    id: '/feedback',
-    path: '/feedback',
-    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
-  } as any)
-const Char123LocaleChar125AdminSponsorsRoute =
-  Char123LocaleChar125AdminSponsorsRouteImport.update({
-    id: '/sponsors',
-    path: '/sponsors',
-    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
-  } as any)
-const Char123LocaleChar125AdminUsersRoute =
-  Char123LocaleChar125AdminUsersRouteImport.update({
-    id: '/users',
-    path: '/users',
-    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
-  } as any)
-const Char123LocaleChar125AdminWaitlistRoute =
-  Char123LocaleChar125AdminWaitlistRouteImport.update({
-    id: '/waitlist',
-    path: '/waitlist',
-    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
-  } as any)
-const Char123LocaleChar125AppIndexRoute =
-  Char123LocaleChar125AppIndexRouteImport.update({
-    id: '/app/',
-    path: '/app/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AppAccountRoute =
-  Char123LocaleChar125AppAccountRouteImport.update({
-    id: '/app/account',
-    path: '/app/account',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AppFeedbackRoute =
-  Char123LocaleChar125AppFeedbackRouteImport.update({
-    id: '/app/feedback',
-    path: '/app/feedback',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AppProRoute =
-  Char123LocaleChar125AppProRouteImport.update({
-    id: '/app/pro',
-    path: '/app/pro',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125BenchmarksSlugRouteRoute =
-  Char123LocaleChar125BenchmarksSlugRouteRouteImport.update({
-    id: '/benchmarks/$slug',
-    path: '/benchmarks/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125BestCategoryRoute =
-  Char123LocaleChar125BestCategoryRouteImport.update({
-    id: '/best/$category',
-    path: '/best/$category',
+const Char123LocaleChar125ReleasesIndexRoute =
+  Char123LocaleChar125ReleasesIndexRouteImport.update({
+    id: '/releases/',
+    path: '/releases/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125CompareIndexRoute =
@@ -286,16 +189,133 @@ const Char123LocaleChar125CompareIndexRoute =
     path: '/compare/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const Char123LocaleChar125ComparePairRoute =
-  Char123LocaleChar125ComparePairRouteImport.update({
-    id: '/compare/$pair',
-    path: '/compare/$pair',
+const Char123LocaleChar125AppIndexRoute =
+  Char123LocaleChar125AppIndexRouteImport.update({
+    id: '/app/',
+    path: '/app/',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AdminIndexRoute =
+  Char123LocaleChar125AdminIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125ReleasesSlugRoute =
+  Char123LocaleChar125ReleasesSlugRouteImport.update({
+    id: '/releases/$slug',
+    path: '/releases/$slug',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125ModelsSlugRoute =
   Char123LocaleChar125ModelsSlugRouteImport.update({
     id: '/models/$slug',
     path: '/models/$slug',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ComparePairRoute =
+  Char123LocaleChar125ComparePairRouteImport.update({
+    id: '/compare/$pair',
+    path: '/compare/$pair',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125BestCategoryRoute =
+  Char123LocaleChar125BestCategoryRouteImport.update({
+    id: '/best/$category',
+    path: '/best/$category',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AppProRoute =
+  Char123LocaleChar125AppProRouteImport.update({
+    id: '/app/pro',
+    path: '/app/pro',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AppFeedbackRoute =
+  Char123LocaleChar125AppFeedbackRouteImport.update({
+    id: '/app/feedback',
+    path: '/app/feedback',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AppAccountRoute =
+  Char123LocaleChar125AppAccountRouteImport.update({
+    id: '/app/account',
+    path: '/app/account',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AdminWaitlistRoute =
+  Char123LocaleChar125AdminWaitlistRouteImport.update({
+    id: '/waitlist',
+    path: '/waitlist',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125AdminUsersRoute =
+  Char123LocaleChar125AdminUsersRouteImport.update({
+    id: '/users',
+    path: '/users',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125AdminSponsorsRoute =
+  Char123LocaleChar125AdminSponsorsRouteImport.update({
+    id: '/sponsors',
+    path: '/sponsors',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125AdminFeedbackRoute =
+  Char123LocaleChar125AdminFeedbackRouteImport.update({
+    id: '/feedback',
+    path: '/feedback',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125authVerifyEmailRoute =
+  Char123LocaleChar125authVerifyEmailRouteImport.update({
+    id: '/(auth)/verify-email',
+    path: '/verify-email',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125authResetPasswordRoute =
+  Char123LocaleChar125authResetPasswordRouteImport.update({
+    id: '/(auth)/reset-password',
+    path: '/reset-password',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125authRegisterRoute =
+  Char123LocaleChar125authRegisterRouteImport.update({
+    id: '/(auth)/register',
+    path: '/register',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125authLoginRoute =
+  Char123LocaleChar125authLoginRouteImport.update({
+    id: '/(auth)/login',
+    path: '/login',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125authForgotPasswordRoute =
+  Char123LocaleChar125authForgotPasswordRouteImport.update({
+    id: '/(auth)/forgot-password',
+    path: '/forgot-password',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const ApiWebhooksStripeRoute = ApiWebhooksStripeRouteImport.update({
+  id: '/api/webhooks/stripe',
+  path: '/api/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarsSplatRoute = ApiAvatarsSplatRouteImport.update({
+  id: '/api/avatars/$',
+  path: '/api/avatars/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char123LocaleChar125BenchmarksSlugRouteRoute =
+  Char123LocaleChar125BenchmarksSlugRouteRouteImport.update({
+    id: '/benchmarks/$slug',
+    path: '/benchmarks/$slug',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125BenchmarksSlugIndexRoute =
@@ -313,6 +333,7 @@ const Char123LocaleChar125BenchmarksSlugHistoryRoute =
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
@@ -351,13 +372,16 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
+  '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
+  '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
 }
 export interface FileRoutesByTo {
+  '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
@@ -394,15 +418,18 @@ export interface FileRoutesByTo {
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
+  '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare': typeof Char123LocaleChar125CompareIndexRoute
+  '/{-$locale}/releases': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/benchmarks/$slug': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
@@ -441,9 +468,11 @@ export interface FileRoutesById {
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
+  '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
+  '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
 }
@@ -451,6 +480,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
+    | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/{-$locale}/admin'
@@ -489,13 +519,16 @@ export interface FileRouteTypes {
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
+    | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin/'
     | '/{-$locale}/app/'
     | '/{-$locale}/compare/'
+    | '/{-$locale}/releases/'
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/benchmarks/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/sponsors.csv'
@@ -532,14 +565,17 @@ export interface FileRouteTypes {
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
+    | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin'
     | '/{-$locale}/app'
     | '/{-$locale}/compare'
+    | '/{-$locale}/releases'
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/benchmarks/$slug'
   id:
     | '__root__'
     | '/{-$locale}'
+    | '/feed.xml'
     | '/robots.txt'
     | '/sitemap.xml'
     | '/{-$locale}/admin'
@@ -578,15 +614,18 @@ export interface FileRouteTypes {
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
+    | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin/'
     | '/{-$locale}/app/'
     | '/{-$locale}/compare/'
+    | '/{-$locale}/releases/'
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/benchmarks/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
+  FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminSponsorsDotcsvRoute: typeof AdminSponsorsDotcsvRoute
@@ -599,6 +638,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/robots.txt': {
       id: '/robots.txt'
       path: '/robots.txt'
@@ -606,11 +652,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/feed.xml': {
+      id: '/feed.xml'
+      path: '/feed.xml'
+      fullPath: '/feed.xml'
+      preLoaderRoute: typeof FeedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}': {
@@ -620,116 +666,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125RouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/sponsors.csv': {
-      id: '/admin/sponsors.csv'
-      path: '/admin/sponsors.csv'
-      fullPath: '/admin/sponsors.csv'
-      preLoaderRoute: typeof AdminSponsorsDotcsvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/waitlist.csv': {
-      id: '/admin/waitlist.csv'
-      path: '/admin/waitlist.csv'
-      fullPath: '/admin/waitlist.csv'
-      preLoaderRoute: typeof AdminWaitlistDotcsvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/prices.json': {
-      id: '/api/prices.json'
-      path: '/api/prices.json'
-      fullPath: '/api/prices.json'
-      preLoaderRoute: typeof ApiPricesDotjsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/{-$locale}/': {
       id: '/{-$locale}/'
       path: '/'
       fullPath: '/{-$locale}/'
       preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/admin': {
-      id: '/{-$locale}/admin'
-      path: '/admin'
-      fullPath: '/{-$locale}/admin'
-      preLoaderRoute: typeof Char123LocaleChar125AdminRouteRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/changelog': {
-      id: '/{-$locale}/changelog'
-      path: '/changelog'
-      fullPath: '/{-$locale}/changelog'
-      preLoaderRoute: typeof Char123LocaleChar125ChangelogRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/chatgpt-api-pricing': {
-      id: '/{-$locale}/chatgpt-api-pricing'
-      path: '/chatgpt-api-pricing'
-      fullPath: '/{-$locale}/chatgpt-api-pricing'
-      preLoaderRoute: typeof Char123LocaleChar125ChatgptApiPricingRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/claude-token-cost-calculator': {
-      id: '/{-$locale}/claude-token-cost-calculator'
-      path: '/claude-token-cost-calculator'
-      fullPath: '/{-$locale}/claude-token-cost-calculator'
-      preLoaderRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/deepseek-api-pricing': {
-      id: '/{-$locale}/deepseek-api-pricing'
-      path: '/deepseek-api-pricing'
-      fullPath: '/{-$locale}/deepseek-api-pricing'
-      preLoaderRoute: typeof Char123LocaleChar125DeepseekApiPricingRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/leaderboard-history': {
-      id: '/{-$locale}/leaderboard-history'
-      path: '/leaderboard-history'
-      fullPath: '/{-$locale}/leaderboard-history'
-      preLoaderRoute: typeof Char123LocaleChar125LeaderboardHistoryRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/openrouter-pricing-calculator': {
-      id: '/{-$locale}/openrouter-pricing-calculator'
-      path: '/openrouter-pricing-calculator'
-      fullPath: '/{-$locale}/openrouter-pricing-calculator'
-      preLoaderRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/privacy': {
-      id: '/{-$locale}/privacy'
-      path: '/privacy'
-      fullPath: '/{-$locale}/privacy'
-      preLoaderRoute: typeof Char123LocaleChar125PrivacyRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/sponsor': {
-      id: '/{-$locale}/sponsor'
-      path: '/sponsor'
-      fullPath: '/{-$locale}/sponsor'
-      preLoaderRoute: typeof Char123LocaleChar125SponsorRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/terms': {
-      id: '/{-$locale}/terms'
-      path: '/terms'
-      fullPath: '/{-$locale}/terms'
-      preLoaderRoute: typeof Char123LocaleChar125TermsRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/token-calculator': {
-      id: '/{-$locale}/token-calculator'
-      path: '/token-calculator'
-      fullPath: '/{-$locale}/token-calculator'
-      preLoaderRoute: typeof Char123LocaleChar125TokenCalculatorRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/token-cost-calculator': {
-      id: '/{-$locale}/token-cost-calculator'
-      path: '/token-cost-calculator'
-      fullPath: '/{-$locale}/token-cost-calculator'
-      preLoaderRoute: typeof Char123LocaleChar125TokenCostCalculatorRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/waitlist': {
@@ -739,137 +680,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125WaitlistRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
+    '/{-$locale}/token-cost-calculator': {
+      id: '/{-$locale}/token-cost-calculator'
+      path: '/token-cost-calculator'
+      fullPath: '/{-$locale}/token-cost-calculator'
+      preLoaderRoute: typeof Char123LocaleChar125TokenCostCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/token-calculator': {
+      id: '/{-$locale}/token-calculator'
+      path: '/token-calculator'
+      fullPath: '/{-$locale}/token-calculator'
+      preLoaderRoute: typeof Char123LocaleChar125TokenCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/terms': {
+      id: '/{-$locale}/terms'
+      path: '/terms'
+      fullPath: '/{-$locale}/terms'
+      preLoaderRoute: typeof Char123LocaleChar125TermsRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/sponsor': {
+      id: '/{-$locale}/sponsor'
+      path: '/sponsor'
+      fullPath: '/{-$locale}/sponsor'
+      preLoaderRoute: typeof Char123LocaleChar125SponsorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/privacy': {
+      id: '/{-$locale}/privacy'
+      path: '/privacy'
+      fullPath: '/{-$locale}/privacy'
+      preLoaderRoute: typeof Char123LocaleChar125PrivacyRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/openrouter-pricing-calculator': {
+      id: '/{-$locale}/openrouter-pricing-calculator'
+      path: '/openrouter-pricing-calculator'
+      fullPath: '/{-$locale}/openrouter-pricing-calculator'
+      preLoaderRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/leaderboard-history': {
+      id: '/{-$locale}/leaderboard-history'
+      path: '/leaderboard-history'
+      fullPath: '/{-$locale}/leaderboard-history'
+      preLoaderRoute: typeof Char123LocaleChar125LeaderboardHistoryRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/deepseek-api-pricing': {
+      id: '/{-$locale}/deepseek-api-pricing'
+      path: '/deepseek-api-pricing'
+      fullPath: '/{-$locale}/deepseek-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125DeepseekApiPricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/claude-token-cost-calculator': {
+      id: '/{-$locale}/claude-token-cost-calculator'
+      path: '/claude-token-cost-calculator'
+      fullPath: '/{-$locale}/claude-token-cost-calculator'
+      preLoaderRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/chatgpt-api-pricing': {
+      id: '/{-$locale}/chatgpt-api-pricing'
+      path: '/chatgpt-api-pricing'
+      fullPath: '/{-$locale}/chatgpt-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125ChatgptApiPricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/changelog': {
+      id: '/{-$locale}/changelog'
+      path: '/changelog'
+      fullPath: '/{-$locale}/changelog'
+      preLoaderRoute: typeof Char123LocaleChar125ChangelogRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/api/prices.json': {
+      id: '/api/prices.json'
+      path: '/api/prices.json'
+      fullPath: '/api/prices.json'
+      preLoaderRoute: typeof ApiPricesDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/avatars/$': {
-      id: '/api/avatars/$'
-      path: '/api/avatars/$'
-      fullPath: '/api/avatars/$'
-      preLoaderRoute: typeof ApiAvatarsSplatRouteImport
+    '/admin/waitlist.csv': {
+      id: '/admin/waitlist.csv'
+      path: '/admin/waitlist.csv'
+      fullPath: '/admin/waitlist.csv'
+      preLoaderRoute: typeof AdminWaitlistDotcsvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/webhooks/stripe': {
-      id: '/api/webhooks/stripe'
-      path: '/api/webhooks/stripe'
-      fullPath: '/api/webhooks/stripe'
-      preLoaderRoute: typeof ApiWebhooksStripeRouteImport
+    '/admin/sponsors.csv': {
+      id: '/admin/sponsors.csv'
+      path: '/admin/sponsors.csv'
+      fullPath: '/admin/sponsors.csv'
+      preLoaderRoute: typeof AdminSponsorsDotcsvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/{-$locale}/(auth)/forgot-password': {
-      id: '/{-$locale}/(auth)/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/{-$locale}/forgot-password'
-      preLoaderRoute: typeof Char123LocaleChar125authForgotPasswordRouteImport
+    '/{-$locale}/admin': {
+      id: '/{-$locale}/admin'
+      path: '/admin'
+      fullPath: '/{-$locale}/admin'
+      preLoaderRoute: typeof Char123LocaleChar125AdminRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/{-$locale}/(auth)/login': {
-      id: '/{-$locale}/(auth)/login'
-      path: '/login'
-      fullPath: '/{-$locale}/login'
-      preLoaderRoute: typeof Char123LocaleChar125authLoginRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/(auth)/register': {
-      id: '/{-$locale}/(auth)/register'
-      path: '/register'
-      fullPath: '/{-$locale}/register'
-      preLoaderRoute: typeof Char123LocaleChar125authRegisterRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/(auth)/reset-password': {
-      id: '/{-$locale}/(auth)/reset-password'
-      path: '/reset-password'
-      fullPath: '/{-$locale}/reset-password'
-      preLoaderRoute: typeof Char123LocaleChar125authResetPasswordRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/(auth)/verify-email': {
-      id: '/{-$locale}/(auth)/verify-email'
-      path: '/verify-email'
-      fullPath: '/{-$locale}/verify-email'
-      preLoaderRoute: typeof Char123LocaleChar125authVerifyEmailRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/admin/': {
-      id: '/{-$locale}/admin/'
-      path: '/'
-      fullPath: '/{-$locale}/admin/'
-      preLoaderRoute: typeof Char123LocaleChar125AdminIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
-    }
-    '/{-$locale}/admin/feedback': {
-      id: '/{-$locale}/admin/feedback'
-      path: '/feedback'
-      fullPath: '/{-$locale}/admin/feedback'
-      preLoaderRoute: typeof Char123LocaleChar125AdminFeedbackRouteImport
-      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
-    }
-    '/{-$locale}/admin/sponsors': {
-      id: '/{-$locale}/admin/sponsors'
-      path: '/sponsors'
-      fullPath: '/{-$locale}/admin/sponsors'
-      preLoaderRoute: typeof Char123LocaleChar125AdminSponsorsRouteImport
-      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
-    }
-    '/{-$locale}/admin/users': {
-      id: '/{-$locale}/admin/users'
-      path: '/users'
-      fullPath: '/{-$locale}/admin/users'
-      preLoaderRoute: typeof Char123LocaleChar125AdminUsersRouteImport
-      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
-    }
-    '/{-$locale}/admin/waitlist': {
-      id: '/{-$locale}/admin/waitlist'
-      path: '/waitlist'
-      fullPath: '/{-$locale}/admin/waitlist'
-      preLoaderRoute: typeof Char123LocaleChar125AdminWaitlistRouteImport
-      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
-    }
-    '/{-$locale}/app/': {
-      id: '/{-$locale}/app/'
-      path: '/app'
-      fullPath: '/{-$locale}/app/'
-      preLoaderRoute: typeof Char123LocaleChar125AppIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/app/account': {
-      id: '/{-$locale}/app/account'
-      path: '/app/account'
-      fullPath: '/{-$locale}/app/account'
-      preLoaderRoute: typeof Char123LocaleChar125AppAccountRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/app/feedback': {
-      id: '/{-$locale}/app/feedback'
-      path: '/app/feedback'
-      fullPath: '/{-$locale}/app/feedback'
-      preLoaderRoute: typeof Char123LocaleChar125AppFeedbackRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/app/pro': {
-      id: '/{-$locale}/app/pro'
-      path: '/app/pro'
-      fullPath: '/{-$locale}/app/pro'
-      preLoaderRoute: typeof Char123LocaleChar125AppProRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/benchmarks/$slug': {
-      id: '/{-$locale}/benchmarks/$slug'
-      path: '/benchmarks/$slug'
-      fullPath: '/{-$locale}/benchmarks/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/best/$category': {
-      id: '/{-$locale}/best/$category'
-      path: '/best/$category'
-      fullPath: '/{-$locale}/best/$category'
-      preLoaderRoute: typeof Char123LocaleChar125BestCategoryRouteImport
+    '/{-$locale}/releases/': {
+      id: '/{-$locale}/releases/'
+      path: '/releases'
+      fullPath: '/{-$locale}/releases/'
+      preLoaderRoute: typeof Char123LocaleChar125ReleasesIndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/compare/': {
@@ -879,11 +799,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125CompareIndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/{-$locale}/compare/$pair': {
-      id: '/{-$locale}/compare/$pair'
-      path: '/compare/$pair'
-      fullPath: '/{-$locale}/compare/$pair'
-      preLoaderRoute: typeof Char123LocaleChar125ComparePairRouteImport
+    '/{-$locale}/app/': {
+      id: '/{-$locale}/app/'
+      path: '/app'
+      fullPath: '/{-$locale}/app/'
+      preLoaderRoute: typeof Char123LocaleChar125AppIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/admin/': {
+      id: '/{-$locale}/admin/'
+      path: '/'
+      fullPath: '/{-$locale}/admin/'
+      preLoaderRoute: typeof Char123LocaleChar125AdminIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/releases/$slug': {
+      id: '/{-$locale}/releases/$slug'
+      path: '/releases/$slug'
+      fullPath: '/{-$locale}/releases/$slug'
+      preLoaderRoute: typeof Char123LocaleChar125ReleasesSlugRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/models/$slug': {
@@ -891,6 +825,132 @@ declare module '@tanstack/react-router' {
       path: '/models/$slug'
       fullPath: '/{-$locale}/models/$slug'
       preLoaderRoute: typeof Char123LocaleChar125ModelsSlugRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/compare/$pair': {
+      id: '/{-$locale}/compare/$pair'
+      path: '/compare/$pair'
+      fullPath: '/{-$locale}/compare/$pair'
+      preLoaderRoute: typeof Char123LocaleChar125ComparePairRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/best/$category': {
+      id: '/{-$locale}/best/$category'
+      path: '/best/$category'
+      fullPath: '/{-$locale}/best/$category'
+      preLoaderRoute: typeof Char123LocaleChar125BestCategoryRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/app/pro': {
+      id: '/{-$locale}/app/pro'
+      path: '/app/pro'
+      fullPath: '/{-$locale}/app/pro'
+      preLoaderRoute: typeof Char123LocaleChar125AppProRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/app/feedback': {
+      id: '/{-$locale}/app/feedback'
+      path: '/app/feedback'
+      fullPath: '/{-$locale}/app/feedback'
+      preLoaderRoute: typeof Char123LocaleChar125AppFeedbackRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/app/account': {
+      id: '/{-$locale}/app/account'
+      path: '/app/account'
+      fullPath: '/{-$locale}/app/account'
+      preLoaderRoute: typeof Char123LocaleChar125AppAccountRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/admin/waitlist': {
+      id: '/{-$locale}/admin/waitlist'
+      path: '/waitlist'
+      fullPath: '/{-$locale}/admin/waitlist'
+      preLoaderRoute: typeof Char123LocaleChar125AdminWaitlistRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/admin/users': {
+      id: '/{-$locale}/admin/users'
+      path: '/users'
+      fullPath: '/{-$locale}/admin/users'
+      preLoaderRoute: typeof Char123LocaleChar125AdminUsersRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/admin/sponsors': {
+      id: '/{-$locale}/admin/sponsors'
+      path: '/sponsors'
+      fullPath: '/{-$locale}/admin/sponsors'
+      preLoaderRoute: typeof Char123LocaleChar125AdminSponsorsRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/admin/feedback': {
+      id: '/{-$locale}/admin/feedback'
+      path: '/feedback'
+      fullPath: '/{-$locale}/admin/feedback'
+      preLoaderRoute: typeof Char123LocaleChar125AdminFeedbackRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/(auth)/verify-email': {
+      id: '/{-$locale}/(auth)/verify-email'
+      path: '/verify-email'
+      fullPath: '/{-$locale}/verify-email'
+      preLoaderRoute: typeof Char123LocaleChar125authVerifyEmailRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/(auth)/reset-password': {
+      id: '/{-$locale}/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/{-$locale}/reset-password'
+      preLoaderRoute: typeof Char123LocaleChar125authResetPasswordRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/(auth)/register': {
+      id: '/{-$locale}/(auth)/register'
+      path: '/register'
+      fullPath: '/{-$locale}/register'
+      preLoaderRoute: typeof Char123LocaleChar125authRegisterRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/(auth)/login': {
+      id: '/{-$locale}/(auth)/login'
+      path: '/login'
+      fullPath: '/{-$locale}/login'
+      preLoaderRoute: typeof Char123LocaleChar125authLoginRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/(auth)/forgot-password': {
+      id: '/{-$locale}/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/{-$locale}/forgot-password'
+      preLoaderRoute: typeof Char123LocaleChar125authForgotPasswordRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/api/webhooks/stripe': {
+      id: '/api/webhooks/stripe'
+      path: '/api/webhooks/stripe'
+      fullPath: '/api/webhooks/stripe'
+      preLoaderRoute: typeof ApiWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatars/$': {
+      id: '/api/avatars/$'
+      path: '/api/avatars/$'
+      fullPath: '/api/avatars/$'
+      preLoaderRoute: typeof ApiAvatarsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/{-$locale}/benchmarks/$slug': {
+      id: '/{-$locale}/benchmarks/$slug'
+      path: '/benchmarks/$slug'
+      fullPath: '/{-$locale}/benchmarks/$slug'
+      preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/benchmarks/$slug/': {
@@ -980,8 +1040,10 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125BestCategoryRoute: typeof Char123LocaleChar125BestCategoryRoute
   Char123LocaleChar125ComparePairRoute: typeof Char123LocaleChar125ComparePairRoute
   Char123LocaleChar125ModelsSlugRoute: typeof Char123LocaleChar125ModelsSlugRoute
+  Char123LocaleChar125ReleasesSlugRoute: typeof Char123LocaleChar125ReleasesSlugRoute
   Char123LocaleChar125AppIndexRoute: typeof Char123LocaleChar125AppIndexRoute
   Char123LocaleChar125CompareIndexRoute: typeof Char123LocaleChar125CompareIndexRoute
+  Char123LocaleChar125ReleasesIndexRoute: typeof Char123LocaleChar125ReleasesIndexRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
@@ -1026,9 +1088,13 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125BestCategoryRoute,
     Char123LocaleChar125ComparePairRoute: Char123LocaleChar125ComparePairRoute,
     Char123LocaleChar125ModelsSlugRoute: Char123LocaleChar125ModelsSlugRoute,
+    Char123LocaleChar125ReleasesSlugRoute:
+      Char123LocaleChar125ReleasesSlugRoute,
     Char123LocaleChar125AppIndexRoute: Char123LocaleChar125AppIndexRoute,
     Char123LocaleChar125CompareIndexRoute:
       Char123LocaleChar125CompareIndexRoute,
+    Char123LocaleChar125ReleasesIndexRoute:
+      Char123LocaleChar125ReleasesIndexRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =
@@ -1038,6 +1104,7 @@ const Char123LocaleChar125RouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
+  FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminSponsorsDotcsvRoute: AdminSponsorsDotcsvRoute,

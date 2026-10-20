@@ -32,6 +32,7 @@ import { scrapeAnthropic } from './sources/anthropic.ts'
 import { scrapeDeepSeek } from './sources/deepseek.ts'
 import { scrapeGoogle } from './sources/google.ts'
 import { scrapeGrok } from './sources/grok.ts'
+import { scrapeMiniMax } from './sources/minimax.ts'
 import { scrapeOpenAI } from './sources/openai.ts'
 import type { FetchOutput, NormalizedModel, ProviderId, ProviderResult } from './types.ts'
 import { SCRIPT_VERSION } from './version.ts'
@@ -45,13 +46,14 @@ interface CliArgs {
   modelFile: string
 }
 
-const ALL_PROVIDERS: ProviderId[] = ['openai', 'anthropic', 'google', 'deepseek', 'grok']
+const ALL_PROVIDERS: ProviderId[] = ['openai', 'anthropic', 'google', 'deepseek', 'minimax', 'grok']
 
 const PROVIDER_SCRAPERS: Record<ProviderId, (b: import('@playwright/test').Browser) => Promise<ProviderResult>> = {
   openai: scrapeOpenAI,
   anthropic: scrapeAnthropic,
   google: scrapeGoogle,
   deepseek: scrapeDeepSeek,
+  minimax: scrapeMiniMax,
   grok: scrapeGrok,
 }
 

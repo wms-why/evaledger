@@ -94,6 +94,17 @@ describe('calculateCost', () => {
     expect(cached.effectiveInputPricePer1M).toBeCloseTo(2, 2)
   })
 
+  it('applies Grok 4.7 long-context pricing above 200K', () => {
+    // $2 / $0.50 / $6 short context; $4 / $1 / $12 at or above 200K.
+    const over = calculateCost('grok-4.7', 250_000, 50_000, { now: NOW })
+    expect(over.effectiveInputPricePer1M).toBeCloseTo(4, 2)
+    expect(over.effectiveOutputPricePer1M).toBeCloseTo(12, 2)
+    expect(over.appliedRule).toContain('long-context')
+
+    const cached = calculateCost('grok-4.7', 250_000, 0, { useCachedInput: true, now: NOW })
+    expect(cached.effectiveInputPricePer1M).toBeCloseTo(1, 2)
+  })
+
   it('carries the verified 1M windows for the Claude 5.x and GPT-6 models', () => {
     expect(findModel('claude-opus-5.5')?.contextWindow).toBe(1_000_000)
     expect(findModel('claude-sonnet-5')?.contextWindow).toBe(1_000_000)

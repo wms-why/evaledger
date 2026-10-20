@@ -30,6 +30,8 @@ export const Route = createRootRoute({
         { rel: 'icon', type: 'image/png', href: '/logo192.png', sizes: '192x192' },
         { rel: 'apple-touch-icon', href: '/logo192.png' },
         { rel: 'manifest', href: '/manifest.json' },
+        // RSS for the Model Releases series — the whole feed in one file.
+        { rel: 'alternate', type: 'application/rss+xml', title: 'Model Releases', href: '/feed.xml' },
       ],
     }
   },

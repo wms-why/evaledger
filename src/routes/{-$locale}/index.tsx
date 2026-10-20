@@ -10,13 +10,23 @@ import { buttonVariants } from '@/components/ui/button'
 import { LeaderboardTable } from '@/features/leaderboard/components/LeaderboardTable'
 import { PopularComparisons } from '@/features/leaderboard/components/CompareTool'
 import { LEADERBOARD } from '@/features/leaderboard/models'
+import { getReleases } from '@/features/releases/releases.fns'
+import { releasePriceRows } from '@/features/releases/data'
+import { releaseVendorLabel } from '@/features/releases/components/ReleaseFactSheet'
+import { fmtDate } from '@/lib/format-date'
+import { formatReleasePrice } from '@/features/releases/format'
 
 const rootRoute = getRouteApi('__root__')
 
 export const Route = createFileRoute('/{-$locale}/')({
-  loader: async () => {
-    const [origin, user] = await Promise.all([getOrigin(), getOptionalUser()])
-    return { origin, loggedIn: !!user }
+  loader: async ({ params }) => {
+    const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
+    const [origin, user, releases] = await Promise.all([
+      getOrigin(),
+      getOptionalUser(),
+      getReleases({ data: locale }),
+    ])
+    return { origin, loggedIn: !!user, releases: releases.slice(0, 3) }
   },
   head: ({ loaderData, params }) => {
     const origin = loaderData?.origin ?? ''
@@ -56,7 +66,7 @@ export const Route = createFileRoute('/{-$locale}/')({
 
 function Home() {
   const { theme } = rootRoute.useLoaderData()
-  const { loggedIn } = Route.useLoaderData()
+  const { loggedIn, releases } = Route.useLoaderData()
   const { t } = useTranslation()
 
   return (
@@ -90,11 +100,51 @@ function Home() {
           <PopularComparisons />
         </section>
 
+        {releases.length > 0 && (
+          <section className="mt-14 border-t border-border pt-8">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="text-[18px] font-semibold">{t('releases.nav')}</h2>
+                <p className="mt-1 text-[14px] text-fg-2">{t('releases.subtitle')}</p>
+              </div>
+              <Link to="/{-$locale}/releases" className="text-[13px] text-primary hover:text-foreground">
+                {t('releases.backToIndex')} →
+              </Link>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {releases.map((entry) => {
+                const price = releasePriceRows(entry)[0]
+                return (
+                  <Link
+                    key={entry.path}
+                    to="/{-$locale}/releases/$slug"
+                    params={{ slug: entry.slug }}
+                    className="rounded-[12px] border border-border bg-card p-4 transition-colors hover:border-primary/40"
+                  >
+                    <p className="text-[12px] text-fg-3">
+                      {releaseVendorLabel(t, entry.vendor)} · {fmtDate(entry.date)}
+                    </p>
+                    <p className="mt-1.5 text-[14px] font-medium leading-snug">{entry.title}</p>
+                    {price && (
+                      <p className="mt-2 text-[12px] tabular-nums text-fg-3">
+                        {formatReleasePrice(price.inputPricePer1M)} / {formatReleasePrice(price.outputPricePer1M)}
+                      </p>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
+        )}
+
         <section className="mt-14 border-t border-border pt-8">
           <h2 className="text-[15px] font-semibold">{t('leaderboard.home.browse')}</h2>
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
             <Link to="/{-$locale}/token-calculator" className="text-primary hover:text-foreground">
               {t('leaderboard.navCalculator')}
+            </Link>
+            <Link to="/{-$locale}/releases" className="text-fg-2 hover:text-primary">
+              {t('releases.nav')}
             </Link>
             <Link to="/{-$locale}/leaderboard-history" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navHistory')}

@@ -41,5 +41,10 @@ playwright-report/
 .tmp/
 data/last-fetch.json
 
+# Release-draft artifacts (`pnpm releases:fetch`).
+# `data/release-drafts/` holds half-finished MDX skeletons — a local working
+# copy, not the published collection (`src/content/releases/`).
+data/release-drafts/
+
 # Claude Code session config (local)
 .claude/

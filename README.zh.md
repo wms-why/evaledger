@@ -73,6 +73,23 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 3. 更新 `REGISTRY.fetchedAt`,让页面显示「更新于 YYYY-MM-DD」。
 4. 重跑 `pnpm test && pnpm typecheck`。
 
+## 新模型发布系列
+
+`/releases` 是站点的第三个系列,和榜单、计算器并列。每篇文章讲一次模型发布,
+但写的不是厂商公告的翻译版,而是一次「成本与换型决策」分析。
+
+让这个系列值得读的唯一规则是:**文章里不写死价格。** 文章只存模型的 key,
+页面渲染时再从定价 registry 和榜单里把价格、倍数、跑分解析出来。厂商调了价,
+所有提到这个模型的文章自动跟着变 —— 文章永远不会和计算器打架。
+
+契约(frontmatter schema、正文模板、每篇的事实清单)写在
+[`src/features/releases/README.md`](src/features/releases/README.md)。
+有测试守着:文章引用了 registry 里没有的价格,或者指向了已经不存在的模型,
+构建就会失败。
+
+整个系列可以通过 RSS 订阅([`/feed.xml`](src/routes/feed[.]xml.ts)):
+一个 feed、中英都在、每篇文章一条。
+
 ## 项目结构
 
 ```
@@ -90,6 +107,7 @@ src/
     audience/      # Resend audience 同步(waitlist 复用)
     waitlist/      # 上线前候补登记 + Turnstile + Resend 同步
     changelog/     # 应用内 changelog 页面(MDX,按语言)
+    releases/      # 「新模型发布」系列 — 发布事件重写成的成本分析
     storage/       # R2 上传 + serving route(头像上传参考实现)
     email/         # Resend 客户端 + 字符串模板
     maintenance/   # Cron 清理任务(过期会话/token/限流记录)
@@ -98,6 +116,7 @@ src/
     {-$locale}/    # 带语言前缀的页面:/、/zh、/admin、/app、/token-cost-calculator ...
     api/, robots.txt, sitemap.xml
   content/changelog/  # 应用内 changelog 内容(fumadocs mdx 源)
+  content/releases/  # 「新模型发布」文章(fumadocs mdx 源,中英双份)
   db/              # Drizzle schema barrel + client + migrations
 drizzle/           # 生成的 SQL 迁移
 ```
