@@ -29,7 +29,11 @@ export function AuthCard({
           <span className="auth-back" aria-hidden="true">
             <ChevronLeft size={16} />
           </span>
-          <Logo />
+          {/* asLink={false}: the Logo is a link on its own — nesting an <a>
+              inside an <a> is invalid HTML, and React cannot hydrate it (the
+              parser closes the outer anchor first, so the tree never
+              matches the server's). */}
+          <Logo asLink={false} />
         </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle theme={theme} />
