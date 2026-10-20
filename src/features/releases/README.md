@@ -94,6 +94,7 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 | `gpt-6-astra` | OpenAI | GPT-6 astra | `gpt-6-astra` | — | — |
 | `claude-opus-5-5` | Anthropic | Claude Opus 5.5 | `claude-opus-5.5` | — | — |
 | `gemini-3-1-pro` | Google | Gemini 3.1 Pro | `gemini-3.1-pro-preview` | `gemini-3.1-pro` | — |
+| `gemini-4-argon` | Google | Gemini 4 Argon | `gemini-4-argon` | `gemini-4-argon` | `2026-10-13` |
 | `grok-4-7` | xAI | Grok 4.7 | `grok-4.7` | `grok-4.7` | — |
 | `deepseek-v4-1-flash` | DeepSeek | DeepSeek V4.1-Flash 0910 | `deepseek-flash-0910` | `deepseek-v4.1-flash` | `2026-09-10` |
 | `deepseek-v4-1-flash-1017` | DeepSeek | DeepSeek V4.1-Flash 1017 | `deepseek-flash` | `deepseek-v4.1-flash-1017` | `2026-10-17` |
@@ -149,6 +150,31 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
   hle-tools 51.4（note: search (blocklist) + code）、matharena-apex 60.9、automation-bench 35.4
 - 跑分对比行：`gpt-5.6-sol`、`claude-opus-5`、`deepseek-v4.1-flash`
 - source：`https://ai.google.dev/gemini-api/docs/pricing`，title「Google — Gemini API pricing」
+
+#### `gemini-4-argon`（Google · Gemini 4 家族第一位）
+- 主角：`gemini-4-argon` $2 / $10，cached $0.10，ctx 1,048,576（输入 + 思考 + 输出**共用一个池子**），
+  source `https://ai.google.dev/gemini-api/docs/pricing`，lastVerified 2026-10-20
+- **促销价：$2 / $10 / $0.10 适用至 2026-11-30，2026-12-01 起 $4 / $20 / $0.20**（与今天的 Claude Opus 5.5 同价）
+- **没有 >200K 长上下文档位**（Gemini 3.1 Pro / 2.5 Pro 都有），且**只支持隐式缓存**——
+  `cachedContents` / `caches.create` 不支持，95% 缓存折扣至少要 4,096 token 的提示词
+- Batch / Flex = 标准价的一半，Priority = 1.8×
+- releasedAt 2026-10-13（2026-09-29 只向 Fairwind 计划成员限量预览）
+- 对比行：`gemini-3.1-pro-preview` $2 / $12、`gemini-3.8-flash` $0.75 / $3.75、
+  `claude-opus-5.5` $4 / $20、`gpt-6-astra` $10 / $50、`deepseek-flash` $0.30 / $1.20
+- 跑分（`gemini-4-argon`，**10 项**，全部来自 Google 官方评测方法说明
+  `https://deepmind.google/models/evals-methodology/gemini-4-argon`）：
+  vals-index 68.9、automation-bench 51.3、deepswe-v1.1 77.9、frontierswe-v2 55、
+  terminal-bench-4.0 57.4、agents-last-exam 39.5、osworld-2.0 69.2、chartography 71.6、
+  graphwalks 84.2、cwe-bench-v1 68
+- 每一项的 note 都带两样东西：**harness**（哪几行是 Google 自己跑的、哪几行来自公开榜单或对手的
+  system card；全部 pass@1、最高思考档，而 API 默认是 `medium`），以及 **Google 表里对手的分数**
+  ——那是 Google 对别家模型的测量值，正文里必须写成「Google 的表里」，不能写成我们自己的测量
+- 跑分对比行：`gpt-6-astra`、`claude-opus-5.5`、`claude-opus-5`、`deepseek-v4.1-flash-1017`、`gemini-3.1-pro`
+- 结论方向：促销期内是三家里最便宜的前沿旗舰，12 月起与 Opus 5.5 同价；官方十九行表里 13 胜 1 平 5 负，
+  其中 Agent 编程 2-2（赢 DeepSWE，Terminal-bench 4.0 垫底）
+- source：Google 发布公告
+  `https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/`，
+  title「Google — Gemini 4 Argon: Built to solve your hardest problems」
 
 #### `grok-4-7`（xAI）
 - 主角：`grok-4.7` $2 / $6，ctx 500,000，source `https://docs.x.ai/docs/models`，lastVerified 2026-09-26

@@ -25,11 +25,17 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  *    are cited to the model card, which is the only place MiniMax publishes
  *    them. Those are vendor-measured (MiniMax's internal harness, Claude Code
  *    scaffolding) — not an independent leaderboard.
+ *  - Gemini 4 Argon comes from Google's own model card (October 2026), which
+ *    prints it next to GPT-6 Astra, Claude Fable 5.1 and Claude Opus 5.5 on
+ *    nineteen benchmarks. We keep the ten rows that have a place in our
+ *    benchmark registry; the other nine are absent rather than interpolated.
+ *    The rival numbers Google prints ride along in the notes — they are
+ *    Google's measurements of other vendors' models, quoted as such.
  *
  * Never drop a caveat the source printed. Missing benchmarks are simply
  * absent — no interpolation.
  */
-export const REGISTRY_VERSION = '0.6.0'
+export const REGISTRY_VERSION = '0.7.0'
 
 /** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
 const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
@@ -60,6 +66,14 @@ const OPENROUTER_ASTRA = 'https://openrouter.ai/openai/gpt-6-astra'
 /** MiniMax M3 model card — carries the vendor's own comparison table. */
 const MINIMAX_M3_CARD = 'https://huggingface.co/MiniMaxAI/MiniMax-M3'
 /**
+ * Google's official evaluation methodology for Gemini 4 Argon (5 pp.). It
+ * carries the results table on page 5 and, more importantly, the per-row
+ * footnotes: which rows Google ran itself, which come from a public
+ * leaderboard, which come from a rival's own system card, and under which
+ * harness. Those caveats travel with every score.
+ */
+const ARGON_EVALS = 'https://deepmind.google/models/evals-methodology/gemini-4-argon'
+/**
  * MiniMax publishes its own numbers: measured on its internal infrastructure
  * with Claude Code as the scaffolding, not on a third-party leaderboard. The
  * caveat travels with every score it takes from the model card.
@@ -70,6 +84,8 @@ const VENDOR_MEASURED = 'Vendor-measured (MiniMax internal infra, Claude Code sc
 const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
 /** Timestamp of the 2026-10-20 audit — only the rows added/changed today use it. */
 const OBSERVED_AT = '2026-10-20T15:30:00+08:00'
+/** Timestamp of the 2026-10-20 late pass that added Gemini 4 Argon. */
+const ARGON_OBSERVED_AT = '2026-10-20T21:20:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
 /** The 1017 checkpoint shipped 2026-10-17 (vendor announcement date). */
@@ -428,6 +444,91 @@ const gemini31Pro: LeaderboardModel = {
   ],
 }
 
+/**
+ * Gemini 4 Argon — Google's flagship reasoning model, GA on 2026-10-13.
+ *
+ * Every score comes from Google's own evaluation methodology (October 2026),
+ * which prints Argon next to GPT-6 Astra, Claude Fable 5.1 and Claude Opus
+ * 5.5 on nineteen benchmarks. We track the ten rows that have a place in our
+ * benchmark registry; the nine we leave out (Vibe Code Bench, PostTrainBench,
+ * Terminal-Bench Science 0.1, LABBench 2, RiemannBench, Vals Finance Agent
+ * v2, Harvey's Legal Agent Benchmark, LVBench, GraphWalks' short band) are
+ * absent rather than interpolated.
+ *
+ * Two things travel with every number:
+ *
+ *  - **The harness.** Google ran some rows itself and took others from a
+ *    public leaderboard or from a rival's own system card. The note says which.
+ *    All of them are pass@1 at the highest thinking setting, while the API's
+ *    own default is `medium` — these are ceilings, not defaults.
+ *  - **The comparison columns.** The numbers Google prints for the rivals are
+ *    Google's measurements of other vendors' models, so they are quoted as "in
+ *    Google's table", never as ours.
+ */
+const gemini4Argon: LeaderboardModel = {
+  id: 'gemini-4-argon',
+  vendor: 'google',
+  kind: 'pro',
+  version: '4-argon',
+  displayName: 'Gemini 4 Argon',
+  priceId: 'gemini-4-argon',
+  releaseDate: '2026-10-13',
+  introduced: '2026-10-13',
+  updatedAt: ARGON_OBSERVED_AT,
+  scores: [
+    sc('vals-index', 68.9, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; Vals AI index over finance, coding, legal and tax work. Same table: GPT-6 Astra 63.1, Claude Opus 5.5 67.0',
+    }),
+    sc('automation-bench', 51.3, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: "Google model card; Zapier leaderboard, private set — not AutomationBench-AA 77.5. Same table: GPT-6 Astra 41.4, Claude Opus 5.5 42.5 (Anthropic's own post says 40.0)",
+    }),
+    sc('deepswe-v1.1', 77.9, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; Argon self-computed on a mini-swe agent harness, rivals from the leaderboard and their system cards. Same table: GPT-6 Astra 74.1, Claude Opus 5.5 74.2',
+    }),
+    sc('frontierswe-v2', 55.0, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; Proximal public leaderboard, one body for all four models. Same table: GPT-6 Astra 65.5, Claude Opus 5.5 62.3',
+    }),
+    sc('terminal-bench-4.0', 57.4, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: "Google model card; Argon self-computed, rivals from the public leaderboard. Same table: GPT-6 Astra 58.2, Claude Opus 5.5 66.4 (Anthropic's own post says 57.9 for Astra)",
+    }),
+    sc('agents-last-exam', 39.5, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; binary pass rate, ALE-Claw harness, 5-hour window, safety filters on. Same table: GPT-6 Astra 34.2, Claude Opus 5.5 38.2',
+    }),
+    sc('osworld-2.0', 69.2, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; offline subset, partial score, best run of 3. Same table: GPT-6 Astra 72.6',
+    }),
+    sc('chartography', 71.6, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: "Google model card; without tools, Surge leaderboard — a different configuration from the tool-assisted entry. Same table: GPT-6 Astra 71.0, Claude Opus 5.5 66.3",
+    }),
+    sc('graphwalks', 84.2, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; 256k-1M band, BFS F1; 99.7 up to 128k. Same table: GPT-6 Astra 71.8, Claude Opus 5.5 66.8',
+    }),
+    sc('cwe-bench-v1', 68.0, {
+      source: ARGON_EVALS,
+      observedAt: ARGON_OBSERVED_AT,
+      note: 'Google model card; public leaderboard, pass@1 with ties broken on pass@4. Same table: GPT-6 Astra 68.0, Claude Opus 5.5 67.0',
+    }),
+  ],
+}
+
 const grok47: LeaderboardModel = {
   id: 'grok-4.7',
   vendor: 'grok',
@@ -480,14 +581,15 @@ const minimaxM3: LeaderboardModel = {
 
 export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: OBSERVED_AT,
+  fetchedAt: ARGON_OBSERVED_AT,
   sourceNote:
-    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows.',
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours.',
   models: [
     claudeOpus55,
     gpt6Astra,
     claudeOpus5,
     gpt56Sol,
+    gemini4Argon,
     gemini31Pro,
     grok47,
     deepseekV41Flash,

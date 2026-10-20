@@ -44,6 +44,8 @@ export const MODEL_NOTES_ZH: Record<string, string> = {
   'claude-opus-4.8': '列在 Anthropic 的 Legacy models 板块;已被 Opus 5.5 取代。',
 
   // ───────────────────────── Google ─────────────────────────
+  'gemini-4-argon':
+    '入门价: $2 / $10 / $0.10 适用至 2026-11-30,自 2026-12-01 起为 $4 / $20 / $0.20。仅支持隐式缓存,不支持显式缓存。Batch 与 Flex 为标准价的一半,Priority 是 1.8×。',
   'gemini-3.8-flash':
     '入门价: $0.75 / $3.75 / $0.075 适用至 2026-12-31,自 2027-01-01 起为 $1.50 / $7.50 / $0.15。',
 

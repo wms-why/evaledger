@@ -9,4 +9,4 @@
  * The `--apply` mode does NOT touch `REGISTRY_VERSION`; only humans update
  * both versions, in the same commit.
  */
-export const SCRIPT_VERSION = '0.6.0'
+export const SCRIPT_VERSION = '0.7.0'

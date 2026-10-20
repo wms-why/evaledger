@@ -119,6 +119,11 @@ export const COMPARE_PAIRS: ComparePair[] = [
   { a: 'deepseek-v4-pro', b: 'deepseek-v4-flash-0731', kind: 'technical' },
   { a: 'glm-5.3', b: 'kimi-k3', kind: 'technical' },
   { a: 'gpt-5.6-sol', b: 'grok-4.7', kind: 'technical' },
+  // Gemini 4 Argon — the new frontier row, against the two flagships it
+  // replaces in the conversation and Google's own previous Pro.
+  { a: 'gemini-4-argon', b: 'gpt-6-astra', kind: 'technical' },
+  { a: 'gemini-4-argon', b: 'claude-opus-5.5', kind: 'technical' },
+  { a: 'gemini-4-argon', b: 'gemini-3.1-pro', kind: 'technical' },
 ]
 
 export interface ComparePairEntry extends ComparePair {
@@ -192,6 +197,7 @@ export function categoryRows(category: BestCategory): LeaderboardRow[] {
 export const BENCHMARK_SHORT: Record<string, string> = {
   'gpqa-diamond': 'GPQA',
   'hle': 'HLE',
+  'vals-index': 'Vals',
   'codeforces': 'Codeforces',
   'matharena-apex': 'Apex',
   'apex-bench-v1.1': 'Apex v1.1',
@@ -199,6 +205,7 @@ export const BENCHMARK_SHORT: Record<string, string> = {
   'terminal-bench-3.0': 'TB 3.0',
   'terminal-bench-4.0': 'TB 4.0',
   'deepswe-v1.1': 'DeepSWE',
+  'frontierswe-v2': 'FrontierSWE',
   'swe-bench-pro': 'SWE-Pro',
   'programbench': 'ProgBench',
   'nl2repo-bench': 'NL2Repo',
@@ -208,12 +215,16 @@ export const BENCHMARK_SHORT: Record<string, string> = {
   'hle-tools': 'HLE+',
   'automation-bench': 'AutoBench',
   'agents-last-exam': 'ALE',
+  'osworld-2.0': 'OSWorld',
   'browsecompc': 'BrowseComp',
   'mcp-atlas': 'MCP Atlas',
   'bankertoolbench': 'BankerTool',
+  'chartography': 'Charto',
   'chartography-tools': 'Charto+',
   'babyvision-tools': 'BabyVision',
   'zerobench-main-tools': 'ZeroBench',
+  'graphwalks': 'GraphWalks',
+  'cwe-bench-v1': 'CWE',
 }
 
 /** Format a score according to its unit. */

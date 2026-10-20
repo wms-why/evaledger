@@ -69,6 +69,49 @@ export const LEDGER: RecordEntry[] = [
     },
   },
   {
+    label: 'Gemini 4 Argon',
+    priceId: 'gemini-4-argon',
+    scoreId: 'gemini-4-argon',
+    introduced: '2026-10-13',
+    sourceUrl: 'https://deepmind.google/models/evals-methodology/gemini-4-argon',
+    priceIdentity: { displayName: 'Gemini 4 Argon' },
+    identity: { displayName: 'Gemini 4 Argon', version: '4-argon' },
+    scores: {
+      'vals-index': 68.9,
+      'automation-bench': 51.3,
+      'deepswe-v1.1': 77.9,
+      'frontierswe-v2': 55,
+      'terminal-bench-4.0': 57.4,
+      'agents-last-exam': 39.5,
+      'osworld-2.0': 69.2,
+      'chartography': 71.6,
+      'graphwalks': 84.2,
+      'cwe-bench-v1': 68,
+    },
+    notes: {
+      'vals-index':
+        'Google model card; Vals AI index over finance, coding, legal and tax work. Same table: GPT-6 Astra 63.1, Claude Opus 5.5 67.0',
+      'automation-bench':
+        "Google model card; Zapier leaderboard, private set — not AutomationBench-AA 77.5. Same table: GPT-6 Astra 41.4, Claude Opus 5.5 42.5 (Anthropic's own post says 40.0)",
+      'deepswe-v1.1':
+        'Google model card; Argon self-computed on a mini-swe agent harness, rivals from the leaderboard and their system cards. Same table: GPT-6 Astra 74.1, Claude Opus 5.5 74.2',
+      'frontierswe-v2':
+        'Google model card; Proximal public leaderboard, one body for all four models. Same table: GPT-6 Astra 65.5, Claude Opus 5.5 62.3',
+      'terminal-bench-4.0':
+        "Google model card; Argon self-computed, rivals from the public leaderboard. Same table: GPT-6 Astra 58.2, Claude Opus 5.5 66.4 (Anthropic's own post says 57.9 for Astra)",
+      'agents-last-exam':
+        'Google model card; binary pass rate, ALE-Claw harness, 5-hour window, safety filters on. Same table: GPT-6 Astra 34.2, Claude Opus 5.5 38.2',
+      'osworld-2.0':
+        'Google model card; offline subset, partial score, best run of 3. Same table: GPT-6 Astra 72.6',
+      'chartography':
+        "Google model card; without tools, Surge leaderboard — a different configuration from the tool-assisted entry. Same table: GPT-6 Astra 71.0, Claude Opus 5.5 66.3",
+      'graphwalks':
+        'Google model card; 256k-1M band, BFS F1; 99.7 up to 128k. Same table: GPT-6 Astra 71.8, Claude Opus 5.5 66.8',
+      'cwe-bench-v1':
+        'Google model card; public leaderboard, pass@1 with ties broken on pass@4. Same table: GPT-6 Astra 68.0, Claude Opus 5.5 67.0',
+    },
+  },
+  {
     label: 'Claude Opus 5',
     priceId: 'claude-opus-5',
     scoreId: 'claude-opus-5',

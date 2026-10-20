@@ -31,6 +31,14 @@ export interface Benchmark {
 
 export const BENCHMARKS: Benchmark[] = [
   {
+    id: 'vals-index',
+    name: 'Vals Index',
+    category: 'knowledge',
+    unit: 'percent',
+    description:
+      'A composite over high-value knowledge work — finance, coding, legal and tax — published by Vals AI. One number for "how good is this model at the work enterprises actually pay for".',
+  },
+  {
     id: 'gpqa-diamond',
     name: 'GPQA Diamond',
     category: 'knowledge',
@@ -96,6 +104,14 @@ export const BENCHMARKS: Benchmark[] = [
       'Long-horizon software-engineering tasks solved in a real repository, scored on held-out test suites.',
   },
   {
+    id: 'frontierswe-v2',
+    name: 'FrontierSWE v2',
+    category: 'coding',
+    unit: 'percent',
+    description:
+      'Repository-level software-engineering tasks at the frontier difficulty level — the harder sibling of DeepSWE.',
+  },
+  {
     id: 'deepswe-v1.1',
     name: 'DeepSWE v1.1',
     category: 'coding',
@@ -150,6 +166,38 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'agentic',
     unit: 'percent',
     description: 'Multi-step automation and workflow tasks.',
+  },
+  {
+    id: 'osworld-2.0',
+    name: 'OSWorld-2.0',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'Computer-use tasks driven through a real desktop — scored as a partial score on the offline subset.',
+  },
+  {
+    id: 'chartography',
+    name: 'Chartography',
+    category: 'vision',
+    unit: 'percent',
+    description:
+      'Chart and figure understanding without tools. The tool-assisted run of the same family is a separate entry ("chartography-tools") and the two numbers are not interchangeable.',
+  },
+  {
+    id: 'graphwalks',
+    name: 'GraphWalks',
+    category: 'reasoning',
+    unit: 'percent',
+    description:
+      'Multi-hop traversal of a synthetic knowledge graph, scored as F1. The published score is the 256k–1M-token band — the one that stresses a long context.',
+  },
+  {
+    id: 'cwe-bench-v1',
+    name: 'CWE-bench v1',
+    category: 'security',
+    unit: 'percent',
+    description:
+      'Remediating real vulnerabilities: the model has to find and patch the flaw, not just describe it.',
   },
   {
     id: 'agents-last-exam',

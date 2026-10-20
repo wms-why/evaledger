@@ -47,6 +47,7 @@ export const DISPLAY_NAME_TO_ID: Record<string, string> = {
   'Claude Haiku 4.5': 'claude-haiku-4.5',
 
   // ───────────────────────── Google ─────────────────────────
+  'Gemini 4 Argon': 'gemini-4-argon',
   'Gemini 3.1 Pro Preview': 'gemini-3.1-pro-preview',
   'Gemini 3.8 Flash': 'gemini-3.8-flash',
   'Gemini 3.1 Flash-Lite': 'gemini-3.1-flash-lite',

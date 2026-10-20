@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.6.0'
+export const REGISTRY_VERSION = '0.7.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -411,6 +411,38 @@ export const REGISTRY: ModelRegistry = {
     },
 
     // ───────────────────────── Google ─────────────────────────
+    {
+      // Gemini 4 Argon — Google's flagship reasoning model. GA on 2026-10-13
+      // (announcement 2026-09-29). Model id `gemini-4-argon`, one stable id,
+      // no preview alias.
+      //
+      // The window is a SINGLE pool: 1,048,576 tokens shared across input,
+      // thinking and output (there is no separate 1M-input row). Max output is
+      // 65,536 per synchronous request, and up to 1,048,576 with long decode.
+      //
+      // Pricing (Standard tier, USD / 1M): $2 input / $10 output, cached input
+      // $0.10 — introductory, through 2026-11-30. From 2026-12-01 it is
+      // $4 / $20 / $0.20. Batch and Flex are half of that; Priority is 1.8×.
+      //
+      // NO long-context band: unlike Gemini 3.1 Pro and 2.5 Pro, Google
+      // publishes no >200K row for Argon, so the price does not step up inside
+      // the window. Caching is implicit-only — `cachedContents` / `caches.create`
+      // are not supported, and the 95% cache-hit discount needs a prompt of at
+      // least 4,096 tokens.
+      id: 'gemini-4-argon',
+      provider: 'google',
+      displayName: 'Gemini 4 Argon',
+      family: 'gemini-4',
+      status: 'active',
+      contextWindow: 1_048_576,
+      inputPricePer1M: 2.0,
+      outputPricePer1M: 10.0,
+      cachedInputPricePer1M: 0.1,
+      sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
+      lastVerified: '2026-10-20',
+      introduced: '2026-10-13',
+      note: 'Introductory pricing: $2 / $10 / $0.10 through 2026-11-30, then $4 / $20 / $0.20 from 2026-12-01. Implicit caching only — explicit caching is not supported. Batch and Flex run at half the standard rate; Priority is 1.8×.',
+    },
     {
       id: 'gemini-3.1-pro-preview',
       provider: 'google',
