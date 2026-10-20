@@ -23,7 +23,8 @@
     "db:seed:local": "wrangler d1 execute aibookplanner-db --local --file=./scripts/seed.sql",
     "db:reset:local": "rm -rf .wrangler/state/v3/d1 && pnpm db:migrate:local && pnpm db:seed:local",
     "prices:fetch": "node --experimental-strip-types --no-warnings scripts/prices/fetch.ts",
-    "releases:fetch": "node --experimental-strip-types --no-warnings scripts/releases/fetch.ts"
+    "releases:fetch": "node --experimental-strip-types --no-warnings scripts/releases/fetch.ts",
+    "records:pins": "node --experimental-strip-types --no-warnings scripts/records/pins.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.64.0",

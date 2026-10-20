@@ -8,7 +8,7 @@ TokenCalculator — a free token cost calculator built on **TanStack Start + Clo
 
 ## Structure
 
-- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `email`, `i18n`, `leaderboard`, `maintenance`, `notifications`, `releases`, `seo`, `storage`, `theme`, `waitlist`.
+- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `email`, `i18n`, `leaderboard`, `maintenance`, `notifications`, `records`, `releases`, `seo`, `storage`, `theme`, `waitlist`.
 - `src/routes/{-$locale}/` — file-based routes with an optional locale prefix (`/` = en, `/zh` = zh). Top-level routes (`api`, `sitemap`, `robots`) live outside the locale group.
 - `src/components/` — `ui/` primitives + `marketing/` landing + `app/` shell.
 - `src/db/` — Drizzle client + `schema.ts` barrel; tables in `src/db/tables/` and feature `*.schema.ts`.
@@ -82,6 +82,37 @@ mechanically and fails the build on:
 So: **after touching prices or scores, re-read the affected articles and bump
 their `dataCheckedAt` to today**, then run `pnpm test`. Anything still red is
 a page you have not re-read yet.
+
+## Records: one model version = one record, and old records do not change
+
+`src/features/records/ledger.ts` is a fourth surface: it pins **what we
+published** — each record's scores, its caveats, its identity, and (for
+retired records) its historical price line.
+
+The rule it protects:
+
+> **Every iteration is a release. Even a suffix-only change — DeepSeek's
+> V4.1-Flash `-0910` → `-1017` — is a new model version: a new REGISTRY row,
+> a new LEADERBOARD row, a new release page, a new ledger entry. Published
+> data is not edited in place; it is retired and frozen.**
+
+- A new checkpoint: new ids, new article, new ledger entry; the predecessor
+  gets `retiredAt` and a non-active price row, and the new entry points at it
+  with `supersedes`.
+- A pinned value changes **only** through a logged change in the ledger
+  entry: `correction` (we published a wrong number) or `remeasurement` (the
+  source re-measured the same weights). Both need a date, a reason and a
+  source. A retired record accepts corrections only.
+- A **live** price may move without a change entry — prices are facts about
+  the vendor's billing page and carry their own discipline
+  (`lastVerified`, `fetchedAt`, re-read articles). A **retired** record's
+  price line is a historical fact and is pinned.
+
+`src/features/records/__tests__/records.node.test.ts` fails the build when a
+price row or leaderboard row has no ledger entry, when a pinned value changed
+without a logged change, when a superseded record was not retired, or when two
+records in one family share a version token. `pnpm records:pins` prints the
+ledger as it stands; the workflow is in `src/features/records/README.md`.
 
 ## Model Releases series (`/releases`)
 

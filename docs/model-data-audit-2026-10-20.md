@@ -207,6 +207,9 @@
 | `src/features/calculator/cost.ts` | 长上下文时把 input multiplier 同样应用到 cached input（OpenAI / Gemini / Grok / MiniMax 都适用） |
 | `src/features/calculator/__tests__/cost.node.test.ts` | 新增长上下文 / 窗口回归测试，并在 MiniMax 用例里补缓存断言 |
 | `src/features/releases/README.md` | 系列契约加第 7 篇（1017 checkpoint）与两个 checkpoint 的分工说明 |
+| `src/features/records/`（新） | **记录台账**：把「我们发布过什么」钉住——分数、备注、身份（退役记录还钉价格线）；新增 checkpoint 必须是新记录，旧记录只能退役不能改写；改值必须走 `changes` 日志（`correction` = 抄错了 / `remeasurement` = 厂商重测） |
+| `src/features/records/__tests__/records.node.test.ts` | 护栏：每个价格行 / 榜单行都要有台账条目；pin 住的值不得静默改动；被取代的记录必须退役；同一 family 内版本 token 不能重复 |
+| `scripts/records/pins.ts` | `pnpm records:pins`——打印与注册表对齐的台账（只读，不写文件） |
 | `src/features/releases/__tests__/integrity.node.test.ts` | 护栏漏了「非高峰缓存读价」这个合法价格（$0.003 写不出来），补进 allowed 集合 |
 | `src/features/series/series.ts` | DeepSeek V4 系列的两个 checkpoint 成员各自指向自己的跑分行（`v4.1-flash-1017` → `deepseek-v4.1-flash-1017`，`v4.1-flash-0910` → `deepseek-v4.1-flash`） |
 | `AGENTS.md` | 「三者一体」表加一行：checkpoint 发布 = 独立记录，不合并 |
@@ -259,6 +262,15 @@ pnpm typecheck  # 本次改动的文件无类型错误
 - **两篇文章互链**：0910 那篇明确写「这张表说的是 0910 checkpoint」，1017 那篇明确写「这是今天 API 服务的权重」，并各自链到模型页与对方。
 
 **没做（有意）**：没有把 1017 的分数和 0910 的分数求平均，也没有在任一篇文章里用另一套分数做比较。两套分数只能各自跟同一张表里的其他模型比。
+
+**这条规矩现在有机器护栏了**（`src/features/records/`）：新增「记录台账」这一面，把「我们发布过什么」钉住——
+
+- 每个价格行、每个榜单行都必须在台账里有一条记录 → **新版本必须是新记录**；
+- 台账里 pin 住的值（分数、备注、身份 displayName/version；退役记录还 pin 价格线）**不得静默改动**，要改只能走 `changes` 日志：`correction`（我们抄错了）或 `remeasurement`（厂商对同一批权重重测），都要写日期、理由、来源；退役记录只接受 `correction`；
+- 取代别人的记录必须把被取代的退役（`retiredAt` + 价格行非 active）；
+- **同一 family 内版本 token 不能重复** → 抓「版本号没变、只改后缀，却把旧行改掉了」这种操作。
+
+在售记录的价格**不 pin**：价格是厂商计费页的事实，它有自己的一套纪律（`lastVerified` / `fetchedAt` / 重读文章）；退役记录的价格线是历史事实，所以 pin 住。
 
 ---
 
