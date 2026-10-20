@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from '@/features/i18n/provider'
 import { ModelCard } from './ModelCard'
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { providerLabel } from '@/features/calculator/provider-label'
 import type { CostBreakdown } from '@/features/calculator/types'
 import { cn } from '@/lib/utils'
 
@@ -17,20 +18,6 @@ interface ResultsGridProps {
   copied: boolean
   /** Model id to visually highlight and scroll into view (from `?model=`). */
   highlightId?: string
-}
-
-const PROVIDER_KEYS: Record<string, string> = {
-  openai: 'calculator.providerOpenai',
-  anthropic: 'calculator.providerAnthropic',
-  google: 'calculator.providerGoogle',
-  deepseek: 'calculator.providerDeepSeek',
-  minimax: 'calculator.providerMinimax',
-  grok: 'calculator.providerGrok',
-  openrouter: 'calculator.providerOpenRouter',
-}
-
-function providerLabel(t: (k: string) => string, key: string): string {
-  return t(PROVIDER_KEYS[key] ?? key)
 }
 
 export function ResultsGrid({

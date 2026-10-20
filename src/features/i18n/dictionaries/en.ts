@@ -556,6 +556,9 @@ export const en = {
     perYear: '/ year',
     inputLabel: 'Input',
     outputLabel: 'Output',
+    contextLabel: 'Context window',
+    tokensUnit: 'tokens',
+    pricingSourceLabel: '{model} pricing source',
     cachedInputLabel: 'Cached input',
     cacheWriteLabel: 'Cache write ({window})',
     peakLabel: 'Peak hours',
@@ -564,8 +567,6 @@ export const en = {
     ruleStandard: 'Standard pricing',
     rulePromo: 'Promo until {date}',
     ruleDelisted: 'Discontinued',
-    showBreakdown: 'Show breakdown',
-    hideBreakdown: 'Hide breakdown',
 
     // TLDR (featured-snippet bait)
     tldrTitle: 'Quick takeaways',

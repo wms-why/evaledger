@@ -524,6 +524,9 @@ export const zh: Dict = {
     perYear: '/ 年',
     inputLabel: '输入',
     outputLabel: '输出',
+    contextLabel: '上下文窗口',
+    tokensUnit: 'token',
+    pricingSourceLabel: '{model} 价格来源',
     cachedInputLabel: '缓存输入',
     cacheWriteLabel: '缓存写入 ({window})',
     peakLabel: '高峰时段',
@@ -532,8 +535,6 @@ export const zh: Dict = {
     ruleStandard: '标准计费',
     rulePromo: '促销至 {date}',
     ruleDelisted: '已下架',
-    showBreakdown: '展开明细',
-    hideBreakdown: '收起明细',
 
     // TLDR
     tldrTitle: '要点速览',

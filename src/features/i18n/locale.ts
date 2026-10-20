@@ -7,6 +7,16 @@ export const defaultLocale: Locale = 'en'
 
 export const dictionaries: Record<Locale, Dict> = { en, zh }
 
+/**
+ * BCP-47 tag used for `Intl` / `toLocaleString` formatting.
+ *
+ * The app locale, NOT the browser locale, must decide how numbers render —
+ * otherwise a zh visitor on an en browser sees en-grouped prices.
+ */
+export function localeTag(locale: Locale): string {
+  return locale === 'zh' ? 'zh-CN' : 'en-US'
+}
+
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (locales as readonly string[]).includes(value)
 }
