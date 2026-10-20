@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
+import { isIndexableBenchmarkHistory } from '@/features/seo/indexability'
 import { localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
@@ -24,6 +25,9 @@ export const Route = createFileRoute('/{-$locale}/benchmarks/$slug/history')({
       path: `/benchmarks/${params.slug}/history`,
       title: `${name} ${dict.leaderboard.history.title} — ${dict.common.appName}`,
       description: dict.leaderboard.history.metaDescription,
+      // With no snapshot on record this page has no series to draw — it falls
+      // back to the parent page. Slug-only, so both languages agree.
+      indexable: isIndexableBenchmarkHistory(params.slug),
     })
     return { meta, links }
   },

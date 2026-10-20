@@ -510,7 +510,7 @@ export const en = {
     brandTitle: 'EvalLedger — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
     brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
     brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
-    footerTagline: 'EvalLedger — see what your LLM tokens actually cost, across every major model.',
+    footerTagline: 'Pricing, benchmarks, and version history for every major LLM.',
     footerProduct: 'Product', footerResources: 'Resources', footerLegal: 'Legal',
     footerProductToken: 'Token Calculator',
     footerChangelog: 'Changelog',

@@ -4,7 +4,7 @@ import { Logo } from '@/components/brand/logo'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
 import { LangSwitch } from '@/features/i18n/lang-switch'
 
-const X_URL = 'https://x.com/evalledger'
+const X_URL = 'https://x.com/Yaomker'
 
 export function Footer({ theme }: { theme: 'light' | 'dark' }) {
   const { t } = useTranslation()

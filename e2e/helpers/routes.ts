@@ -163,7 +163,9 @@ export const ALL_PAGE_ROUTES: RouteCase[] = [
  * served at the same URL no matter the language.
  */
 export const ENDPOINT_ROUTES: RouteCase[] = [
-  { path: '/sitemap.xml', name: 'sitemap', group: 'static' },
+  { path: '/sitemap.xml', name: 'sitemap (core)', group: 'static' },
+  { path: '/sitemap-core.xml', name: 'core sitemap', group: 'static' },
+  { path: '/sitemap-full.xml', name: 'full sitemap', group: 'static' },
   { path: '/robots.txt', name: 'robots', group: 'static' },
   { path: '/feed.xml', name: 'feed', group: 'static' },
   { path: '/api/prices.json', name: 'price api', group: 'static' },

@@ -475,7 +475,7 @@ export const zh: Dict = {
     brandTitle: 'EvalLedger — 一站式比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 LLM 价格',
     brandDescription: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。',
     brandOgDescription: '给工程师用的 LLM 价格比对计算器。免费,无需注册。',
-    footerTagline: 'EvalLedger——看清你的 LLM token 在每一家主流模型上到底多少钱。',
+    footerTagline: '主流大模型的定价、基准与版本演进，一次看完。',
     footerProduct: '产品', footerResources: '资源', footerLegal: '法律',
     footerProductToken: 'Token 计算器',
     footerChangelog: '更新日志',

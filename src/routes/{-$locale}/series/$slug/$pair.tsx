@@ -1,4 +1,5 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import { isIndexableSeriesPair } from '@/features/seo/indexability'
 import { jsonLd, localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
@@ -56,6 +57,9 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/$pair')({
       path,
       title,
       description,
+      // Only compare what both versions report: a pair with an unscored side
+      // renders an honest empty state. Slug-only, so both languages agree.
+      indexable: isIndexableSeriesPair(params.slug, params.pair),
       scripts: [
         jsonLd({
           '@context': 'https://schema.org',

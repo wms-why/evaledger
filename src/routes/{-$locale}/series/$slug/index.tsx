@@ -1,4 +1,5 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import { isIndexableSeriesLine } from '@/features/seo/indexability'
 import { jsonLd, localeHead } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
@@ -88,6 +89,9 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
       path,
       title,
       description,
+      // A line whose versions report no score has no ladder worth indexing —
+      // but it stays reachable and linked. Slug-only, so both languages agree.
+      indexable: isIndexableSeriesLine(params.slug),
       scripts: [
         jsonLd({
           '@context': 'https://schema.org',

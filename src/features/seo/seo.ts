@@ -1,22 +1,5 @@
 import { locales, defaultLocale, localizePath, type Locale } from '@/features/i18n/locale'
 
-const PUBLIC_PATHS = [
-  '/',
-  '/changelog',
-  '/sponsor',
-  '/waitlist',
-  '/terms',
-  '/privacy',
-  '/token-cost-calculator',
-  '/openrouter-pricing-calculator',
-  '/claude-token-cost-calculator',
-  '/deepseek-api-pricing',
-  '/token-calculator',
-  '/leaderboard-history',
-  '/compare',
-  '/releases',
-] as const
-
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' }
 
@@ -34,7 +17,11 @@ export function buildRobots(origin: string): string {
     'Disallow: /*/admin',
     'Disallow: /admin',
     'Disallow: /api/',
-    `Sitemap: ${origin}/sitemap.xml`,
+    // The CORE sitemap only. The full sitemap is served at
+    // /sitemap-full.xml, but it is deliberately not declared here: a declared
+    // sitemap is an invitation, and the long tail is not what this site is
+    // asking to be ranked for.
+    `Sitemap: ${origin}/sitemap-core.xml`,
     '',
   ].join('\n')
 }
@@ -49,18 +36,38 @@ function alternates(origin: string, path: string): string {
   return links.join('')
 }
 
-export function buildSitemap(
-  origin: string,
-  singleLocalePaths: string[] = [],
-  extraBilingualPaths: string[] = [],
-): string {
-  const bilingual = locales.flatMap((l) =>
-    [...PUBLIC_PATHS, ...extraBilingualPaths].map(
-      (p) => `<url><loc>${origin}${localizePath(l, p)}</loc>${alternates(origin, p)}</url>`,
-    ),
-  )
-  const single = singleLocalePaths.map((p) => `<url><loc>${origin}${p}</loc></url>`)
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${[...bilingual, ...single].join('')}</urlset>`
+/** One `<url>` entry, with the hreflang alternates of its page family. */
+function urlEntry(origin: string, locale: Locale, path: string): string {
+  return `<url><loc>${origin}${localizePath(locale, path)}</loc>${alternates(origin, path)}</url>`
+}
+
+/**
+ * What a sitemap publishes.
+ *
+ * The three buckets are the three ways a page can be listed:
+ *
+ *   - `both` — the page exists in English and in Chinese; both are listed.
+ *   - `en` / `zh` — only one language is listed. The page still carries its
+ *     hreflang alternates, so a crawler that follows one finds the other;
+ *     the list simply does not spend the site's index budget on the twin.
+ */
+export interface SitemapInput {
+  /** Listed in both languages. */
+  both?: readonly string[]
+  /** Listed in English only. */
+  en?: readonly string[]
+  /** Listed in Chinese only. */
+  zh?: readonly string[]
+}
+
+export function buildSitemap(origin: string, input: SitemapInput): string {
+  const { both = [], en = [], zh = [] } = input
+  const entries = [
+    ...both.flatMap((path) => locales.map((locale) => urlEntry(origin, locale, path))),
+    ...en.map((path) => urlEntry(origin, 'en', path)),
+    ...zh.map((path) => urlEntry(origin, 'zh', path)),
+  ]
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${entries.join('')}</urlset>`
 }
 
 export interface HeadLink {
@@ -101,21 +108,33 @@ export function localeHead(input: {
   title: string
   description: string
   scripts?: HeadMeta[]
+  /**
+   * `false` marks the page as **noindex**: a thin page that stays reachable
+   * and linked, but does not compete for the site's index budget.
+   *
+   * A noindex page also drops its hreflang alternates — Google ignores the
+   * annotations of a page it is told not to index, and a noindex page must
+   * not advertise a sibling as its translation.
+   */
+  indexable?: boolean
 }): { meta: HeadMeta[]; links: HeadLink[]; scripts?: HeadMeta[] } {
-  const { origin, locale, path, title, description, scripts } = input
+  const { origin, locale, path, title, description, scripts, indexable = true } = input
   const canonical = `${origin}${localizePath(locale, path)}`
   const links: HeadLink[] = [{ rel: 'canonical', href: canonical }]
-  for (const l of locales) {
-    links.push({ rel: 'alternate', hrefLang: l, href: `${origin}${localizePath(l, path)}` })
+  if (indexable) {
+    for (const l of locales) {
+      links.push({ rel: 'alternate', hrefLang: l, href: `${origin}${localizePath(l, path)}` })
+    }
+    links.push({
+      rel: 'alternate',
+      hrefLang: 'x-default',
+      href: `${origin}${localizePath(defaultLocale, path)}`,
+    })
   }
-  links.push({
-    rel: 'alternate',
-    hrefLang: 'x-default',
-    href: `${origin}${localizePath(defaultLocale, path)}`,
-  })
   const meta: HeadMeta[] = [
     { title },
     { name: 'description', content: description },
+    ...(indexable ? [] : [{ name: 'robots', content: 'noindex, follow' } as HeadMeta]),
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:url', content: canonical },
