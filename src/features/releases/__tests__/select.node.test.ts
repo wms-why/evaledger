@@ -4,7 +4,9 @@ import {
   isZhPath,
   releaseSlugFromPath,
   selectReleases,
+  sortByReleasedAt,
   uniqueReleaseSlugs,
+  type ReleaseMeta,
   type ReleaseRaw,
 } from '../select'
 
@@ -128,6 +130,42 @@ describe('selectReleases', () => {
     )
     expect(out[0]?.compareModelIds).toEqual([])
     expect(out[0]?.compareSlugs).toEqual([])
+  })
+})
+
+describe('sortByReleasedAt', () => {
+  /** Turn a raw entry into the flattened shape the list route consumes. */
+  const metaOf = (r: ReleaseRaw, releasedAt?: string): ReleaseMeta => {
+    const locale = r.info.path.includes('.zh') ? 'zh' : 'en'
+    return selectReleases([{ ...r, releasedAt }], locale)[0]!
+  }
+
+  it('orders posts by launch day, newest first', () => {
+    const out = sortByReleasedAt([
+      metaOf(raw[0]!, '2026-09-10'),
+      metaOf(raw[1]!, '2026-09-03'),
+      metaOf({ ...raw[3]!, published: true }, '2026-10-19'),
+    ])
+    expect(out.map((e) => e.title)).toEqual([
+      'Draft',
+      'DeepSeek V4.1-Flash',
+      'GPT-6 astra',
+    ])
+  })
+
+  it('puts posts without a release date last', () => {
+    const out = sortByReleasedAt([
+      metaOf(raw[1]!),
+      metaOf(raw[0]!, '2026-09-10'),
+    ])
+    expect(out.map((e) => e.title)).toEqual(['DeepSeek V4.1-Flash', 'GPT-6 astra'])
+  })
+
+  it('does not mutate the input list', () => {
+    const input = selectReleases(raw, 'en')
+    const before = input.map((e) => e.slug)
+    sortByReleasedAt(input)
+    expect(input.map((e) => e.slug)).toEqual(before)
   })
 })
 

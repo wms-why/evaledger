@@ -52,6 +52,14 @@ export const BENCHMARKS: Benchmark[] = [
     description: 'Competitive-programming Elo-style rating, not a percentage.',
   },
   {
+    id: 'apex-bench-v1.1',
+    name: 'Apex Bench v1.1',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'Apex Bench v1.1 — the evaluation column DeepSeek publishes in its own V4.1-Flash announcements. Distinct from MathArena Apex: same name, different table, never interchangeable.',
+  },
+  {
     id: 'matharena-apex',
     name: 'MathArena Apex',
     category: 'math',

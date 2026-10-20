@@ -7,6 +7,11 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  *  - The DeepSeek family, GLM 5.3 and Kimi K3 scores come from the owner's
  *    reference table (captured 2026-10-19), itself from the DeepSeek V4.1
  *    Flash launch post — hence one shared `sourceUrl`.
+ *  - DeepSeek V4.1-Flash 1017 is a **separate checkpoint** with its own
+ *    announcement table (2026-10-17). It is a separate row, never merged into
+ *    the 0910 launch row: the two tables measure different weights, and the
+ *    1017 table even re-states the 0910 checkpoint's numbers in its second
+ *    column, which is why the two rows can be read side by side.
  *  - Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their
  *    vendor launch tables plus Artificial Analysis. Both rows are partial and
  *    use vendor harnesses; their per-score notes name the setting.
@@ -24,10 +29,16 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  * Never drop a caveat the source printed. Missing benchmarks are simply
  * absent — no interpolation.
  */
-export const REGISTRY_VERSION = '0.5.0'
+export const REGISTRY_VERSION = '0.6.0'
 
 /** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
 const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
+/**
+ * DeepSeek V4.1-Flash-1017 announcement (vendor news post, 2026-10-17).
+ * Its comparison table covers the 1017 checkpoint, the 0910 launch
+ * checkpoint, Kimi K3, GLM 5.3, GPT-5.6-Sol and Claude Opus 5.
+ */
+const DEEPSEEK_FLASH_1017 = 'https://api-docs.deepseek.com/news/news261017/'
 /** Gemini 3.1 Pro model card. */
 const GEMINI_CARD = 'https://deepmind.google/models/model-cards/gemini-3-1-pro/'
 /** benchlm compare page (Vals harness figures). */
@@ -61,6 +72,8 @@ const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
 const OBSERVED_AT = '2026-10-20T15:30:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
+/** The 1017 checkpoint shipped 2026-10-17 (vendor announcement date). */
+const DEEPSEEK_FLASH_1017_RELEASE = '2026-10-17'
 
 interface ScoreOptions {
   unit?: ScoreUnit
@@ -201,14 +214,22 @@ const gpt56Sol: LeaderboardModel = {
   ],
 }
 
+/**
+ * The launch checkpoint — the weights the 2026-09-10 reference table was
+ * measured on. Kept as its own row: the API has since moved to the 1017
+ * checkpoint, and merging the two score sets would make the launch table
+ * look like it described today's weights.
+ */
 const deepseekV41Flash: LeaderboardModel = {
   id: 'deepseek-v4.1-flash',
   vendor: 'deepseek',
   kind: 'flash',
-  version: 'v4.1-flash',
-  displayName: 'DeepSeek V4.1-Flash',
-  priceId: 'deepseek-flash',
+  version: 'v4.1-flash-0910',
+  displayName: 'DeepSeek V4.1-Flash 0910',
+  priceId: 'deepseek-flash-0910',
   releaseDate: DEEPSEEK_FLASH_RELEASE,
+  introduced: DEEPSEEK_FLASH_RELEASE,
+  retiredAt: DEEPSEEK_FLASH_1017_RELEASE,
   updatedAt: COLLECTED_AT,
   scores: [
     sc('gpqa-diamond', 90.9),
@@ -230,6 +251,58 @@ const deepseekV41Flash: LeaderboardModel = {
     sc('chartography-tools', 78.9),
     sc('babyvision-tools', 89.6),
     sc('zerobench-main-tools', 49.0),
+  ],
+}
+
+/**
+ * The 1017 checkpoint — the weights the API serves today under the model
+ * name `deepseek-flash`. Its own announcement table (2026-10-17) covers 11
+ * benchmarks and re-states the 0910 checkpoint's numbers in its second
+ * column, so the two rows are directly comparable.
+ */
+const deepseekV41Flash1017: LeaderboardModel = {
+  id: 'deepseek-v4.1-flash-1017',
+  vendor: 'deepseek',
+  kind: 'flash',
+  version: 'v4.1-flash-1017',
+  displayName: 'DeepSeek V4.1-Flash 1017',
+  priceId: 'deepseek-flash',
+  releaseDate: DEEPSEEK_FLASH_1017_RELEASE,
+  introduced: DEEPSEEK_FLASH_1017_RELEASE,
+  supersedes: 'deepseek-v4.1-flash',
+  updatedAt: OBSERVED_AT,
+  scores: [
+    sc('hle', 42.6, {
+      source: DEEPSEEK_FLASH_1017,
+      observedAt: OBSERVED_AT,
+      note: '44.0 on text-only subset',
+    }),
+    sc('terminal-bench-4.0', 42.3, {
+      source: DEEPSEEK_FLASH_1017,
+      observedAt: OBSERVED_AT,
+      note: 'measured with the Claude Code framework',
+    }),
+    sc('deepswe-v1.1', 77.0, {
+      source: DEEPSEEK_FLASH_1017,
+      observedAt: OBSERVED_AT,
+      note: 'Mini-SWE-V2 framework',
+    }),
+    sc('programbench', 29.1, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('nl2repo-bench', 68.2, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('automation-bench', 60.5, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('agents-last-exam', 35.4, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('apex-bench-v1.1', 72.1, {
+      source: DEEPSEEK_FLASH_1017,
+      observedAt: OBSERVED_AT,
+      note: 'Apex Bench v1.1 — not MathArena Apex',
+    }),
+    sc('chartography-tools', 83.0, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('babyvision-tools', 92.5, { source: DEEPSEEK_FLASH_1017, observedAt: OBSERVED_AT }),
+    sc('zerobench-main-tools', 51.0, {
+      source: DEEPSEEK_FLASH_1017,
+      observedAt: OBSERVED_AT,
+      note: 'Pass@5',
+    }),
   ],
 }
 
@@ -409,7 +482,7 @@ export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
   fetchedAt: OBSERVED_AT,
   sourceNote:
-    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows.',
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows.',
   models: [
     claudeOpus55,
     gpt6Astra,
@@ -418,6 +491,7 @@ export const LEADERBOARD: LeaderboardRegistry = {
     gemini31Pro,
     grok47,
     deepseekV41Flash,
+    deepseekV41Flash1017,
     deepseekV4Pro0813,
     deepseekV4Flash0731,
     glm53,

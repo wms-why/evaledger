@@ -64,6 +64,7 @@ The join keys:
 | Change | What must move with it |
 | --- | --- |
 | A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) |
+| A checkpoint ships (same SKU, new weights) | **A separate record, never a merged one**: a new REGISTRY row (the old checkpoint flips to `status: 'delisted'` and keeps its price), a new LEADERBOARD row (the old row keeps its scores), and a new release page — the two pages cross-link. Never fold two checkpoints' scores into one row, and never let one article quote the other checkpoint's numbers |
 | A price changes | The REGISTRY price + `lastVerified` = today + `REGISTRY.fetchedAt` = today + every affected release page re-read with its `dataCheckedAt` bumped to today |
 | A score is corrected or added | The LEADERBOARD score (+ a `history` snapshot when it overwrites one) + every affected release page re-read with its `dataCheckedAt` bumped to today |
 | A model is retired | REGISTRY `status: 'delisted'` + the LEADERBOARD row + a line in the release page saying it is retired — **never delete the article**, it is a long-tail search entry |

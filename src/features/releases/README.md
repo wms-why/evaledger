@@ -53,7 +53,7 @@ export const releases = defineCollections({
 
 | URL | 说明 |
 | --- | --- |
-| `/{-locale}/releases` | 列表页：按 `date` 倒序，卡片显示厂商 / 主角模型 / 一句话结论 / 价格 / 跑分有无 |
+| `/{-locale}/releases` | 列表页：按 `releasedAt` 倒序（模型发布日；没有可核实发布日的排在最后），卡片显示厂商 / 主角模型 / 一句话结论 / 价格 / 跑分有无 |
 | `/{-locale}/releases/$slug` | 详情页：`$slug` 不带 locale 后缀，`/releases/x` = en，`/zh/releases/x` = zh |
 
 slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
@@ -87,7 +87,7 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 正文里出现的金额，**只能**是主角模型或对比模型在 REGISTRY 里的原始单价，
 以及由这些单价直接算出的倍数/百分比。禁止出现注册表里没有的数字。
 
-## 5. 首期 6 篇（6 家主力各 1 篇）
+## 5. 已发篇目（6 家主力各 1 篇；DeepSeek 两个 checkpoint 两篇）
 
 | slug | 厂商 | 主角 | modelId | modelSlug | releasedAt |
 | --- | --- | --- | --- | --- | --- |
@@ -95,11 +95,17 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 | `claude-opus-5-5` | Anthropic | Claude Opus 5.5 | `claude-opus-5.5` | — | — |
 | `gemini-3-1-pro` | Google | Gemini 3.1 Pro | `gemini-3.1-pro-preview` | `gemini-3.1-pro` | — |
 | `grok-4-7` | xAI | Grok 4.7 | `grok-4.7` | `grok-4.7` | — |
-| `deepseek-v4-1-flash` | DeepSeek | DeepSeek V4.1-Flash | `deepseek-flash` | `deepseek-v4.1-flash` | `2026-09-10` |
+| `deepseek-v4-1-flash` | DeepSeek | DeepSeek V4.1-Flash 0910 | `deepseek-flash-0910` | `deepseek-v4.1-flash` | `2026-09-10` |
+| `deepseek-v4-1-flash-1017` | DeepSeek | DeepSeek V4.1-Flash 1017 | `deepseek-flash` | `deepseek-v4.1-flash-1017` | `2026-10-17` |
 | `minimax-m3-1-flash` | MiniMax | MiniMax M3.1 Flash | `minimax-m3.1-flash` | `minimax-m3.1-flash` | `2026-10-19` |
 
 `gpt-6-astra` 与 `claude-opus-5-5` **故意不给** `modelSlug`：
 榜单里没有这两个 SKU 的可溯源跑分，就不编。正文里要写明「还没有核验过的跑分」。
+
+**同一模型线的两个 checkpoint，要两篇，不是一篇。** DeepSeek 在同一个 API 模型名
+（`deepseek-flash`）下滚动更新 checkpoint：0910 首发与 1017 当前版的权重不同、
+跑分不同、公告也不同，所以价格行、榜单行、发布文章各一份，两篇互链。
+**不要把两套分数并到一行，也不要让一篇文章引用另一套分数。**
 
 ### 6.1 每篇的事实清单（写正文时直接用，不要自己算）
 
@@ -154,11 +160,12 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 - 结论方向：输出只要 $6 —— 比 GPT-5.6 sol 的 $20 便宜 70%，比 Claude Opus 5 的 $25 便宜 76%
 - source：`https://docs.x.ai/docs/models`，title「xAI — Models & pricing」
 
-#### `deepseek-v4-1-flash`（DeepSeek）
-- 主角：`deepseek-flash` $0.30 / $1.20（peak），cached $0.006，ctx 1,000,000，
+#### `deepseek-v4-1-flash`（DeepSeek · 0910 首发 checkpoint）
+- 主角：`deepseek-flash-0910` $0.30 / $1.20（peak），cached $0.006，ctx 1,000,000，
   off-peak $0.15 / $0.60（peak 的一半），
   off-peakNote: Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.
-  source `https://api-docs.deepseek.com/quick_start/pricing`，lastVerified 2026-10-19
+  source `https://api-docs.deepseek.com/quick_start/pricing`，lastVerified 2026-10-20
+- 该行 status = delisted：0910 checkpoint 已被 1017 取代，API 不再提供；价格留着给长尾搜索
 - releasedAt 2026-09-10
 - 对比行：`deepseek-v4-pro` $1.32 / $3.96（peak，off-peak $0.66 / $1.98）→ 主角便宜 4.4×（输入）/ 3.3×（输出）
 - 缓存折扣：$0.006 = 输入价的 2%（省 98%）
@@ -168,9 +175,28 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
   sec-bench-pro 62.8、exploitgym 15.3、hle-tools 63.9、automation-bench 54.8、agents-last-exam 31.8、
   chartography-tools 78.9、babyvision-tools 89.6、zerobench-main-tools 49.0
 - 跑分对比行：`gpt-5.6-sol`、`claude-opus-5`、`gemini-3.1-pro`、`kimi-k3`、`glm-5.3`
-- 结论方向：注册表里最便宜的 active 模型之一；同门 V4-Pro 是它的 3–4 倍
+- 结论方向：注册表里最便宜的模型之一；同门 V4-Pro 是它的 3–4 倍
 - source：DeepSeek V4.1 Flash 发布公告 `https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg`，
   title「DeepSeek V4.1 Flash 发布公告」
+
+#### `deepseek-v4-1-flash-1017`（DeepSeek · 1017 当前 checkpoint）
+- 主角：`deepseek-flash` $0.30 / $1.20（peak），cached $0.006，ctx 1,000,000，
+  off-peak $0.15 / $0.60、off-peak cached $0.003，
+  source `https://api-docs.deepseek.com/quick_start/pricing`，lastVerified 2026-10-20
+- **价格与 0910 那一行完全相同**——变的只有权重
+- releasedAt 2026-10-17
+- 对比行：`deepseek-v4-pro` $1.32 / $3.96（peak）→ 主角便宜 4.4×（输入）/ 3.3×（输出）
+- 跑分（`deepseek-v4.1-flash-1017`，11 项，来自 1017 公告对照表）：hle 42.6（note: 44.0 on text-only subset）、
+  terminal-bench-4.0 42.3（note: measured with the Claude Code framework）、
+  deepswe-v1.1 77.0（note: Mini-SWE-V2 framework）、programbench 29.1、nl2repo-bench 68.2、
+  automation-bench 60.5、agents-last-exam 35.4、apex-bench-v1.1 72.1
+  （note: Apex Bench v1.1 — not MathArena Apex）、chartography-tools 83.0、babyvision-tools 92.5、
+  zerobench-main-tools 51.0（note: Pass@5）
+- 跑分对比行：`deepseek-v4.1-flash`（0910 行）、`kimi-k3`、`glm-5.3`、`gpt-5.6-sol`、`claude-opus-5`
+- **不可引用**：1017 公告里的单任务成本（$0.19 / $0.47 之类）不是每 1M token 的单价；
+  Search & Fetch 的按次价格（$0.75 / 千次）也不在价格表里——正文只描述，不写数字
+- source：`https://api-docs.deepseek.com/news/news261017/`，
+  title「DeepSeek-V4.1-Flash-1017: Wish-Driven Programming Made Real」
 
 #### `minimax-m3-1-flash`（MiniMax）
 - 主角：`minimax-m3.1-flash` $0.15 / $0.60，cached $0.015，ctx 1,000,000，

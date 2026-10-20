@@ -194,6 +194,7 @@ export const BENCHMARK_SHORT: Record<string, string> = {
   'hle': 'HLE',
   'codeforces': 'Codeforces',
   'matharena-apex': 'Apex',
+  'apex-bench-v1.1': 'Apex v1.1',
   'terminal-bench-2.1': 'TB 2.1',
   'terminal-bench-3.0': 'TB 3.0',
   'terminal-bench-4.0': 'TB 4.0',

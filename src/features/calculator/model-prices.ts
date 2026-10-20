@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.5.0'
+export const REGISTRY_VERSION = '0.6.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -518,10 +518,23 @@ export const REGISTRY: ModelRegistry = {
     //     within the period it is billed in. The two delisted entries have no
     //     verified off-peak cache rate, so they fall back to the peak rate —
     //     which over-quotes them off-peak rather than under-quoting.
+    // ── Two checkpoints, two rows — never merged ──────────────────────
+    // DeepSeek ships V4.1-Flash as rolling checkpoints under one API model
+    // name (`deepseek-flash`). Two of them are on the record and they are
+    // priced identically, but they are NOT the same thing:
+    //   - 0910 — the launch checkpoint (2026-09-10), the one the launch
+    //     announcement's 19-benchmark reference table was measured on.
+    //   - 1017 — the current checkpoint (2026-10-17), served under the name
+    //     `deepseek-flash`; the legacy aliases `deepseek-v4-flash` and
+    //     `deepseek-v4-flash-vision-exp` are routed to it and billed at the
+    //     Flash price. Its own announcement publishes a different score set.
+    // A single merged row would blur "what the API serves today" with "what
+    // the launch table measured" — so they stay separate rows, and the
+    // 0910 row keeps the price history alive for long-tail search.
     {
       id: 'deepseek-flash',
       provider: 'deepseek',
-      displayName: 'DeepSeek V4.1-Flash',
+      displayName: 'DeepSeek V4.1-Flash 1017',
       family: 'deepseek-v4',
       status: 'active',
       contextWindow: 1_000_000,
@@ -542,7 +555,37 @@ export const REGISTRY: ModelRegistry = {
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
       lastVerified: '2026-10-20',
-      note: 'API model version DeepSeek-V4.1-Flash-1017 (released 2026-10-17); the 2026-09-10 launch price is unchanged.',
+      introduced: '2026-10-17',
+      supersedes: 'deepseek-flash-0910',
+      note: 'Checkpoint DeepSeek-V4.1-Flash-1017 (released 2026-10-17), served under the API model name `deepseek-flash`; open weights on Hugging Face / ModelScope. The 2026-09-10 launch price is unchanged. The launch checkpoint is kept as its own row (deepseek-flash-0910).',
+    },
+    {
+      id: 'deepseek-flash-0910',
+      provider: 'deepseek',
+      displayName: 'DeepSeek V4.1-Flash 0910',
+      family: 'deepseek-v4',
+      status: 'delisted',
+      contextWindow: 1_000_000,
+      inputPricePer1M: 0.3,
+      outputPricePer1M: 1.2,
+      cachedInputPricePer1M: 0.006,
+      pricingPeriod: 'peak',
+      peakOffPeak: {
+        peak: { inputPricePer1M: 0.3, outputPricePer1M: 1.2 },
+        // Off-peak cache hit is $0.003 (half the peak $0.006).
+        offPeak: {
+          inputPricePer1M: 0.15,
+          outputPricePer1M: 0.6,
+          cachedInputPricePer1M: 0.003,
+        },
+        offPeakNote:
+          'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.',
+      },
+      sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
+      lastVerified: '2026-10-20',
+      introduced: '2026-09-10',
+      retiredAt: '2026-10-17',
+      note: 'Launch checkpoint of 2026-09-10 — the one the launch announcement\'s reference table was measured on. Superseded by the 1017 checkpoint on 2026-10-17; the API no longer serves it (`deepseek-flash` now routes to 1017). Rates are identical to the live checkpoint; kept for long-tail search and for the launch post\'s score table.',
     },
     {
       id: 'deepseek-v4-pro',

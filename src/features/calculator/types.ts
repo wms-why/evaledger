@@ -116,6 +116,23 @@ export interface ModelPrice {
   sourceUrl: string
   /** ISO date this entry was last verified against `sourceUrl`. */
   lastVerified: string
+  /**
+   * ISO date this record came into existence (the checkpoint's ship date).
+   * Part of the record identity: a new checkpoint is a new record with its
+   * own date, never an edit of the previous one.
+   */
+  introduced?: string
+  /**
+   * The record this one replaces (its `id`). A new checkpoint of the same
+   * model points at the checkpoint it took over from.
+   */
+  supersedes?: string
+  /**
+   * ISO date the record stopped being served. A retired record's price line
+   * is a historical fact and is pinned in the record ledger
+   * (`src/features/records/ledger.ts`).
+   */
+  retiredAt?: string
   /** Short note shown on the model card if non-empty. */
   note?: string
 }

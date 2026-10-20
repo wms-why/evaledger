@@ -1,8 +1,8 @@
 # 模型价格与跑分核对报告（2026-10-20）
 
-> 范围：`src/features/calculator/model-prices.ts` 里 20 个 active 模型的价格，`src/features/leaderboard/models.ts` 里 13 个模型 / 135 条分数，以及受影响的 6 篇 release 文章（中英各一版，共 12 个文件）。
+> 范围：`src/features/calculator/model-prices.ts` 里 20 个 active 模型的价格，`src/features/leaderboard/models.ts` 里 14 个模型 / 146 条分数，以及受影响的 6 篇 release 文章（中英各一版，共 12 个文件）。
 >
-> 结论先说：**基础输入/输出单价没有一条是错的；不对的是“缺的字段”和“旧的门槛”**——5 个缓存读价没录、8 个上下文窗口偏小、6 个长上下文档位没建模；跑分方面，已有 110 条参考表分数逐条对上，没有抄错，缺的是 Claude Opus 5.5 / GPT-6 Astra 两行新分，以及 DeepSeek 1017 这个新 checkpoint 还没合并。
+> 结论先说：**基础输入/输出单价没有一条是错的；不对的是“缺的字段”和“旧的门槛”**——5 个缓存读价没录、8 个上下文窗口偏小、6 个长上下文档位没建模；跑分方面，已有 110 条参考表分数逐条对上，没有抄错，缺的是 Claude Opus 5.5 / GPT-6 Astra 两行新分。DeepSeek 1017 这个新 checkpoint 已按「不融合」的原则单独入库（见 §5.5）：价格、跑分、发布文章各一份，不和 0910 那版混。
 
 ---
 
@@ -16,7 +16,8 @@
 | 长上下文档位 | **补了 6 个**：GPT-6 Astra / Sol / Luna、GPT-5.6 Sol（>272K，2× / 1.5×）、Gemini 3.1 Pro（>200K，2× / 1.5×）、Grok 4.7（≥200K，2× / 2×） |
 | 已有跑分 | **110 条参考表分数逐条核对，全部一致**（DeepSeek 三家 + GLM + Kimi + GPT-5.6 Sol + Claude Opus 5） |
 | 新增跑分 | **8 条**：Claude Opus 5.5 四项、GPT-6 Astra 四项 |
-| 没合并的 | DeepSeek V4.1-Flash-1017 新 checkpoint；GPT-6.1 Sol、Sonnet 5.5、Gemini 4 Argon 等新 SKU（见 §5） |
+| 单独入库（不融合） | **DeepSeek V4.1-Flash-1017 checkpoint**：单独的价格行、单独的榜单行（11 条）、单独的中英发布文章；0910 那版原样保留（见 §5.5） |
+| 仍未入库 | GPT-6.1 Sol、Sonnet 5.5、Gemini 4 Argon 等新 SKU（见 §5） |
 
 ---
 
@@ -41,8 +42,9 @@
 | Google | Gemini 2.5 Pro | $1.25 | $10 | $0.125 | 1,000,000 | >200K：2× / 1.5× | ✅ | [pricing](https://ai.google.dev/gemini-api/docs/pricing) |
 | Google | Gemini 2.5 Flash-Lite | $0.10 | $0.40 | $0.010 | 1,000,000 | — | ✅ | [pricing](https://ai.google.dev/gemini-api/docs/pricing) |
 | Google | Gemini 2.5 Flash | $0.30 | $2.50 | $0.030 | 1,000,000 | >200K：2× / 1.5× | ✅ | [pricing](https://ai.google.dev/gemini-api/docs/pricing) |
-| DeepSeek | V4.1-Flash（peak） | $0.30 | $1.20 | $0.006 | 1,000,000 | — | ✅（API 已是 1017） | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
-| DeepSeek | V4.1-Flash（off-peak） | $0.15 | $0.60 | $0.003 | 1,000,000 | — | ✅ | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
+| DeepSeek | V4.1-Flash 1017（peak） | $0.30 | $1.20 | $0.006 | 1,000,000 | — | ✅（当前在售 checkpoint） | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
+| DeepSeek | V4.1-Flash 1017（off-peak） | $0.15 | $0.60 | $0.003 | 1,000,000 | — | ✅ | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
+| DeepSeek | V4.1-Flash 0910（首发 checkpoint，已退役，同价） | $0.30 | $1.20 | $0.006 | 1,000,000 | — | 🛠 独立成行（见 §5.5） | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
 | DeepSeek | V4-Pro（peak） | $1.32 | $3.96 | $0.044 | 1,000,000 | — | ✅ | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
 | DeepSeek | V4-Pro（off-peak） | $0.66 | $1.98 | $0.022 | 1,000,000 | — | ✅ | [pricing](https://api-docs.deepseek.com/quick_start/pricing) |
 | MiniMax | M3.1 Flash | $0.15 | $0.60 | $0.015 | 1,000,000 | — | ✅ | [pricing](https://platform.minimax.io/docs/pricing/overview) |
@@ -74,7 +76,8 @@
 | Gemini 3.8 Flash | note | 无 | 引入价到 2026-12-31，2027-01-01 起翻倍 | Google pricing |
 | Grok 4.7 | cachedInputPricePer1M | 未录 | 0.50 | xAI pricing「Cached」列 |
 | Grok 4.7 | longContext | 无 | ≥200K，2× / 2× | xAI pricing「Long context ≥ 200k」 |
-| DeepSeek V4.1-Flash | note | 无 | API 版本为 1017（2026-10-17） | DeepSeek pricing / 1017 公告 |
+| DeepSeek V4.1-Flash 1017 | displayName / note | 无（与 0910 混在一行） | displayName「DeepSeek V4.1-Flash 1017」+ note 写明当前 checkpoint、API 模型名、开源地址 | DeepSeek pricing / 1017 公告 |
+| DeepSeek V4.1-Flash 0910 | 新增独立行 | 无 | displayName「DeepSeek V4.1-Flash 0910」，status delisted，同价 | 同上 |
 
 > ⚠️ **口径提醒（不改数据，但要知道）**
 > - 计算器的长上下文判定用的是 **input + output 总长度**；OpenAI 的 272K、Gemini 的 200K、Grok 的 200K、MiniMax 的 512K 门槛，官方写的都是 **input / prompt tokens**。两者在“输出把总量推过线、输入没到线”的边界上会差一档；本次没有改判定逻辑。
@@ -150,29 +153,70 @@
 | Claude Opus 5.5 / GPQA | 未录 | 87.5 / 94.2 / 96 | 不录：三个来源互相打架，且没有说明 harness |
 | GPT-6 Astra / AutomationBench、Agents' Last Exam | 未录 | 41.4 / 59.3 | 不录：与参考表同名列不可比 |
 
+### 3.5 DeepSeek V4.1-Flash 1017：11 条新分数（单独一行，不与 0910 融合）
+
+来源是 1017 公告里的对照表（[英文页](https://api-docs.deepseek.com/news/news261017/) / [中文页](https://api-docs.deepseek.com/zh-cn/news/news261017)，图片表格 en / cn 两版数值一致）。
+这张表有 6 个模型列（1017 checkpoint、0910 checkpoint、Kimi K3、GLM 5.3、GPT-5.6-Sol、Claude Opus 5），11 行 benchmark。
+
+| Benchmark | 1017（新入库） | 0910（既有） | 备注 |
+| --- | ---: | ---: | --- |
+| HLE（无工具） | 42.6 / 44.0* | 36.8 / 39.1* | * = 纯文本子集 |
+| Terminal-Bench 4.0 | 42.3 | 31.2 | Claude Code 框架下测得 |
+| DeepSWE v1.1 | 77.0 | 74.2 | Mini-SWE-V2 框架下测得 |
+| ProgramBench | 29.1 | 20.3 | |
+| NL2Repo-Bench | 68.2 | 65.4 | |
+| Automation-Bench | 60.5 | 54.8 | |
+| Agents' Last Exam | 35.4 | 31.8 | |
+| Apex Bench v1.1 | 72.1 | 64.6 | 见下方说明 |
+| Chartography（带工具） | 83.0 | 78.9 | |
+| BabyVision（带工具） | 92.5 | 89.6 | |
+| ZeroBench-main（带工具） | 51.0 | 49.0 | Pass@5 |
+
+**交叉核对结果：这 10 个共有列，我们手里的 0910 数字与厂商这次重述的完全一致**（36.8/39.1、31.2、74.2、20.3、65.4、54.8、31.8、78.9、89.6、49.0）——这是两套独立转录（0910 公告对照表 vs 1017 公告对照表）互相对上的结果，也顺带证明 0910 那 19 条没有被抄错。
+
+**唯一对不上的是 Apex Bench v1.1 这一列**，原因不是抄错，而是**同名不同表**：我们给 0910 行记的是 **MathArena Apex**（65.6，来源 matharena.ai），而这张表里的 **Apex Bench v1.1** 是 DeepSeek 自己发布的评测列（0910 checkpoint 是 64.6，Kimi K3 是 47.8）。两者不能互换，所以：
+
+- 新增 benchmark id `apex-bench-v1.1`（name「Apex Bench v1.1」），与 `matharena-apex` 分开；
+- 只给 1017 行记 72.1；0910 行的 64.6 **不补**——那一行的跑分只来自它自己的发布公告，保持「一行一个出处」；
+- 文章里也不许把 64.6 当成 0910 行的成绩引用。
+
+**另外两点事实**（进文章，不进价格表）：
+
+- 1017 公告的性能–费用图显示，同一个 DeepSWE v1.1 成绩下，1017 的**每次任务成本只有 0910 的一小部分**（图上 1017 max 档约 $0.19/任务、0910 max 档约 $0.47/任务——**这是「每次任务」的成本，不是每 1M token 的单价，所以不进价格表，文章里也不引用**，只描述「同样成绩、更低的单任务成本」）。
+- 1017 公告同时开放了 DeepSeek 自研的 Search / Fetch API，按每千次调用计费，API 用户通过服务端工具调用在 2026-10-31 16:00 UTC（北京时间 11 月 1 日 00:00）之前免费——同样**不引用具体金额**。
+
 ---
 
 ## 4. 改了哪些文件
 
 | 文件 | 改动 |
 | --- | --- |
-| `src/features/calculator/model-prices.ts` | 缓存价、上下文窗口、长上下文档位、备注；`REGISTRY_VERSION` 0.5.0；`fetchedAt` 2026-10-20 |
-| `src/features/leaderboard/models.ts` | 新增 Claude Opus 5.5 / GPT-6 Astra 两行共 8 条分；`REGISTRY_VERSION` 0.5.0；`fetchedAt` 2026-10-20 |
+| `src/features/calculator/model-prices.ts` | 缓存价、上下文窗口、长上下文档位、备注；**DeepSeek V4.1-Flash 拆成 1017 / 0910 两行**；`REGISTRY_VERSION` 0.6.0；`fetchedAt` 2026-10-20 |
+| `src/features/leaderboard/models.ts` | 新增 Claude Opus 5.5 / GPT-6 Astra 两行共 8 条分；**新增 `deepseek-v4.1-flash-1017` 一行 11 条分，0910 行改名并改指 0910 价格行**；`REGISTRY_VERSION` 0.6.0；`fetchedAt` 2026-10-20 |
+| `src/features/leaderboard/benchmarks.ts` | **新增 `apex-bench-v1.1`**（与 `matharena-apex` 分开） |
+| `src/features/leaderboard/leaderboard.ts` | `BENCHMARK_SHORT` 加 `apex-bench-v1.1` |
+| `src/features/calculator/model-notes.ts` | 两个 DeepSeek checkpoint 的中文备注 |
+| `src/features/calculator/__tests__/model-notes.node.test.ts` | 备注条数 24 → 25 |
 | `src/content/releases/claude-opus-5-5.md` / `.zh.md` | 加 `modelSlug`、1M 上下文、4 项跑分、发布日期；`dataCheckedAt` 2026-10-20 |
 | `src/content/releases/gpt-6-astra.md` / `.zh.md` | 加 `modelSlug`、1,050,000 上下文、长上下文价、4 项跑分；`dataCheckedAt` 2026-10-20 |
 | `src/content/releases/gemini-3-1-pro.md` / `.zh.md` | 删掉“窗口是 OpenAI 2.5 倍 / 无长上下文档位”的错误结论；补 $4/$18、缓存 $0.20、GPQA 已被 GPT-6 Astra 超过 |
-| `src/content/releases/deepseek-v4-1-flash.md` / `.zh.md` | 补 1017 checkpoint 说明；日期 2026-10-20 |
+| `src/content/releases/deepseek-v4-1-flash.md` / `.zh.md` | **改指 0910 价格行**；正文说明这张表说的是 0910 checkpoint，并链到 1017 那篇 |
+| `src/content/releases/deepseek-v4-1-flash-1017.md` / `.zh.md` | **新增**：1017 checkpoint 的发布分析（11 项跑分、同价、单独成篇） |
 | `src/content/releases/grok-4-7.md` / `.zh.md` | 补缓存 $0.50、200K 长上下文档位、发布日期；`sourceUrl` 改为 pricing |
 | `src/content/releases/minimax-m3-1-flash.md` / `.zh.md` | 仅日期（价格/分数未变） |
 | `src/features/calculator/cost.ts` | 长上下文时把 input multiplier 同样应用到 cached input（OpenAI / Gemini / Grok / MiniMax 都适用） |
 | `src/features/calculator/__tests__/cost.node.test.ts` | 新增长上下文 / 窗口回归测试，并在 MiniMax 用例里补缓存断言 |
-| `scripts/prices/version.ts` | `SCRIPT_VERSION` 0.5.0，与 REGISTRY 对齐 |
+| `src/features/releases/README.md` | 系列契约加第 7 篇（1017 checkpoint）与两个 checkpoint 的分工说明 |
+| `src/features/releases/__tests__/integrity.node.test.ts` | 护栏漏了「非高峰缓存读价」这个合法价格（$0.003 写不出来），补进 allowed 集合 |
+| `src/features/series/series.ts` | DeepSeek V4 系列的两个 checkpoint 成员各自指向自己的跑分行（`v4.1-flash-1017` → `deepseek-v4.1-flash-1017`，`v4.1-flash-0910` → `deepseek-v4.1-flash`） |
+| `AGENTS.md` | 「三者一体」表加一行：checkpoint 发布 = 独立记录，不合并 |
+| `scripts/prices/version.ts` | `SCRIPT_VERSION` 0.6.0，与 REGISTRY 对齐 |
 
 验证命令（均已通过）：
 
 ```bash
-pnpm test       # 381 tests passed
-pnpm typecheck  # clean
+pnpm test       # 394 tests passed
+pnpm typecheck  # 本次改动的文件无类型错误
 ```
 
 ---
@@ -189,9 +233,32 @@ pnpm typecheck  # clean
 | Google | Gemini 3.6 Flash | $0.75 / $3.75（2026-12-31 前），缓存 $0.075 | 未核 | 同上 |
 | Google | Gemini 3.5 Flash-Lite | $0.30 / $2.50，缓存 $0.03 | 未核 | 同上 |
 | Google | Gemini Omni Flash | $1.50 / $9.00 | 未核 | 同上 |
-| DeepSeek | V4.1-Flash-1017 | 价格不变（$0.30 / $1.20 peak） | 1,000,000 | [1017 公告](https://api-docs.deepseek.com/news/news261017/) |
 
-其中 **DeepSeek 1017 最值得优先处理**：API 从 2026-10-17 起已经服务新 checkpoint，价格页的 MODEL VERSION 写的是 `DeepSeek-V4.1-Flash-1017`；它公布了 HLE 42.6/44.0、TB4 42.3、DeepSWE 77.0、ProgramBench 29.1 等一组新分数，和榜单上的旧 checkpoint 分数不是一回事。本次只在价格条目和 release 文章里加了“这是 1017”的说明，没有把两组分数混在一起。
+> **DeepSeek V4.1-Flash-1017 已经不在这一栏里了**——它在本轮单独入库，见 §5.5。
+
+---
+
+## 5.5 DeepSeek V4.1-Flash 1017：两个 checkpoint，各记各的
+
+**为什么必须拆开。** DeepSeek 的 V4.1-Flash 是在同一个 API 模型名（`deepseek-flash`）下滚动更新的 checkpoint。0910 和 1017 **不是同一个模型**：权重不同、跑分不同、发布公告不同。如果把两套分数并到一行，读者会把「发布公告测出来的成绩」当成「今天 API 里的权重」，这正是跑分表最常见的误用。
+
+**这一轮做了什么（三张表各自补齐）**：
+
+| 面 | 0910（首发） | 1017（当前在售） |
+| --- | --- | --- |
+| 价格 `REGISTRY` | `deepseek-flash-0910`（delisted，同价 $0.30 / $1.20 peak，$0.15 / $0.60 off-peak，缓存 $0.006 / $0.003，ctx 1,000,000） | `deepseek-flash`（active，同价同窗口） |
+| 跑分 `LEADERBOARD` | `deepseek-v4.1-flash`（displayName「DeepSeek V4.1-Flash 0910」，19 项，来自 0910 发布公告对照表） | `deepseek-v4.1-flash-1017`（displayName「DeepSeek V4.1-Flash 1017」，11 项，来自 1017 公告对照表） |
+| 文章 `src/content/releases` | `deepseek-v4-1-flash`（中英各一篇） | `deepseek-v4-1-flash-1017`（中英各一篇，**新增**） |
+
+**几条口径**：
+
+- **价格没变，所以两行的单价一模一样**——但它们是两条独立的行，价格行的 `id` 也分开（`deepseek-flash` = 现在在售的 1017，`deepseek-flash-0910` = 已退役的 0910）。合并成一行，等于让「历史 checkpoint」和「在售 checkpoint」共用一条状态，退役这件事就看不出来了。
+- **0910 那 19 条分数一条没动**，仍然只来自它自己的发布公告对照表（保持「一行一个出处」）。1017 公告里顺带重述的 0910 数字，和我们手里的 10 个共有列逐条一致（见 §3.5），当作**交叉验证**记在报告里，不写回 0910 行。
+- **0910 行因此不再是「active 模型」**：它现在标 `delisted`，但价格仍在（长尾搜索要留住），和 `deepseek-chat`、`grok-4` 这些退役行的处理方式一致。
+- **Apex Bench v1.1 与 MathArena Apex 分开**：新增 benchmark id `apex-bench-v1.1`，只给 1017 行记 72.1；0910 行的 64.6 不补（它的数学列是 MathArena Apex 65.6，两者同名不同表）。
+- **两篇文章互链**：0910 那篇明确写「这张表说的是 0910 checkpoint」，1017 那篇明确写「这是今天 API 服务的权重」，并各自链到模型页与对方。
+
+**没做（有意）**：没有把 1017 的分数和 0910 的分数求平均，也没有在任一篇文章里用另一套分数做比较。两套分数只能各自跟同一张表里的其他模型比。
 
 ---
 
@@ -208,7 +275,7 @@ pnpm typecheck  # clean
    - Gemini 3.1 Pro Preview：`$2.00, prompts <= 200k` / `$4.00, prompts > 200k`，输出 `$12.00` / `$18.00`，缓存 `$0.20` / `$0.40`。
    - Gemini 3.8 Flash：`$0.75 / $3.75 / $0.075 through December 31, 2026`，2027-01-01 起翻倍。
    - Gemini 3.1 Flash-Lite：`$0.25 / $1.50 / $0.025`。
-4. **DeepSeek** — [pricing](https://api-docs.deepseek.com/quick_start/pricing)。核对 peak/off-peak 四格 + MODEL VERSION `DeepSeek-V4.1-Flash-1017`；off-peak 是 peak 的一半是文档原文。
+4. **DeepSeek** — [pricing](https://api-docs.deepseek.com/quick_start/pricing)。核对 peak/off-peak 四格 + MODEL VERSION `DeepSeek-V4.1-Flash-1017`；off-peak 是 peak 的一半是文档原文。MODEL VERSION 现在写的是 1017——那就是 API 今天在服务的 checkpoint；0910 首发 checkpoint 价格一模一样，站内以独立条目 `deepseek-flash-0910` 保留。
 5. **MiniMax** — [pricing](https://platform.minimax.io/docs/pricing/overview)。M3.1 Flash `$0.15 / $0.60 / $0.015`；M3 `$0.30 / $1.20 / $0.06`，>512K 翻倍。
 6. **xAI** — [pricing](https://docs.x.ai/docs/pricing)。Grok 4.7 `500k` 上下文；短上下文 `$2.00 / $0.50 / $6.00`；长上下文（≥200K）`$4.00 / $12.00`，缓存读也翻倍。
 
@@ -217,7 +284,7 @@ pnpm typecheck  # clean
 7. **DeepSeek 参考表** — [news260910](https://api-docs.deepseek.com/zh-cn/news/news260910/)。这是已有 110 条分数的唯一来源；逐列对 GPQA / HLE / Codeforces / Apex / TB 2.1 / TB 3.0 / TB 4.0 / DeepSWE / ProgramBench / NL2Repo / CyberGym / SEC / ExploitGym / HLE-tools / Automation / Agents / Chartography / BabyVision / ZeroBench。
 8. **Claude Opus 5.5** — [Anthropic launch](https://www.anthropic.com/news/claude-opus-5-5)。表里能直接看到 TB4 66.4、HLE-tools 67.7、Chartography 89.0；HLE 64.4 在 system card，[BenchLM](https://benchlm.ai/benchmarks/hlenotools) 有转引。
 9. **GPT-6 Astra** — [Snowflake 转载的 OpenAI 表](https://www.snowflake.com/en/blog/openai-gpt-6-astra-snowflake-cortex-ai/) 核 GPQA 96.0、TB4 57.9；[OpenRouter / AA](https://openrouter.ai/openai/gpt-6-astra) 核 HLE 54.7、TB2.1 89.9。
-10. **Kimi K3 / MathArena** — [matharena.ai](https://matharena.ai/models/moonshot_k3)。Apex 65.62 是 MathArena 的 Apex，不是 1017 公告里的 “Apex Bench v1.1”（那张表里是 47.8）——两个 benchmark 同名不同表，不要混。
+10. **Kimi K3 / MathArena** — [matharena.ai](https://matharena.ai/models/moonshot_k3)。Apex 65.62 是 MathArena 的 Apex，不是 1017 公告里的 “Apex Bench v1.1”（那张表里是 47.8）——两个 benchmark 同名不同表，不要混。现在 1017 公告那一列以独立 benchmark id `apex-bench-v1.1` 入库（1017 = 72.1），0910 行不补 64.6。
 
 ---
 

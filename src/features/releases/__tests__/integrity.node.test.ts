@@ -178,6 +178,12 @@ function allowedPrices(post: Post): number[] {
     if (m.peakOffPeak) {
       out.push(m.peakOffPeak.peak.inputPricePer1M, m.peakOffPeak.peak.outputPricePer1M)
       out.push(m.peakOffPeak.offPeak.inputPricePer1M, m.peakOffPeak.offPeak.outputPricePer1M)
+      // The off-peak cache-hit rate is a live price of this model too. It was
+      // missing here, so a post could not quote "$0.003" even though the
+      // registry holds it — a false positive, not a guard.
+      if (m.peakOffPeak.offPeak.cachedInputPricePer1M != null) {
+        out.push(m.peakOffPeak.offPeak.cachedInputPricePer1M)
+      }
     }
     for (const tokens of [
       [1_000_000, 500_000],

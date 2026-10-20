@@ -52,6 +52,33 @@ export function selectReleases(entries: ReleaseRaw[], locale: string): ReleaseMe
     }))
 }
 
+/** Parse an ISO date into a timestamp, or `null` when it is missing/unparsable. */
+function time(iso: string | undefined): number | null {
+  if (!iso) return null
+  const t = Date.parse(iso)
+  return Number.isNaN(t) ? null : t
+}
+
+/**
+ * Sort posts by the day the model shipped, newest first.
+ *
+ * The list page reads as a launch timeline, not a publishing log: every post
+ * carries the same publish date, so `date` cannot order them. `releasedAt` is
+ * the launch day — but it is optional, and a post without a verifiable launch
+ * date cannot be placed on that timeline, so it sinks to the end (still
+ * newest-published first among the undated ones).
+ */
+export function sortByReleasedAt(entries: ReleaseMeta[]): ReleaseMeta[] {
+  return [...entries].sort((a, b) => {
+    const ra = time(a.releasedAt)
+    const rb = time(b.releasedAt)
+    if (ra !== null && rb !== null && ra !== rb) return rb - ra
+    if (ra !== null && rb === null) return -1
+    if (ra === null && rb !== null) return 1
+    return (time(b.date) ?? 0) - (time(a.date) ?? 0)
+  })
+}
+
 /** Find one post by its URL slug inside an already-selected list. */
 export function findReleaseBySlug(entries: ReleaseMeta[], slug: string): ReleaseMeta | undefined {
   return entries.find((e) => e.slug === slug)
