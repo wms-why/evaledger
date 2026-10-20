@@ -1,9 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
+import { BENCHMARKS } from '../benchmarks'
+import { availableScoreIds, MIN_COMPARE_MODELS } from '../compare-selection'
 import { COMPARE_PAIR_ENTRIES } from '../leaderboard'
 import { findLeaderboardModel } from '../models'
-import { CompareSelector } from './CompareSelector'
+import type { LeaderboardModel } from '../types'
 import { CompareResult } from './CompareResult'
+import { CompareScoreSelector } from './CompareScoreSelector'
+import { CompareSelector } from './CompareSelector'
 import { CostQuickCalc } from './CostQuickCalc'
 
 export function PopularComparisons({ exclude }: { exclude?: string }) {
@@ -33,26 +37,40 @@ export function PopularComparisons({ exclude }: { exclude?: string }) {
   )
 }
 
-/** Interactive /compare body: selector + result + cost calculator + links. */
+/** Interactive /compare body: selectors + result + cost calculator + links. */
 export function CompareTool({
-  a,
-  b,
+  models,
+  scoreIds,
   onChange,
+  onScoresChange,
 }: {
-  a: string
-  b: string
-  onChange: (a: string, b: string) => void
+  models: LeaderboardModel[]
+  scoreIds: string[]
+  onChange: (ids: string[]) => void
+  onScoresChange: (ids: string[]) => void
 }) {
-  const modelA = findLeaderboardModel(a)
-  const modelB = findLeaderboardModel(b)
+  if (models.length < MIN_COMPARE_MODELS) return null
 
-  if (!modelA || !modelB) return null
+  const availableScores = availableScoreIds(models)
+  const benchmarks = BENCHMARKS.filter((benchmark) => availableScores.includes(benchmark.id))
 
   return (
     <div className="space-y-8">
-      <CompareSelector a={a} b={b} onChange={onChange} />
-      <CompareResult a={modelA} b={modelB} />
-      <CostQuickCalc a={modelA} b={modelB} />
+      <div className="space-y-3">
+        <CompareSelector models={models} onChange={onChange} />
+        <CompareScoreSelector
+          benchmarks={benchmarks}
+          selectedIds={scoreIds}
+          onChange={onScoresChange}
+        />
+      </div>
+      <CompareResult
+        models={models}
+        scoreIds={scoreIds}
+        onRemoveScore={(id) => onScoresChange(scoreIds.filter((value) => value !== id))}
+        onShowAllScores={() => onScoresChange(availableScores)}
+      />
+      <CostQuickCalc models={models} />
       <PopularComparisons />
     </div>
   )

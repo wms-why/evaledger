@@ -473,6 +473,15 @@ textarea::placeholder {
   color: var(--fg-3);
 }
 
+/* Compact search field inside the model picker popover. */
+input.model-select-search {
+  height: 32px;
+  padding: 0 10px 0 32px;
+  font-size: 13px;
+  border-radius: 8px;
+  background: var(--bg-inset);
+}
+
 .social-btn {
   display: inline-flex;
   align-items: center;

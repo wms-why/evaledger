@@ -19,16 +19,22 @@ function monthlyCost(model: LeaderboardModel, calls: number, input: number, outp
 }
 
 /** "What would 1,000 calls a month cost?" — the compare-page calculator embed. */
-export function CostQuickCalc({ a, b }: { a: LeaderboardModel; b: LeaderboardModel }) {
+export function CostQuickCalc({ models }: { models: LeaderboardModel[] }) {
   const { t } = useTranslation()
   const [calls, setCalls] = useState(DEFAULTS.calls)
   const [input, setInput] = useState(DEFAULTS.inputTokens)
   const [output, setOutput] = useState(DEFAULTS.outputTokens)
 
-  const costA = useMemo(() => monthlyCost(a, calls, input, output), [a, calls, input, output])
-  const costB = useMemo(() => monthlyCost(b, calls, input, output), [b, calls, input, output])
-
-  const cheapest = costA != null && costB != null ? (costA < costB ? 'a' : 'b') : undefined
+  const costs = useMemo(
+    () => models.map((model) => monthlyCost(model, calls, input, output)),
+    [models, calls, input, output],
+  )
+  const present = costs.filter((cost): cost is number => cost != null)
+  const cheapest = present.length
+    ? present.filter((cost) => cost === Math.min(...present)).length === 1
+      ? Math.min(...present)
+      : undefined
+    : undefined
 
   const fields: Array<{ label: string; value: number; set: (n: number) => void }> = [
     { label: t('leaderboard.compare.callsPerMonth'), value: calls, set: setCalls },
@@ -56,25 +62,36 @@ export function CostQuickCalc({ a, b }: { a: LeaderboardModel; b: LeaderboardMod
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {([
-          [a, costA, 'a'],
-          [b, costB, 'b'],
-        ] as const).map(([model, cost, side]) => (
-          <div
-            key={model.id}
-            className={cn(
-              'rounded-[12px] border px-4 py-3',
-              cheapest === side ? 'border-primary/40 bg-soft' : 'border-border bg-bg-alt',
-            )}
-          >
-            <div className="text-[13px] text-fg-2">{model.displayName}</div>
-            <div className="mt-1 text-[22px] font-semibold tabular-nums text-foreground">
-              {cost != null ? formatPrice(cost) : '—'}
-              <span className="ml-1 text-[12px] font-normal text-fg-3">{t('leaderboard.perMonth')}</span>
+      <div
+        className={cn(
+          'mt-4 grid gap-3 sm:grid-cols-2',
+          models.length > 2 && 'lg:grid-cols-3',
+        )}
+      >
+        {models.map((model, index) => {
+          const cost = costs[index]
+          return (
+            <div
+              key={model.id}
+              className={cn(
+                'rounded-[12px] border px-4 py-3',
+                cost != null && cost === cheapest
+                  ? 'border-primary/40 bg-soft'
+                  : 'border-border bg-bg-alt',
+              )}
+            >
+              <div className="text-[13px] text-fg-2">{model.displayName}</div>
+              <div className="mt-1 text-[22px] font-semibold tabular-nums text-foreground">
+                {cost != null ? formatPrice(cost) : '—'}
+                {cost != null && (
+                  <span className="ml-1 text-[12px] font-normal text-fg-3">
+                    {t('leaderboard.perMonth')}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
       <p className="mt-3 text-[12px] text-fg-3">{t('leaderboard.compare.costNote')}</p>
     </section>

@@ -16,16 +16,7 @@ import {
   type SortKey,
 } from '../leaderboard'
 import type { Vendor } from '../types'
-
-const VENDOR_LABEL_KEY: Record<Vendor, string> = {
-  claude: 'leaderboard.vendorClaude',
-  openai: 'leaderboard.vendorOpenai',
-  google: 'leaderboard.vendorGoogle',
-  grok: 'leaderboard.vendorGrok',
-  deepseek: 'leaderboard.vendorDeepseek',
-  glm: 'leaderboard.vendorGlm',
-  kimi: 'leaderboard.vendorKimi',
-}
+import { VENDOR_LABEL_KEY } from '../vendors'
 
 const VENDOR_DOT: Record<Vendor, string> = {
   claude: '#D97757',
@@ -33,6 +24,7 @@ const VENDOR_DOT: Record<Vendor, string> = {
   google: '#4285F4',
   grok: '#111111',
   deepseek: '#4D6BFE',
+  minimax: '#E5484D',
   glm: '#3B4CCA',
   kimi: '#7C3AED',
 }

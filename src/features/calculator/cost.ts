@@ -49,6 +49,7 @@ export function calculateCost(
   // 1. Pick the effective base price (promo > standard).
   let inputPrice = model.inputPricePer1M
   let outputPrice = model.outputPricePer1M
+  let cachedInputMultiplier = 1
   let appliedRule = 'standard'
 
   if (model.promo && now <= new Date(model.promo.untilDate)) {
@@ -72,6 +73,7 @@ export function calculateCost(
     if (tier) {
       inputPrice = inputPrice * tier.inputMultiplier
       outputPrice = outputPrice * tier.outputMultiplier
+      cachedInputMultiplier = tier.inputMultiplier
       appliedRule = `long-context ≥${tier.threshold.toLocaleString()} (×${tier.inputMultiplier} / ×${tier.outputMultiplier})`
     }
   }
@@ -88,13 +90,16 @@ export function calculateCost(
   // 4. Cached input replaces input rate (still subject to long-context / promo).
   //    A peak/off-peak tier may carry its own cache-hit rate; when it does not,
   //    fall back to the model's top-level rate, which is the peak rate.
+  //    Providers price the long-context step on the cache rate too (OpenAI is
+  //    explicit: "2x input and cache rates"), so the input multiplier applies
+  //    to the cached rate as well.
   if (options.useCachedInput && model.cachedInputPricePer1M !== undefined) {
     const tierCachePrice = model.peakOffPeak
       ? (options.peakHour !== false
           ? model.peakOffPeak.peak.cachedInputPricePer1M
           : model.peakOffPeak.offPeak.cachedInputPricePer1M)
       : undefined
-    inputPrice = tierCachePrice ?? model.cachedInputPricePer1M
+    inputPrice = (tierCachePrice ?? model.cachedInputPricePer1M) * cachedInputMultiplier
     appliedRule = appliedRule === 'standard' ? 'cached input' : `${appliedRule} + cached input`
   }
 

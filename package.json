@@ -4,7 +4,7 @@
   "type": "module",
   "packageManager": "pnpm@10.33.1",
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev --port 3000 --host",
     "build": "vite build",
     "preview": "pnpm build && vite preview",
     "test": "vitest run",
@@ -22,7 +22,8 @@
     "db:migrate:prod": "wrangler d1 migrations apply aibookplanner-db-prod --env production --remote",
     "db:seed:local": "wrangler d1 execute aibookplanner-db --local --file=./scripts/seed.sql",
     "db:reset:local": "rm -rf .wrangler/state/v3/d1 && pnpm db:migrate:local && pnpm db:seed:local",
-    "prices:fetch": "node --experimental-strip-types --no-warnings scripts/prices/fetch.ts"
+    "prices:fetch": "node --experimental-strip-types --no-warnings scripts/prices/fetch.ts",
+    "releases:fetch": "node --experimental-strip-types --no-warnings scripts/releases/fetch.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.64.0",

@@ -4,17 +4,8 @@ import { BENCHMARKS } from '../benchmarks'
 import { COMPARE_PAIR_ENTRIES, formatScore, scoreOf } from '../leaderboard'
 import { findLeaderboardModel } from '../models'
 import type { LeaderboardModel } from '../types'
+import { VENDOR_LABEL_KEY } from '../vendors'
 import { PriceCell } from './PriceCell'
-
-const VENDOR_LABEL_KEY: Record<LeaderboardModel['vendor'], string> = {
-  claude: 'leaderboard.vendorClaude',
-  openai: 'leaderboard.vendorOpenai',
-  google: 'leaderboard.vendorGoogle',
-  grok: 'leaderboard.vendorGrok',
-  deepseek: 'leaderboard.vendorDeepseek',
-  glm: 'leaderboard.vendorGlm',
-  kimi: 'leaderboard.vendorKimi',
-}
 
 export function ModelProfile({ model }: { model: LeaderboardModel }) {
   const { t } = useTranslation()

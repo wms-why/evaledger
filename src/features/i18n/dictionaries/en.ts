@@ -29,8 +29,14 @@ export const en = {
     vendorGoogle: 'Google',
     vendorGrok: 'xAI',
     vendorDeepseek: 'DeepSeek',
+    vendorMinimax: 'MiniMax',
     vendorGlm: 'Zhipu',
     vendorKimi: 'Moonshot',
+    modelSelect: {
+      search: 'Search models or vendors…',
+      empty: 'No models found',
+      exhausted: 'No models left to add',
+    },
     home: {
       title: 'LLM Leaderboard — Benchmark Scores & Token Prices in One Table',
       metaDescription:
@@ -39,16 +45,16 @@ export const en = {
       updated: 'Updated',
       positioning:
         'Every score here is traceable to a named source, and every price to a provider page. No interpolation, no marketing charts — just the numbers you can defend.',
-      compareTitle: 'Compare two models',
+      compareTitle: 'Compare multiple models',
       compareBody:
-        'Put any two models head to head: benchmark deltas, price per blended million tokens, context window, and a monthly cost estimate for your usage.',
+        'Shortlist up to five models and compare them side by side: benchmark deltas, blended price per million tokens, context window, and a monthly cost estimate for your usage. Drag them to reorder the columns.',
       compareCta: 'Open the comparison',
       browse: 'Browse',
     },
     compare: {
       title: 'Compare LLMs',
       metaDescription:
-        'Compare any two LLMs side by side — benchmark scores, per-token price, context window, and a monthly cost estimate for your usage.',
+        'Compare up to five LLMs side by side — benchmark scores, per-token price, context window, and a monthly cost estimate for your usage.',
       pairMetaDescription:
         'How {a} and {b} compare on benchmarks and price — scores, context window, and what a month of your usage would cost.',
       techKicker: 'Head to head',
@@ -59,9 +65,22 @@ export const en = {
       ecosystemNote:
         'Raw benchmark parity rarely decides the pick — tooling, open weights, and provider reliability usually do.',
       whichToBuy: 'which should you use?',
-      modelA: 'First model',
-      modelB: 'Second model',
-      swap: 'Swap models',
+      selectedModels: 'Selected models',
+      addModel: 'Add model',
+      maxReached: 'Max {max} models',
+      removeModel: 'Remove {model}',
+      reorderModel: 'Reorder {model}',
+      reorderHint: 'Drag a grip to reorder the columns, or press ← / → on a focused grip.',
+      modelCount: '{count} / {max} models',
+      scoreItems: 'Score items',
+      scoreCount: '{count} / {total} selected',
+      scorePickerHint:
+        'Click a score to show or hide its row; hover a table row to remove it.',
+      selectAllScores: 'Select all',
+      clearScores: 'Clear',
+      showAllScores: 'Show all',
+      removeScore: 'Remove {benchmark}',
+      noScoresSelected: 'No score items selected — add one above to show its benchmark row.',
       dimension: 'Dimension',
       price: 'Blended price',
       fullPrice: 'Full price',
@@ -80,13 +99,27 @@ export const en = {
       pickReasonB:
         'You are optimizing for cost at scale and your workloads tolerate the score gap.',
       costTitle: 'What your usage would cost',
-      costSubtitle: 'Adjust the monthly volume — both models recompute instantly.',
+      costSubtitle: 'Adjust the monthly volume — every model recomputes instantly.',
       callsPerMonth: 'Requests per month',
       inputTokens: 'Input tokens / request',
       outputTokens: 'Output tokens / request',
       costNote:
         'Estimates use list prices and ignore cached input, batch discounts, and off-peak rates.',
+      runUsageFor: 'Run {model} usage',
       popularTitle: 'Popular comparisons',
+      summarySeparator: '; ',
+      summaryTerminator: '.',
+      summarySplit: '{a} and {b} split the {n} shared benchmarks',
+      summaryLeads: '{model} leads on {wins} of {total} shared benchmarks',
+      summaryCheaper: '{model} is ~{pct}% cheaper per blended million tokens',
+      summaryNone:
+        '{a} and {b} have no overlapping benchmarks or price difference to compare',
+      summaryMultiLeads:
+        '{model} leads on {wins} of {total} shared benchmarks across {count} models',
+      summaryMultiTie: '{models} tie at {wins} of {total} shared benchmarks',
+      summaryCheapest:
+        '{model} has the lowest blended price at {price} per million tokens, ~{pct}% below {dearer}',
+      summaryMultiNone: 'Not enough shared benchmark or price data to rank these models',
     },
     model: {
       metaTitleSuffix: 'Benchmarks & Token Pricing',
@@ -166,6 +199,53 @@ export const en = {
   changelog: {
     title: 'Changelog',
     subtitle: 'Product updates and improvements.',
+  },
+  releases: {
+    nav: 'Model Releases',
+    title: 'Model Releases',
+    subtitle:
+      'Every major model launch, rewritten as a cost-and-switch analysis. The prices and scores on each page are pulled live from the provider pages, not copied into the article.',
+    kicker: 'Model release',
+    publishedOn: 'Published',
+    releasedOn: 'Released',
+    checkedOn: 'Prices checked',
+    source: 'Source',
+    sourceNote: 'Source re-checked on {date}.',
+    sourcePrice: '{name} pricing comes from the provider page linked in the table above.',
+    readMore: 'Read the analysis',
+    empty: 'No release analyses published yet.',
+    scoreCount: '{n} benchmarks tracked',
+    noScores: 'No verified scores yet',
+    priceTitle: 'What it costs',
+    priceNote:
+      'USD per 1M tokens, read live from the provider pricing page — so this table can never go stale.',
+    colModel: 'Model',
+    colInput: 'Input',
+    colOutput: 'Output',
+    colCached: 'Cached',
+    colContext: 'Context',
+    colVs: 'Output vs subject',
+    colBenchmark: 'Benchmark',
+    statusActive: 'Active',
+    statusLegacy: 'Legacy',
+    statusRetired: 'Retired',
+    costTitle: 'What your usage would cost',
+    costNote: '1M input + 500K output tokens per month, at list price.',
+    costBreakdown: '{input} input + {output} output',
+    costOffPeak: 'Off-peak hours',
+    costOffPeakNote: 'The same workload scheduled outside this provider’s peak window.',
+    scoreTitle: 'How it scores',
+    scoreEmpty:
+      'We have not verified a benchmark set for this model yet — so we do not publish one. Numbers we cannot trace do not belong on this site.',
+    scoreNote:
+      'Transcribed from the sources named on each leaderboard entry. Coverage differs per model; a missing cell means the source did not report that benchmark.',
+    ctaTitle: 'Run the numbers yourself',
+    ctaNote: 'The tables above are the same data the calculator and the comparison tool use.',
+    ctaCompare: 'Compare it head to head',
+    ctaCalculator: 'Price your own usage',
+    ctaModel: 'See the full model page',
+    backToIndex: 'All model releases',
+    relatedTitle: 'More release analyses',
   },
   waitlist: {
     title: 'Join the waitlist',
@@ -301,7 +381,7 @@ export const en = {
     heroEyebrow: 'Token Cost Calculator · Free',
     heroTitlePre: 'See what your ', heroTitleHl: 'LLM tokens', heroTitlePost: ' actually cost — across every major model.',
     heroSubtitle:
-      'Compare prices across OpenAI, Claude, Gemini, DeepSeek, and Grok in one place. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated regularly.',
+      'Compare prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok in one place. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated regularly.',
     heroCtaPrimary: 'Open the calculator',
     heroSocialProof: 'Trusted by engineers comparing LLM costs every day',
     heroPreviewVolume: '100k input · 40k output · 1k req/mo',
@@ -316,13 +396,13 @@ export const en = {
     ctaBody: 'Paste your prompt, set your usage, see the cost across every model — in seconds. No signup.',
     ctaButton: 'Open the calculator',
     brandMetaDescription:
-      'TokenCalculator is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
+      'TokenCalculator is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
     calculatorMetaDescription:
-      'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
+      'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
     deepseekMetaDescription:
       'DeepSeek V4-Pro ($1.32 input / $3.96 output per 1M) and V4.1-Flash ($0.30 / $1.20) pricing — plus V3.2, off-peak hours, prompt cache, and comparison to GPT-5 / Claude / Gemini. Updated {date}.',
     homeMetaDescription:
-      'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
+      'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
     openrouterMetaDescription:
       'See what OpenRouter really charges after the markup — and when going direct to OpenAI, Claude, Gemini, or DeepSeek is cheaper. Updated {date}.',
     claudeMetaDescription:
@@ -330,7 +410,7 @@ export const en = {
     chatgptMetaDescription:
       'ChatGPT API pricing — GPT-6 astra at $10 input / $50 output per 1M, GPT-5 cached input at $0.125/M (90% off), and the Batch API at 50% off. Updated {date}.',
     brandTitle: 'TokenCalculator — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
-    brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
+    brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
     brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
     footerTagline: 'TokenCalculator — see what your LLM tokens actually cost, across every major model.',
     footerProduct: 'Product', footerResources: 'Resources', footerLegal: 'Legal',
@@ -399,7 +479,7 @@ export const en = {
     // crawlers can index the answer copy — overrides the marketing.faqTitle
     // default which is a generic landing-page phrasing.
     faqTitle: 'Frequently asked questions',
-    subtitleToken: 'Compare prices across OpenAI, Claude, Gemini, DeepSeek, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest.',
+    subtitleToken: 'Compare prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest.',
     h1Openrouter: 'OpenRouter Pricing Calculator',
     subtitleOpenrouter: 'See what your tokens actually cost after the OpenRouter markup — and when going direct to the provider is cheaper.',
     h1Claude: 'Claude Token Cost Calculator',
@@ -432,7 +512,7 @@ export const en = {
 
     // Misc labels
     tokenizerLabel: 'Tokenizer',
-    useCached: 'Use cached input (Anthropic / OpenAI / DeepSeek)',
+    useCached: 'Use cached input (Anthropic / OpenAI / DeepSeek / MiniMax)',
     familyGpt5: 'GPT-5',
     familyGpt4: 'GPT-4',
     familyOSeries: 'o-series',
@@ -443,10 +523,12 @@ export const en = {
     familyGrok4: 'Grok 4',
     familyDeepSeekV3: 'DeepSeek V3',
     familyDeepSeekR1: 'DeepSeek R1',
+    familyMiniMaxM3: 'MiniMax M3',
     providerOpenai: 'OpenAI',
     providerAnthropic: 'Anthropic',
     providerGoogle: 'Google',
     providerDeepSeek: 'DeepSeek',
+    providerMinimax: 'MiniMax',
     providerGrok: 'Grok',
     providerOpenRouter: 'OpenRouter',
     openrouterCurrentMarkup: 'Current average markup: ×{multiplier} ({pct}%)',
@@ -530,7 +612,7 @@ export const en = {
     faq2Q: 'Why is output more expensive than input?',
     faq2A: 'Every LLM provider charges more per output token than per input token — typically 4× to 8× more. Output tokens are billed higher because generation is the compute-heavy step (autoregressive decoding), while input is a single forward pass.',
     faq3Q: 'How do I count tokens?',
-    faq3A: 'For OpenAI models, the calculator uses the real tokenizer (o200k_base for GPT-5, cl100k_base for older families). For Anthropic, Google, DeepSeek, and Grok, it uses a CJK-aware character approximation — accurate to within ~10% for English, ~5% for Chinese.',
+    faq3A: 'For OpenAI models, the calculator uses the real tokenizer (o200k_base for GPT-5, cl100k_base for older families). For Anthropic, Google, DeepSeek, MiniMax, and Grok, it uses a CJK-aware character approximation — accurate to within ~10% for English, ~5% for Chinese.',
     faq4Q: 'How accurate is this calculator?',
     faq4A: 'Token counts are exact for OpenAI-family models and approximate for everyone else. Prices are sourced from each provider\'s official pricing page and re-verified regularly, but providers change prices without notice — always check the source link on each model card before relying on a number for billing.',
     faq5Q: 'What is prompt caching?',

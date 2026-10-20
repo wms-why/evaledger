@@ -3,18 +3,28 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
 /**
  * Hand-curated leaderboard registry.
  *
- * Two provenance lanes:
+ * Five provenance lanes:
  *  - The DeepSeek family, GLM 5.3 and Kimi K3 scores come from the owner's
  *    reference table (captured 2026-10-19), itself from the DeepSeek V4.1
  *    Flash launch post — hence one shared `sourceUrl`.
+ *  - Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their
+ *    vendor launch tables plus Artificial Analysis. Both rows are partial and
+ *    use vendor harnesses; their per-score notes name the setting.
  *  - Gemini 3.1 Pro and Grok 4.7 were read from public benchmark sites /
  *    the vendor model card; each score carries its own `sourceUrl` and a
  *    `note` when the harness differs from the reference table.
+ *  - MiniMax M3.1 Flash comes from the vendor launch post (2026-10-19);
+ *    its scores carry that post as `sourceUrl` and its coverage is partial.
+ *  - MiniMax M3 comes from the vendor's launch post and its own model-card
+ *    comparison table. Scores the post states are cited to the post; the rest
+ *    are cited to the model card, which is the only place MiniMax publishes
+ *    them. Those are vendor-measured (MiniMax's internal harness, Claude Code
+ *    scaffolding) — not an independent leaderboard.
  *
  * Never drop a caveat the source printed. Missing benchmarks are simply
  * absent — no interpolation.
  */
-export const REGISTRY_VERSION = '0.2.0'
+export const REGISTRY_VERSION = '0.5.0'
 
 /** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
 const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
@@ -24,9 +34,31 @@ const GEMINI_CARD = 'https://deepmind.google/models/model-cards/gemini-3-1-pro/'
 const BENCHLM = 'https://benchlm.ai/compare/gemini-3-1-pro-vs-grok-4-7'
 /** BenchLeader compare page (Artificial Analysis figures). */
 const BENCHLEADER = 'https://www.benchleader.com/compare/gemini-3-1-pro-vs-grok-4-7'
+/** MiniMax M3.1 Flash launch post (vendor blog, 2026-10-19). */
+const MINIMAX_M31F_BLOG = 'https://www.minimax.cn/blog/minimax-m31f'
+/** MiniMax M3 launch post (vendor blog, 2026-06-01). */
+const MINIMAX_M3_BLOG = 'https://www.minimax.cn/blog/minimax-m3'
+/** Anthropic's Opus 5.5 launch table (vendor-reported; footnotes carry the harness). */
+const ANTHROPIC_OPUS_55 = 'https://www.anthropic.com/news/claude-opus-5-5'
+/** BenchLM's HLE-without-tools table; cites the Opus 5.5 system card, Table 8.1.A. */
+const BENCHLM_HLE = 'https://benchlm.ai/benchmarks/hlenotools'
+/** Snowflake launch-partner table, sourced from OpenAI's GPT-6 Astra announcement. */
+const OPENAI_GPT6_ASTRA = 'https://www.snowflake.com/en/blog/openai-gpt-6-astra-snowflake-cortex-ai/'
+/** Artificial Analysis rows mirrored on OpenRouter. */
+const OPENROUTER_ASTRA = 'https://openrouter.ai/openai/gpt-6-astra'
+/** MiniMax M3 model card — carries the vendor's own comparison table. */
+const MINIMAX_M3_CARD = 'https://huggingface.co/MiniMaxAI/MiniMax-M3'
+/**
+ * MiniMax publishes its own numbers: measured on its internal infrastructure
+ * with Claude Code as the scaffolding, not on a third-party leaderboard. The
+ * caveat travels with every score it takes from the model card.
+ */
+const VENDOR_MEASURED = 'Vendor-measured (MiniMax internal infra, Claude Code scaffolding)'
 
-/** Timestamp of this collection run — becomes every model's `updatedAt`. */
-const COLLECTED_AT = '2026-10-19T15:56:11+08:00'
+/** Timestamp of the original collection run — most scores were observed then. */
+const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
+/** Timestamp of the 2026-10-20 audit — only the rows added/changed today use it. */
+const OBSERVED_AT = '2026-10-20T15:30:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
 
@@ -34,6 +66,7 @@ interface ScoreOptions {
   unit?: ScoreUnit
   source?: string
   note?: string
+  observedAt?: string
 }
 
 function sc(benchmark: string, score: number, opts: ScoreOptions = {}): BenchmarkScore {
@@ -42,9 +75,75 @@ function sc(benchmark: string, score: number, opts: ScoreOptions = {}): Benchmar
     score,
     unit: opts.unit ?? 'percent',
     sourceUrl: opts.source ?? SOURCE_URL,
-    observedAt: COLLECTED_AT,
+    observedAt: opts.observedAt ?? COLLECTED_AT,
     note: opts.note,
   }
+}
+
+const claudeOpus55: LeaderboardModel = {
+  id: 'claude-opus-5.5',
+  vendor: 'claude',
+  kind: 'opus',
+  version: 'opus-5.5',
+  displayName: 'Claude Opus 5.5',
+  priceId: 'claude-opus-5.5',
+  releaseDate: '2026-09-22',
+  updatedAt: OBSERVED_AT,
+  scores: [
+    sc('hle', 64.4, {
+      source: BENCHLM_HLE,
+      observedAt: OBSERVED_AT,
+      note: 'vendor card, max effort, no tools',
+    }),
+    sc('terminal-bench-4.0', 66.4, {
+      source: ANTHROPIC_OPUS_55,
+      observedAt: OBSERVED_AT,
+      note: 'vendor-reported, xhigh effort; Artificial Analysis measures 59.6 in its own harness',
+    }),
+    sc('hle-tools', 67.7, {
+      source: ANTHROPIC_OPUS_55,
+      observedAt: OBSERVED_AT,
+      note: 'vendor-reported, with tools',
+    }),
+    sc('chartography-tools', 89.0, {
+      source: ANTHROPIC_OPUS_55,
+      observedAt: OBSERVED_AT,
+      note: 'vendor-reported, with tools',
+    }),
+  ],
+}
+
+const gpt6Astra: LeaderboardModel = {
+  id: 'gpt-6-astra',
+  vendor: 'openai',
+  kind: 'gpt',
+  version: '6-astra',
+  displayName: 'GPT-6 Astra',
+  priceId: 'gpt-6-astra',
+  releaseDate: '2026-09-03',
+  updatedAt: OBSERVED_AT,
+  scores: [
+    sc('gpqa-diamond', 96.0, {
+      source: OPENAI_GPT6_ASTRA,
+      observedAt: OBSERVED_AT,
+      note: 'OpenAI-reported maximum at any effort setting',
+    }),
+    sc('hle', 54.7, {
+      source: OPENROUTER_ASTRA,
+      observedAt: OBSERVED_AT,
+      note: 'Artificial Analysis, max effort',
+    }),
+    sc('terminal-bench-2.1', 89.9, {
+      source: OPENROUTER_ASTRA,
+      observedAt: OBSERVED_AT,
+      note: 'Artificial Analysis, high effort',
+    }),
+    sc('terminal-bench-4.0', 57.9, {
+      source: OPENAI_GPT6_ASTRA,
+      observedAt: OBSERVED_AT,
+      note: 'OpenAI-reported maximum; Anthropic reports the same 57.9 at high effort',
+    }),
+  ],
 }
 
 const claudeOpus5: LeaderboardModel = {
@@ -270,12 +369,50 @@ const grok47: LeaderboardModel = {
   ],
 }
 
+const minimaxM31Flash: LeaderboardModel = {
+  id: 'minimax-m3.1-flash',
+  vendor: 'minimax',
+  kind: 'flash',
+  version: 'm3.1-flash',
+  displayName: 'MiniMax M3.1 Flash',
+  priceId: 'minimax-m3.1-flash',
+  releaseDate: '2026-10-19',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('deepswe-v1.1', 73.7, { source: MINIMAX_M31F_BLOG }),
+    sc('cybergym', 82.0, { source: MINIMAX_M31F_BLOG }),
+    sc('agents-last-exam', 29.6, { source: MINIMAX_M31F_BLOG }),
+    sc('bankertoolbench', 76.2, { source: MINIMAX_M31F_BLOG }),
+  ],
+}
+
+const minimaxM3: LeaderboardModel = {
+  id: 'minimax-m3',
+  vendor: 'minimax',
+  kind: 'pro',
+  version: 'm3',
+  displayName: 'MiniMax M3',
+  priceId: 'minimax-m3',
+  releaseDate: '2026-06-01',
+  updatedAt: COLLECTED_AT,
+  scores: [
+    sc('swe-bench-pro', 59.0, { source: MINIMAX_M3_BLOG, note: VENDOR_MEASURED }),
+    sc('terminal-bench-2.1', 66.0, { source: MINIMAX_M3_BLOG, note: VENDOR_MEASURED }),
+    sc('mcp-atlas', 74.2, { source: MINIMAX_M3_BLOG, note: VENDOR_MEASURED }),
+    sc('nl2repo-bench', 42.1, { source: MINIMAX_M3_CARD, note: VENDOR_MEASURED }),
+    sc('browsecompc', 83.5, { source: MINIMAX_M3_CARD, note: VENDOR_MEASURED }),
+    sc('bankertoolbench', 76.1, { source: MINIMAX_M3_CARD, note: VENDOR_MEASURED }),
+  ],
+}
+
 export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: COLLECTED_AT,
+  fetchedAt: OBSERVED_AT,
   sourceNote:
-    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ.',
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows.',
   models: [
+    claudeOpus55,
+    gpt6Astra,
     claudeOpus5,
     gpt56Sol,
     gemini31Pro,
@@ -285,6 +422,8 @@ export const LEADERBOARD: LeaderboardRegistry = {
     deepseekV4Flash0731,
     glm53,
     kimiK3,
+    minimaxM31Flash,
+    minimaxM3,
   ],
   history: [],
 }

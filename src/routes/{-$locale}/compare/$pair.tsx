@@ -62,8 +62,8 @@ function ComparePairPage() {
       <SiteNav theme={theme} loggedIn={loggedIn} />
       <Hero a={a} b={b} />
       <div className="mx-auto max-w-5xl space-y-10 px-5 py-12 md:px-7">
-        <CompareResult a={a} b={b} />
-        <CostQuickCalc a={a} b={b} />
+        <CompareResult models={[a, b]} />
+        <CostQuickCalc models={[a, b]} />
         <PopularComparisons exclude={entry.slug} />
       </div>
       <Footer theme={theme} />

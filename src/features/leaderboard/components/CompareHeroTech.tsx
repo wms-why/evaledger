@@ -26,7 +26,7 @@ export function CompareHeroTech({ a, b }: CompareHeroProps) {
         <h1 className="mt-3 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[44px]">
           {a.displayName} <span className="text-fg-3">{t('leaderboard.compare.vs')}</span> {b.displayName}
         </h1>
-        <p className="mt-4 max-w-[640px] text-[16px] text-fg-2">{buildSummary(a, b)}</p>
+        <p className="mt-4 max-w-[640px] text-[16px] text-fg-2">{buildSummary([a, b], t)}</p>
 
         <div className="mt-8 space-y-3">
           {shared.map((bm) => {

@@ -56,6 +56,51 @@ describe('calculateCost', () => {
     expect(r.appliedRule).toContain('long-context')
   })
 
+  it('applies Gemini 3.1 Pro long-context pricing above 200K', () => {
+    // $2 / $12 up to 200K; $4 / $18 above it.
+    const under = calculateCost('gemini-3.1-pro-preview', 100_000, 50_000, { now: NOW })
+    expect(under.effectiveInputPricePer1M).toBeCloseTo(2, 2)
+    expect(under.effectiveOutputPricePer1M).toBeCloseTo(12, 2)
+
+    const over = calculateCost('gemini-3.1-pro-preview', 250_000, 50_000, { now: NOW })
+    expect(over.effectiveInputPricePer1M).toBeCloseTo(4, 2)
+    expect(over.effectiveOutputPricePer1M).toBeCloseTo(18, 2)
+    expect(over.appliedRule).toContain('long-context')
+
+    // The cached read doubles in the long-context band too ($0.20 → $0.40).
+    const cached = calculateCost('gemini-3.1-pro-preview', 250_000, 0, {
+      useCachedInput: true,
+      now: NOW,
+    })
+    expect(cached.effectiveInputPricePer1M).toBeCloseTo(0.4, 2)
+  })
+
+  it('applies OpenAI long-context pricing above 272K', () => {
+    // GPT-6 astra: $10 / $50 short context; $20 / $75 above 272K input.
+    const under = calculateCost('gpt-6-astra', 200_000, 50_000, { now: NOW })
+    expect(under.effectiveInputPricePer1M).toBeCloseTo(10, 2)
+    expect(under.effectiveOutputPricePer1M).toBeCloseTo(50, 2)
+
+    const over = calculateCost('gpt-6-astra', 300_000, 50_000, { now: NOW })
+    expect(over.effectiveInputPricePer1M).toBeCloseTo(20, 2)
+    expect(over.effectiveOutputPricePer1M).toBeCloseTo(75, 2)
+    expect(over.appliedRule).toContain('long-context')
+
+    // OpenAI prices the long-context step on the cache rate too ($1 → $2).
+    const cached = calculateCost('gpt-6-astra', 300_000, 0, {
+      useCachedInput: true,
+      now: NOW,
+    })
+    expect(cached.effectiveInputPricePer1M).toBeCloseTo(2, 2)
+  })
+
+  it('carries the verified 1M windows for the Claude 5.x and GPT-6 models', () => {
+    expect(findModel('claude-opus-5.5')?.contextWindow).toBe(1_000_000)
+    expect(findModel('claude-sonnet-5')?.contextWindow).toBe(1_000_000)
+    expect(findModel('gpt-6-astra')?.contextWindow).toBe(1_050_000)
+    expect(findModel('gpt-5.6-cyber')?.contextWindow).toBe(400_000)
+  })
+
   it('does NOT apply long-context when total ctx is below threshold', () => {
     const r = calculateCost('gemini-2.5-pro', 100_000, 50_000, { now: NOW })
     expect(r.effectiveInputPricePer1M).toBeCloseTo(1.25, 2)
@@ -90,6 +135,31 @@ describe('calculateCost', () => {
     expect(off.effectiveInputPricePer1M).toBeCloseTo(0.003, 4)
     expect(peak.totalCost).toBeCloseTo(1.206, 4) // 0.006 + 1.2
     expect(off.totalCost).toBeCloseTo(0.603, 4) // 0.003 + 0.6
+  })
+
+  it('bills MiniMax M3.1 Flash at the flat published rate', () => {
+    // $0.15 / $0.60 / $0.015 per 1M. 1M input + 1M output.
+    const r = calculateCost('minimax-m3.1-flash', 1_000_000, 1_000_000, { now: NOW })
+    expect(r.effectiveInputPricePer1M).toBeCloseTo(0.15, 4)
+    expect(r.effectiveOutputPricePer1M).toBeCloseTo(0.6, 4)
+    expect(r.totalCost).toBeCloseTo(0.75, 4)
+    expect(r.appliedRule).toBe('standard')
+  })
+
+  it('applies the MiniMax M3 512K long-context doubling', () => {
+    // MiniMax-M3 standard tier: $0.30 / $1.20, 2x above 512K of input.
+    const under = calculateCost('minimax-m3', 400_000, 100_000, { now: NOW })
+    expect(under.effectiveInputPricePer1M).toBeCloseTo(0.3, 4)
+    expect(under.appliedRule).toBe('standard')
+
+    const over = calculateCost('minimax-m3', 600_000, 100_000, { now: NOW })
+    expect(over.effectiveInputPricePer1M).toBeCloseTo(0.6, 4)
+    expect(over.effectiveOutputPricePer1M).toBeCloseTo(2.4, 4)
+    expect(over.appliedRule).toContain('long-context')
+
+    // Cached input doubles with the rest of the long-context tier ($0.06 → $0.12).
+    const cached = calculateCost('minimax-m3', 600_000, 0, { useCachedInput: true, now: NOW })
+    expect(cached.effectiveInputPricePer1M).toBeCloseTo(0.12, 4)
   })
 
   it('throws for unknown model id', () => {

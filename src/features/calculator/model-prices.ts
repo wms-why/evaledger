@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.2.1'
+export const REGISTRY_VERSION = '0.5.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -34,25 +34,31 @@ export const REGISTRY_VERSION = '0.2.1'
  */
 export const REGISTRY: ModelRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: '2026-09-26',
+  fetchedAt: '2026-10-20',
   sourceNote:
     'Prices sourced from each provider\'s official pricing page. Verify before relying on for billing.',
   openRouterMarkup: 1.05,
 
   models: [
     // ───────────────────────── OpenAI ─────────────────────────
+    // OpenAI's page has two context bands: "short context" / "long context".
+    // The long-context column is 2× input and 1.5× output, applied above
+    // 272K input tokens (see the AWS Bedrock model cards for the threshold).
+    // The 1.05M window belongs to the GPT-6 line and GPT-5.6 sol; cyber keeps
+    // the 400K window. Verified 2026-10-20 against platform.openai.com/docs/pricing.
     {
       id: 'gpt-6-astra',
       provider: 'openai',
       displayName: 'GPT-6 astra',
       family: 'gpt-6',
       status: 'active',
-      contextWindow: 400_000,
+      contextWindow: 1_050_000,
       inputPricePer1M: 10.0,
       outputPricePer1M: 50.0,
       cachedInputPricePer1M: 1.0,
+      longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gpt-6-sol',
@@ -60,12 +66,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'GPT-6 sol',
       family: 'gpt-6',
       status: 'active',
-      contextWindow: 400_000,
+      contextWindow: 1_050_000,
       inputPricePer1M: 2.0,
       outputPricePer1M: 10.0,
       cachedInputPricePer1M: 0.2,
+      longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gpt-6-luna',
@@ -73,12 +80,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'GPT-6 luna',
       family: 'gpt-6',
       status: 'active',
-      contextWindow: 400_000,
+      contextWindow: 1_050_000,
       inputPricePer1M: 0.1,
       outputPricePer1M: 0.5,
       cachedInputPricePer1M: 0.01,
+      longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gpt-5.6-cyber',
@@ -89,8 +97,9 @@ export const REGISTRY: ModelRegistry = {
       contextWindow: 400_000,
       inputPricePer1M: 12.5,
       outputPricePer1M: 75.0,
+      cachedInputPricePer1M: 1.25,
       sourceUrl: 'https://platform.openai.com/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gpt-5.6-sol',
@@ -98,11 +107,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'GPT-5.6 sol',
       family: 'gpt-5',
       status: 'active',
-      contextWindow: 400_000,
+      contextWindow: 1_050_000,
       inputPricePer1M: 4.0,
       outputPricePer1M: 20.0,
+      cachedInputPricePer1M: 0.4,
+      longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gpt-5',
@@ -223,13 +234,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'Fable 5.1',
       family: 'claude-fable',
       status: 'active',
-      contextWindow: 200_000,
+      contextWindow: 1_000_000,
       inputPricePer1M: 10.0,
       outputPricePer1M: 50.0,
       cachedInputPricePer1M: 0.25,
       cacheWrite: [{ window: '5min', pricePer1M: 12.5 }],
       sourceUrl: 'https://claude.com/pricing#api',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'claude-opus-5.5',
@@ -237,13 +248,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'Opus 5.5',
       family: 'claude-opus',
       status: 'active',
-      contextWindow: 200_000,
+      contextWindow: 1_000_000,
       inputPricePer1M: 4.0,
       outputPricePer1M: 20.0,
       cachedInputPricePer1M: 0.2,
       cacheWrite: [{ window: '5min', pricePer1M: 5.0 }],
       sourceUrl: 'https://claude.com/pricing#api',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'claude-sonnet-5',
@@ -251,13 +262,13 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'Sonnet 5',
       family: 'claude-sonnet',
       status: 'active',
-      contextWindow: 200_000,
+      contextWindow: 1_000_000,
       inputPricePer1M: 2.0,
       outputPricePer1M: 10.0,
       cachedInputPricePer1M: 0.2,
       cacheWrite: [{ window: '5min', pricePer1M: 2.5 }],
       sourceUrl: 'https://claude.com/pricing#api',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'claude-haiku-4.5',
@@ -274,7 +285,7 @@ export const REGISTRY: ModelRegistry = {
         { window: '1hr', pricePer1M: 2.0 },
       ],
       sourceUrl: 'https://claude.com/pricing#api',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'claude-opus-4.5',
@@ -347,12 +358,12 @@ export const REGISTRY: ModelRegistry = {
       displayName: 'Claude Opus 5',
       family: 'claude-opus',
       status: 'delisted',
-      contextWindow: 200_000,
+      contextWindow: 1_000_000,
       inputPricePer1M: 5.0,
       outputPricePer1M: 25.0,
       cachedInputPricePer1M: 0.5,
       sourceUrl: 'https://claude.com/pricing#api',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
       note: 'Listed in Anthropic\'s Legacy models section; superseded by Opus 5.5.',
     },
     {
@@ -408,8 +419,13 @@ export const REGISTRY: ModelRegistry = {
       contextWindow: 1_000_000,
       inputPricePer1M: 2.0,
       outputPricePer1M: 12.0,
+      cachedInputPricePer1M: 0.2,
+      // Google's own row: "Input price $4.00, prompts > 200k tokens;
+      // output $18.00, prompts > 200k". The cached read doubles too ($0.40);
+      // cost.ts applies the input multiplier to the cached rate as well.
+      longContext: [{ threshold: 200_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gemini-3.8-flash',
@@ -422,7 +438,8 @@ export const REGISTRY: ModelRegistry = {
       outputPricePer1M: 3.75,
       cachedInputPricePer1M: 0.075,
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
+      note: 'Introductory pricing: $0.75 / $3.75 / $0.075 through 2026-12-31, then $1.50 / $7.50 / $0.15 from 2027-01-01.',
     },
     {
       id: 'gemini-3.1-flash-lite',
@@ -433,8 +450,9 @@ export const REGISTRY: ModelRegistry = {
       contextWindow: 1_000_000,
       inputPricePer1M: 0.25,
       outputPricePer1M: 1.5,
+      cachedInputPricePer1M: 0.025,
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gemini-2.5-pro',
@@ -450,7 +468,7 @@ export const REGISTRY: ModelRegistry = {
         { threshold: 200_000, inputMultiplier: 2, outputMultiplier: 1.5 },
       ],
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gemini-2.5-flash-lite',
@@ -463,7 +481,7 @@ export const REGISTRY: ModelRegistry = {
       outputPricePer1M: 0.4,
       cachedInputPricePer1M: 0.01,
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'gemini-2.5-flash',
@@ -479,7 +497,7 @@ export const REGISTRY: ModelRegistry = {
         { threshold: 200_000, inputMultiplier: 2, outputMultiplier: 1.5 },
       ],
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
 
     // ───────────────────────── DeepSeek ─────────────────────────
@@ -522,7 +540,8 @@ export const REGISTRY: ModelRegistry = {
           'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
-      lastVerified: '2026-10-19',
+      lastVerified: '2026-10-20',
+      note: 'API model version DeepSeek-V4.1-Flash-1017 (released 2026-10-17); the 2026-09-10 launch price is unchanged.',
     },
     {
       id: 'deepseek-v4-pro',
@@ -547,7 +566,7 @@ export const REGISTRY: ModelRegistry = {
           'Mon–Fri (excl. Chinese holidays). Peak 01:00–04:00 & 06:00–10:00 UTC; off-peak = all other times.',
       },
       sourceUrl: 'https://api-docs.deepseek.com/quick_start/pricing',
-      lastVerified: '2026-10-19',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'deepseek-chat',
@@ -596,6 +615,56 @@ export const REGISTRY: ModelRegistry = {
       note: 'Replaced by DeepSeek V4 series; kept for long-tail search.',
     },
 
+    // ───────────────────────── MiniMax ─────────────────────────
+    // Verified 2026-10-19 against platform.minimax.io/docs/pricing/overview
+    // (USD) and platform.minimax.cn/docs/pricing/overview (CNY); the CN launch
+    // post at minimax.cn/blog/minimax-m31f quotes ¥1 / ¥4 / ¥0.1 per 1M for
+    // M3.1 Flash, which reconciles with the USD row at ¥6.667/USD (every M3
+    // cell implies ¥7.00/USD, so one global FX factor does not tie the two
+    // lists together — the USD numbers below are the published ones, not
+    // converted). The M3 launch post (minimax.cn/blog/minimax-m3, 2026-06-01)
+    // confirms the two-pricing-tiers-by-context-length structure and the
+    // 1.5× service_tier=priority lane; the numbers themselves come from the
+    // live pricing page, which the post only shows as a screenshot.
+    // Not carried: the whole M2 line (M2.7 / M2.5 / M2.1 / M2 and their
+    // -highspeed twins). MiniMax closed the series to new users on
+    // 2026-10-19 and M2.7 / M2.5 retire 2026-11-18, after which M Plan
+    // traffic reroutes to M3.1 Flash. The live pricing pages no longer list
+    // any of them — only archived snapshots still show their rates — so this
+    // registry carries MiniMax's current, callable models only.
+    {
+      id: 'minimax-m3.1-flash',
+      provider: 'minimax',
+      displayName: 'MiniMax M3.1 Flash',
+      family: 'minimax-m3',
+      status: 'active',
+      // MiniMax documents 1M as TOTAL input + output, not input alone.
+      contextWindow: 1_000_000,
+      inputPricePer1M: 0.15,
+      outputPricePer1M: 0.6,
+      cachedInputPricePer1M: 0.015,
+      sourceUrl: 'https://platform.minimax.io/docs/pricing/overview',
+      lastVerified: '2026-10-20',
+      note: 'Released 2026-10-19; $0.15 / $0.60 / $0.015 (¥1 / ¥4 / ¥0.1). Flat rate — no long-context tier, and unlike M3 it does not accept service_tier=priority.',
+    },
+    {
+      id: 'minimax-m3',
+      provider: 'minimax',
+      displayName: 'MiniMax M3',
+      family: 'minimax-m3',
+      status: 'active',
+      contextWindow: 1_000_000,
+      inputPricePer1M: 0.3,
+      outputPricePer1M: 1.2,
+      cachedInputPricePer1M: 0.06,
+      // Standard tier, ≤512k input. Past 512k of input every meter doubles
+      // ($0.60 / $2.40 / $0.12) — see the long-context table on the page.
+      longContext: [{ threshold: 524_288, inputMultiplier: 2, outputMultiplier: 2 }],
+      sourceUrl: 'https://platform.minimax.io/docs/pricing/overview',
+      lastVerified: '2026-10-20',
+      note: 'Released 2026-06-01. service_tier=priority costs 1.5× ($0.45 / $1.80 / $0.09). No separate cache-write charge. The cached-input rate above 512k doubles to $0.12; cost.ts applies the input multiplier to the cached rate as well.',
+    },
+
     // ───────────────────────── Grok ─────────────────────────
     {
       id: 'grok-4.7',
@@ -607,7 +676,7 @@ export const REGISTRY: ModelRegistry = {
       inputPricePer1M: 2.0,
       outputPricePer1M: 6.0,
       sourceUrl: 'https://docs.x.ai/docs/models',
-      lastVerified: '2026-09-26',
+      lastVerified: '2026-10-20',
     },
     {
       id: 'grok-4',

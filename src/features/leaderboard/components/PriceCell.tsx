@@ -5,15 +5,15 @@ import type { ModelPrice } from '@/features/calculator/types'
 import { cn } from '@/lib/utils'
 
 /**
- * The one price component, rendered in four places (see plan §3):
+ * The one price component, rendered in three places:
  *  - `column`     → leaderboard table cell (blended $/1M)
- *  - `compare`    → compare-page row (input / output / cached)
  *  - `card`       → model profile price block (full breakdown + source)
  *  - `calculator` → "run your usage through it" link
  *
- * All four read the same `REGISTRY`, so there is one source of truth.
+ * All three read the same `REGISTRY`, so there is one source of truth. The
+ * compare table reads `formatPrice` directly for its compact breakdown rows.
  */
-export type PriceView = 'column' | 'compare' | 'card' | 'calculator'
+export type PriceView = 'column' | 'card' | 'calculator'
 
 export function formatPrice(n: number): string {
   if (n >= 100) return `$${n.toFixed(0)}`
@@ -31,10 +31,13 @@ export function PriceCell({
   priceId,
   view = 'column',
   className,
+  label,
 }: {
   priceId?: string
   view?: PriceView
   className?: string
+  /** Overrides the calculator link text (e.g. "Run Claude Opus 5 usage"). */
+  label?: string
 }) {
   const { t } = useTranslation()
   const price = resolve(priceId)
@@ -60,38 +63,35 @@ export function PriceCell({
           className,
         )}
       >
-        {t('leaderboard.model.runUsage')} →
+        {label ?? t('leaderboard.model.runUsage')} →
       </Link>
     )
   }
 
-  const rows: Array<[string, string | undefined]> = [
-    [t('leaderboard.compare.input'), formatPrice(price.inputPricePer1M)],
-    [t('leaderboard.compare.output'), formatPrice(price.outputPricePer1M)],
-    [
-      t('leaderboard.compare.cached'),
-      price.cachedInputPricePer1M != null ? formatPrice(price.cachedInputPricePer1M) : undefined,
-    ],
-  ]
-
   return (
     <div className={cn('space-y-1', className)}>
-      {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between gap-4 text-[13px]">
-          <span className="text-fg-3">{label}</span>
-          <span className="tabular-nums text-fg-2">{value ?? '—'}</span>
-        </div>
-      ))}
-      {view === 'card' && (
-        <a
-          href={price.sourceUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-block text-[12px] text-fg-3 underline decoration-dotted underline-offset-2 hover:text-foreground"
-        >
-          {t('leaderboard.sourceVerified', { date: price.lastVerified })}
-        </a>
-      )}
+      <div className="flex items-center justify-between gap-4 text-[13px]">
+        <span className="text-fg-3">{t('leaderboard.compare.input')}</span>
+        <span className="tabular-nums text-fg-2">{formatPrice(price.inputPricePer1M)}</span>
+      </div>
+      <div className="flex items-center justify-between gap-4 text-[13px]">
+        <span className="text-fg-3">{t('leaderboard.compare.output')}</span>
+        <span className="tabular-nums text-fg-2">{formatPrice(price.outputPricePer1M)}</span>
+      </div>
+      <div className="flex items-center justify-between gap-4 text-[13px]">
+        <span className="text-fg-3">{t('leaderboard.compare.cached')}</span>
+        <span className="tabular-nums text-fg-2">
+          {price.cachedInputPricePer1M != null ? formatPrice(price.cachedInputPricePer1M) : '—'}
+        </span>
+      </div>
+      <a
+        href={price.sourceUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-2 inline-block text-[12px] text-fg-3 underline decoration-dotted underline-offset-2 hover:text-foreground"
+      >
+        {t('leaderboard.sourceVerified', { date: price.lastVerified })}
+      </a>
     </div>
   )
 }
