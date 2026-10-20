@@ -25,6 +25,18 @@ export default [
     },
   },
   {
+    // The Playwright suite runs in Node, not in the worker: `process.env` is
+    // the normal way to configure it, so the ban above does not apply here.
+    files: ['e2e/**/*.ts', 'playwright.config.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2024,
+        sourceType: 'module',
+      },
+    },
+  },
+  {
     // Never lint generated or built files
     ignores: [
       'dist/**',

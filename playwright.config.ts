@@ -1,36 +1,68 @@
 import { defineConfig, devices } from '@playwright/test'
 
 /**
- * Playwright config for end-to-end visual sweeps (e.g. the admin console).
+ * Playwright — end-to-end coverage for the **public** site.
  *
- * These are NOT part of the unit/integration suite (`pnpm test`, Vitest) — they
- * drive a real Chromium against a running dev server to capture screenshots and
- * exercise client-only behaviour (drawers, theme toggle, toasts) that Vitest
- * cannot. Run them where a browser can actually launch:
+ * Scope: every user-facing page (landing, calculators, leaderboard, compare,
+ * models, benchmarks, best-of, releases, series, legal, changelog, auth
+ * screens) plus the machine-readable endpoints (sitemap / robots / feed /
+ * price API). The admin console is deliberately out of scope — this project
+ * ships no back office.
  *
- *   npx playwright install chromium     # one-time: download the browser
- *   pnpm e2e                          # runs everything in ./e2e
+ * These tests are NOT part of `pnpm test` (Vitest). Vitest owns the pure
+ * logic and the D1-level behaviour; Playwright owns "does the page a visitor
+ * actually lands on render, and does it render the right numbers".
  *
- * The `webServer` below migrates + seeds the local D1 and boots `pnpm dev`
- * before the tests, and tears it down after. See e2e/README.md.
+ *   npx playwright install chromium   # one-time browser download
+ *   pnpm e2e                          # run everything in ./e2e
+ *
+ * The `webServer` below migrates the local D1 and boots `pnpm dev` before the
+ * suite, and tears it down afterwards. If a dev server is already listening on
+ * :3000 it is reused as-is (outside CI) — the suite then runs against whatever
+ * that server has open, which is exactly what a developer wants locally.
  */
+const PORT = Number(process.env.E2E_PORT ?? 3000)
+const BASE_URL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`
+
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: false,
+  // Every spec drives its own browser context, so the pages are independent —
+  // they can run in parallel.
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
-  workers: 1,
-  reporter: [['list']],
+  // A dev server that re-bundles mid-run can still make one page flaky; one
+  // retry turns "the optimizer reloaded" into a non-event.
+  retries: process.env.CI ? 2 : 1,
+  workers: process.env.CI ? 2 : 4,
+  // A cold dev-server compile of a release post is not instant.
+  timeout: 60_000,
+  expect: { timeout: 10_000 },
+  globalSetup: './e2e/global-setup.ts',
+  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // Escape hatch for a machine that already has a Chromium build but cannot
+    // download the one this Playwright wants (offline CI, a locked-down
+    // sandbox): point it at an executable and the suite uses that.
+    ...(process.env.E2E_CHROMIUM_PATH
+      ? { launchOptions: { executablePath: process.env.E2E_CHROMIUM_PATH } }
+      : {}),
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'pnpm db:migrate:local && pnpm db:seed:local && pnpm dev',
-    url: 'http://localhost:3000/',
+    // `db:migrate:local` only (no seed): the public pages need the schema,
+    // and the seed script wipes the local `user` / `feedback` tables.
+    command: 'pnpm db:migrate:local && pnpm dev',
+    url: BASE_URL,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 180_000,
+    env: {
+      ...process.env,
+      // Sandboxes that forbid writes to ~/Library need HOME inside the
+      // workspace — wrangler writes its worker registry there.
+      ...(process.env.E2E_HOME ? { HOME: process.env.E2E_HOME } : {}),
+    },
   },
 })
