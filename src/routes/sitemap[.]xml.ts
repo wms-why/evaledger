@@ -23,6 +23,6 @@ const handler = () => {
   })
 }
 
-export const Route = createFileRoute('/_sitemap.xml')({
+export const Route = createFileRoute('/sitemap.xml')({
   server: { handlers: { GET: handler } },
 })

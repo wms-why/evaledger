@@ -9,11 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/_sitemap[.]xml'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
 import { Route as SitemapFullDotxmlRouteImport } from './routes/sitemap-full[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as AdminSponsorsDotcsvRouteImport } from './routes/admin/sponsors[.]csv'
 import { Route as AdminWaitlistDotcsvRouteImport } from './routes/admin/waitlist[.]csv'
@@ -63,10 +63,6 @@ import { Route as Char123LocaleChar125BenchmarksSlugHistoryRouteImport } from '.
 import { Route as Char123LocaleChar125SeriesSlugIndexRouteImport } from './routes/{-$locale}/series/$slug/index'
 import { Route as Char123LocaleChar125SeriesSlugPairRouteImport } from './routes/{-$locale}/series/$slug/$pair'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/_sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
   id: '/feed.xml',
   path: '/feed.xml',
@@ -85,6 +81,11 @@ const SitemapCoreDotxmlRoute = SitemapCoreDotxmlRouteImport.update({
 const SitemapFullDotxmlRoute = SitemapFullDotxmlRouteImport.update({
   id: '/sitemap-full.xml',
   path: '/sitemap-full.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char123LocaleChar125RouteRoute =
@@ -372,11 +373,11 @@ const Char123LocaleChar125SeriesSlugPairRoute =
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/': typeof SitemapDotxmlRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
   '/sitemap-full.xml': typeof SitemapFullDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
@@ -426,11 +427,11 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/series/$slug/': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof SitemapDotxmlRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
   '/sitemap-full.xml': typeof SitemapFullDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
   '/api/prices.json': typeof ApiPricesDotjsonRoute
@@ -479,11 +480,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/_sitemap.xml': typeof SitemapDotxmlRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
   '/sitemap-full.xml': typeof SitemapFullDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminRouteRouteWithChildren
   '/admin/sponsors.csv': typeof AdminSponsorsDotcsvRoute
   '/admin/waitlist.csv': typeof AdminWaitlistDotcsvRoute
@@ -536,11 +537,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
-    | '/'
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap-core.xml'
     | '/sitemap-full.xml'
+    | '/sitemap.xml'
     | '/{-$locale}/admin'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
@@ -590,11 +591,11 @@ export interface FileRouteTypes {
     | '/{-$locale}/series/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap-core.xml'
     | '/sitemap-full.xml'
+    | '/sitemap.xml'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
     | '/api/prices.json'
@@ -642,11 +643,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/{-$locale}'
-    | '/_sitemap.xml'
     | '/feed.xml'
     | '/robots.txt'
     | '/sitemap-core.xml'
     | '/sitemap-full.xml'
+    | '/sitemap.xml'
     | '/{-$locale}/admin'
     | '/admin/sponsors.csv'
     | '/admin/waitlist.csv'
@@ -698,11 +699,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
   SitemapFullDotxmlRoute: typeof SitemapFullDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminSponsorsDotcsvRoute: typeof AdminSponsorsDotcsvRoute
   AdminWaitlistDotcsvRoute: typeof AdminWaitlistDotcsvRoute
   ApiPricesDotjsonRoute: typeof ApiPricesDotjsonRoute
@@ -713,13 +714,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_sitemap.xml': {
-      id: '/_sitemap.xml'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/feed.xml': {
       id: '/feed.xml'
       path: '/feed.xml'
@@ -746,6 +740,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-full.xml'
       fullPath: '/sitemap-full.xml'
       preLoaderRoute: typeof SitemapFullDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}': {
@@ -1244,11 +1245,11 @@ const Char123LocaleChar125RouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
   SitemapFullDotxmlRoute: SitemapFullDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminSponsorsDotcsvRoute: AdminSponsorsDotcsvRoute,
   AdminWaitlistDotcsvRoute: AdminWaitlistDotcsvRoute,
   ApiPricesDotjsonRoute: ApiPricesDotjsonRoute,
