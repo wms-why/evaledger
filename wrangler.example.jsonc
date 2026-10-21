@@ -76,8 +76,8 @@
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
 	// Declaring var keys here gives `wrangler types` enough info to type env.BETTER_AUTH_SECRET etc.
-	// Real values are supplied via .dev.vars (local) or `wrangler secret put` (production).
-	// Empty strings are fine — they are never deployed; secrets override them.
+	// Local values go here (your wrangler.jsonc is gitignored). Production values are
+	// supplied by `wrangler secret put` and override these on deploy. Empty strings are fine.
 	"vars": {
 		"BETTER_AUTH_SECRET": "",
 		"BETTER_AUTH_URL": "",

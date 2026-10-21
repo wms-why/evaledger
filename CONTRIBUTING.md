@@ -14,8 +14,8 @@ the Cloudflare free-to-cheap stack.
 
 ```bash
 pnpm install
-cp .dev.vars.example .dev.vars   # everything is optional locally; blanks degrade gracefully
-pnpm db:migrate:local         # create the local D1 schema
+cp wrangler.example.jsonc wrangler.jsonc  # fill in local values under `vars`; blanks degrade gracefully
+pnpm db:migrate:local                     # create the local D1 schema
 pnpm dev                      # http://localhost:3000
 ```
 
@@ -35,7 +35,7 @@ pnpm build       # production build
 - **Branch** off `main`: `feat/...`, `fix/...`, `docs/...`, `chore/...`.
 - **Commits**: [Conventional Commits](https://www.conventionalcommits.org) (`feat(storage): ...`, `fix(billing): ...`). Keep them scoped and self-describing.
 - **Code style**: match the surrounding file. Features live as self-contained vertical slices under `src/features/<name>/`; never hand-write owner filters — use `scopeFromUser`/`ownedBy`/`withOwner` from `src/db/scope.ts`.
-- **Env access**: only via `src/lib/env.ts` (never `process.env`). New vars go in `wrangler.jsonc` vars, `.dev.vars.example`, and the zod schema in `src/lib/env-validate.ts`.
+- **Env access**: only via `src/lib/env.ts` (never `process.env`). New vars go in `wrangler.example.jsonc` (and your local `wrangler.jsonc`) vars, and the zod schema in `src/lib/env-validate.ts`.
 - **Tests**: name them `*.node.test.ts` (pure/node pool) or `*.workers.test.ts` (real D1/R2 via miniflare). Add tests for new logic.
 - **Docs**: if you change setup/deploy/behaviour, update the relevant section of the README.
 

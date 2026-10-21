@@ -11,9 +11,6 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
-
-.dev.vars*
-!.dev.vars.example
 !.env.example
 # 生产/staging 密钥文件（wrangler secret bulk 用），绝不入库
 .prod.vars

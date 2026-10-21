@@ -47,9 +47,8 @@ The pricing registry lives in [`src/features/calculator/model-prices.ts`](src/fe
 
 ```bash
 pnpm install
-cp wrangler.example.jsonc wrangler.jsonc
-cp .dev.vars.example .dev.vars       # everything is optional locally
-pnpm db:migrate:local                # apply D1 migrations
+cp wrangler.example.jsonc wrangler.jsonc  # fill in local values under `vars`
+pnpm db:migrate:local                     # apply D1 migrations
 pnpm dev                             # http://localhost:3000
 ```
 

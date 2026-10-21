@@ -45,9 +45,8 @@
 
 ```bash
 pnpm install
-cp wrangler.example.jsonc wrangler.jsonc
-cp .dev.vars.example .dev.vars       # 本地全可选
-pnpm db:migrate:local                # 应用 D1 迁移
+cp wrangler.example.jsonc wrangler.jsonc  # 本地值直接填在 `vars` 区域
+pnpm db:migrate:local                     # 应用 D1 迁移
 pnpm dev                             # http://localhost:3000
 ```
 
