@@ -8,10 +8,49 @@ EvalLedger — a free token cost calculator built on **TanStack Start + Cloudfla
 
 ## Structure
 
-- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `email`, `i18n`, `leaderboard`, `maintenance`, `notifications`, `records`, `releases`, `seo`, `storage`, `theme`, `waitlist`.
+- `src/features/*` — vertical feature slices, each self-contained (schema / server fns / actions / components): `admin`, `analytics`, `audience`, `auth`, `billing`, `changelog`, `data-quality`, `email`, `i18n`, `leaderboard`, `maintenance`, `notifications`, `records`, `releases`, `seo`, `storage`, `theme`, `waitlist`.
 - `src/routes/{-$locale}/` — file-based routes with an optional locale prefix (`/` = en, `/zh` = zh). Top-level routes (`api`, `sitemap`, `robots`) live outside the locale group.
 - `src/components/` — `ui/` primitives + `marketing/` landing + `app/` shell.
 - `src/db/` — Drizzle client + `schema.ts` barrel; tables in `src/db/tables/` and feature `*.schema.ts`.
+
+## Where data lives: this project is a file-based site
+
+The rule that governs every change to this repo:
+
+> **Everything this site knows is a file. The database is not where site data
+> lives — not the published data and not the data visitors submit about it.**
+
+- **Published data → files in git.** Model prices
+  (`src/features/calculator/model-prices.ts`), scores
+  (`src/features/leaderboard/models.ts`), benchmarks
+  (`src/features/leaderboard/benchmarks.ts`), release articles
+  (`src/content/releases/`), series (`src/features/series/series.ts`) and
+  the records ledger (`src/features/records/ledger.ts`) are TypeScript and
+  Markdown files. There is **no** `model`, `price`, `score` or `release`
+  table in D1, and there must never be one: a price is a claim about a
+  vendor's page, so it is reviewed in a diff and changed in a commit — not
+  a row a request handler mutates.
+- **Submitted data → files too, not rows.** A correction report ("this price
+  is stale") is one JSON object per report in the R2 bucket, under the
+  `data-reports/` prefix (`src/features/data-quality/data-report.server.ts`).
+  It is a file for the same reason the price is: it is a claim about the
+  world, it is reviewed, and the **fix** it produces is an edit to the price
+  file. It is *not* a row — a table for it would mean a schema, a migration,
+  and a deploy step that has to be remembered, for data that is a file.
+- **A migration that adds a table for site data is a design error, not a
+  feature.** Adding one is how this repo ends up with a database that
+  disagrees with the files it is supposed to describe. The tables D1 *does*
+  hold (`user`, `session`, `account`, `verification`, `rateLimit`,
+  `subscription`, `processedWebhookEvents`, `waitlist`, `sponsorship`,
+  `feedback`) are the SaaS substrate the template brought — accounts,
+  payments, moderation — not site content.
+
+**A migration is a schema change, not a feature.** `.github/workflows/deploy.yml`
+deploys the Worker but never runs `wrangler d1 migrations apply`, so
+`pnpm db:migrate:prod` is a **required manual step** after any deploy that
+ships a migration. Before merging a migration, say so in the PR/commit. The
+cheapest way to never say it: do not need one.
+
 
 ## Conventions
 
@@ -50,6 +89,30 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy (stag
 - Never auto-merge prices. `cacheWrite` / `longContext` / `peakOffPeak` / `promo` / `status` are human-only.
 - See `scripts/prices/README.md` for selector-debugging workflow and provider mapping.
 
+## A price is a timeline, not a number
+
+A model with a promotion is not "one price" — it is a timeline. The registry
+records that timeline as `priceWindows: PriceWindow[]` (a dated rate band:
+`from`, optional `until`, the rates, a label) rather than describing it only
+in prose. `tiers: PricingTier[]` records the service tiers a vendor
+publishes next to the standard rate, and `channel` records whether the row
+is the vendor's own price list (`official`) or a router's quote
+(`aggregator` — the OpenRouter clone).
+
+- `cost.ts` resolves the band whose `[from, until]` contains the date and
+  falls back to the base price outside every band; `priceDetail(model, now)`
+  exposes the same resolution as data. **The two must never disagree** —
+  a price the calculator charges and a price the page shows are the same
+  number by construction, not by convention.
+- `appliedRule` names the band (`"Promotional rate (until 2026-11-21)"`),
+  and `pricing-rule.ts` localizes it via `calculator.ruleWindow` /
+  `calculator.ruleWindowUntil`. The Chinese band names live in
+  `PRICE_WINDOW_LABELS_ZH` (`model-notes.ts`), mirroring `MODEL_NOTES_ZH`.
+- **A promo window is a promise with a date.** Encoding a rate band means
+  committing to when it ends — the figure and the expiry come from the same
+  source, and the source is linked from the price detail. Never invent a
+  band: only encode what the provider's own page already states.
+
 ## Data moves as one: prices + scores + release pages
 
 `src/features/calculator/model-prices.ts` (prices),
@@ -86,6 +149,47 @@ mechanically and fails the build on:
 So: **after touching prices or scores, re-read the affected articles and bump
 their `dataCheckedAt` to today**, then run `pnpm test`. Anything still red is
 a page you have not re-read yet.
+
+## Capability boards: how a score is computed
+
+`src/features/leaderboard/scoring.ts` is the site's scoring core. It exists
+because the old "Avg" column averaged each model over **whatever benchmarks
+it happened to have** — so a model measured on three easy tests could
+outrank one measured on seven hard ones, and a reader could not tell from
+the page whether the comparison was fair.
+
+The rule it enforces:
+
+> **A model is ranked on a board only if it was measured on every core
+> benchmark of that board. A missing benchmark is "not tested" — never zero,
+> and never a partial average over a smaller denominator.**
+
+- A **track** (`TRACKS`) is a named capability: general, coding, agent,
+  reasoning. Each declares `core` (the gate, with weights) and `context`
+  (shown, never scored).
+- **Normalization is per benchmark**: a score is `raw / fieldBest * 100`,
+  where `fieldBest` is the best score ANY model has recorded on that
+  benchmark. A raw 90% on one test and a raw 90% on another are not the
+  same achievement, so they must not be averaged as if they were.
+- Only `percent` benchmarks can enter a composite. A `rating` benchmark
+  (codeforces) has no field best and is context-only.
+- `rankTrack(track)` returns `{ ranked, incomplete }` — the two partition the
+  registry. `incomplete` models are **listed, not hidden**, each with the
+  benchmark it is missing.
+- **Adding a model must not move anyone's score** unless it becomes the
+  field best on a core benchmark. Pinned by
+  `src/features/leaderboard/__tests__/board-fairness.node.test.ts`.
+
+The same gate governs the `/best/*` pages (`categoryRows` →
+`scoreAgainstCore`) and the data-quality page. If you add a benchmark, a
+board, or a model, run `pnpm vitest run src/features/leaderboard` — the
+fairness tests are the contract.
+
+The **methodology page** (`/methodology`) and each **board page**
+(`/leaderboard/$track`) publish this arithmetic: the formula, the weights,
+the field best and who holds it, and the source of every score. A change to
+the formula is a change to a published promise — update the copy in
+`src/features/i18n/dictionaries/` (en **and** zh) in the same commit.
 
 ## Records: one model version = one record, and old records do not change
 
