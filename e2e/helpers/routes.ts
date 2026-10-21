@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { BEST_CATEGORIES, COMPARE_PAIR_ENTRIES } from '@/features/leaderboard/leaderboard'
+import { TRACK_IDS } from '@/features/leaderboard/scoring'
 import { SERIES } from '@/features/series/series'
 import { allSeriesPairs } from '@/features/series/select'
 import type { Locale } from '@/features/i18n/locale'
@@ -31,6 +32,7 @@ export interface RouteCase {
     | 'static'
     | 'calculator'
     | 'compare'
+    | 'leaderboard'
     | 'model'
     | 'benchmark'
     | 'best'
@@ -44,6 +46,7 @@ export interface RouteCase {
 export const STATIC_ROUTES: RouteCase[] = [
   { path: '/', name: 'landing / leaderboard', group: 'static' },
   { path: '/leaderboard-history', name: 'leaderboard history', group: 'static' },
+  { path: '/methodology', name: 'scoring methodology', group: 'static' },
   { path: '/changelog', name: 'changelog', group: 'static' },
   { path: '/sponsor', name: 'sponsor', group: 'static' },
   { path: '/waitlist', name: 'waitlist', group: 'static' },
@@ -55,6 +58,13 @@ export const STATIC_ROUTES: RouteCase[] = [
   { path: '/reset-password', name: 'reset password', group: 'auth' },
   { path: '/verify-email', name: 'verify email', group: 'auth' },
 ]
+
+/** `/leaderboard/$track` — one page per capability board. */
+export const TRACK_ROUTES: RouteCase[] = TRACK_IDS.map((slug) => ({
+  path: `/leaderboard/${slug}`,
+  name: `leaderboard track ${slug}`,
+  group: 'leaderboard' as const,
+}))
 
 /** The calculator and the per-provider pricing landings. */
 export const CALCULATOR_ROUTES: RouteCase[] = [
@@ -149,6 +159,7 @@ export const ALL_PAGE_ROUTES: RouteCase[] = [
   ...STATIC_ROUTES,
   ...CALCULATOR_ROUTES,
   ...COMPARE_ROUTES,
+  ...TRACK_ROUTES,
   ...MODEL_ROUTES,
   ...BENCHMARK_ROUTES,
   ...BEST_ROUTES,

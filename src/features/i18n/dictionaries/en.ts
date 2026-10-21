@@ -20,7 +20,6 @@ export const en = {
     colRank: '#',
     colModel: 'Model',
     colScore: 'Score',
-    colAverage: 'Avg',
     colPrice: 'Price /1M',
     colObserved: 'Observed',
     sourceVerified: 'Source · verified {date}',
@@ -195,6 +194,127 @@ export const en = {
       subtitle:
         'Cost any prompt across every model on the leaderboard — paste text or enter your monthly usage.',
     },
+
+    // ── Scoring tracks ──────────────────────────────────────────────────
+    // Four capability boards. Each states its own formula, weights and scope;
+    // nothing here is shared between boards, so a score can never leak across.
+    tracks: {
+      general: {
+        label: 'General intelligence',
+        scope:
+          'Broad academic and frontier knowledge. It deliberately excludes coding and agent benchmarks, so a model strong at reasoning is not penalised for being weaker at editing files.',
+        formula:
+          'The weighted mean of GPQA Diamond (weight 1) and HLE (weight 2), each rescaled against the best score any model has recorded on that benchmark. A model missing either benchmark is not ranked.',
+      },
+      coding: {
+        label: 'Coding',
+        scope:
+          'Repository-level software engineering: real issue resolution, program synthesis and natural-language-to-repository generation.',
+        formula:
+          'The weighted mean of DeepSWE v1.1 (weight 2), NL2Repo-Bench (weight 1) and ProgramBench (weight 1), each rescaled against the best score any model has recorded on that benchmark. A model missing any of the three is not ranked.',
+      },
+      agent: {
+        label: 'Agent',
+        scope:
+          'Long-horizon tool use — terminal tasks, multi-step automation and work that has to survive contact with a real environment.',
+        formula:
+          'The weighted mean of Terminal-Bench 4.0 (weight 2), Agents’ Last Exam (weight 1) and Automation-Bench (weight 1), each rescaled against the best score any model has recorded on that benchmark. A model missing any of the three is not ranked.',
+      },
+      reasoning: {
+        label: 'Reasoning',
+        scope:
+          'Deliberate multi-step problem solving under hard evaluation: frontier knowledge, competition mathematics and long-horizon graph traversal.',
+        formula:
+          'The weighted mean of GPQA Diamond (weight 1), HLE (weight 1) and MathArena Apex (weight 2), each rescaled against the best score any model has recorded on that benchmark. A model missing any of the three is not ranked.',
+      },
+    },
+    track: {
+      nav: 'Capability boards',
+      title: '{track} leaderboard',
+      metaDescription:
+        'Models ranked on {track}, with the formula, the weights and the source of every score shown. Only models that were actually measured on every benchmark of the board are ranked.',
+      intro:
+        'A model is ranked here only if it published a score for every benchmark this board scores on. Models that were not measured on all of them are listed below, marked as untested — never averaged over the benchmarks they happen to have.',
+      formulaTitle: 'How this board is scored',
+      weightsTitle: 'Weights',
+      scopeTitle: 'What this board measures',
+      benchmarksTitle: 'Benchmarks in this board',
+      contextTitle: 'Reported here but not scored',
+      contextNote:
+        'These benchmarks are published for this model but carry no weight in this board’s score.',
+      normalizationTitle: 'Normalization',
+      normalizationNote:
+        'Raw scores are not comparable across benchmarks — 90% on one test and 90% on another are not the same achievement. Each benchmark is therefore rescaled against the best score any model has recorded on it, so 100 always means "the best result anyone has published on this benchmark".',
+      fieldBest: 'Best recorded',
+      fieldBestHeldBy: 'held by {model}',
+      composite: 'Composite',
+      coverage: 'Coverage',
+      coverageFull: 'All {n} benchmarks',
+      coveragePartial: '{n} of {total} scored',
+      untested: 'Not tested',
+      untestedHint: 'This model has no published score for that benchmark, so it is not counted as zero — it simply has not been measured.',
+      notRanked: 'Not ranked on this board',
+      notRankedReason: 'Missing a score for {benchmarks}',
+      notRankedReasonOne: 'Missing a score for {benchmark}',
+      allModels: 'All {n} models',
+      rankedModels: '{n} models ranked',
+      unrankedModels: '{n} not ranked',
+      sourceTitle: 'Where these scores come from',
+      sourceVendor: 'Vendor-reported',
+      sourceThirdParty: 'Third-party evaluation',
+      sourceReference: 'Reference table',
+      sourceNote:
+        'A score published by the vendor is the vendor’s own harness. A third-party score is measured on someone else’s infrastructure, which is why the two are not interchangeable.',
+      observedAt: 'Measured',
+      testConfig: 'Test configuration',
+      sampleConditions: 'Sample conditions',
+      version: 'Version',
+      compareAll: 'Compare all boards',
+      pick: 'Pick a board',
+      rankTitle: 'Ranked models',
+      noRankedModels: 'No model has been measured on every benchmark of this board yet.',
+    },
+    custom: {
+      title: 'Custom weights',
+      intro:
+        'Weight what matters to you and the board re-ranks itself. A model that was never measured on one of your weighted boards cannot be scored on it, so it drops out of this ranking rather than being averaged over the benchmarks it happens to have.',
+      price: 'Price',
+      score: 'Custom score',
+      priceAxis: 'Price index',
+      notRanked: 'Not ranked on your weights',
+      noPrice: 'No published price',
+      note: 'The price axis is logarithmic, so the cheapest model in the field scores 100 and the most expensive scores 0.',
+    },
+    methodology: {
+      title: 'How we score',
+      metaDescription:
+        'The exact formula, weights and sources behind every EvalLedger leaderboard — what a composite score means, what it excludes, and why a missing score is never a zero.',
+      intro:
+        'A leaderboard is only as trustworthy as its arithmetic. This is the whole of ours: every board, its weights, what it leaves out, and where each number came from.',
+      why: 'Why a missing score is never a zero',
+      whyBody:
+        'Averaging over the benchmarks a model happens to have scored flatters thin models: drop the two hardest tests and your average rises. So no board on this site averages over a partial set. A model that was not measured on every benchmark of a board is not ranked on it — it is listed as untested, and the benchmarks it is missing are named.',
+      weights: 'Weights',
+      benchmark: 'Benchmark',
+      weight: 'Weight',
+      best: 'Best recorded',
+      source: 'Source',
+      scope: 'Scope',
+      formula: 'Formula',
+      boards: 'The boards',
+      boardsNote: 'Each board is scored on its own benchmarks, with its own weights. A model needs a complete set for that board to be ranked on it.',
+      sources: 'Where the numbers come from',
+      sourcesNote:
+        'Every score links to the page it was read from. Scores are grouped by who measured them, because a vendor’s own harness and an independent evaluation are not the same measurement.',
+      updates: 'How the data is kept honest',
+      updatesNote:
+        'Prices carry the date they were last checked against the provider’s page. Scores carry the date they were observed and the caveat the source printed with them. Corrections are logged rather than quietly applied, and you can report a number that looks wrong.',
+      reportIssue: 'Report a data problem',
+    },
+
+    // ── Price breakdown ─────────────────────────────────────────────────
+    // Every price is broken into its parts, so a reader can tell which
+    // number they are looking at and where it came from.
     price: {
       title: 'Price breakdown',
       input: 'Input',
@@ -508,7 +628,7 @@ export const en = {
     feedbackAdmin: 'All Feedback', feedbackSub: 'Every submission, with status controls and replies.',
     adminNotePlaceholder: 'Optional reply shown to the submitter', save: 'Save', saved: 'Saved.',
     noProviders: 'No providers configured yet.',
-  },
+    },
   marketing: {
     navFeatures: 'Features',
     navChangelog: 'Changelog',

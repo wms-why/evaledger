@@ -3,6 +3,7 @@ import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing
 import type { ModelPrice } from '@/features/calculator/types'
 import { BENCHMARKS, type Benchmark } from './benchmarks'
 import { LEADERBOARD } from './models'
+import { scoreAgainstCore, type TrackBenchmark } from './scoring'
 import type { BenchmarkScore, LeaderboardModel, ScoreUnit } from './types'
 
 /** The six benchmarks shown on the home leaderboard (models mostly have these). */
@@ -47,53 +48,27 @@ export function scoreOf(model: LeaderboardModel, benchmarkId: string): Benchmark
   return model.scores.find((s) => s.benchmark === benchmarkId)
 }
 
-export function averageCoreScore(model: LeaderboardModel): number | undefined {
-  const vals = CORE_BENCHMARK_IDS.map((id) => scoreOf(model, id)).filter(
-    (s): s is BenchmarkScore => !!s && s.unit === 'percent',
-  )
-  if (vals.length === 0) return undefined
-  return vals.reduce((sum, s) => sum + s.score, 0) / vals.length
-}
-
 export interface LeaderboardRow {
   model: LeaderboardModel
   price?: ModelPrice
   blendedPricePer1M?: number
-  average?: number
+  /**
+   * The model's composite on the board it is ranked on.
+   *
+   * Named `composite`, not `average`, because it is NOT a plain average of
+   * the benchmarks a model happens to have: the denominators would differ, so
+   * a model measured on three easy tests could outrank one measured on seven
+   * hard ones. Boards compute this through the coverage gate in `scoring.ts`
+   * instead. It is set only by the board-scoped row builders — a row with no
+   * board has no composite.
+   */
+  composite?: number
 }
 
 export function leaderboardRows(): LeaderboardRow[] {
   return LEADERBOARD.models.map((model) => {
     const price = findPrice(model)
-    return { model, price, blendedPricePer1M: blendedPricePer1M(price), average: averageCoreScore(model) }
-  })
-}
-
-export type SortKey = 'model' | 'average' | 'price' | string
-
-export function sortRows(rows: LeaderboardRow[], key: SortKey, dir: 'asc' | 'desc'): LeaderboardRow[] {
-  const mul = dir === 'asc' ? 1 : -1
-  const value = (r: LeaderboardRow): number | string => {
-    if (key === 'model') return r.model.displayName.toLowerCase()
-    if (key === 'average') return r.average ?? -Infinity
-    if (key === 'price') return r.blendedPricePer1M ?? Number.NaN
-    const s = scoreOf(r.model, key)
-    return s ? s.score : -Infinity
-  }
-  return [...rows].sort((a, b) => {
-    const va = value(a)
-    const vb = value(b)
-    if (typeof va === 'string' || typeof vb === 'string') {
-      return String(va).localeCompare(String(vb)) * mul
-    }
-    // A model without a price has no place in the price ranking: it goes last
-    // in BOTH directions — "no price" is not "the most expensive", and a
-    // descending sort used to put every priceless model at the top.
-    if (Number.isNaN(va) || Number.isNaN(vb)) {
-      if (Number.isNaN(va) && Number.isNaN(vb)) return 0
-      return Number.isNaN(va) ? 1 : -1
-    }
-    return (va - vb) * mul
+    return { model, price, blendedPricePer1M: blendedPricePer1M(price) }
   })
 }
 
@@ -196,21 +171,28 @@ export function findBestCategory(slug: string): BestCategory | undefined {
   return BEST_CATEGORIES.find((c) => c.slug === slug)
 }
 
+/**
+ * The rows of a "best model for X" page.
+ *
+ * These pages used to average each model over whatever benchmarks it
+ * happened to have — the same unfairness the main board had. They now go
+ * through the same coverage gate: a model is ranked only if it was
+ * measured on every benchmark of the category, and its score is the
+ * weighted mean of the field-best-normalized scores.
+ */
 export function categoryRows(category: BestCategory): LeaderboardRow[] {
+  const core: TrackBenchmark[] = category.benchmarkIds.map((id) => ({ id, weight: 1 }))
   const rows = leaderboardRows().filter(
     (r) => !category.vendors || category.vendors.includes(r.model.vendor),
   )
   const scored = rows.map((r) => {
-    const vals = category.benchmarkIds
-      .map((id) => scoreOf(r.model, id))
-      .filter((s): s is BenchmarkScore => !!s && s.unit === 'percent')
-    const avg = vals.length ? vals.reduce((n, s) => n + s.score, 0) / vals.length : undefined
-    return { row: r, avg }
+    const score = scoreAgainstCore(r.model, core)
+    return { row: r, composite: score.composite }
   })
   return scored
-    .filter((s) => s.avg !== undefined)
-    .sort((x, y) => (y.avg as number) - (x.avg as number))
-    .map((s) => ({ ...s.row, average: s.avg }))
+    .filter((s) => s.composite !== undefined)
+    .sort((x, y) => (y.composite as number) - (x.composite as number))
+    .map((s) => ({ ...s.row, composite: s.composite }))
 }
 
 /** Compact column headings for dense tables. */

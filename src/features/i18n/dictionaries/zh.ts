@@ -22,7 +22,6 @@ export const zh: Dict = {
     colRank: '#',
     colModel: '模型',
     colScore: '分数',
-    colAverage: '均值',
     colPrice: '价格 /1M',
     colObserved: '采集时间',
     sourceVerified: '来源 · 核验于 {date}',
@@ -180,6 +179,125 @@ export const zh: Dict = {
       h1: 'Token 计算器',
       subtitle: '为榜单里所有模型计算任意提示词成本——粘贴文本或输入月度用量。',
     },
+
+    // ── 专项榜单 ────────────────────────────────────────────────────────
+    // 四条能力榜，各自声明自己的公式、权重与适用范围；不共用任何基准，
+    // 因此一个基准的分数不会串到另一条榜上。
+    tracks: {
+      general: {
+        label: '综合智能',
+        scope:
+          '通识与前沿学术知识。刻意排除编程与智能体基准——推理强的模型不会因为改文件能力弱而被扣分。',
+        formula:
+          'GPQA Diamond（权重 1）与 HLE（权重 2）的加权平均，每个基准先按全站最高分重新标定。缺少任一核心基准的模型不参与排名。',
+      },
+      coding: {
+        label: '编程',
+        scope:
+          '仓库级软件工程：真实 issue 修复、程序合成、自然语言到仓库生成。',
+        formula:
+          'DeepSWE v1.1（权重 2）、NL2Repo-Bench（权重 1）与 ProgramBench（权重 1）的加权平均，每个基准先按全站最高分重新标定。缺少任一核心基准的模型不参与排名。',
+      },
+      agent: {
+        label: '智能体',
+        scope:
+          '长程工具使用——终端任务、多步自动化，以及必须扛住真实环境考验的工作。',
+        formula:
+          'Terminal-Bench 4.0（权重 2）、Agents’ Last Exam（权重 1）与 Automation-Bench（权重 1）的加权平均，每个基准先按全站最高分重新标定。缺少任一核心基准的模型不参与排名。',
+      },
+      reasoning: {
+        label: '推理',
+        scope:
+          '在高强度评测下进行的多步问题求解：前沿知识、竞赛数学与长程图遍历。',
+        formula:
+          'GPQA Diamond（权重 1）、HLE（权重 1）与 MathArena Apex（权重 2）的加权平均，每个基准先按全站最高分重新标定。缺少任一核心基准的模型不参与排名。',
+      },
+    },
+    track: {
+      nav: '专项榜',
+      title: '{track}榜单',
+      metaDescription:
+        '按{track}排名的模型，公开公式、权重与每个分数的来源。只有在该榜每项基准上都实测过的模型才会进入排名。',
+      intro:
+        '只有在该榜全部计分基准上都公开过成绩的模型才会进入排名。没有在全部基准上实测的模型列在下方并标记为未测试——绝不会用「恰好测过的那几项」去平均。',
+      formulaTitle: '这个榜怎么算',
+      weightsTitle: '权重',
+      scopeTitle: '这个榜衡量什么',
+      benchmarksTitle: '本榜包含的基准',
+      contextTitle: '有成绩但不计分',
+      contextNote: '这些基准是公开的，但不参与本榜分数的计算。',
+      normalizationTitle: '归一化方式',
+      normalizationNote:
+        '不同基准的原始分不可直接比较——两个不同的测试都考 90%，含义并不相同。因此每个基准都按全站最高分重新标定，100 始终表示「该基准上公开过的最好成绩」。',
+      fieldBest: '全站最高',
+      fieldBestHeldBy: '由 {model} 保持',
+      composite: '综合分',
+      coverage: '覆盖',
+      coverageFull: '全部 {n} 项',
+      coveragePartial: '已测 {n}/{total}',
+      untested: '未测试',
+      untestedHint: '该模型在这一项基准上没有公开成绩，因此不记为零分——只是没有测过。',
+      notRanked: '未进入本榜排名',
+      notRankedReason: '缺少 {benchmarks} 的成绩',
+      notRankedReasonOne: '缺少 {benchmark} 的成绩',
+      allModels: '全部 {n} 个模型',
+      rankedModels: '{n} 个模型参与排名',
+      unrankedModels: '{n} 个未参与排名',
+      sourceTitle: '这些分数的来源',
+      sourceVendor: '厂商自测',
+      sourceThirdParty: '第三方评测',
+      sourceReference: '参考表',
+      sourceNote:
+        '厂商公布的分数来自厂商自己的评测环境；第三方分数是在别人的基础设施上测出来的。两者不能互相替代。',
+      observedAt: '采集于',
+      testConfig: '测试配置',
+      sampleConditions: '样本条件',
+      version: '版本',
+      compareAll: '对比全部榜单',
+      pick: '选择一个榜单',
+      rankTitle: '参与排名的模型',
+      noRankedModels: '目前还没有模型在本榜的全部基准上都实测过。',
+    },
+    custom: {
+      title: '自定义权重',
+      intro:
+        '按你在意的维度设定权重，榜单会重新排序。某个模型若从未在你加权的榜单上实测过，就无法在该榜计分——它会被移出这个排名，而不是用「恰好测过的那几项」去平均。',
+      price: '价格',
+      score: '自定义分',
+      priceAxis: '价格指数',
+      notRanked: '未按你的权重排名',
+      noPrice: '没有公开价格',
+      note: '价格轴按对数刻度计算：全站最便宜的模型得 100 分，最贵的得 0 分。',
+    },
+    methodology: {
+      title: '我们的评分方法',
+      metaDescription:
+        'EvalLedger 每一个榜单背后的完整公式、权重与来源——综合分意味着什么、排除了什么，以及为什么缺失的成绩永远不会被当成零分。',
+      intro:
+        '一个榜单的可信度取决于它的算术是否经得起检验。这就是我们全部的算术：每一条榜、它的权重、排除了什么，以及每个数字的出处。',
+      why: '为什么缺失的成绩永远不是零分',
+      whyBody:
+        '只对「恰好测过的那几项」取平均会美化数据薄弱的模型：去掉最难的两项测试，平均分就上去了。所以本站任何榜单都不对残缺集合取平均。没有在全部计分基准上实测的模型不进入该榜排名——它被列为未测试，并写明缺了哪几项。',
+      weights: '权重',
+      benchmark: '基准',
+      weight: '权重',
+      best: '全站最高',
+      source: '来源',
+      scope: '适用范围',
+      formula: '公式',
+      boards: '有哪几条榜',
+      boardsNote: '每条榜用自己的基准和权重单独计分。模型需要在该榜上取得完整的一组成绩，才能进入该榜排名。',
+      sources: '数字从哪来',
+      sourcesNote:
+        '每个分数都链接到它被读取的原始页面，并按「谁测的」分组——厂商自测与第三方评测不是同一次测量。',
+      updates: '数据是怎么被保持诚实的',
+      updatesNote:
+        '价格带有与厂商页面核对的日期；分数带有观测日期和来源随附的说明。修正会被记录下来，而不是悄悄改掉；如果你发现某个数字不对，可以直接报告。',
+      reportIssue: '报告数据问题',
+    },
+
+    // ── 价格明细 ────────────────────────────────────────────────────────
+    // 每个价格都拆开成独立字段，读者才知道自己看的是哪个数、它从哪来。
     price: {
       title: '价格明细',
       input: '输入',
@@ -473,7 +591,7 @@ export const zh: Dict = {
     feedbackAdmin: '全部反馈', feedbackSub: '全部反馈，可流转状态并回复。',
     adminNotePlaceholder: '可选回复，提交者可见', save: '保存', saved: '已保存。',
     noProviders: '尚未配置任何服务商。',
-  },
+    },
   marketing: {
     navFeatures: '功能',
     navChangelog: '更新日志',
@@ -664,9 +782,9 @@ export const zh: Dict = {
     offPeakLabel: '非高峰时段',
     longContextLabel: '长上下文 ≥{n}',
     ruleStandard: '标准计费',
+    rulePromo: '促销至 {date}',
     ruleWindow: '{label}',
     ruleWindowUntil: '{label}（至 {date}）',
-    rulePromo: '促销至 {date}',
     ruleDelisted: '已下架',
 
     // TLDR

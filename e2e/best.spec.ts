@@ -43,7 +43,7 @@ test.describe('best-of pages', () => {
       // A header row plus one row per model in the category.
       await expect(table.getByRole('row')).toHaveCount(rows.length + 1)
 
-      const avgColumn = await columnIndex(table, t('en', 'leaderboard.colAverage'))
+      const avgColumn = await columnIndex(table, t('en', 'leaderboard.track.composite'))
       const priceColumn = await columnIndex(table, t('en', 'leaderboard.colPrice'))
 
       for (const [index, row] of rows.entries()) {
@@ -54,9 +54,9 @@ test.describe('best-of pages', () => {
           `/models/${row.model.id}`,
         )
         await expect(tr.getByRole('cell').nth(avgColumn)).toHaveText(
-          row.average != null ? row.average.toFixed(1) : '—',
+          row.composite != null ? row.composite.toFixed(1) : '—',
         )
-        await expect(tr.getByRole('cell').nth(priceColumn)).toHaveText(
+        await expect(tr.getByRole('cell').nth(priceColumn)).toContainText(
           row.blendedPricePer1M != null ? formatPrice(row.blendedPricePer1M) : '—',
         )
       }

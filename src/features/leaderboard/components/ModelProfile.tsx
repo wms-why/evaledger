@@ -1,11 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
+import { Badge } from '@/components/ui/badge'
 import { BENCHMARKS } from '../benchmarks'
 import { COMPARE_PAIR_ENTRIES, formatScore, scoreOf } from '../leaderboard'
 import { findLeaderboardModel } from '../models'
+import { scoreTrack, TRACKS, TRACK_IDS } from '../scoring'
 import type { LeaderboardModel } from '../types'
 import { VENDOR_LABEL_KEY } from '../vendors'
 import { PriceCell } from './PriceCell'
+import { ScoreProvenance } from './ScoreProvenance'
 
 export function ModelProfile({ model }: { model: LeaderboardModel }) {
   const { t } = useTranslation()
@@ -32,6 +35,7 @@ export function ModelProfile({ model }: { model: LeaderboardModel }) {
         <PriceCell priceId={model.priceId} view="calculator" />
       </div>
 
+      <TrackSummary model={model} />
       <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         <section>
           <h2 className="text-[18px] font-semibold">{t('leaderboard.model.scores')}</h2>
@@ -49,10 +53,14 @@ export function ModelProfile({ model }: { model: LeaderboardModel }) {
                           <Link to="/{-$locale}/benchmarks/$slug" params={{ slug: bm.id }} className="text-fg-2 hover:text-primary">
                             {bm.name}
                           </Link>
-                          {s.note && <span className="ml-2 text-[11px] text-fg-3">({s.note})</span>}
+                          {bm.version && (
+                            <span className="ml-2 text-[11px] text-fg-3">
+                              {t('leaderboard.track.version')} {bm.version}
+                            </span>
+                          )}
                         </td>
                         <td className="px-4 py-2.5 text-right font-medium tabular-nums text-foreground">
-                          {formatScore(s.score, s.unit)}
+                          <ScoreProvenance score={s}>{formatScore(s.score, s.unit)}</ScoreProvenance>
                         </td>
                       </tr>
                     )
@@ -102,5 +110,55 @@ export function ModelProfile({ model }: { model: LeaderboardModel }) {
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Where this model stands on each capability board.
+ *
+ * A model that was never measured on a board's core benchmarks has no
+ * composite on it — that is stated, not hidden, and the missing benchmark
+ * is named so the reader can see exactly why.
+ */
+function TrackSummary({ model }: { model: LeaderboardModel }) {
+  const { t } = useTranslation()
+  const tracks = TRACK_IDS.map((slug) => ({ slug, score: scoreTrack(model, TRACKS[slug]) }))
+
+  return (
+    <section>
+      <h2 className="text-[18px] font-semibold">{t('leaderboard.track.nav')}</h2>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {tracks.map(({ slug, score }) => (
+          <li
+            key={slug}
+            className="flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-border bg-card px-4 py-3"
+          >
+            <Link
+              to="/{-$locale}/leaderboard/$track"
+              params={{ track: slug }}
+              className="text-[14px] font-medium text-foreground hover:text-primary"
+            >
+              {t(TRACKS[slug].labelKey)}
+            </Link>
+            {score.composite != null ? (
+              <span className="tabular-nums text-[15px] font-semibold text-foreground">
+                {score.composite.toFixed(1)}
+              </span>
+            ) : (
+              <Badge
+                variant="free"
+                title={t('leaderboard.track.notRankedReason', {
+                  benchmarks: score.missing
+                    .map((id) => BENCHMARKS.find((b) => b.id === id)?.name ?? id)
+                    .join(', '),
+                })}
+              >
+                {t('leaderboard.track.untested')}
+              </Badge>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }

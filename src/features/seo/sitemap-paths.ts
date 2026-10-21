@@ -1,6 +1,7 @@
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { BEST_CATEGORIES, COMPARE_PAIR_ENTRIES } from '@/features/leaderboard/leaderboard'
+import { TRACK_IDS } from '@/features/leaderboard/scoring'
 import { allSeriesPairs, listSeries } from '@/features/series/select'
 import { isIndexablePath } from './indexability'
 import { CORE_PATHS, CORE_ZH_PATHS } from './sitemap-core'
@@ -37,6 +38,7 @@ export const PUBLIC_PATHS = [
   '/deepseek-api-pricing',
   '/token-calculator',
   '/leaderboard-history',
+  '/methodology',
   '/compare',
   '/releases',
 ] as const
@@ -52,6 +54,14 @@ export function leaderboardPaths(): string[] {
     ...COMPARE_PAIR_ENTRIES.map((p) => `/compare/${p.slug}`),
     ...BEST_CATEGORIES.map((c) => `/best/${c.slug}`),
   ]
+}
+
+/**
+ * The capability boards: one page per track — general, coding, agent,
+ * reasoning. Each states its own formula and weights.
+ */
+export function trackPaths(): string[] {
+  return TRACK_IDS.map((slug) => `/leaderboard/${slug}`)
 }
 
 /**
@@ -79,6 +89,7 @@ export function sitemapPaths(releaseSlugs: string[] = []): string[] {
   return [
     ...PUBLIC_PATHS,
     ...leaderboardPaths(),
+    ...trackPaths(),
     ...releaseSlugs.map((slug) => `/releases/${slug}`),
     ...seriesPaths(),
   ].filter(isIndexablePath)

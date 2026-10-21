@@ -25,6 +25,7 @@ import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './rou
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
 import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
 import { Route as Char123LocaleChar125LeaderboardHistoryRouteImport } from './routes/{-$locale}/leaderboard-history'
+import { Route as Char123LocaleChar125MethodologyRouteImport } from './routes/{-$locale}/methodology'
 import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
 import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
 import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
@@ -60,6 +61,7 @@ import { Route as Char123LocaleChar125SeriesIndexRouteImport } from './routes/{-
 import { Route as Char123LocaleChar125SeriesSlugRouteRouteImport } from './routes/{-$locale}/series/$slug/route'
 import { Route as Char123LocaleChar125BenchmarksSlugIndexRouteImport } from './routes/{-$locale}/benchmarks/$slug/index'
 import { Route as Char123LocaleChar125BenchmarksSlugHistoryRouteImport } from './routes/{-$locale}/benchmarks/$slug/history'
+import { Route as Char123LocaleChar125LeaderboardTrackIndexRouteImport } from './routes/{-$locale}/leaderboard/$track/index'
 import { Route as Char123LocaleChar125SeriesSlugIndexRouteImport } from './routes/{-$locale}/series/$slug/index'
 import { Route as Char123LocaleChar125SeriesSlugPairRouteImport } from './routes/{-$locale}/series/$slug/$pair'
 
@@ -149,6 +151,12 @@ const Char123LocaleChar125LeaderboardHistoryRoute =
   Char123LocaleChar125LeaderboardHistoryRouteImport.update({
     id: '/leaderboard-history',
     path: '/leaderboard-history',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125MethodologyRoute =
+  Char123LocaleChar125MethodologyRouteImport.update({
+    id: '/methodology',
+    path: '/methodology',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
@@ -358,6 +366,12 @@ const Char123LocaleChar125BenchmarksSlugHistoryRoute =
     path: '/history',
     getParentRoute: () => Char123LocaleChar125BenchmarksSlugRouteRoute,
   } as any)
+const Char123LocaleChar125LeaderboardTrackIndexRoute =
+  Char123LocaleChar125LeaderboardTrackIndexRouteImport.update({
+    id: '/leaderboard/$track/',
+    path: '/leaderboard/$track/',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125SeriesSlugIndexRoute =
   Char123LocaleChar125SeriesSlugIndexRouteImport.update({
     id: '/',
@@ -387,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
+  '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -424,6 +439,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/leaderboard/$track/': typeof Char123LocaleChar125LeaderboardTrackIndexRoute
   '/{-$locale}/series/$slug/': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRoutesByTo {
@@ -440,6 +456,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
+  '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -475,6 +492,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/leaderboard/$track': typeof Char123LocaleChar125LeaderboardTrackIndexRoute
   '/{-$locale}/series/$slug': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRoutesById {
@@ -494,6 +512,7 @@ export interface FileRoutesById {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
+  '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -531,6 +550,7 @@ export interface FileRoutesById {
   '/{-$locale}/benchmarks/$slug/history': typeof Char123LocaleChar125BenchmarksSlugHistoryRoute
   '/{-$locale}/series/$slug/$pair': typeof Char123LocaleChar125SeriesSlugPairRoute
   '/{-$locale}/benchmarks/$slug/': typeof Char123LocaleChar125BenchmarksSlugIndexRoute
+  '/{-$locale}/leaderboard/$track/': typeof Char123LocaleChar125LeaderboardTrackIndexRoute
   '/{-$locale}/series/$slug/': typeof Char123LocaleChar125SeriesSlugIndexRoute
 }
 export interface FileRouteTypes {
@@ -551,6 +571,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
+    | '/{-$locale}/methodology'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -588,6 +609,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug/'
+    | '/{-$locale}/leaderboard/$track/'
     | '/{-$locale}/series/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -604,6 +626,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
+    | '/{-$locale}/methodology'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -639,6 +662,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug'
+    | '/{-$locale}/leaderboard/$track'
     | '/{-$locale}/series/$slug'
   id:
     | '__root__'
@@ -657,6 +681,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
+    | '/{-$locale}/methodology'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -694,6 +719,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/benchmarks/$slug/history'
     | '/{-$locale}/series/$slug/$pair'
     | '/{-$locale}/benchmarks/$slug/'
+    | '/{-$locale}/leaderboard/$track/'
     | '/{-$locale}/series/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -824,6 +850,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard-history'
       fullPath: '/{-$locale}/leaderboard-history'
       preLoaderRoute: typeof Char123LocaleChar125LeaderboardHistoryRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/methodology': {
+      id: '/{-$locale}/methodology'
+      path: '/methodology'
+      fullPath: '/{-$locale}/methodology'
+      preLoaderRoute: typeof Char123LocaleChar125MethodologyRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/openrouter-pricing-calculator': {
@@ -1071,6 +1104,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugHistoryRouteImport
       parentRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRoute
     }
+    '/{-$locale}/leaderboard/$track/': {
+      id: '/{-$locale}/leaderboard/$track/'
+      path: '/leaderboard/$track'
+      fullPath: '/{-$locale}/leaderboard/$track/'
+      preLoaderRoute: typeof Char123LocaleChar125LeaderboardTrackIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/series/$slug/': {
       id: '/{-$locale}/series/$slug/'
       path: '/'
@@ -1156,6 +1196,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   Char123LocaleChar125DeepseekApiPricingRoute: typeof Char123LocaleChar125DeepseekApiPricingRoute
   Char123LocaleChar125LeaderboardHistoryRoute: typeof Char123LocaleChar125LeaderboardHistoryRoute
+  Char123LocaleChar125MethodologyRoute: typeof Char123LocaleChar125MethodologyRoute
   Char123LocaleChar125OpenrouterPricingCalculatorRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   Char123LocaleChar125PrivacyRoute: typeof Char123LocaleChar125PrivacyRoute
   Char123LocaleChar125SponsorRoute: typeof Char123LocaleChar125SponsorRoute
@@ -1182,6 +1223,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125CompareIndexRoute: typeof Char123LocaleChar125CompareIndexRoute
   Char123LocaleChar125ReleasesIndexRoute: typeof Char123LocaleChar125ReleasesIndexRoute
   Char123LocaleChar125SeriesIndexRoute: typeof Char123LocaleChar125SeriesIndexRoute
+  Char123LocaleChar125LeaderboardTrackIndexRoute: typeof Char123LocaleChar125LeaderboardTrackIndexRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
@@ -1197,6 +1239,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125DeepseekApiPricingRoute,
     Char123LocaleChar125LeaderboardHistoryRoute:
       Char123LocaleChar125LeaderboardHistoryRoute,
+    Char123LocaleChar125MethodologyRoute: Char123LocaleChar125MethodologyRoute,
     Char123LocaleChar125OpenrouterPricingCalculatorRoute:
       Char123LocaleChar125OpenrouterPricingCalculatorRoute,
     Char123LocaleChar125PrivacyRoute: Char123LocaleChar125PrivacyRoute,
@@ -1236,6 +1279,8 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125ReleasesIndexRoute:
       Char123LocaleChar125ReleasesIndexRoute,
     Char123LocaleChar125SeriesIndexRoute: Char123LocaleChar125SeriesIndexRoute,
+    Char123LocaleChar125LeaderboardTrackIndexRoute:
+      Char123LocaleChar125LeaderboardTrackIndexRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =

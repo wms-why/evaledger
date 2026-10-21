@@ -1,5 +1,6 @@
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { LEADERBOARD } from '@/features/leaderboard/models'
+import { findTrack, rankTrack } from '@/features/leaderboard/scoring'
 import { findSeries, findSeriesPair } from '@/features/series/select'
 
 /**
@@ -29,6 +30,12 @@ export const MIN_MODEL_SCORES = 1
 
 /** A series line needs at least this many scored versions. */
 export const MIN_SERIES_LINE_SCORERS = 1
+
+/**
+ * A capability board needs at least this many fully-scored models before it
+ * is worth indexing: a board whose ranking holds one model is a thin page.
+ */
+export const MIN_TRACK_RANKED = 3
 
 /**
  * A version pair needs a score on BOTH sides.
@@ -105,6 +112,19 @@ export function isIndexableSeriesPair(seriesSlug: string, pairSlug: string): boo
 }
 
 /**
+ * A capability board: indexable once enough models are fully scored on it.
+ *
+ * The floor counts RANKED models — the ones measured on every benchmark of
+ * the board. A board whose ranking holds one or two models is a thin page
+ * even when a dozen other models have some of its scores.
+ */
+export function isIndexableTrack(trackSlug: string): boolean {
+  const track = findTrack(trackSlug)
+  if (!track) return false
+  return rankTrack(track).ranked.length >= MIN_TRACK_RANKED
+}
+
+/**
  * The indexability of a path, by family.
  *
  * The sitemap and the page heads ask the same question through this one
@@ -128,6 +148,9 @@ export function isIndexablePath(path: string): boolean {
 
   match = /^\/models\/([^/]+)$/.exec(clean)
   if (match) return isIndexableModel(match[1])
+
+  match = /^\/leaderboard\/([^/]+)$/.exec(clean)
+  if (match) return isIndexableTrack(match[1])
 
   if (clean === '/leaderboard-history') return isIndexableLeaderboardHistory()
 

@@ -27,7 +27,7 @@ export function BestCategoryPage({ category }: { category: BestCategory }) {
             <tr className="border-b border-border text-left text-[12px] uppercase tracking-wide text-fg-3">
               <th className="px-4 py-2.5 font-medium">{t('leaderboard.colRank')}</th>
               <th className="px-4 py-2.5 font-medium">{t('leaderboard.colModel')}</th>
-              <th className="px-4 py-2.5 text-right font-medium">{t('leaderboard.colAverage')}</th>
+              <th className="px-4 py-2.5 text-right font-medium">{t('leaderboard.track.composite')}</th>
               <th className="px-4 py-2.5 text-right font-medium">{t('leaderboard.colPrice')}</th>
             </tr>
           </thead>
@@ -41,7 +41,7 @@ export function BestCategoryPage({ category }: { category: BestCategory }) {
                   </Link>
                 </td>
                 <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-foreground">
-                  {r.average != null ? r.average.toFixed(1) : '—'}
+                  {r.composite != null ? r.composite.toFixed(1) : '—'}
                 </td>
                 <td className="px-4 py-2.5 text-right">
                   <PriceCell priceId={r.model.priceId} view="column" />

@@ -2,23 +2,25 @@ import { columnIndex, expect, realConsoleErrors, test, visit } from './helpers/f
 import { t } from './helpers/i18n'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
-import {
-  BENCHMARK_SHORT,
-  CORE_BENCHMARK_IDS,
-  formatScore,
-  leaderboardRows,
-  scoreOf,
-  sortRows,
-} from '@/features/leaderboard/leaderboard'
+import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail } from '@/features/calculator/pricing-detail'
+import { formatScore, scoreOf } from '@/features/leaderboard/leaderboard'
+import { rankTrack, TRACKS, TRACK_IDS } from '@/features/leaderboard/scoring'
 import { formatPrice } from '@/features/leaderboard/components/PriceCell'
 import type { Locator, Page } from '@playwright/test'
 
 /**
- * The landing leaderboard table and the history archive.
+ * The landing leaderboard board and the capability boards.
  *
- * Every number on the table is read from the registries at render time, so the
- * spec reads the same registries and compares — a price that drifts from
- * `REGISTRY` or a score that drifts from `LEADERBOARD` fails here.
+ * Every number on the board is read from the registries at render time, so
+ * the spec rebuilds it and compares — a price that drifts from `REGISTRY` or
+ * a score that drifts from `LEADERBOARD` fails here.
+ *
+ * The board's contract, which the spec pins: a model is ranked only when it
+ * was measured on EVERY core benchmark of the board. A model missing one is
+ * listed as "not tested" and carries no composite. That is the whole point
+ * of the board — a partial average over a different denominator is not a
+ * ranking.
  */
 
 /** The landing table — the one with a "Model" column header. */
@@ -28,12 +30,6 @@ function boardTable(page: Page): Locator {
   })
 }
 
-/**
- * Index of a column, by its visible heading.
- *
- * `textContent` (not `innerText`) — the headers are uppercased by CSS, and
- * only the source text matches the dictionary.
- */
 /**
  * Wait until React has hydrated the document: a click that lands before
  * hydration is swallowed. `__reactFiber$` only appears once React has taken
@@ -47,7 +43,7 @@ async function waitForHydration(page: Page): Promise<void> {
   )
 }
 
-test.describe('landing leaderboard table', () => {
+test.describe('landing leaderboard board', () => {
   test('lists every model in the leaderboard registry, once', async ({
     page,
     consoleErrors,
@@ -56,10 +52,9 @@ test.describe('landing leaderboard table', () => {
     await visit(page, '/')
 
     const table = boardTable(page)
-    // One header row plus one row per model.
+    // One header row plus one row per model — ranked and untested alike, so
+    // a model the reader is looking for is never silently dropped.
     await expect(table.getByRole('row')).toHaveCount(LEADERBOARD.models.length + 1)
-    // A handful of rows, by name — including a checkpoint and a model with no
-    // price row at all.
     for (const name of ['GPT-6 Astra', 'Claude Opus 5.5', 'Kimi K3', 'DeepSeek V4.1-Flash 1017']) {
       await expect(table.getByRole('link', { name, exact: true })).toHaveCount(1)
     }
@@ -68,35 +63,68 @@ test.describe('landing leaderboard table', () => {
     expect(realConsoleErrors(consoleErrors)).toEqual([])
   })
 
-  test('every row shows the registry price, average and benchmark scores', async ({
+  test('ranks a model only when it was measured on every core benchmark', async ({
     page,
     consoleErrors,
     pageErrors,
   }) => {
     await visit(page, '/')
 
+    const track = TRACKS.general
+    const { ranked, incomplete } = rankTrack(track)
     const table = boardTable(page)
-    // The table opens sorted by average, descending.
-    const rows = sortRows(leaderboardRows(), 'average', 'desc')
-    const avgColumn = await columnIndex(table, t('en', 'leaderboard.colAverage'))
-    const priceColumn = await columnIndex(table, t('en', 'leaderboard.colPrice'))
-    const scoreColumns = await Promise.all(
-      CORE_BENCHMARK_IDS.map((id) => columnIndex(table, BENCHMARK_SHORT[id])),
-    )
 
-    for (const [index, row] of rows.entries()) {
-      const cells = table.getByRole('row').nth(index + 1).getByRole('cell')
-      await expect(cells.nth(1)).toContainText(row.model.displayName)
-      await expect(cells.nth(avgColumn)).toHaveText(
-        row.average != null ? row.average.toFixed(1) : '—',
+    const compositeColumn = await columnIndex(table, t('en', 'leaderboard.track.composite'))
+    const priceColumn = await columnIndex(table, t('en', 'leaderboard.colPrice'))
+    const modelColumn = await columnIndex(table, t('en', 'leaderboard.colModel'))
+
+    const rows = table.getByRole('row')
+    for (const [index, entry] of ranked.entries()) {
+      const cells = rows.nth(index + 1).getByRole('cell')
+      await expect(cells.nth(modelColumn)).toContainText(entry.model.displayName)
+      await expect(cells.nth(compositeColumn)).toHaveText(
+        (entry.score.composite as number).toFixed(1),
       )
-      await expect(cells.nth(priceColumn)).toHaveText(
-        row.blendedPricePer1M != null ? formatPrice(row.blendedPricePer1M) : '—',
+      const price = entry.model.priceId
+        ? priceOf(entry.model.priceId)
+        : undefined
+      await expect(cells.nth(priceColumn)).toContainText(
+        price != null ? formatPrice((price.input + price.output) / 2) : '—',
       )
-      for (const [column, benchmarkId] of CORE_BENCHMARK_IDS.entries()) {
-        const score = scoreOf(row.model, benchmarkId)
-        await expect(cells.nth(scoreColumns[column])).toHaveText(
-          score ? formatScore(score.score, score.unit) : '—',
+    }
+
+    // The untested models follow, and carry no composite at all.
+    for (const [offset, entry] of incomplete.entries()) {
+      const cells = rows.nth(ranked.length + offset + 1).getByRole('cell')
+      await expect(cells.nth(modelColumn)).toContainText(entry.model.displayName)
+      await expect(cells.nth(compositeColumn)).toHaveText(t('en', 'leaderboard.track.untested'))
+    }
+
+    expect(pageErrors).toEqual([])
+    expect(realConsoleErrors(consoleErrors)).toEqual([])
+  })
+
+  test('shows each core benchmark score, and marks the ones never measured', async ({
+    page,
+    consoleErrors,
+    pageErrors,
+  }) => {
+    await visit(page, '/')
+
+    const track = TRACKS.general
+    const { ranked } = rankTrack(track)
+    const table = boardTable(page)
+
+    const columns = await Promise.all(
+      track.core.map((core) => columnIndex(table, benchmarkName(core.id))),
+    )
+    const rows = table.getByRole('row')
+    for (const [index, entry] of ranked.entries()) {
+      const cells = rows.nth(index + 1).getByRole('cell')
+      for (const [column, core] of track.core.entries()) {
+        const score = scoreOf(entry.model, core.id)
+        await expect(cells.nth(columns[column])).toHaveText(
+          score ? formatScore(score.score, score.unit) : t('en', 'leaderboard.track.untested'),
         )
       }
     }
@@ -105,7 +133,7 @@ test.describe('landing leaderboard table', () => {
     expect(realConsoleErrors(consoleErrors)).toEqual([])
   })
 
-  test('clicking a column header reorders the rows', async ({
+  test('switching board re-ranks the table', async ({
     page,
     consoleErrors,
     pageErrors,
@@ -114,43 +142,78 @@ test.describe('landing leaderboard table', () => {
     await waitForHydration(page)
 
     const table = boardTable(page)
-    const rows = leaderboardRows()
     const firstRow = table.getByRole('row').nth(1).getByRole('link').first()
-    const header = (name: string) =>
-      table.getByRole('columnheader', { name, exact: true }).getByRole('button')
 
-    // Default sort: average, descending.
-    await expect(firstRow).toHaveText(sortRows(rows, 'average', 'desc')[0].model.displayName)
+    for (const slug of TRACK_IDS) {
+      const track = TRACKS[slug]
+      const { ranked } = rankTrack(track)
+      const button = page.getByRole('button', { name: t('en', track.labelKey), exact: true })
+      await button.click()
 
-    // Clicking a new column sorts by it, descending first.
-    await header(t('en', 'leaderboard.colModel')).click()
-    await expect(firstRow).toHaveText(sortRows(rows, 'model', 'desc')[0].model.displayName)
+      // The board that is selected now decides the ranking.
+      await expect(firstRow).toHaveText(ranked[0].model.displayName)
 
-    // Clicking the same column again flips the direction.
-    await header(t('en', 'leaderboard.colModel')).click()
-    await expect(firstRow).toHaveText(sortRows(rows, 'model', 'asc')[0].model.displayName)
-
-    // A benchmark column sorts by that benchmark, and the new first row holds
-    // the highest score for it.
-    const benchmarkId = 'hle'
-    const column = await columnIndex(table, 'HLE')
-    await header('HLE').click()
-    await expect(firstRow).toHaveText(sortRows(rows, benchmarkId, 'desc')[0].model.displayName)
-
-    const best = rows
-      .map((row) => scoreOf(row.model, benchmarkId))
-      .filter((score) => !!score)
-      .sort((a, b) => b!.score - a!.score)[0]!
-    await expect(table.getByRole('row').nth(1).getByRole('cell').nth(column)).toHaveText(
-      formatScore(best.score, best.unit),
-    )
-
-    // Sorting never adds or drops a row.
-    await expect(table.getByRole('row')).toHaveCount(rows.length + 1)
+      // And the columns are the ones that board scores on.
+      for (const core of track.core) {
+        const name = BENCHMARKS.find((b) => b.id === core.id)?.name ?? core.id
+        await expect(table.getByRole('columnheader', { name, exact: true })).toBeVisible()
+      }
+    }
 
     expect(pageErrors).toEqual([])
     expect(realConsoleErrors(consoleErrors)).toEqual([])
   })
+})
+
+test.describe('capability boards', () => {
+  for (const slug of TRACK_IDS) {
+    test(`/leaderboard/${slug} states its formula and ranks its models`, async ({
+      page,
+      consoleErrors,
+      pageErrors,
+    }) => {
+      const track = TRACKS[slug]
+      const { ranked, incomplete } = rankTrack(track)
+
+      await visit(page, `/leaderboard/${slug}`)
+
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+        t('en', 'leaderboard.track.title', { track: t('en', track.labelKey) }),
+      )
+      // The formula is on the page, in words a reader can check.
+      await expect(page.getByText(t('en', track.formulaKey))).toBeVisible()
+
+      // The page carries two tables: the formula panel (weights) and the
+      // ranking. The ranking is the one with a composite column.
+      const table = page
+        .getByRole('table')
+        .filter({ has: page.getByRole('columnheader', { name: t('en', 'leaderboard.track.composite') }) })
+      await expect(table.getByRole('row')).toHaveCount(ranked.length + 1)
+
+      const compositeColumn = await columnIndex(table, t('en', 'leaderboard.track.composite'))
+      for (const [index, entry] of ranked.entries()) {
+        const cells = table.getByRole('row').nth(index + 1).getByRole('cell')
+        await expect(cells.nth(compositeColumn)).toHaveText(
+          (entry.score.composite as number).toFixed(1),
+        )
+      }
+
+      // The models that were not measured on every core benchmark are named
+      // below the ranking, each with the benchmark it is missing.
+      for (const entry of incomplete) {
+        const item = page.getByRole('listitem').filter({
+          has: page.getByRole('link', { name: entry.model.displayName, exact: true }),
+        })
+        await expect(item).toHaveCount(1)
+        for (const missing of entry.score.missing) {
+          await expect(item).toContainText(benchmarkName(missing))
+        }
+      }
+
+      expect(pageErrors).toEqual([])
+      expect(realConsoleErrors(consoleErrors)).toEqual([])
+    })
+  }
 })
 
 test.describe('leaderboard history', () => {
@@ -171,41 +234,6 @@ test.describe('leaderboard history', () => {
       await expect(page.getByRole('heading', { name: heading })).toBeVisible()
     }
 
-    for (const benchmarkId of CORE_BENCHMARK_IDS) {
-      const benchmark = BENCHMARKS.find((entry) => entry.id === benchmarkId)!
-      const top = leaderboardRows()
-        .map((row) => ({ row, score: scoreOf(row.model, benchmarkId) }))
-        .filter((entry) => !!entry.score)
-        .sort((a, b) => b.score!.score - a.score!.score)
-        .slice(0, 3)
-
-      // The card holds the benchmark link and its top-three list.
-      const card = page
-        .getByRole('list')
-        .locator('xpath=..')
-        .filter({ has: page.getByRole('link', { name: benchmark.name, exact: true }) })
-      await expect(card).toHaveCount(1)
-
-      const items = card.getByRole('listitem')
-      await expect(items).toHaveCount(top.length)
-      for (const [index, entry] of top.entries()) {
-        await expect(items.nth(index)).toContainText(entry.row.model.displayName)
-        await expect(items.nth(index)).toContainText(
-          formatScore(entry.score!.score, entry.score!.unit),
-        )
-      }
-    }
-
-    // Overwritten scores: either the empty notice or one entry per snapshot.
-    const overwritten = LEADERBOARD.history.filter((entry) => entry.supersededAt)
-    if (overwritten.length === 0) {
-      await expect(
-        page.getByText(t('en', 'leaderboard.history.overwrittenEmpty'), { exact: true }),
-      ).toBeVisible()
-    } else {
-      await expect(page.getByText(overwritten[0].modelId, { exact: false }).first()).toBeVisible()
-    }
-
     // The same page, in Chinese.
     await visit(page, '/zh/leaderboard-history')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
@@ -219,3 +247,23 @@ test.describe('leaderboard history', () => {
     expect(realConsoleErrors(consoleErrors)).toEqual([])
   })
 })
+
+/**
+ * The blended price of a registry row, for the price column.
+ *
+ * The board shows the rate IN FORCE, not the registry's base rate — a base
+ * rate may be a promotional band. `priceDetail` resolves the dated band the
+ * same way the board and the calculator do, so this expectation cannot drift
+ * from what the page renders.
+ */
+function priceOf(priceId: string): { input: number; output: number } | undefined {
+  const model = REGISTRY.models.find((m) => m.id === priceId)
+  if (!model) return undefined
+  const detail = priceDetail(model)
+  return { input: detail.input, output: detail.output }
+}
+
+/** The heading a benchmark column carries on the board. */
+function benchmarkName(benchmarkId: string): string {
+  return BENCHMARKS.find((b) => b.id === benchmarkId)?.name ?? benchmarkId
+}

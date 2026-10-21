@@ -25,6 +25,14 @@ export interface Benchmark {
   name: string
   category: BenchmarkCategory
   unit: ScoreUnit
+  /**
+   * Version of the benchmark itself, when the benchmark has one — e.g.
+   * Terminal-Bench 4.0 is `"4.0"`, DeepSWE v1.1 is `"1.1"`. Two versions of
+   * the same benchmark are two different numbers (a 4.0 score is not
+   * comparable with a 2.1 score), so the version belongs to the benchmark,
+   * not only to its slug.
+   */
+  version?: string
   /** One-line "what it measures", used as the /benchmarks/[slug] intro. */
   description: string
 }
@@ -61,6 +69,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'apex-bench-v1.1',
+    version: '1.1',
     name: 'Apex Bench v1.1',
     category: 'agentic',
     unit: 'percent',
@@ -76,6 +85,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'terminal-bench-2.1',
+    version: '2.1',
     name: 'Terminal-Bench 2.1',
     category: 'agentic',
     unit: 'percent',
@@ -83,6 +93,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'terminal-bench-3.0',
+    version: '3.0',
     name: 'Terminal-Bench 3.0',
     category: 'agentic',
     unit: 'percent',
@@ -90,6 +101,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'terminal-bench-4.0',
+    version: '4.0',
     name: 'Terminal-Bench 4.0',
     category: 'agentic',
     unit: 'percent',
@@ -105,6 +117,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'frontierswe-v2',
+    version: '2',
     name: 'FrontierSWE v2',
     category: 'coding',
     unit: 'percent',
@@ -113,6 +126,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'deepswe-v1.1',
+    version: '1.1',
     name: 'DeepSWE v1.1',
     category: 'coding',
     unit: 'percent',
@@ -169,6 +183,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'osworld-2.0',
+    version: '2.0',
     name: 'OSWorld-2.0',
     category: 'agentic',
     unit: 'percent',
@@ -193,6 +208,7 @@ export const BENCHMARKS: Benchmark[] = [
   },
   {
     id: 'cwe-bench-v1',
+    version: '1',
     name: 'CWE-bench v1',
     category: 'security',
     unit: 'percent',

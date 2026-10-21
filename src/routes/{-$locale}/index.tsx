@@ -7,7 +7,7 @@ import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { buttonVariants } from '@/components/ui/button'
-import { LeaderboardTable } from '@/features/leaderboard/components/LeaderboardTable'
+import { LeaderboardBoard } from '@/features/leaderboard/components/LeaderboardBoard'
 import { PopularComparisons } from '@/features/leaderboard/components/CompareTool'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { getReleases } from '@/features/releases/releases.fns'
@@ -82,7 +82,7 @@ function Home() {
               {t('leaderboard.home.updated')}: {LEADERBOARD.fetchedAt.slice(0, 10)}
             </span>
           </div>
-          <LeaderboardTable />
+          <LeaderboardBoard />
         </section>
 
         <p className="mx-auto mt-8 max-w-[720px] text-center text-[16px] text-fg-2">
