@@ -13,7 +13,7 @@
  */
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
-import { Home, Sparkles, Settings, Gauge, Users, Menu, ClipboardList, PanelLeftClose, PanelLeftOpen, Heart, MessageSquare } from 'lucide-react'
+import { Home, Sparkles, Settings, Gauge, Users, Menu, ClipboardList, PanelLeftClose, PanelLeftOpen, Heart, MessageSquare, Flag } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
 import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
@@ -130,6 +130,10 @@ export function AppShell({
             <Link to="/{-$locale}/admin/feedback" activeProps={{}} className={item(active === 'admin-feedback')} title={t('admin.feedbackAdmin')}>
               <MessageSquare size={18} className="shrink-0" />
               {label(t('admin.feedbackAdmin'))}
+            </Link>
+            <Link to="/{-$locale}/admin/data-reports" activeProps={{}} className={item(active === 'admin-data-reports')} title={t('admin.dataReports')}>
+              <Flag size={18} className="shrink-0" />
+              {label(t('admin.dataReports'))}
             </Link>
           </>
         )}

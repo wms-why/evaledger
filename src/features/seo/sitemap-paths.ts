@@ -39,6 +39,7 @@ export const PUBLIC_PATHS = [
   '/token-calculator',
   '/leaderboard-history',
   '/methodology',
+  '/data-quality',
   '/compare',
   '/releases',
 ] as const

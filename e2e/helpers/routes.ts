@@ -47,6 +47,7 @@ export const STATIC_ROUTES: RouteCase[] = [
   { path: '/', name: 'landing / leaderboard', group: 'static' },
   { path: '/leaderboard-history', name: 'leaderboard history', group: 'static' },
   { path: '/methodology', name: 'scoring methodology', group: 'static' },
+  { path: '/data-quality', name: 'data quality', group: 'static' },
   { path: '/changelog', name: 'changelog', group: 'static' },
   { path: '/sponsor', name: 'sponsor', group: 'static' },
   { path: '/waitlist', name: 'waitlist', group: 'static' },

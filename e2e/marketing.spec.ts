@@ -115,7 +115,7 @@ test.describe('landing page', () => {
     const table = page.getByRole('table')
     await expect(table).toBeVisible()
     await expect(table.getByRole('columnheader', { name: t('en', 'leaderboard.colModel') })).toBeVisible()
-    await expect(table.getByRole('columnheader', { name: t('en', 'leaderboard.colAverage') })).toBeVisible()
+    await expect(table.getByRole('columnheader', { name: t('en', 'leaderboard.track.composite') })).toBeVisible()
     await expect(table.getByRole('columnheader', { name: t('en', 'leaderboard.colPrice') })).toBeVisible()
 
     // the rows carry a link to each model's own page

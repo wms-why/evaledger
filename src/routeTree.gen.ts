@@ -23,6 +23,7 @@ import { Route as Char123LocaleChar125AdminRouteRouteImport } from './routes/{-$
 import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
 import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './routes/{-$locale}/chatgpt-api-pricing'
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
+import { Route as Char123LocaleChar125DataQualityRouteImport } from './routes/{-$locale}/data-quality'
 import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
 import { Route as Char123LocaleChar125LeaderboardHistoryRouteImport } from './routes/{-$locale}/leaderboard-history'
 import { Route as Char123LocaleChar125MethodologyRouteImport } from './routes/{-$locale}/methodology'
@@ -42,6 +43,7 @@ import { Route as Char123LocaleChar125authRegisterRouteImport } from './routes/{
 import { Route as Char123LocaleChar125authResetPasswordRouteImport } from './routes/{-$locale}/(auth)/reset-password'
 import { Route as Char123LocaleChar125authVerifyEmailRouteImport } from './routes/{-$locale}/(auth)/verify-email'
 import { Route as Char123LocaleChar125AdminIndexRouteImport } from './routes/{-$locale}/admin/index'
+import { Route as Char123LocaleChar125AdminDataReportsRouteImport } from './routes/{-$locale}/admin/data-reports'
 import { Route as Char123LocaleChar125AdminFeedbackRouteImport } from './routes/{-$locale}/admin/feedback'
 import { Route as Char123LocaleChar125AdminSponsorsRouteImport } from './routes/{-$locale}/admin/sponsors'
 import { Route as Char123LocaleChar125AdminUsersRouteImport } from './routes/{-$locale}/admin/users'
@@ -139,6 +141,12 @@ const Char123LocaleChar125ClaudeTokenCostCalculatorRoute =
   Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport.update({
     id: '/claude-token-cost-calculator',
     path: '/claude-token-cost-calculator',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125DataQualityRoute =
+  Char123LocaleChar125DataQualityRouteImport.update({
+    id: '/data-quality',
+    path: '/data-quality',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125DeepseekApiPricingRoute =
@@ -250,6 +258,12 @@ const Char123LocaleChar125AdminIndexRoute =
   Char123LocaleChar125AdminIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
+  } as any)
+const Char123LocaleChar125AdminDataReportsRoute =
+  Char123LocaleChar125AdminDataReportsRouteImport.update({
+    id: '/data-reports',
+    path: '/data-reports',
     getParentRoute: () => Char123LocaleChar125AdminRouteRoute,
   } as any)
 const Char123LocaleChar125AdminFeedbackRoute =
@@ -399,6 +413,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
@@ -420,6 +435,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/register': typeof Char123LocaleChar125authRegisterRoute
   '/{-$locale}/reset-password': typeof Char123LocaleChar125authResetPasswordRoute
   '/{-$locale}/verify-email': typeof Char123LocaleChar125authVerifyEmailRoute
+  '/{-$locale}/admin/data-reports': typeof Char123LocaleChar125AdminDataReportsRoute
   '/{-$locale}/admin/feedback': typeof Char123LocaleChar125AdminFeedbackRoute
   '/{-$locale}/admin/sponsors': typeof Char123LocaleChar125AdminSponsorsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
@@ -454,6 +470,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
@@ -473,6 +490,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/register': typeof Char123LocaleChar125authRegisterRoute
   '/{-$locale}/reset-password': typeof Char123LocaleChar125authResetPasswordRoute
   '/{-$locale}/verify-email': typeof Char123LocaleChar125authVerifyEmailRoute
+  '/{-$locale}/admin/data-reports': typeof Char123LocaleChar125AdminDataReportsRoute
   '/{-$locale}/admin/feedback': typeof Char123LocaleChar125AdminFeedbackRoute
   '/{-$locale}/admin/sponsors': typeof Char123LocaleChar125AdminSponsorsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
@@ -510,6 +528,7 @@ export interface FileRoutesById {
   '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
   '/{-$locale}/chatgpt-api-pricing': typeof Char123LocaleChar125ChatgptApiPricingRoute
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
@@ -531,6 +550,7 @@ export interface FileRoutesById {
   '/{-$locale}/(auth)/register': typeof Char123LocaleChar125authRegisterRoute
   '/{-$locale}/(auth)/reset-password': typeof Char123LocaleChar125authResetPasswordRoute
   '/{-$locale}/(auth)/verify-email': typeof Char123LocaleChar125authVerifyEmailRoute
+  '/{-$locale}/admin/data-reports': typeof Char123LocaleChar125AdminDataReportsRoute
   '/{-$locale}/admin/feedback': typeof Char123LocaleChar125AdminFeedbackRoute
   '/{-$locale}/admin/sponsors': typeof Char123LocaleChar125AdminSponsorsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125AdminUsersRoute
@@ -569,6 +589,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/changelog'
     | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
@@ -590,6 +611,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/register'
     | '/{-$locale}/reset-password'
     | '/{-$locale}/verify-email'
+    | '/{-$locale}/admin/data-reports'
     | '/{-$locale}/admin/feedback'
     | '/{-$locale}/admin/sponsors'
     | '/{-$locale}/admin/users'
@@ -624,6 +646,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/changelog'
     | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
@@ -643,6 +666,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/register'
     | '/{-$locale}/reset-password'
     | '/{-$locale}/verify-email'
+    | '/{-$locale}/admin/data-reports'
     | '/{-$locale}/admin/feedback'
     | '/{-$locale}/admin/sponsors'
     | '/{-$locale}/admin/users'
@@ -679,6 +703,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/changelog'
     | '/{-$locale}/chatgpt-api-pricing'
     | '/{-$locale}/claude-token-cost-calculator'
+    | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
@@ -700,6 +725,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/(auth)/register'
     | '/{-$locale}/(auth)/reset-password'
     | '/{-$locale}/(auth)/verify-email'
+    | '/{-$locale}/admin/data-reports'
     | '/{-$locale}/admin/feedback'
     | '/{-$locale}/admin/sponsors'
     | '/{-$locale}/admin/users'
@@ -838,6 +864,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/data-quality': {
+      id: '/{-$locale}/data-quality'
+      path: '/data-quality'
+      fullPath: '/{-$locale}/data-quality'
+      preLoaderRoute: typeof Char123LocaleChar125DataQualityRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/deepseek-api-pricing': {
       id: '/{-$locale}/deepseek-api-pricing'
       path: '/deepseek-api-pricing'
@@ -969,6 +1002,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/{-$locale}/admin/'
       preLoaderRoute: typeof Char123LocaleChar125AdminIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125AdminRouteRoute
+    }
+    '/{-$locale}/admin/data-reports': {
+      id: '/{-$locale}/admin/data-reports'
+      path: '/data-reports'
+      fullPath: '/{-$locale}/admin/data-reports'
+      preLoaderRoute: typeof Char123LocaleChar125AdminDataReportsRouteImport
       parentRoute: typeof Char123LocaleChar125AdminRouteRoute
     }
     '/{-$locale}/admin/feedback': {
@@ -1129,6 +1169,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface Char123LocaleChar125AdminRouteRouteChildren {
+  Char123LocaleChar125AdminDataReportsRoute: typeof Char123LocaleChar125AdminDataReportsRoute
   Char123LocaleChar125AdminFeedbackRoute: typeof Char123LocaleChar125AdminFeedbackRoute
   Char123LocaleChar125AdminSponsorsRoute: typeof Char123LocaleChar125AdminSponsorsRoute
   Char123LocaleChar125AdminUsersRoute: typeof Char123LocaleChar125AdminUsersRoute
@@ -1138,6 +1179,8 @@ interface Char123LocaleChar125AdminRouteRouteChildren {
 
 const Char123LocaleChar125AdminRouteRouteChildren: Char123LocaleChar125AdminRouteRouteChildren =
   {
+    Char123LocaleChar125AdminDataReportsRoute:
+      Char123LocaleChar125AdminDataReportsRoute,
     Char123LocaleChar125AdminFeedbackRoute:
       Char123LocaleChar125AdminFeedbackRoute,
     Char123LocaleChar125AdminSponsorsRoute:
@@ -1194,6 +1237,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
   Char123LocaleChar125ChatgptApiPricingRoute: typeof Char123LocaleChar125ChatgptApiPricingRoute
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
+  Char123LocaleChar125DataQualityRoute: typeof Char123LocaleChar125DataQualityRoute
   Char123LocaleChar125DeepseekApiPricingRoute: typeof Char123LocaleChar125DeepseekApiPricingRoute
   Char123LocaleChar125LeaderboardHistoryRoute: typeof Char123LocaleChar125LeaderboardHistoryRoute
   Char123LocaleChar125MethodologyRoute: typeof Char123LocaleChar125MethodologyRoute
@@ -1235,6 +1279,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125ChatgptApiPricingRoute,
     Char123LocaleChar125ClaudeTokenCostCalculatorRoute:
       Char123LocaleChar125ClaudeTokenCostCalculatorRoute,
+    Char123LocaleChar125DataQualityRoute: Char123LocaleChar125DataQualityRoute,
     Char123LocaleChar125DeepseekApiPricingRoute:
       Char123LocaleChar125DeepseekApiPricingRoute,
     Char123LocaleChar125LeaderboardHistoryRoute:

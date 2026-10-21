@@ -31,6 +31,8 @@ const NAV_ITEMS = [
   },
   { to: '/{-$locale}/releases', labelKey: 'releases.nav', also: [] },
   { to: '/{-$locale}/series', labelKey: 'series.nav', also: [] },
+  { to: '/{-$locale}/methodology', labelKey: 'leaderboard.track.nav', also: [] },
+  { to: '/{-$locale}/data-quality', labelKey: 'dataQuality.title', also: [] },
   { to: '/{-$locale}/changelog', labelKey: 'marketing.navChangelog', also: [] },
 ] as const
 

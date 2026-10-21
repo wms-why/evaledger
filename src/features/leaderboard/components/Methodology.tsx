@@ -176,6 +176,12 @@ export function Methodology() {
         <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-fg-2">
           {t('leaderboard.methodology.updatesNote')}
         </p>
+        <Link
+          to="/{-$locale}/data-quality"
+          className="mt-3 inline-block text-[14px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+        >
+          {t('leaderboard.methodology.reportIssue')} →
+        </Link>
       </section>
     </div>
   )
