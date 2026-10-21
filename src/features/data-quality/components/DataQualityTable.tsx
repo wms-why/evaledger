@@ -240,7 +240,7 @@ export function DataQualityTable({ rows }: { rows: ModelQuality[] }) {
   const { t } = useTranslation()
   return (
     <div className="overflow-x-auto rounded-[14px] border border-border bg-card">
-      <table className="w-full min-w-[820px] border-collapse text-[13px]">
+      <table className="w-full min-w-205 border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-border text-left text-[12px] uppercase tracking-wide text-fg-3">
             <th className="px-3 py-2 font-medium">{t('dataQuality.col.model')}</th>

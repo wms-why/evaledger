@@ -101,7 +101,7 @@ function Row({ r, onSaved }: { r: DataReportRow; onSaved: () => void }) {
           <div className="relative">
             <select
               aria-label={t('admin.dataReportStatus')}
-              className="h-[38px] appearance-none rounded-[7px] border border-input bg-background pl-3 pr-9 text-sm text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
+              className="h-9.5 appearance-none rounded-[7px] border border-input bg-background pl-3 pr-9 text-sm text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
               value={status}
               onChange={(e) => setStatus(e.target.value as DataReportStatus)}
             >

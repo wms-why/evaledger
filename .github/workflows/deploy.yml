@@ -52,3 +52,23 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+      # 生产敏感变量：.prod.vars 不入库，CI 从仓库 secret PROD_VARS 现场还原后
+      # 用 `wrangler secret bulk` 上传（格式：每行 KEY=VALUE，可含 # 注释）。
+      # 未配置 PROD_VARS 时优雅跳过，fork 仍可部署。放在 deploy 之后：首次部署
+      # 时 Worker 尚不存在，先 deploy 才能保证路由与绑定就位。
+      # 注意：这些键不能再出现在 wrangler.jsonc 的 vars 里，否则同名冲突会让
+      # `wrangler deploy` 弹出交互式确认（CI 无人应答）。
+      - name: Push production secrets
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PROD_VARS: ${{ secrets.PROD_VARS }}
+        run: |
+          if [ -z "$PROD_VARS" ]; then
+            echo "::notice::PROD_VARS 未配置，跳过 secret bulk。"
+            exit 0
+          fi
+          umask 077
+          printf '%s\n' "$PROD_VARS" > .prod.vars
+          pnpm exec wrangler secret bulk .prod.vars --env production

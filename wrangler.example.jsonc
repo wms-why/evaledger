@@ -151,12 +151,7 @@
 					"binding": "CACHE",
 					"id": "00000000000000000000000000000000"
 				}
-			],
-			"vars": {
-				"MMX_API_KEY": "",
-				"DEEPSEEK_API_KEY": "",
-				"REPLICATE_API_TOKEN": ""
-			}
+			]
 		},
 		"production": {
 			"name": "aibookplanner-production",
@@ -186,6 +181,9 @@
 					"id": "00000000000000000000000000000000"
 				}
 			],
+			// 敏感键不写进 vars：它们经 `wrangler secret bulk .prod.vars` 上传
+			// （本地 pnpm secrets:push:prod；CI 见 .github/workflows/deploy.yml）。
+			// 同名 var 与远程 secret 冲突会让 wrangler deploy 交互式确认。
 			"vars": {
 				// The origin every absolute URL is derived from — canonical, og:url,
 				// sitemap.xml, robots.txt, feed.xml, Stripe return URLs, auth emails.
@@ -194,10 +192,7 @@
 				// fill it in by hand when deploying from a local checkout.
 				"BETTER_AUTH_URL": "",
 				// Extra origins allowed to call the auth endpoints (comma-separated).
-				"AUTH_TRUSTED_ORIGINS": "",
-				"MMX_API_KEY": "",
-				"DEEPSEEK_API_KEY": "",
-				"REPLICATE_API_TOKEN": ""
+				"AUTH_TRUSTED_ORIGINS": ""
 			}
 		}
 	}
