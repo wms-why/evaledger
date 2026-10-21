@@ -82,6 +82,82 @@ export interface PromoPricing {
   note: string
 }
 
+/**
+ * Where a quoted price comes from.
+ *
+ * - `official` — the vendor's own price list: what the model costs when you
+ *   call the provider directly.
+ * - `aggregator` — a third-party router's quote for the same model (e.g. the
+ *   OpenRouter clone the calculator builds on the fly), which carries the
+ *   router's own markup and is therefore NOT the vendor's price.
+ *
+ * Every row in the registry today is a first-party vendor price; the
+ * OpenRouter clone is the only `aggregator` quote the site produces.
+ */
+export type PricingChannel = 'official' | 'aggregator'
+
+/**
+ * A dated rate band — one leg of a model's price timeline.
+ *
+ * A model with a promotion (or an introductory rate) is not "one price": it
+ * is a timeline. The promo band applies from `from` until `until`; a
+ * different band applies afterwards. Before this existed the only way to say
+ * that was a free-text note, so a reader could not tell whether the price on
+ * screen was the promotional rate or the long-term one — the exact ambiguity
+ * this type removes.
+ *
+ * Bands are inclusive on both ends and compared at day granularity (UTC):
+ * a band with `until: '2026-11-21'` covers the whole of 2026-11-21.
+ */
+export interface PriceWindow {
+  /** ISO date the band starts (inclusive). */
+  from: string
+  /**
+   * ISO date the band ends (inclusive). Omitted when the band runs until the
+   * next one starts (the long-term rate).
+   */
+  until?: string
+  /** USD per 1M input tokens while this band is in force. */
+  inputPricePer1M: number
+  /** USD per 1M output tokens while this band is in force. */
+  outputPricePer1M: number
+  /** USD per 1M cached input tokens while this band is in force. */
+  cachedInputPricePer1M?: number
+  /**
+   * Human-readable name of the band ("Promotional rate", "Standard rate",
+   * "Introductory rate"). English is the source of truth; the Chinese
+   * overlay lives in `model-notes.ts`.
+   */
+  label: string
+}
+
+/**
+ * A service tier the vendor publishes next to the standard rate.
+ *
+ * Only tiers a model's own note documents are recorded — a tier we cannot
+ * trace back to the vendor's pricing page is a tier we do not ship.
+ */
+export interface PricingTier {
+  /** Which lane the tier is: standard, batch, long-context, priority, flex, peak, off-peak. */
+  kind: 'standard' | 'batch' | 'long-context' | 'priority' | 'flex' | 'peak' | 'off-peak'
+  /** Human-readable name of the tier ("Priority", "Batch", ...). */
+  label: string
+  /** USD per 1M input tokens for this tier, when the vendor publishes a fixed rate. */
+  inputPricePer1M?: number
+  /** USD per 1M output tokens for this tier, when the vendor publishes a fixed rate. */
+  outputPricePer1M?: number
+  /** USD per 1M cached input tokens for this tier, when the vendor publishes a fixed rate. */
+  cachedInputPricePer1M?: number
+  /**
+   * Factor on the standard rate, when the vendor states the tier as a
+   * multiplier ("half the standard rate", "1.8×"). Needed for tiers whose
+   * absolute rate depends on which dated band is in force.
+   */
+  multiplier?: number
+  /** Short note shown next to the tier (English source of truth). */
+  note?: string
+}
+
 export interface ModelPrice {
   /** Stable id used in URLs/JSON; never rename without a redirect. */
   id: string
@@ -112,6 +188,22 @@ export interface ModelPrice {
   pricingPeriod?: PricingPeriod
   /** Time-bounded promo — replaces input/output if `Date.now() <= promo.untilDate`. */
   promo?: PromoPricing
+  /**
+   * Where this price comes from: the vendor's own price list (`official`)
+   * or a third-party router's quote for the same model (`aggregator`).
+   */
+  channel?: PricingChannel
+  /**
+   * Dated rate bands — the model's price timeline (promotional band, then
+   * the long-term band). A model without windows is flat-rate: one price,
+   * no expiry.
+   */
+  priceWindows?: PriceWindow[]
+  /**
+   * Service tiers the vendor publishes next to the standard rate (batch,
+   * flex, priority, ...). Only tiers a model's own note documents.
+   */
+  tiers?: PricingTier[]
   /** Canonical URL of the official pricing page this entry was sourced from. */
   sourceUrl: string
   /** ISO date this entry was last verified against `sourceUrl`. */

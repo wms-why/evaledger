@@ -3,7 +3,7 @@ title: "DeepSeek V4.1-Flash 1017: the same $0.30 / $1.20 price, a much better ch
 description: "DeepSeek V4.1-Flash 1017 (2026-10-17) keeps the $0.30 / $1.20 peak price and the $0.006 cache read, and publishes 11 new benchmark scores. Here is what changed, what it costs, and whether you should switch."
 date: "2026-10-20"
 checkedAt: "2026-10-20"
-dataCheckedAt: "2026-10-20"
+dataCheckedAt: "2026-10-21"
 releasedAt: "2026-10-17"
 vendor: deepseek
 modelId: deepseek-flash
@@ -25,7 +25,7 @@ published: true
 
 - **The price did not move. The checkpoint did.** DeepSeek V4.1-Flash 1017 still bills $0.30 per 1M input and $1.20 per 1M output at peak, $0.15 / $0.60 off-peak, and $0.006 for a cached input read — exactly the card the 0910 launch published. There is no budget conversation attached to this release.
 - **What you get for that same price is a materially better agent.** Eleven benchmark scores, all from the 1017 announcement's own table, and that table re-states the previous checkpoint's column, so the upgrade can be read directly instead of inferred.
-- **So for agent and coding traffic the switch is free; for a frontier flagship it is still not a replacement.** GPT-5.6 sol sits at $4 / $20 and Claude Opus 5 at $5 / $25 — an order of magnitude above Flash in either period. The 1017 checkpoint closes more of the quality gap than the 0910 one did, not all of it.
+- **So for agent and coding traffic the switch is free; for a frontier flagship it is still not a replacement.** GPT-5.6 sol sits at $4 / $20 — a promotional rate through 2026-11-21, when it goes to $5 / $30 — and Claude Opus 5 at $5 / $25 — an order of magnitude above Flash in either period. The 1017 checkpoint closes more of the quality gap than the 0910 one did, not all of it.
 
 ## What shipped
 
@@ -42,7 +42,7 @@ published: true
 - **The off-peak clock is still the cheapest lever you have.** Peak runs 01:00–04:00 and 06:00–10:00 UTC on weekdays only, excluding Chinese public holidays — roughly a fifth of the week at $0.30 / $1.20, and half price for everything else at $0.15 / $0.60. Batch jobs, nightly summaries and evaluation sweeps that start outside those two windows are billed at half the rate, and a Chinese public holiday is off-peak all day.
 - **Cache aggressively; the read is 2% of the peak input rate.** $0.006 per 1M cached input, $0.003 off-peak, means an agent loop that re-reads the same context every turn stops paying for those turns again. In long-context workloads this is the line that decides the bill, and the new checkpoint did not make it worse.
 - **Against DeepSeek's own Pro tier the gap is still about 4× on input and about 3× on output**, in either period, because both models halve off-peak. If Pro's quality is what you need, this release does not change that conversation — it only changes what you get on the cheap row.
-- **Against a frontier flagship the gap is still an order of magnitude.** GPT-5.6 sol is $4 / $20 and Claude Opus 5 is $5 / $25, against Flash at $0.30 / $1.20 peak and $0.15 / $0.60 off-peak. The new checkpoint makes Flash a better value, but it does not turn a $0.30 line item into a $4 one.
+- **Against a frontier flagship the gap is still an order of magnitude.** GPT-5.6 sol is $4 / $20 (promotional, through 2026-11-21; $5 / $30 from 2026-11-22) and Claude Opus 5 is $5 / $25, against Flash at $0.30 / $1.20 peak and $0.15 / $0.60 off-peak. The new checkpoint makes Flash a better value, but it does not turn a $0.30 line item into a $4 one.
 - **There is no long-context step to plan around.** The 1,000,000-token window is billed at the same rate as a short prompt.
 
 ## How it scores

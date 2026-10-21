@@ -1,4 +1,5 @@
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing-detail'
 import type { ModelPrice } from '@/features/calculator/types'
 import { BENCHMARKS, type Benchmark } from './benchmarks'
 import { LEADERBOARD } from './models'
@@ -24,10 +25,22 @@ export function findPrice(model: LeaderboardModel): ModelPrice | undefined {
   return REGISTRY.models.find((m) => m.id === model.priceId)
 }
 
-/** Blended (input + output) / 2 price, USD per 1M tokens. */
-export function blendedPricePer1M(price: ModelPrice | undefined): number | undefined {
+/**
+ * Blended (input + output) / 2 price, USD per 1M tokens — the rate IN FORCE.
+ *
+ * A price is a timeline, not a number: the registry's base rate may be the
+ * PROMOTIONAL band, and quoting it as the long-term price is exactly the
+ * mistake this function used to make. The blend is therefore taken from the
+ * dated band in force on `now` — the same resolution `calculateCost` charges
+ * with — so the board and the calculator can never disagree.
+ *
+ * `now` defaults to the registry snapshot (`REGISTRY.fetchedAt`): the site is
+ * a snapshot of the registry, so a render is deterministic.
+ */
+export function blendedPricePer1M(price: ModelPrice | undefined, now?: Date): number | undefined {
   if (!price) return undefined
-  return (price.inputPricePer1M + price.outputPricePer1M) / 2
+  const detail = priceDetail(price, now ?? registrySnapshotDate())
+  return (detail.input + detail.output) / 2
 }
 
 export function scoreOf(model: LeaderboardModel, benchmarkId: string): BenchmarkScore | undefined {

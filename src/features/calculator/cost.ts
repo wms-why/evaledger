@@ -1,11 +1,14 @@
-import type { CostBreakdown, ModelPrice } from './types'
+import type { CostBreakdown, ModelPrice, PriceWindow } from './types'
 import { REGISTRY } from './model-prices'
 
 /**
  * Compute USD cost for a single model at a given input/output token count.
  *
  * Rules applied (in order):
- *  1. Promo — if `Date.now()` is on/before `promo.untilDate`, use promo.
+ *  1. Dated price band — if the model carries `priceWindows`, the band whose
+ *     [from, until] range contains "now" supplies the base prices (and the
+ *     cache-hit rate, when the band states one). A model without windows is
+ *     flat-rate. The legacy `promo` field still applies on top of it.
  *  2. Long-context — pick the highest-threshold tier the context of ONE
  *     request crosses (see `requestContextTokens`); multiply base prices by
  *     the tier's multipliers. If the request is under all thresholds, skip.
@@ -55,6 +58,91 @@ export interface CalculateOptions {
   requestContextTokens?: number
 }
 
+const DAY_MS = 86_400_000
+
+/** Start of an ISO day, in UTC. */
+function startOfDay(iso: string): number {
+  const parsed = Date.parse(`${iso}T00:00:00.000Z`)
+  return Number.isFinite(parsed) ? parsed : Date.parse(iso)
+}
+
+/** Last millisecond of an ISO day, in UTC — a band ending that day covers all of it. */
+function endOfDay(iso: string): number {
+  const parsed = Date.parse(`${iso}T00:00:00.000Z`)
+  return Number.isFinite(parsed) ? parsed + DAY_MS - 1 : Date.parse(iso)
+}
+
+/**
+ * The UTC start of an ISO day, as a `Date`.
+ *
+ * The band resolver works at day granularity (UTC), so every "as of" date the
+ * site states — the registry snapshot, a band's `from` / `until`, a legacy
+ * promo's end date — is turned into the first millisecond of that day here.
+ * One conversion, one meaning: a date-only string and a `Date` never stand
+ * for different days.
+ */
+export function utcDay(iso: string): Date {
+  return new Date(startOfDay(iso))
+}
+
+/**
+ * The dated rate band that is in force on `now`.
+ *
+ * A band covers `[from, until]` inclusive, at day granularity (UTC): a band
+ * with `until: '2026-11-21'` covers the whole of 2026-11-21. When two bands
+ * overlap, the one that started most recently wins. Returns `undefined` for
+ * a flat-rate model (no windows) and for a date that falls outside every
+ * band — the caller then falls back to the model's base price.
+ */
+export function resolvePriceWindow(
+  model: ModelPrice,
+  now: Date = new Date(),
+): PriceWindow | undefined {
+  const windows = model.priceWindows
+  if (!windows || windows.length === 0) return undefined
+  const nowMs = now.getTime()
+  let best: PriceWindow | undefined
+  for (const band of windows) {
+    const from = startOfDay(band.from)
+    if (nowMs < from) continue
+    if (band.until !== undefined && nowMs > endOfDay(band.until)) continue
+    if (!best || startOfDay(band.from) > startOfDay(best.from)) best = band
+  }
+  return best
+}
+
+/**
+ * The band that has not started yet — the next rate change, if the model's
+ * timeline has one. `undefined` when the model is flat-rate or its last band
+ * is already in force.
+ */
+export function nextPriceWindow(
+  model: ModelPrice,
+  now: Date = new Date(),
+): PriceWindow | undefined {
+  const windows = model.priceWindows
+  if (!windows || windows.length === 0) return undefined
+  const nowMs = now.getTime()
+  let next: PriceWindow | undefined
+  for (const band of windows) {
+    const from = startOfDay(band.from)
+    if (from <= nowMs) continue
+    if (!next || from < startOfDay(next.from)) next = band
+  }
+  return next
+}
+
+/**
+ * The `appliedRule` string for a dated band: the band's label plus the
+ * boundary it ends on ("Promotional rate (until 2026-11-21)"), or the label
+ * alone for a band that never ends ("Standard rate"). The shape is what
+ * `pricing-rule.ts` localizes.
+ */
+export function priceWindowRule(band: PriceWindow): string {
+  if (band.until) return `${band.label} (until ${band.until})`
+  return band.label
+}
+
 export function calculateCost(
   modelId: string,
   inputTokens: number,
@@ -69,15 +157,30 @@ export function calculateCost(
   // total: `requestContextTokens` carries it when the caller prices a total.
   const requestContext = options.requestContextTokens ?? inputTokens + outputTokens
 
-  // 1. Pick the effective base price (promo > standard).
+  // 1. Pick the effective base price (dated band > legacy promo > standard).
   let inputPrice = model.inputPricePer1M
   let outputPrice = model.outputPricePer1M
+  let cachedPrice = model.cachedInputPricePer1M
   let cachedInputMultiplier = 1
   let appliedRule = 'standard'
 
+  // A dated band is the model's price TIMELINE: the promotional band is in
+  // force until it expires, then the standard band takes over. Outside every
+  // band (before the first one, or after a gap) the base price stands.
+  const band = resolvePriceWindow(model, now)
+  if (band) {
+    inputPrice = band.inputPricePer1M
+    outputPrice = band.outputPricePer1M
+    if (band.cachedInputPricePer1M !== undefined) cachedPrice = band.cachedInputPricePer1M
+    appliedRule = priceWindowRule(band)
+  }
+
+  // The legacy `promo` field is an explicit per-row override; it still wins
+  // over the band it sits on (no row carries both today).
   if (model.promo && now <= new Date(model.promo.untilDate)) {
     inputPrice = model.promo.inputPricePer1M
     outputPrice = model.promo.outputPricePer1M
+    cachedPrice = model.cachedInputPricePer1M
     appliedRule = `promo (until ${model.promo.untilDate})`
   }
 
@@ -97,11 +200,15 @@ export function calculateCost(
       inputPrice = inputPrice * tier.inputMultiplier
       outputPrice = outputPrice * tier.outputMultiplier
       cachedInputMultiplier = tier.inputMultiplier
-      appliedRule = `long-context ≥${tier.threshold.toLocaleString()} (×${tier.inputMultiplier} / ×${tier.outputMultiplier})`
+      // The band the price came from stays visible: "Promotional rate (until
+      // 2026-11-21) + long-context ≥272,000 (×2 / ×1.5)".
+      const longContextRule = `long-context ≥${tier.threshold.toLocaleString()} (×${tier.inputMultiplier} / ×${tier.outputMultiplier})`
+      appliedRule = appliedRule === 'standard' ? longContextRule : `${appliedRule} + ${longContextRule}`
     }
   }
 
-  // 3. DeepSeek peak/off-peak.
+  // 3. DeepSeek peak/off-peak. The period price REPLACES the base price
+  //    (it is a schedule, not a multiplier), so it also replaces the rule.
   if (model.peakOffPeak) {
     const isPeak = options.peakHour !== false
     const tier = isPeak ? model.peakOffPeak.peak : model.peakOffPeak.offPeak
@@ -116,13 +223,13 @@ export function calculateCost(
   //    Providers price the long-context step on the cache rate too (OpenAI is
   //    explicit: "2x input and cache rates"), so the input multiplier applies
   //    to the cached rate as well.
-  if (options.useCachedInput && model.cachedInputPricePer1M !== undefined) {
+  if (options.useCachedInput && cachedPrice !== undefined) {
     const tierCachePrice = model.peakOffPeak
       ? (options.peakHour !== false
           ? model.peakOffPeak.peak.cachedInputPricePer1M
           : model.peakOffPeak.offPeak.cachedInputPricePer1M)
       : undefined
-    inputPrice = (tierCachePrice ?? model.cachedInputPricePer1M) * cachedInputMultiplier
+    inputPrice = (tierCachePrice ?? cachedPrice) * cachedInputMultiplier
     appliedRule = appliedRule === 'standard' ? 'cached input' : `${appliedRule} + cached input`
   }
 
@@ -174,22 +281,36 @@ export function calculateAll(
  * Apply OpenRouter's average markup to a model — used when the user asks
  * "what would this cost via OpenRouter instead of direct?". We do NOT mutate
  * the registry; instead we return a clone with bumped prices.
+ *
+ * The clone is an AGGREGATOR quote: the router sells one price — the rate in
+ * force today (the dated band the vendor's timeline is on), marked up. The
+ * official bands and tiers therefore do not travel with the clone: keeping
+ * them would make the quote fall back to an un-marked-up band.
  */
-export function applyOpenRouterMarkup(modelId: string, markup?: number): ModelPrice | null {
+export function applyOpenRouterMarkup(
+  modelId: string,
+  markup?: number,
+  now: Date = new Date(),
+): ModelPrice | null {
   const base = REGISTRY.models.find((m) => m.id === modelId)
   if (!base) return null
   const factor = markup ?? REGISTRY.openRouterMarkup
+  const band = resolvePriceWindow(base, now)
+  const input = band?.inputPricePer1M ?? base.inputPricePer1M
+  const output = band?.outputPricePer1M ?? base.outputPricePer1M
+  const cached = band?.cachedInputPricePer1M ?? base.cachedInputPricePer1M
   return {
     ...base,
     id: `${base.id}-via-openrouter`,
     provider: 'openrouter',
+    channel: 'aggregator',
     displayName: `${base.displayName} (via OpenRouter)`,
-    inputPricePer1M: round4(base.inputPricePer1M * factor),
-    outputPricePer1M: round4(base.outputPricePer1M * factor),
+    inputPricePer1M: round4(input * factor),
+    outputPricePer1M: round4(output * factor),
     cachedInputPricePer1M:
-      base.cachedInputPricePer1M !== undefined
-        ? round4(base.cachedInputPricePer1M * factor)
-        : undefined,
+      cached !== undefined ? round4(cached * factor) : undefined,
+    priceWindows: undefined,
+    tiers: undefined,
     note: `OpenRouter markup ×${factor.toFixed(2)} applied to ${base.displayName}.`,
   }
 }

@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.7.0'
+export const REGISTRY_VERSION = '0.8.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -49,6 +49,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-6-astra',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-6 astra',
       family: 'gpt-6',
       status: 'active',
@@ -63,6 +64,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-6-sol',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-6 sol',
       family: 'gpt-6',
       status: 'active',
@@ -77,6 +79,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-6-luna',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-6 luna',
       family: 'gpt-6',
       status: 'active',
@@ -91,6 +94,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-5.6-cyber',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-5.6 cyber',
       family: 'gpt-5',
       status: 'active',
@@ -104,6 +108,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-5.6-sol',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-5.6 sol',
       family: 'gpt-5',
       status: 'active',
@@ -111,6 +116,27 @@ export const REGISTRY: ModelRegistry = {
       inputPricePer1M: 4.0,
       outputPricePer1M: 20.0,
       cachedInputPricePer1M: 0.4,
+      // The note on this row documents a TIME-BOXED rate: the promo band runs
+      // through 2026-11-21, the pre-promo rate ($5 / $30) is what the row
+      // falls back to afterwards. Encoded here so a reader can see "this rate
+      // applies until 2026-11-21" instead of parsing the prose. The second
+      // band is the rate the note records — re-check it when the promo ends.
+      priceWindows: [
+        {
+          from: '2026-10-01',
+          until: '2026-11-21',
+          inputPricePer1M: 4.0,
+          outputPricePer1M: 20.0,
+          cachedInputPricePer1M: 0.4,
+          label: 'Promotional rate',
+        },
+        {
+          from: '2026-11-22',
+          inputPricePer1M: 5.0,
+          outputPricePer1M: 30.0,
+          label: 'Standard rate',
+        },
+      ],
       longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
       sourceUrl: 'https://platform.openai.com/docs/pricing',
       lastVerified: '2026-10-20',
@@ -119,6 +145,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-5',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-5',
       family: 'gpt-5',
       status: 'delisted',
@@ -133,6 +160,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-5-mini',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-5 mini',
       family: 'gpt-5',
       status: 'delisted',
@@ -147,6 +175,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-5-nano',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-5 nano',
       family: 'gpt-5',
       status: 'delisted',
@@ -161,6 +190,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-4.1',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-4.1',
       family: 'gpt-4',
       status: 'delisted',
@@ -175,6 +205,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gpt-4.1-mini',
       provider: 'openai',
+      channel: 'official',
       displayName: 'GPT-4.1 mini',
       family: 'gpt-4',
       status: 'delisted',
@@ -189,6 +220,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'o3',
       provider: 'openai',
+      channel: 'official',
       displayName: 'o3',
       family: 'o-series',
       status: 'delisted',
@@ -203,6 +235,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'o3-mini',
       provider: 'openai',
+      channel: 'official',
       displayName: 'o3-mini',
       family: 'o-series',
       status: 'delisted',
@@ -217,6 +250,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'o1-pro',
       provider: 'openai',
+      channel: 'official',
       displayName: 'o1-pro',
       family: 'o-series',
       status: 'delisted',
@@ -232,6 +266,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-fable-5.1',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Fable 5.1',
       family: 'claude-fable',
       status: 'active',
@@ -246,6 +281,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-5.5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Opus 5.5',
       family: 'claude-opus',
       status: 'active',
@@ -260,6 +296,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-sonnet-5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Sonnet 5',
       family: 'claude-sonnet',
       status: 'active',
@@ -274,6 +311,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-haiku-4.5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Haiku 4.5',
       family: 'claude-haiku',
       status: 'active',
@@ -291,6 +329,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-4.5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Opus 4.5',
       family: 'claude-opus',
       status: 'delisted',
@@ -309,6 +348,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-sonnet-4.5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Sonnet 4.5',
       family: 'claude-sonnet',
       status: 'delisted',
@@ -327,6 +367,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-sonnet-4.6',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Sonnet 4.6',
       family: 'claude-sonnet',
       status: 'delisted',
@@ -341,6 +382,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-fable-5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Fable 5',
       family: 'claude-fable',
       status: 'delisted',
@@ -356,6 +398,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-5',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Opus 5',
       family: 'claude-opus',
       status: 'delisted',
@@ -370,6 +413,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-4.6',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Opus 4.6',
       family: 'claude-opus',
       status: 'delisted',
@@ -384,6 +428,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-4.7',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Opus 4.7',
       family: 'claude-opus',
       status: 'delisted',
@@ -398,6 +443,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'claude-opus-4.8',
       provider: 'anthropic',
+      channel: 'official',
       displayName: 'Claude Opus 4.8',
       family: 'claude-opus',
       status: 'delisted',
@@ -431,6 +477,7 @@ export const REGISTRY: ModelRegistry = {
       // least 4,096 tokens.
       id: 'gemini-4-argon',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 4 Argon',
       family: 'gemini-4',
       status: 'active',
@@ -438,6 +485,34 @@ export const REGISTRY: ModelRegistry = {
       inputPricePer1M: 2.0,
       outputPricePer1M: 10.0,
       cachedInputPricePer1M: 0.1,
+      // The note documents a dated timeline (introductory → standard) and the
+      // three service tiers Google publishes next to it. Encoded here so a
+      // reader sees "introductory until 2026-11-30, then $4 / $20" and "Batch
+      // and Flex are half, Priority is 1.8×" instead of parsing prose.
+      // The tiers are factors on the standard rate, so their absolute rate
+      // follows whichever band is in force — hence no fixed numbers.
+      priceWindows: [
+        {
+          from: '2026-10-13',
+          until: '2026-11-30',
+          inputPricePer1M: 2.0,
+          outputPricePer1M: 10.0,
+          cachedInputPricePer1M: 0.1,
+          label: 'Introductory rate',
+        },
+        {
+          from: '2026-12-01',
+          inputPricePer1M: 4.0,
+          outputPricePer1M: 20.0,
+          cachedInputPricePer1M: 0.2,
+          label: 'Standard rate',
+        },
+      ],
+      tiers: [
+        { kind: 'batch', label: 'Batch', multiplier: 0.5, note: 'Runs at half the standard rate.' },
+        { kind: 'flex', label: 'Flex', multiplier: 0.5, note: 'Runs at half the standard rate.' },
+        { kind: 'priority', label: 'Priority', multiplier: 1.8, note: 'Costs 1.8× the standard rate.' },
+      ],
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
       lastVerified: '2026-10-20',
       introduced: '2026-10-13',
@@ -446,6 +521,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-3.1-pro-preview',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 3.1 Pro Preview',
       family: 'gemini-3',
       status: 'active',
@@ -463,6 +539,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-3.8-flash',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 3.8 Flash',
       family: 'gemini-3',
       status: 'active',
@@ -470,6 +547,26 @@ export const REGISTRY: ModelRegistry = {
       inputPricePer1M: 0.75,
       outputPricePer1M: 3.75,
       cachedInputPricePer1M: 0.075,
+      // The note documents a dated timeline (introductory → standard). Encoded
+      // here so the rate on screen says when it changes instead of leaving
+      // the reader to parse the prose.
+      priceWindows: [
+        {
+          from: '2026-10-01',
+          until: '2026-12-31',
+          inputPricePer1M: 0.75,
+          outputPricePer1M: 3.75,
+          cachedInputPricePer1M: 0.075,
+          label: 'Introductory rate',
+        },
+        {
+          from: '2027-01-01',
+          inputPricePer1M: 1.5,
+          outputPricePer1M: 7.5,
+          cachedInputPricePer1M: 0.15,
+          label: 'Standard rate',
+        },
+      ],
       sourceUrl: 'https://ai.google.dev/gemini-api/docs/pricing',
       lastVerified: '2026-10-20',
       note: 'Introductory pricing: $0.75 / $3.75 / $0.075 through 2026-12-31, then $1.50 / $7.50 / $0.15 from 2027-01-01.',
@@ -477,6 +574,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-3.1-flash-lite',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 3.1 Flash-Lite',
       family: 'gemini-3',
       status: 'active',
@@ -490,6 +588,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-2.5-pro',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 2.5 Pro',
       family: 'gemini-2.5',
       status: 'active',
@@ -506,6 +605,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-2.5-flash-lite',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 2.5 Flash-Lite',
       family: 'gemini-2.5',
       status: 'active',
@@ -519,6 +619,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'gemini-2.5-flash',
       provider: 'google',
+      channel: 'official',
       displayName: 'Gemini 2.5 Flash',
       family: 'gemini-2.5',
       status: 'active',
@@ -566,6 +667,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'deepseek-flash',
       provider: 'deepseek',
+      channel: 'official',
       displayName: 'DeepSeek V4.1-Flash 1017',
       family: 'deepseek-v4',
       status: 'active',
@@ -594,6 +696,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'deepseek-flash-0910',
       provider: 'deepseek',
+      channel: 'official',
       displayName: 'DeepSeek V4.1-Flash 0910',
       family: 'deepseek-v4',
       status: 'delisted',
@@ -622,6 +725,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'deepseek-v4-pro',
       provider: 'deepseek',
+      channel: 'official',
       displayName: 'DeepSeek V4-Pro',
       family: 'deepseek-v4',
       status: 'active',
@@ -647,6 +751,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'deepseek-chat',
       provider: 'deepseek',
+      channel: 'official',
       displayName: 'DeepSeek V3.2',
       family: 'deepseek-v3',
       status: 'delisted',
@@ -670,6 +775,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'deepseek-reasoner',
       provider: 'deepseek',
+      channel: 'official',
       displayName: 'DeepSeek R1',
       family: 'deepseek-r1',
       status: 'delisted',
@@ -711,6 +817,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'minimax-m3.1-flash',
       provider: 'minimax',
+      channel: 'official',
       displayName: 'MiniMax M3.1 Flash',
       family: 'minimax-m3',
       status: 'active',
@@ -719,6 +826,20 @@ export const REGISTRY: ModelRegistry = {
       inputPricePer1M: 0.15,
       outputPricePer1M: 0.6,
       cachedInputPricePer1M: 0.015,
+      // The note states there is no second lane for this model: flat rate, no
+      // long-context tier, and no service_tier=priority (unlike M3). Recorded
+      // as a `standard` tier so a reader can see that the single rate is the
+      // whole rate, instead of wondering whether a tier is missing.
+      tiers: [
+        {
+          kind: 'standard',
+          label: 'Flat rate',
+          inputPricePer1M: 0.15,
+          outputPricePer1M: 0.6,
+          cachedInputPricePer1M: 0.015,
+          note: 'Flat rate — no long-context tier, and unlike M3 it does not accept service_tier=priority.',
+        },
+      ],
       sourceUrl: 'https://platform.minimax.io/docs/pricing/overview',
       lastVerified: '2026-10-20',
       note: 'Released 2026-10-19; $0.15 / $0.60 / $0.015 (¥1 / ¥4 / ¥0.1). Flat rate — no long-context tier, and unlike M3 it does not accept service_tier=priority.',
@@ -726,6 +847,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'minimax-m3',
       provider: 'minimax',
+      channel: 'official',
       displayName: 'MiniMax M3',
       family: 'minimax-m3',
       status: 'active',
@@ -736,6 +858,29 @@ export const REGISTRY: ModelRegistry = {
       // Standard tier, ≤512k input. Past 512k of input every meter doubles
       // ($0.60 / $2.40 / $0.12) — see the long-context table on the page.
       longContext: [{ threshold: 524_288, inputMultiplier: 2, outputMultiplier: 2 }],
+      // The note names the two lanes MiniMax publishes for this model: the
+      // service_tier=priority lane (1.5×, with its own absolute rates) and
+      // the ≥512k doubling, whose cache-hit rate the note spells out ($0.12).
+      tiers: [
+        {
+          kind: 'priority',
+          label: 'Priority',
+          inputPricePer1M: 0.45,
+          outputPricePer1M: 1.8,
+          cachedInputPricePer1M: 0.09,
+          multiplier: 1.5,
+          note: 'service_tier=priority costs 1.5× ($0.45 / $1.80 / $0.09).',
+        },
+        {
+          kind: 'long-context',
+          label: 'Long context ≥512k',
+          inputPricePer1M: 0.6,
+          outputPricePer1M: 2.4,
+          cachedInputPricePer1M: 0.12,
+          multiplier: 2,
+          note: 'Above 512k of input every meter doubles; the cached-input rate doubles to $0.12.',
+        },
+      ],
       sourceUrl: 'https://platform.minimax.io/docs/pricing/overview',
       lastVerified: '2026-10-20',
       note: 'Released 2026-06-01. service_tier=priority costs 1.5× ($0.45 / $1.80 / $0.09). No separate cache-write charge. The cached-input rate above 512k doubles to $0.12; cost.ts applies the input multiplier to the cached rate as well.',
@@ -745,6 +890,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'grok-4.7',
       provider: 'grok',
+      channel: 'official',
       displayName: 'Grok 4.7',
       family: 'grok-4',
       status: 'active',
@@ -761,6 +907,7 @@ export const REGISTRY: ModelRegistry = {
     {
       id: 'grok-4',
       provider: 'grok',
+      channel: 'official',
       displayName: 'Grok 4',
       family: 'grok-4',
       status: 'delisted',
@@ -778,4 +925,20 @@ export const REGISTRY: ModelRegistry = {
 /** Lookup helper — returns the canonical entry for an id, or undefined. */
 export function findModel(id: string) {
   return REGISTRY.models.find((m) => m.id === id)
+}
+
+/**
+ * Every distinct label the dated price bands use ("Promotional rate",
+ * "Introductory rate", "Standard rate").
+ *
+ * The labels are the registry's English source of truth; the Chinese names
+ * live in `model-notes.ts`. Surfaces that have to recognise a band by its
+ * label (the pricing-rule translator) read the set from here.
+ */
+export function priceWindowLabels(): string[] {
+  const labels = new Set<string>()
+  for (const model of REGISTRY.models) {
+    for (const band of model.priceWindows ?? []) labels.add(band.label)
+  }
+  return [...labels]
 }

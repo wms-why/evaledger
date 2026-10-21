@@ -1,5 +1,6 @@
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 
 /**
  * Page-specific block for /chatgpt-api-pricing. Explains the Batch API
@@ -38,21 +39,30 @@ export function ChatGPTSection() {
             </p>
             {cachedModels.length > 0 && (
               <ul className="mt-4 space-y-1.5 text-[12px] tabular-nums text-fg-2">
-                {cachedModels.map((m) => (
-                  <li key={m.id}>
-                    <span className="font-medium text-fg-1">{m.displayName}:</span>{' '}
-                    ${m.cachedInputPricePer1M!.toFixed(3)}/M
-                    {m.inputPricePer1M != null && (
-                      <>
-                        {' '}
-                        <span className="text-fg-3">
-                          ({Math.round((1 - m.cachedInputPricePer1M! / m.inputPricePer1M) * 100)}%
-                          off)
-                        </span>
-                      </>
-                    )}
-                  </li>
-                ))}
+                {cachedModels.map((m) => {
+                  // The rate IN FORCE, not the registry's base rate: a base
+                  // rate may be a promotional band, and the discount is a
+                  // ratio of two prices the reader is actually charged. Both
+                  // sides come from the same resolution, so the percentage
+                  // cannot mix a promo rate with a standard one.
+                  const detail = priceDetail(m)
+                  if (detail.cached == null) return null
+                  return (
+                    <li key={m.id}>
+                      <span className="font-medium text-fg-1">{m.displayName}:</span>{' '}
+                      ${detail.cached.toFixed(3)}/M
+                      {detail.input != null && (
+                        <>
+                          {' '}
+                          <span className="text-fg-3">
+                            ({Math.round((1 - detail.cached / detail.input) * 100)}%
+                            off)
+                          </span>
+                        </>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>

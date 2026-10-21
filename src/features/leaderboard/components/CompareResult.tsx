@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Minus } from 'lucide-react'
 import { useTranslation } from '@/features/i18n/provider'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 import { cn } from '@/lib/utils'
 import { BENCHMARKS } from '../benchmarks'
 import { blendedPricePer1M, findPrice, formatScore, scoreOf } from '../leaderboard'
@@ -188,7 +189,7 @@ export function CompareResult({
   const interactive = !!onRemoveScore
   const leadCell = interactive ? 'pl-9 pr-3' : 'px-4'
   const prices = models.map((model) => findPrice(model))
-  const blended = prices.map(blendedPricePer1M)
+  const blended = prices.map((price) => blendedPricePer1M(price))
   const cheapest = uniqueMin(blended)
   const bestContext = uniqueMax(prices.map((price) => price?.contextWindow))
   const minWidth = Math.max(560, 200 + models.length * 150)
@@ -330,13 +331,17 @@ export function CompareResult({
                   className="whitespace-nowrap px-4 py-2.5 text-right text-[12px] tabular-nums text-fg-2"
                 >
                   {price
-                    ? [
-                        formatPrice(price.inputPricePer1M),
-                        formatPrice(price.outputPricePer1M),
-                        price.cachedInputPricePer1M != null
-                          ? formatPrice(price.cachedInputPricePer1M)
-                          : '—',
-                      ].join(' · ')
+                    ? (() => {
+                        // The rate IN FORCE, not the registry's base rate — a
+                        // promotional band must not be quoted as the standing
+                        // price. Same resolution the calculator charges with.
+                        const detail = priceDetail(price)
+                        return [
+                          formatPrice(detail.input),
+                          formatPrice(detail.output),
+                          detail.cached != null ? formatPrice(detail.cached) : '—',
+                        ].join(' · ')
+                      })()
                     : '—'}
                 </td>
               ))}

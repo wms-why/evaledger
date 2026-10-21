@@ -1,4 +1,5 @@
 import { useTranslation } from '@/features/i18n/provider'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 import { cn } from '@/lib/utils'
 import { blendedPricePer1M, findPrice } from '../leaderboard'
 import { formatPrice } from './PriceCell'
@@ -14,14 +15,19 @@ export function CompareHeroPlan({ a, b }: CompareHeroProps) {
   const pb = findPrice(b)
   const ba = blendedPricePer1M(pa)
   const bb = blendedPricePer1M(pb)
+  // The rate IN FORCE, not the registry's base rate — a promotional band must
+  // not be quoted as the standing price. Same resolution the calculator
+  // charges with, so the two can never disagree.
+  const da = pa ? priceDetail(pa) : undefined
+  const db = pb ? priceDetail(pb) : undefined
 
   const rows: Array<{ label: string; a?: string; b?: string }> = [
-    { label: t('leaderboard.compare.input'), a: pa ? formatPrice(pa.inputPricePer1M) : undefined, b: pb ? formatPrice(pb.inputPricePer1M) : undefined },
-    { label: t('leaderboard.compare.output'), a: pa ? formatPrice(pa.outputPricePer1M) : undefined, b: pb ? formatPrice(pb.outputPricePer1M) : undefined },
+    { label: t('leaderboard.compare.input'), a: da ? formatPrice(da.input) : undefined, b: db ? formatPrice(db.input) : undefined },
+    { label: t('leaderboard.compare.output'), a: da ? formatPrice(da.output) : undefined, b: db ? formatPrice(db.output) : undefined },
     {
       label: t('leaderboard.compare.cached'),
-      a: pa?.cachedInputPricePer1M != null ? formatPrice(pa.cachedInputPricePer1M) : undefined,
-      b: pb?.cachedInputPricePer1M != null ? formatPrice(pb.cachedInputPricePer1M) : undefined,
+      a: da?.cached != null ? formatPrice(da.cached) : undefined,
+      b: db?.cached != null ? formatPrice(db.cached) : undefined,
     },
     {
       label: t('leaderboard.compare.context'),

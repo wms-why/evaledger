@@ -1,5 +1,6 @@
 import { calculateCost } from '@/features/calculator/cost'
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 import type { ModelPrice, ModelStatus } from '@/features/calculator/types'
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { blendedPricePer1M, scoreOf } from '@/features/leaderboard/leaderboard'
@@ -181,6 +182,11 @@ export function seriesRow(member: SeriesMember, index: number): SeriesRow {
   }
 
   const blended = blendedPricePer1M(price)
+  // The rate IN FORCE, not the registry's base rate — a model's base rate may
+  // be a PROMOTIONAL band. The ladder shows input / output / cached next to
+  // the blended column, so all four must come from the same resolution or the
+  // row contradicts itself.
+  const detail = price ? priceDetail(price) : undefined
 
   const row: SeriesRow = {
     key: member.key,
@@ -190,9 +196,9 @@ export function seriesRow(member: SeriesMember, index: number): SeriesRow {
     scoreId: member.scoreId,
     displayName: price?.displayName ?? score?.displayName ?? member.key,
     status: price?.status ?? member.status ?? 'delisted',
-    inputPricePer1M: price?.inputPricePer1M,
-    outputPricePer1M: price?.outputPricePer1M,
-    cachedInputPricePer1M: price?.cachedInputPricePer1M,
+    inputPricePer1M: detail?.input,
+    outputPricePer1M: detail?.output,
+    cachedInputPricePer1M: detail?.cached,
     blendedPricePer1M: blended,
     contextWindow: price?.contextWindow,
     sourceUrl: price?.sourceUrl,

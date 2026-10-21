@@ -1,17 +1,24 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 import type { ModelPrice } from '@/features/calculator/types'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { PriceBreakdown } from './PriceBreakdown'
 
 /**
  * The one price component, rendered in three places:
  *  - `column`     → leaderboard table cell (blended $/1M)
- *  - `card`       → model profile price block (full breakdown + source)
+ *  - `card`       → model profile price block (the full breakdown)
  *  - `calculator` → "run your usage through it" link
  *
  * All three read the same `REGISTRY`, so there is one source of truth. The
  * compare table reads `formatPrice` directly for its compact breakdown rows.
+ *
+ * The number shown is always the rate IN FORCE (the dated band the resolver
+ * picks), never the registry's base rate: a base rate may be a promotional
+ * band, and a board must not quote a promotion as the long-term price.
  */
 export type PriceView = 'column' | 'card' | 'calculator'
 
@@ -47,9 +54,28 @@ export function PriceCell({
   }
 
   if (view === 'column') {
-    const blended = (price.inputPricePer1M + price.outputPricePer1M) / 2
+    // The rate IN FORCE, not the registry's base rate: the base rate may be
+    // a promotional band, and quoting it as the long-term price is the bug
+    // this cell used to have. `priceDetail` resolves the band exactly like
+    // `calculateCost` charges it.
+    const detail = priceDetail(price)
+    const blended = (detail.input + detail.output) / 2
+    const until = detail.promoUntil
     return (
-      <span className={cn('tabular-nums text-fg-2', className)}>{formatPrice(blended)}</span>
+      <span className={cn('inline-flex flex-col items-end gap-0.5', className)}>
+        <span
+          className="tabular-nums text-fg-2"
+          title={detail.promoActive ? t('leaderboard.price.promoActive') : undefined}
+        >
+          {formatPrice(blended)}
+        </span>
+        {detail.promoActive && until && (
+          <Badge variant="pro" className="px-[6px] py-0 text-[10px] leading-[1.6]">
+            {t('leaderboard.price.promoActive')} ·{' '}
+            {t('leaderboard.price.effectiveUntil', { date: until })}
+          </Badge>
+        )}
+      </span>
     )
   }
 
@@ -70,28 +96,7 @@ export function PriceCell({
 
   return (
     <div className={cn('space-y-1', className)}>
-      <div className="flex items-center justify-between gap-4 text-[13px]">
-        <span className="text-fg-3">{t('leaderboard.compare.input')}</span>
-        <span className="tabular-nums text-fg-2">{formatPrice(price.inputPricePer1M)}</span>
-      </div>
-      <div className="flex items-center justify-between gap-4 text-[13px]">
-        <span className="text-fg-3">{t('leaderboard.compare.output')}</span>
-        <span className="tabular-nums text-fg-2">{formatPrice(price.outputPricePer1M)}</span>
-      </div>
-      <div className="flex items-center justify-between gap-4 text-[13px]">
-        <span className="text-fg-3">{t('leaderboard.compare.cached')}</span>
-        <span className="tabular-nums text-fg-2">
-          {price.cachedInputPricePer1M != null ? formatPrice(price.cachedInputPricePer1M) : '—'}
-        </span>
-      </div>
-      <a
-        href={price.sourceUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="mt-2 inline-block text-[12px] text-fg-3 underline decoration-dotted underline-offset-2 hover:text-foreground"
-      >
-        {t('leaderboard.sourceVerified', { date: price.lastVerified })}
-      </a>
+      <PriceBreakdown model={price} />
     </div>
   )
 }

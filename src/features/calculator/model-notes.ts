@@ -45,7 +45,7 @@ export const MODEL_NOTES_ZH: Record<string, string> = {
 
   // ───────────────────────── Google ─────────────────────────
   'gemini-4-argon':
-    '入门价: $2 / $10 / $0.10 适用至 2026-11-30,自 2026-12-01 起为 $4 / $20 / $0.20。仅支持隐式缓存,不支持显式缓存。Batch 与 Flex 为标准价的一半,Priority 是 1.8×。',
+    '入门价: $2 / $10 / $0.10 适用至 2026-11-30,自 2026-12-01 起为 $4 / $20 / $0.20。仅支持隐式缓存,不支持显式缓存。批处理与 Flex 为标准价的一半,优先是 1.8×。',
   'gemini-3.8-flash':
     '入门价: $0.75 / $3.75 / $0.075 适用至 2026-12-31,自 2027-01-01 起为 $1.50 / $7.50 / $0.15。',
 
@@ -67,8 +67,94 @@ export const MODEL_NOTES_ZH: Record<string, string> = {
   'grok-4': '已被 Grok 4.7 取代;保留用于长尾搜索。',
 }
 
+/**
+ * Chinese names of the dated price bands, keyed by their English label.
+ *
+ * The English label lives in the price registry (`model-prices.ts`) — it is
+ * the source of truth, the same way the English note is. This module is the
+ * Chinese overlay, so a band name never has to live in two places.
+ */
+export const PRICE_WINDOW_LABELS_ZH: Record<string, string> = {
+  'Promotional rate': '促销价',
+  'Introductory rate': '入门价',
+  'Standard rate': '标准价',
+}
+
+/**
+ * Chinese names of the service tiers a vendor publishes next to the standard
+ * rate, keyed by their English label.
+ *
+ * The English label lives in the price registry (`model-prices.ts`) — same
+ * rule as the band names above: English is the source of truth, this file is
+ * the Chinese overlay. Every tier in the registry carries a label, so the
+ * label — not the tier's `kind` — is what a reader sees; without this
+ * overlay the Chinese pages would print English tier names.
+ *
+ * `Flex` keeps its Latin form: it is the name of Google's product lane, the
+ * same way the dictionary keeps `leaderboard.price.tierFlex` untranslated.
+ */
+export const PRICE_TIER_LABELS_ZH: Record<string, string> = {
+  'Batch': '批处理',
+  'Flex': 'Flex',
+  'Priority': '优先',
+  'Flat rate': '统一费率',
+  'Long context ≥512k': '长上下文 ≥512k',
+}
+
+/**
+ * Chinese notes of the service tiers, keyed by their English note.
+ *
+ * Same overlay rule as `MODEL_NOTES_ZH`: every price figure, multiplier and
+ * product name is copied verbatim from the English note — never rounded,
+ * converted or re-ordered.
+ */
+export const PRICE_TIER_NOTES_ZH: Record<string, string> = {
+  'Runs at half the standard rate.': '按标准价的一半计费。',
+  'Costs 1.8× the standard rate.': '为标准价的 1.8×。',
+  'Flat rate — no long-context tier, and unlike M3 it does not accept service_tier=priority.':
+    '统一费率——没有长上下文档位,而且与 M3 不同,它不接受 service_tier=priority。',
+  'service_tier=priority costs 1.5× ($0.45 / $1.80 / $0.09).':
+    'service_tier=priority 的价格为 1.5×($0.45 / $1.80 / $0.09)。',
+  'Above 512k of input every meter doubles; the cached-input rate doubles to $0.12.':
+    '输入超过 512k 时每个计费项都翻倍;缓存输入价翻倍到 $0.12。',
+}
+
 /** Suffix the OpenRouter clone appends to the id of the model it copies. */
 const OPENROUTER_SUFFIX = '-via-openrouter'
+
+/**
+ * Localized name of a dated price band; falls back to the English label.
+ *
+ * Used by the pricing-rule translator, so a rule like
+ * `Promotional rate (until 2026-11-21)` reads `促销价（至 2026-11-21）` on the
+ * Chinese pages (`calculator.ruleWindowUntil`).
+ */
+export function priceWindowLabel(label: string, locale: string): string {
+  if (locale !== 'zh') return label
+  return PRICE_WINDOW_LABELS_ZH[label] ?? label
+}
+
+/**
+ * Localized name of a service tier; falls back to the registry's English
+ * label.
+ *
+ * Mirrors `priceWindowLabel`: the tier's label is what the vendor
+ * published, so it is translated through the overlay rather than re-invented
+ * from the tier's `kind`.
+ */
+export function priceTierLabel(label: string, locale: string): string {
+  if (locale !== 'zh') return label
+  return PRICE_TIER_LABELS_ZH[label] ?? label
+}
+
+/**
+ * Localized note of a service tier; falls back to the registry's English
+ * note. Same overlay rule as `priceTierLabel`.
+ */
+export function priceTierNote(note: string, locale: string): string {
+  if (locale !== 'zh') return note
+  return PRICE_TIER_NOTES_ZH[note] ?? note
+}
 
 /** Look a Chinese note up without widening the type to `string`. */
 function zhNote(id: string): string | undefined {
