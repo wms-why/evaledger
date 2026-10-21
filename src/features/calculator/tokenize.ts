@@ -47,14 +47,28 @@ export interface TokenCount {
  * Returns `null` if gpt-tokenizer is unavailable (e.g. server-side).
  */
 type Encoder = (text: string) => number[]
+
+// Literal dynamic imports keep gpt-tokenizer out of the SSR/Workers bundle
+// while staying statically analyzable by Vite (each encoding is its own
+// lazy client chunk).
+const ENCODER_LOADERS: Record<'cl100k_base' | 'o200k_base', () => Promise<Encoder>> = {
+  cl100k_base: async () => {
+    const { encode } = await import('gpt-tokenizer/encoding/cl100k_base')
+    return encode
+  },
+  o200k_base: async () => {
+    const { encode } = await import('gpt-tokenizer/encoding/o200k_base')
+    return encode
+  },
+}
+
 let _encoderCache: Partial<Record<'cl100k_base' | 'o200k_base', Encoder>> = {}
 
 async function loadEncoder(rank: 'cl100k_base' | 'o200k_base'): Promise<Encoder | null> {
   if (typeof window === 'undefined') return null
   if (_encoderCache[rank]) return _encoderCache[rank]!
   try {
-    // Dynamic import keeps gpt-tokenizer out of the SSR/Workers bundle.
-    const { encode } = await import('gpt-tokenizer/encoding/' + rank)
+    const encode = await ENCODER_LOADERS[rank]()
     _encoderCache[rank] = encode
     return encode
   } catch {
