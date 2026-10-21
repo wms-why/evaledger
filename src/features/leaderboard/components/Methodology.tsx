@@ -1,17 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
-import { Badge } from '@/components/ui/badge'
 import { BENCHMARKS } from '../benchmarks'
-import { LEADERBOARD } from '../models'
-import { sourceInfo } from '../sources'
 import { fieldBestDetail, TRACKS, TRACK_IDS } from '../scoring'
 
 /**
  * The methodology page — the whole of the site's arithmetic, in one place.
  *
  * This is what makes a leaderboard checkable: every board, its benchmarks,
- * their weights, the field best each is normalized against, and where the
- * scores came from. A reader can recompute any composite by hand.
+ * their weights, and the field best each is normalized against. A reader can
+ * recompute any composite by hand. Where the numbers were read from lives on
+ * the data-quality page, next to the freshness of every row they cite.
  */
 export function Methodology() {
   const { t } = useTranslation()
@@ -121,89 +119,27 @@ export function Methodology() {
 
       <section>
         <h2 className="text-[18px] font-semibold">
-          {t('leaderboard.methodology.sources')}
-        </h2>
-        <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-fg-2">
-          {t('leaderboard.methodology.sourcesNote')}
-        </p>
-        <div className="mt-4 overflow-hidden rounded-[14px] border border-border bg-card">
-          <table className="w-full border-collapse text-[13px]">
-            <thead>
-              <tr className="border-b border-border text-left text-[12px] uppercase tracking-wide text-fg-3">
-                <th className="px-4 py-2.5 font-medium">
-                  {t('leaderboard.methodology.source')}
-                </th>
-                <th className="px-4 py-2.5 font-medium">{t('leaderboard.track.sourceTitle')}</th>
-                <th className="px-4 py-2.5 text-right font-medium">
-                  {t('leaderboard.colObserved')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sourceRows().map((row) => (
-                <tr key={row.url} className="border-b border-border/60 last:border-0">
-                  <td className="px-4 py-2.5">
-                    <a
-                      href={row.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-foreground underline decoration-dotted underline-offset-2 hover:text-primary"
-                    >
-                      {row.name}
-                    </a>
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <Badge variant="free">
-                      {row.kind === 'vendor'
-                        ? t('leaderboard.track.sourceVendor')
-                        : row.kind === 'third-party'
-                          ? t('leaderboard.track.sourceThirdParty')
-                          : t('leaderboard.track.sourceReference')}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-fg-3">{row.count}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-[18px] font-semibold">
           {t('leaderboard.methodology.updates')}
         </h2>
         <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-fg-2">
           {t('leaderboard.methodology.updatesNote')}
         </p>
-        <Link
-          to="/{-$locale}/data-quality"
-          className="mt-3 inline-block text-[14px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
-        >
-          {t('leaderboard.methodology.reportIssue')} →
-        </Link>
+        <div className="mt-3 flex flex-col items-start gap-1.5">
+          <Link
+            to="/{-$locale}/data-quality"
+            hash="data-quality-sources"
+            className="text-[14px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+          >
+            {t('leaderboard.methodology.sourcesLink')} →
+          </Link>
+          <Link
+            to="/{-$locale}/data-quality"
+            className="text-[14px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+          >
+            {t('leaderboard.methodology.reportIssue')} →
+          </Link>
+        </div>
       </section>
     </div>
   )
-}
-
-/** One row per distinct source URL, with how many scores cite it. */
-function sourceRows() {
-  const counts = new Map<string, { name: string; kind: string; count: number }>()
-  for (const model of LEADERBOARD.models) {
-    for (const score of model.scores) {
-      const url = score.sourceUrl
-      if (!url) continue
-      const info = sourceInfo(url)
-      const existing = counts.get(url)
-      if (existing) {
-        existing.count += 1
-        continue
-      }
-      counts.set(url, { name: info?.name ?? url, kind: info?.kind ?? 'reference-table', count: 1 })
-    }
-  }
-  return [...counts.entries()]
-    .map(([url, row]) => ({ url, ...row }))
-    .sort((a, b) => b.count - a.count)
 }

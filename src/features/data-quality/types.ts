@@ -62,6 +62,22 @@ export interface ScoreSource {
   kind: SourceKind
 }
 
+/**
+ * One distinct page every score in the registry was read from, with the
+ * number of score entries that cite it. The page-level index that the
+ * per-model `sources` lists roll up into.
+ */
+export interface DataSourceRow {
+  /** The page the scores were read from. */
+  url: string
+  /** Human-facing name of the source. */
+  name: string
+  /** Who published it: the vendor, an independent harness, or our table. */
+  kind: SourceKind
+  /** How many score entries across the registry cite this page. */
+  count: number
+}
+
 /** One model's score coverage, broken down by where the scores came from. */
 export interface ScoreQuality {
   modelId: string

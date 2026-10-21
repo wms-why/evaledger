@@ -6,7 +6,8 @@ import { getOptionalUser, getTurnstileSiteKey } from '@/features/auth/middleware
 import { DataQualitySummary } from '@/features/data-quality/components/DataQualitySummary'
 import { DataQualityTable } from '@/features/data-quality/components/DataQualityTable'
 import { DataReportForm } from '@/features/data-quality/components/DataReportForm'
-import { dataQualitySummary, modelQuality } from '@/features/data-quality/quality'
+import { DataSourceTable } from '@/features/data-quality/components/DataSourceTable'
+import { dataQualitySummary, modelQuality, scoreSources } from '@/features/data-quality/quality'
 import { useTranslation } from '@/features/i18n/provider'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { LEADERBOARD } from '@/features/leaderboard/models'
@@ -28,6 +29,7 @@ export const Route = createFileRoute('/{-$locale}/data-quality')({
       turnstileSiteKey,
       quality: modelQuality(),
       summary: dataQualitySummary(),
+      sources: scoreSources(),
       models: LEADERBOARD.models.map((m) => ({ id: m.id, displayName: m.displayName })),
     }
   },
@@ -51,7 +53,7 @@ export const Route = createFileRoute('/{-$locale}/data-quality')({
 
 function DataQualityPage() {
   const { theme } = rootRoute.useLoaderData()
-  const { loggedIn, turnstileSiteKey, quality, summary, models } = Route.useLoaderData()
+  const { loggedIn, turnstileSiteKey, quality, summary, sources, models } = Route.useLoaderData()
   const { t } = useTranslation()
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -67,6 +69,16 @@ function DataQualityPage() {
         </header>
 
         <DataQualitySummary summary={summary} />
+
+        <section id="data-quality-sources" className="flex flex-col gap-3">
+          <h2 className="text-[19px] font-semibold leading-tight tracking-tight">
+            {t('dataQuality.sources.title')}
+          </h2>
+          <p className="max-w-[70ch] text-[14px] leading-relaxed text-fg-2">
+            {t('dataQuality.sources.note')}
+          </p>
+          <DataSourceTable rows={sources} />
+        </section>
 
         <section id="data-quality-table" className="flex flex-col gap-3">
           <DataQualityTable rows={quality} />

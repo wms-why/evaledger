@@ -5,13 +5,14 @@ import type { ModelPrice, Provider } from '@/features/calculator/types'
 import { formatScore } from '@/features/leaderboard/leaderboard'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { TRACK_IDS, scoreTrack } from '@/features/leaderboard/scoring'
-import { sourceKind } from '@/features/leaderboard/sources'
+import { sourceInfo, sourceKind } from '@/features/leaderboard/sources'
 import type { LeaderboardModel } from '@/features/leaderboard/types'
 import { seriesRows, seriesStep } from '@/features/series/data'
 import { findSeries, seriesForScoreId } from '@/features/series/select'
 import type {
   Channel,
   DataQualitySummary,
+  DataSourceRow,
   Freshness,
   ModelQuality,
   PriceQuality,
@@ -201,6 +202,37 @@ export function scoreQuality(
 /** `$5` / `$0.40` — prices are read at a glance, so keep them short. */
 function money(value: number): string {
   return `$${Number.isInteger(value) ? String(value) : value.toFixed(2)}`
+}
+
+/**
+ * One row per distinct page any leaderboard score was read from, with how
+ * many score entries cite it, most-cited first.
+ *
+ * Derived from the same score registry the per-model tables read — the
+ * page-level rollup of the `sources` lists each model already carries. The
+ * kind badge names the page with the same taxonomy the summary tiles group
+ * by, so a reader can go from the tile counts to the pages behind them.
+ */
+export function scoreSources(): DataSourceRow[] {
+  const rows = new Map<string, DataSourceRow>()
+  for (const model of LEADERBOARD.models) {
+    for (const score of model.scores) {
+      if (!score.sourceUrl) continue
+      const info = sourceInfo(score.sourceUrl)
+      const existing = rows.get(score.sourceUrl)
+      if (existing) {
+        existing.count += 1
+        continue
+      }
+      rows.set(score.sourceUrl, {
+        url: score.sourceUrl,
+        name: info?.name ?? score.sourceUrl,
+        kind: info?.kind ?? 'reference-table',
+        count: 1,
+      })
+    }
+  }
+  return [...rows.values()].sort((a, b) => b.count - a.count)
 }
 
 /** The scoring core is a sibling module; a track we cannot resolve is

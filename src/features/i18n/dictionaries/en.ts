@@ -288,9 +288,9 @@ export const en = {
     methodology: {
       title: 'How we score',
       metaDescription:
-        'The exact formula, weights and sources behind every EvalLedger leaderboard — what a composite score means, what it excludes, and why a missing score is never a zero.',
+        'The exact formula and weights behind every EvalLedger leaderboard — what a composite score means, what it excludes, and why a missing score is never a zero.',
       intro:
-        'A leaderboard is only as trustworthy as its arithmetic. This is the whole of ours: every board, its weights, what it leaves out, and where each number came from.',
+        'A leaderboard is only as trustworthy as its arithmetic. This is the whole of ours: every board, its weights, and what it leaves out. Each number’s provenance — the page it was read from — lives on the data quality page.',
       why: 'Why a missing score is never a zero',
       whyBody:
         'Averaging over the benchmarks a model happens to have scored flatters thin models: drop the two hardest tests and your average rises. So no board on this site averages over a partial set. A model that was not measured on every benchmark of a board is not ranked on it — it is listed as untested, and the benchmarks it is missing are named.',
@@ -303,9 +303,7 @@ export const en = {
       formula: 'Formula',
       boards: 'The boards',
       boardsNote: 'Each board is scored on its own benchmarks, with its own weights. A model needs a complete set for that board to be ranked on it.',
-      sources: 'Where the numbers come from',
-      sourcesNote:
-        'Every score links to the page it was read from. Scores are grouped by who measured them, because a vendor’s own harness and an independent evaluation are not the same measurement.',
+      sourcesLink: 'Where the numbers come from',
       updates: 'How the data is kept honest',
       updatesNote:
         'Prices carry the date they were last checked against the provider’s page. Scores carry the date they were observed and the caveat the source printed with them. Corrections are logged rather than quietly applied, and you can report a number that looks wrong.',
@@ -378,6 +376,14 @@ export const en = {
       staleScoreSets: 'Score sets due for re-measurement',
       undatedScoreSets: 'Score sets with no measurement date',
       completeModelCount: 'Models with a complete score set',
+    },
+    sources: {
+      title: 'Where the numbers come from',
+      note:
+        'Every score links to the page it was read from, grouped by who measured it — a vendor’s own harness and an independent evaluation are not the same measurement.',
+      colSource: 'Source',
+      colKind: 'Measured by',
+      colScores: 'Scores',
     },
     col: {
       model: 'Model',
