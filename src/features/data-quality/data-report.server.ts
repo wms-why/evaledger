@@ -7,15 +7,23 @@
  * written — nothing is corrected, nothing is summarised — so a triager reads
  * the reporter's own words and source link.
  *
+ * Ownership goes through `@/db/scope` (`ownedBy` / `withOwner`) like every
+ * other user-scoped table: an owner edit and an owner delete are guarded by
+ * the same filter that lists the owner's rows. An anonymous report has
+ * `user_id IS NULL` and therefore never matches an owner filter — anonymous
+ * intake stays with the admin queue.
+ *
  * No `cloudflare:workers` import and no React: the Drizzle handle is passed in,
  * so the workers test pool can drive it against a local D1.
  */
-import { count, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq } from 'drizzle-orm'
 import type { DB } from '@/db/client'
+import { ownedBy, scopeFromUser, withOwner, type Scope } from '@/db/scope'
 import { dataReport } from './data-report.schema'
 import {
   DETAIL_MAX,
   EMAIL_MAX,
+  OPEN_REPORT_LIMIT,
   SOURCE_URL_MAX,
   isDataReportKind,
   isDataReportStatus,
@@ -30,13 +38,28 @@ export interface CreateDataReportInput {
   detail: string
   sourceUrl?: string | null
   email?: string | null
+  /** The signed-in reporter, or null/undefined for an anonymous report. */
+  userId?: string | null
 }
 
 export type CreateDataReportResult =
   | { ok: true; id: string }
-  | { ok: false; reason: 'kind' | 'detail' }
+  | { ok: false; reason: 'kind' | 'detail' | 'limit' }
 
-/** One row as the admin console renders it. */
+/** The fields a reporter may change while the report is still open. */
+export interface EditDataReportInput {
+  modelId?: string | null
+  kind: string
+  detail: string
+  sourceUrl?: string | null
+}
+
+export type EditDataReportResult =
+  | { ok: true }
+  /** `locked`: the row is gone, not yours, or already triaged. */
+  | { ok: false; reason: 'kind' | 'detail' | 'locked' }
+
+/** One row as the admin console and "my reports" render it. */
 export interface DataReportRow {
   id: string
   modelId: string | null
@@ -58,6 +81,21 @@ function optional(value: string | null | undefined, max: number): string | null 
   return trimmed.slice(0, max)
 }
 
+/** Drizzle row → the shape the UI renders. */
+function toRow(r: typeof dataReport.$inferSelect): DataReportRow {
+  return {
+    id: r.id,
+    modelId: r.modelId,
+    kind: r.kind,
+    detail: r.detail,
+    sourceUrl: r.sourceUrl,
+    email: r.email,
+    status: r.status,
+    createdAt: r.createdAt.toISOString(),
+    updatedAt: r.updatedAt.toISOString(),
+  }
+}
+
 /** Record a correction report. */
 export async function createDataReport(
   db: DB,
@@ -68,22 +106,34 @@ export async function createDataReport(
   const kind: DataReportKind = input.kind
   const detail = (input.detail ?? '').trim()
   if (!detail || detail.length > DETAIL_MAX) return { ok: false, reason: 'detail' }
+  const email = optional(input.email, EMAIL_MAX)
+  const scope = input.userId ? scopeFromUser(input.userId) : null
+  if (scope) {
+    // COUNT→INSERT is not atomic, same honest trade-off as feedback: a
+    // concurrent pair can briefly overshoot. The real governance is triage.
+    const [{ c }] = await db
+      .select({ c: count() })
+      .from(dataReport)
+      .where(and(ownedBy(dataReport, scope), eq(dataReport.status, 'open')))
+    if (Number(c) >= OPEN_REPORT_LIMIT) return { ok: false, reason: 'limit' }
+  }
   const id = crypto.randomUUID()
-  await db.insert(dataReport).values({
+  const values = {
     id,
     modelId: optional(input.modelId, 120),
     kind,
     detail,
     sourceUrl: optional(input.sourceUrl, SOURCE_URL_MAX),
-    email: optional(input.email, EMAIL_MAX),
+    email,
     status: 'open',
     createdAt: new Date(now),
     updatedAt: new Date(now),
-  })
+  }
+  await db.insert(dataReport).values(scope ? withOwner(scope, values) : { ...values, userId: null })
   return { ok: true, id }
 }
 
-/** Newest first, paginated. */
+/** Newest first, paginated — the admin queue. */
 export async function listDataReports(
   db: DB,
   p: { page: number; pageSize: number },
@@ -95,18 +145,62 @@ export async function listDataReports(
     .limit(p.pageSize)
     .offset(p.page * p.pageSize)
   const [{ c }] = await db.select({ c: count() }).from(dataReport)
-  const rows = listed.map((r) => ({
-    id: r.id,
-    modelId: r.modelId,
-    kind: r.kind,
-    detail: r.detail,
-    sourceUrl: r.sourceUrl,
-    email: r.email,
-    status: r.status,
-    createdAt: r.createdAt.toISOString(),
-    updatedAt: r.updatedAt.toISOString(),
-  }))
-  return { rows, total: Number(c) }
+  return { rows: listed.map(toRow), total: Number(c) }
+}
+
+/** The reporter's own rows, newest first. Anonymous rows are never included. */
+export async function listMyDataReports(db: DB, scope: Scope): Promise<DataReportRow[]> {
+  const listed = await db
+    .select()
+    .from(dataReport)
+    .where(ownedBy(dataReport, scope))
+    .orderBy(desc(dataReport.createdAt), desc(dataReport.id))
+  return listed.map(toRow)
+}
+
+/**
+ * Edit an owned report that has not been triaged yet.
+ *
+ * Ownership and the `open` status live in the same WHERE clause as the write:
+ * dropping the owner filter is privilege escalation, dropping the status
+ * filter edits a record the queue has already ruled on.
+ */
+export async function updateMyDataReport(
+  db: DB,
+  scope: Scope,
+  id: string,
+  input: EditDataReportInput,
+  now: number,
+): Promise<EditDataReportResult> {
+  if (!isDataReportKind(input.kind)) return { ok: false, reason: 'kind' }
+  const kind: DataReportKind = input.kind
+  const detail = (input.detail ?? '').trim()
+  if (!detail || detail.length > DETAIL_MAX) return { ok: false, reason: 'detail' }
+  const res = await db
+    .update(dataReport)
+    .set({
+      modelId: optional(input.modelId, 120),
+      kind,
+      detail,
+      sourceUrl: optional(input.sourceUrl, SOURCE_URL_MAX),
+      updatedAt: new Date(now),
+    })
+    .where(
+      and(ownedBy(dataReport, scope), eq(dataReport.id, id), eq(dataReport.status, 'open')),
+    )
+    .returning({ id: dataReport.id })
+  return res.length > 0 ? { ok: true } : { ok: false, reason: 'locked' }
+}
+
+/** Withdraw an owned report that has not been triaged yet. */
+export async function deleteMyDataReport(db: DB, scope: Scope, id: string): Promise<boolean> {
+  const res = await db
+    .delete(dataReport)
+    .where(
+      and(ownedBy(dataReport, scope), eq(dataReport.id, id), eq(dataReport.status, 'open')),
+    )
+    .returning({ id: dataReport.id })
+  return res.length > 0
 }
 
 /**

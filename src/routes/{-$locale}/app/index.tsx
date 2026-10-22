@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Settings, Sparkles, ArrowRight } from 'lucide-react'
+import { Settings, ArrowRight, Flag } from 'lucide-react'
 import { requireUser } from '@/features/auth/middleware'
 import { getEntitlement } from '@/features/billing/middleware'
 import { useTranslation } from '@/features/i18n/provider'
@@ -58,15 +58,15 @@ function AppHome() {
           </Link>
         </Card>
         <Card className="p-4.5 transition-colors hover:border-border-strong">
-          <Link to="/{-$locale}/app/pro" className="block">
+          <Link to="/{-$locale}/app/reports" className="block">
             <div className="flex size-12 items-center justify-center rounded-xl bg-soft text-primary">
-              <Sparkles size={22} />
+              <Flag size={22} />
             </div>
             <div className="mb-1.5 mt-3.5 flex items-center gap-2">
-              <h3 className="m-0 text-[15px] font-semibold text-foreground">{t('app.openPro')}</h3>
+              <h3 className="m-0 text-[15px] font-semibold text-foreground">{t('app.openReports')}</h3>
               <ArrowRight size={15} className="text-fg-3" />
             </div>
-            <p className="m-0 text-[13px] leading-snug text-fg-3">{t('app.openProSub')}</p>
+            <p className="m-0 text-[13px] leading-snug text-fg-3">{t('app.openReportsSub')}</p>
           </Link>
         </Card>
       </div>

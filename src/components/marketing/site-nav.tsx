@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
+import { buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
 import { LangSwitch } from '@/features/i18n/lang-switch'
 import { useTranslation } from '@/features/i18n/provider'
@@ -59,7 +60,7 @@ export function isNavItemActive(pathname: string, to: string, also: readonly str
 }
 
 /** Sticky marketing header. Links + CTA collapse into a hamburger menu on mobile. */
-export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean }) {
+export function SiteNav({ theme, loggedIn }: { theme: 'light' | 'dark'; loggedIn: boolean }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const [open, setOpen] = React.useState(false)
@@ -87,6 +88,21 @@ export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean 
     </>
   )
 
+  const authEntry = loggedIn ? (
+    <Link to="/{-$locale}/app" className={buttonVariants({ size: 'sm' })}>
+      {t('app.dashboard')}
+    </Link>
+  ) : (
+    <div className="flex items-center gap-1">
+      <Link to="/{-$locale}/login" className={`${LINK_CLASS} ${IDLE_CLASS}`}>
+        {t('auth.login')}
+      </Link>
+      <Link to="/{-$locale}/register" className={buttonVariants({ size: 'sm' })}>
+        {t('auth.register')}
+      </Link>
+    </div>
+  )
+
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <nav className="flex h-14 items-center gap-3 px-5 md:px-7">
@@ -99,7 +115,7 @@ export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean 
           <ThemeToggle theme={theme} />
           <LangSwitch />
         </div>
-        <div className="hidden md:block" />
+        <div className="hidden md:block">{authEntry}</div>
 
         {/* mobile hamburger */}
         <button
@@ -116,6 +132,7 @@ export function SiteNav({ theme }: { theme: 'light' | 'dark'; loggedIn: boolean 
       {open && (
         <div className="flex flex-col gap-1 border-t border-border px-5 py-3 md:hidden" onClick={() => setOpen(false)}>
           {navLinks}
+          <div className="mt-2">{authEntry}</div>
         </div>
       )}
     </header>

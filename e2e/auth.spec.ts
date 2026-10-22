@@ -20,7 +20,7 @@ const AUTH_PAGES = [
 ] as const
 
 /** The signed-in shell — every one of these must bounce a logged-out visitor. */
-const GATED_ROUTES = ['/app', '/app/account', '/app/pro', '/app/feedback'] as const
+const GATED_ROUTES = ['/app', '/app/account',  '/app/feedback'] as const
 
 /** A page that threw or logged an error is broken, even when it rendered. */
 function expectNoErrors(pageErrors: string[], consoleErrors: string[]): void {

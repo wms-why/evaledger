@@ -30,6 +30,15 @@ export const SOURCE_URL_MAX = 500
 /** Longest optional contact address. */
 export const EMAIL_MAX = 200
 
+/**
+ * Open reports one account may hold at a time.
+ *
+ * The public form is damped per IP (KV) + Turnstile; a signed-in reporter can
+ * file from the dashboard without a captcha, so the account itself needs a
+ * ceiling. Reports that were triaged no longer count away from the budget.
+ */
+export const OPEN_REPORT_LIMIT = 20
+
 export function isDataReportKind(value: unknown): value is DataReportKind {
   return typeof value === 'string' && (DATA_REPORT_KINDS as readonly string[]).includes(value)
 }

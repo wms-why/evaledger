@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useTurnstile } from '@/features/auth/components/turnstile'
 import { useTranslation } from '@/features/i18n/provider'
 import { submitDataReportFn } from '../data-report.actions'
-import { DATA_REPORT_KINDS, REPORT_KIND_I18N_KEY, type DataReportKind } from '../data-report.shared'
+import { DATA_REPORT_KINDS, OPEN_REPORT_LIMIT, REPORT_KIND_I18N_KEY, type DataReportKind } from '../data-report.shared'
 
 /**
  * The public correction form.
@@ -69,6 +69,11 @@ export function DataReportForm({
         setSourceUrl('')
       } else if (status === 'rate-limited') {
         setMessage({ kind: 'err', text: t('dataQuality.report.rateLimited') })
+      } else if (status === 'limit') {
+        setMessage({
+          kind: 'err',
+          text: t('dataQuality.report.limit', { n: OPEN_REPORT_LIMIT }),
+        })
       } else {
         setMessage({ kind: 'err', text: t('dataQuality.report.error') })
       }

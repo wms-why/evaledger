@@ -51,7 +51,7 @@ import { Route as Char123LocaleChar125AdminWaitlistRouteImport } from './routes/
 import { Route as Char123LocaleChar125AppIndexRouteImport } from './routes/{-$locale}/app/index'
 import { Route as Char123LocaleChar125AppAccountRouteImport } from './routes/{-$locale}/app/account'
 import { Route as Char123LocaleChar125AppFeedbackRouteImport } from './routes/{-$locale}/app/feedback'
-import { Route as Char123LocaleChar125AppProRouteImport } from './routes/{-$locale}/app/pro'
+import { Route as Char123LocaleChar125AppReportsRouteImport } from './routes/{-$locale}/app/reports'
 import { Route as Char123LocaleChar125BenchmarksSlugRouteRouteImport } from './routes/{-$locale}/benchmarks/$slug/route'
 import { Route as Char123LocaleChar125BestCategoryRouteImport } from './routes/{-$locale}/best/$category'
 import { Route as Char123LocaleChar125CompareIndexRouteImport } from './routes/{-$locale}/compare/index'
@@ -308,10 +308,10 @@ const Char123LocaleChar125AppFeedbackRoute =
     path: '/app/feedback',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
-const Char123LocaleChar125AppProRoute =
-  Char123LocaleChar125AppProRouteImport.update({
-    id: '/app/pro',
-    path: '/app/pro',
+const Char123LocaleChar125AppReportsRoute =
+  Char123LocaleChar125AppReportsRouteImport.update({
+    id: '/app/reports',
+    path: '/app/reports',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125BenchmarksSlugRouteRoute =
@@ -442,7 +442,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/admin/waitlist': typeof Char123LocaleChar125AdminWaitlistRoute
   '/{-$locale}/app/account': typeof Char123LocaleChar125AppAccountRoute
   '/{-$locale}/app/feedback': typeof Char123LocaleChar125AppFeedbackRoute
-  '/{-$locale}/app/pro': typeof Char123LocaleChar125AppProRoute
+  '/{-$locale}/app/reports': typeof Char123LocaleChar125AppReportsRoute
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
@@ -497,7 +497,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/admin/waitlist': typeof Char123LocaleChar125AdminWaitlistRoute
   '/{-$locale}/app/account': typeof Char123LocaleChar125AppAccountRoute
   '/{-$locale}/app/feedback': typeof Char123LocaleChar125AppFeedbackRoute
-  '/{-$locale}/app/pro': typeof Char123LocaleChar125AppProRoute
+  '/{-$locale}/app/reports': typeof Char123LocaleChar125AppReportsRoute
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
@@ -557,7 +557,7 @@ export interface FileRoutesById {
   '/{-$locale}/admin/waitlist': typeof Char123LocaleChar125AdminWaitlistRoute
   '/{-$locale}/app/account': typeof Char123LocaleChar125AppAccountRoute
   '/{-$locale}/app/feedback': typeof Char123LocaleChar125AppFeedbackRoute
-  '/{-$locale}/app/pro': typeof Char123LocaleChar125AppProRoute
+  '/{-$locale}/app/reports': typeof Char123LocaleChar125AppReportsRoute
   '/{-$locale}/best/$category': typeof Char123LocaleChar125BestCategoryRoute
   '/{-$locale}/compare/$pair': typeof Char123LocaleChar125ComparePairRoute
   '/{-$locale}/models/$slug': typeof Char123LocaleChar125ModelsSlugRoute
@@ -618,7 +618,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/waitlist'
     | '/{-$locale}/app/account'
     | '/{-$locale}/app/feedback'
-    | '/{-$locale}/app/pro'
+    | '/{-$locale}/app/reports'
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
@@ -673,7 +673,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/waitlist'
     | '/{-$locale}/app/account'
     | '/{-$locale}/app/feedback'
-    | '/{-$locale}/app/pro'
+    | '/{-$locale}/app/reports'
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
@@ -732,7 +732,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin/waitlist'
     | '/{-$locale}/app/account'
     | '/{-$locale}/app/feedback'
-    | '/{-$locale}/app/pro'
+    | '/{-$locale}/app/reports'
     | '/{-$locale}/best/$category'
     | '/{-$locale}/compare/$pair'
     | '/{-$locale}/models/$slug'
@@ -1060,11 +1060,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AppFeedbackRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
-    '/{-$locale}/app/pro': {
-      id: '/{-$locale}/app/pro'
-      path: '/app/pro'
-      fullPath: '/{-$locale}/app/pro'
-      preLoaderRoute: typeof Char123LocaleChar125AppProRouteImport
+    '/{-$locale}/app/reports': {
+      id: '/{-$locale}/app/reports'
+      path: '/app/reports'
+      fullPath: '/{-$locale}/app/reports'
+      preLoaderRoute: typeof Char123LocaleChar125AppReportsRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/benchmarks/$slug': {
@@ -1258,7 +1258,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125authVerifyEmailRoute: typeof Char123LocaleChar125authVerifyEmailRoute
   Char123LocaleChar125AppAccountRoute: typeof Char123LocaleChar125AppAccountRoute
   Char123LocaleChar125AppFeedbackRoute: typeof Char123LocaleChar125AppFeedbackRoute
-  Char123LocaleChar125AppProRoute: typeof Char123LocaleChar125AppProRoute
+  Char123LocaleChar125AppReportsRoute: typeof Char123LocaleChar125AppReportsRoute
   Char123LocaleChar125BestCategoryRoute: typeof Char123LocaleChar125BestCategoryRoute
   Char123LocaleChar125ComparePairRoute: typeof Char123LocaleChar125ComparePairRoute
   Char123LocaleChar125ModelsSlugRoute: typeof Char123LocaleChar125ModelsSlugRoute
@@ -1311,7 +1311,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
       Char123LocaleChar125authVerifyEmailRoute,
     Char123LocaleChar125AppAccountRoute: Char123LocaleChar125AppAccountRoute,
     Char123LocaleChar125AppFeedbackRoute: Char123LocaleChar125AppFeedbackRoute,
-    Char123LocaleChar125AppProRoute: Char123LocaleChar125AppProRoute,
+    Char123LocaleChar125AppReportsRoute: Char123LocaleChar125AppReportsRoute,
     Char123LocaleChar125BestCategoryRoute:
       Char123LocaleChar125BestCategoryRoute,
     Char123LocaleChar125ComparePairRoute: Char123LocaleChar125ComparePairRoute,

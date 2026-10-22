@@ -13,7 +13,7 @@
  */
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
-import { Home, Sparkles, Settings, Gauge, Users, Menu, ClipboardList, PanelLeftClose, PanelLeftOpen, Heart, MessageSquare, Flag } from 'lucide-react'
+import { Home, Settings, Gauge, Users, Menu, ClipboardList, PanelLeftClose, PanelLeftOpen, Heart, MessageSquare, Flag } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
 import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/features/theme/theme-toggle'
@@ -94,14 +94,13 @@ export function AppShell({
           <Home size={18} className="shrink-0" />
           {label(t('app.dashboard'))}
         </Link>
-        <Link to="/{-$locale}/app/pro" activeProps={{}} className={item(active === 'pro')} title={t('app.proDemo')}>
-          <Sparkles size={18} className="shrink-0" />
-          {label(t('app.proDemo'))}
-          {!rail && <Badge variant="pro" className="ml-auto">Pro</Badge>}
-        </Link>
         <Link to="/{-$locale}/app/feedback" activeProps={{}} className={item(active === 'feedback')} title={t('feedback.nav')}>
           <MessageSquare size={18} className="shrink-0" />
           {label(t('feedback.nav'))}
+        </Link>
+        <Link to="/{-$locale}/app/reports" activeProps={{}} className={item(active === 'reports')} title={t('app.myReports.nav')}>
+          <Flag size={18} className="shrink-0" />
+          {label(t('app.myReports.nav'))}
         </Link>
         {grp(t('app.navAccount'))}
         <Link to="/{-$locale}/app/account" activeProps={{}} className={item(active === 'account')} title={t('app.account')}>
