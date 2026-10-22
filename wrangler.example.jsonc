@@ -6,8 +6,8 @@
  *   cp wrangler.example.jsonc wrangler.jsonc
  *
  * Placeholders to replace in `wrangler.jsonc` after creating your resources:
- *   - env.{staging,production}.d1_databases[].database_id  (wrangler d1 create ...)
- *   - env.{staging,production}.kv_namespaces[].id          (wrangler kv namespace create CACHE --env ...)
+ *   - env.production.d1_databases[].database_id  (wrangler d1 create ...)
+ *   - env.production.kv_namespaces[].id          (wrangler kv namespace create ...)
  *   - optionally add env.production.routes for a custom domain
  * Keep this example file in sync when you add new bindings/vars.
  *
@@ -16,7 +16,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "aibookplanner",
+	"name": "tokencalculator",
 	"compatibility_date": "2026-05-30",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -50,19 +50,21 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "aibookplanner-db",
+			"database_name": "evaledger-db",
 			"database_id": "00000000-0000-0000-0000-000000000000",
 			"migrations_dir": "drizzle"
 		}
 	],
-	// 对象存储（头像/文件上传）。本地 dev/test 由 miniflare 自动模拟，零配置即用。
-	// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files`（见 docs/storage.md）。
+	// 对象存储（头像上传）。本地 dev/test 由 miniflare 自动模拟，零配置即用。
+	// 部署前先建桶：`wrangler r2 bucket create evaledger-files`（见 src/features/storage/）。
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
-			"bucket_name": "aibookplanner-files"
+			"bucket_name": "evaledger-files"
 		}
 	],
+	// 限流缓存。部署前先建命名空间：
+	// `wrangler kv namespace create evaledger-cache`（本地用下面的占位 id）。
 	"kv_namespaces": [
 		{
 			"binding": "CACHE",
@@ -119,42 +121,13 @@
 	 */
 	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
 	/**
-	 * Named Environments (staging / production)
+	 * Named Environment (production)
 	 * Note: Named environments do NOT inherit top-level bindings in wrangler,
-	 * so each env repeats its own binding declarations.
+	 * so the env repeats its own binding declarations.
 	 */
 	"env": {
-		"staging": {
-			"name": "aibookplanner-staging",
-			"triggers": {
-				"crons": [
-					"0 3 * * *"
-				]
-			},
-			"d1_databases": [
-				{
-					"binding": "DB",
-					"database_name": "aibookplanner-db-staging",
-					"database_id": "00000000-0000-0000-0000-000000000000",
-					"migrations_dir": "drizzle"
-				}
-			],
-			// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files-staging`。
-			"r2_buckets": [
-				{
-					"binding": "BUCKET",
-					"bucket_name": "aibookplanner-files-staging"
-				}
-			],
-			"kv_namespaces": [
-				{
-					"binding": "CACHE",
-					"id": "00000000000000000000000000000000"
-				}
-			]
-		},
 		"production": {
-			"name": "aibookplanner-production",
+			"name": "tokencalculator-production",
 			"triggers": {
 				"crons": [
 					"0 3 * * *"
@@ -163,16 +136,16 @@
 			"d1_databases": [
 				{
 					"binding": "DB",
-					"database_name": "aibookplanner-db-prod",
+					"database_name": "evaledger-db-prod",
 					"database_id": "00000000-0000-0000-0000-000000000000",
 					"migrations_dir": "drizzle"
 				}
 			],
-			// 部署前先建桶：`wrangler r2 bucket create aibookplanner-files-prod`。
+			// 部署前先建桶：`wrangler r2 bucket create evaledger-files-prod`。
 			"r2_buckets": [
 				{
 					"binding": "BUCKET",
-					"bucket_name": "aibookplanner-files-prod"
+					"bucket_name": "evaledger-files-prod"
 				}
 			],
 			"kv_namespaces": [

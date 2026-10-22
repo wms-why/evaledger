@@ -13,12 +13,13 @@ EvalLedger — a free token cost calculator built on **TanStack Start + Cloudfla
 - `src/components/` — `ui/` primitives + `marketing/` landing + `app/` shell.
 - `src/db/` — Drizzle client + `schema.ts` barrel; tables in `src/db/tables/` and feature `*.schema.ts`.
 
-## Where data lives: this project is a file-based site
+## Where data lives: published data is files, submissions are intake
 
 The rule that governs every change to this repo:
 
-> **Everything this site knows is a file. The database is not where site data
-> lives — not the published data and not the data visitors submit about it.**
+> **Published site content is a file in git. Submitted intake is a row.**
+> Prices, scores, benchmarks, articles and the ledger are reviewed in diffs;
+> correction reports, waitlist signups and feedback are operational rows.
 
 - **Published data → files in git.** Model prices
   (`src/features/calculator/model-prices.ts`), scores
@@ -30,20 +31,20 @@ The rule that governs every change to this repo:
   table in D1, and there must never be one: a price is a claim about a
   vendor's page, so it is reviewed in a diff and changed in a commit — not
   a row a request handler mutates.
-- **Submitted data → files too, not rows.** A correction report ("this price
-  is stale") is one JSON object per report in the R2 bucket, under the
-  `data-reports/` prefix (`src/features/data-quality/data-report.server.ts`).
-  It is a file for the same reason the price is: it is a claim about the
-  world, it is reviewed, and the **fix** it produces is an edit to the price
-  file. It is *not* a row — a table for it would mean a schema, a migration,
-  and a deploy step that has to be remembered, for data that is a file.
-- **A migration that adds a table for site data is a design error, not a
-  feature.** Adding one is how this repo ends up with a database that
-  disagrees with the files it is supposed to describe. The tables D1 *does*
-  hold (`user`, `session`, `account`, `verification`, `rateLimit`,
-  `subscription`, `processedWebhookEvents`, `waitlist`, `sponsorship`,
-  `feedback`) are the SaaS substrate the template brought — accounts,
-  payments, moderation — not site content.
+- **Submitted data → D1 intake tables.** A correction report ("this price
+  is stale") is a row in `data_report`
+  (`src/features/data-quality/data-report.schema.ts`), triaged in the admin
+  console like `waitlist` / `feedback`. It is intake, not site content: the
+  report is a claim, and the **fix** it produces is still an edit to the
+  price file. Never let a report become the source of a published price or
+  score.
+- **A migration that adds a table for published site content is a design
+  error, not a feature.** Adding one is how this repo ends up with a
+  database that disagrees with the files it is supposed to describe. The
+  tables D1 *does* hold (`user`, `session`, `account`, `verification`,
+  `rateLimit`, `subscription`, `processedWebhookEvents`, `waitlist`,
+  `sponsorship`, `feedback`, `data_report`) are accounts, payments,
+  moderation and intake — not site content.
 
 **A migration is a schema change, not a feature.** `.github/workflows/deploy.yml`
 deploys the Worker but never runs `wrangler d1 migrations apply`, so
@@ -66,18 +67,18 @@ cheapest way to never say it: do not need one.
 - **SEO structured data (JSON-LD):** use `jsonLd(obj)` from `@/features/seo/seo` and pass the result through the `scripts` option of `localeHead()` — it folds them into `meta`. `head()` only renders `meta` and `links`; a `scripts[]` key in the returned head object is silently dropped (this used to break JSON-LD on every page — it now works). Reference impl: `src/routes/{-$locale}/index.tsx` (Organization + SoftwareApplication + FAQPage).
 - **Rebrand gotchas:** marketing components carry hardcoded brand strings (GitHub URLs, `<span className="kicker">` copy, aria-labels) that are NOT in i18n dictionaries. When rebranding: `grep -rln -E "(OldBrand|oldbrand)" src` catches i18n + hardcoded + package.json + wrangler in one pass. Also `grep` old strings in `*.node.test.ts` — i18n-key assertions break silently.
 - **The domain is one variable:** `BETTER_AUTH_URL` is the origin every absolute URL is derived from — canonical + hreflang, `og:url`, `sitemap.xml`, `robots.txt`, `feed.xml`, the Stripe return URLs, and every auth/verification email link. Change it and the whole site follows; forget it and the site advertises URLs that don't resolve. The custom domains themselves live in `wrangler.jsonc` (`env.production.routes`, `custom_domain: true`) and, in CI, are injected from the repo variable `CF_PROD_DOMAIN` by `.github/scripts/gen-wrangler.mjs` — which also rewrites `BETTER_AUTH_URL` to `https://$CF_PROD_DOMAIN`, so the two can never drift. `AUTH_TRUSTED_ORIGINS` (comma-separated) is the escape hatch for a host that still serves the app but isn't the canonical one: without it better-auth's CSRF origin check rejects sign-ins from that host.
-- **Project context (EvalLedger):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then into TokenCalculator, now EvalLedger). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the root README is rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. The actual Cloudflare infra (D1 database `aibookplanner-db`, R2 bucket `aibookplanner-files`, worker names) keeps the historical name and is **not** renamed in a rebrand — the worker name is load-bearing: renaming it deploys a *new* Worker that comes with none of the `wrangler secret put` values. Route slugs (`/token-calculator`, `/token-cost-calculator`) and the internal dict key `leaderboard.tokenCalculator` likewise stay: they describe the product, not the brand, and changing them breaks live URLs and every `t('en', …)` assertion.
+- **Project context (EvalLedger):** this is a token-cost calculator product, forked twice from the upstream FlareStarter template (first into AIBookPlanner, then into TokenCalculator, now EvalLedger). The chrome (marketing/i18n, calculator, admin console, sponsor, feedback) is fully rebranded; the root README is rebranded as of the post-A/B/C pass. Brand assets live in i18n dictionaries (`marketing.*`) + `src/components/brand/logo.tsx`. Cloudflare resources are named `evaledger-*` (`evaledger-db[-prod]`, `evaledger-files[-prod]`, `evaledger-cache-prod`), but the production Worker name stays `tokencalculator-production`: renaming it deploys a *new* Worker with none of the existing secrets and forces a custom-domain cutover. Route slugs (`/token-calculator`, `/token-cost-calculator`) and the internal dict key `leaderboard.tokenCalculator` likewise stay: they describe the product, not the brand, and changing them breaks live URLs and every `t('en', …)` assertion.
 
 ## Commands
 
 ```bash
 pnpm dev               # vite dev on :3000
 pnpm typecheck         # fumadocs-mdx && tsc --noEmit
-pnpm test                  # vitest run
+pnpm test              # vitest run
 pnpm e2e               # playwright run (browser e2e, not in CI)
 pnpm build             # vite build
 pnpm db:migrate:local  # apply D1 migrations locally
-pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy (staging: deploy:staging)
+pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 ```
 
 ## Model price refresh

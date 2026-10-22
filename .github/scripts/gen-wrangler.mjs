@@ -33,7 +33,7 @@ if (!CF_PROD_DOMAIN) {
 
 const text = readFileSync('wrangler.example.jsonc', 'utf8')
 
-// Split at the production env block so replacements never touch staging placeholders.
+// Split at the production env block so replacements never touch top-level placeholders.
 const at = text.indexOf('"production"')
 if (at === -1) {
   console.error('::error::wrangler.example.jsonc has no "production" env block')

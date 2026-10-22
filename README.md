@@ -25,7 +25,7 @@ The pricing registry lives in [`src/features/calculator/model-prices.ts`](src/fe
 |------|-------|
 | **Calculator** | The product. Two input modes (paste / manual), live tokenization, OpenRouter-aware cost grid, three SEO routes. Source: [`src/features/calculator/`](src/features/calculator/). |
 | **Leaderboard** | Four capability boards (general / coding / agent / reasoning) at `/leaderboard/{track}`, plus a custom-weight board. A model is ranked only if it was measured on *every* core benchmark of that board — a missing one reads "not tested", never zero. `/methodology` publishes the whole arithmetic. Source: [`src/features/leaderboard/`](src/features/leaderboard/). |
-| **Data quality** | `/data-quality` shows, per model, when its price was last verified, where each score was read from, what changed since the previous version, and which boards it covers. Visitors can report a stale price, a wrong version or two contradictory scores — each report is a JSON file in R2, not a database row. Source: [`src/features/data-quality/`](src/features/data-quality/). |
+| **Data quality** | `/data-quality` shows, per model, when its price was last verified, where each score was read from, what changed since the previous version, and which boards it covers. Visitors can report a stale price, a wrong version or two contradictory scores — each report is a row in the `data_report` D1 table, triaged in the admin console. Source: [`src/features/data-quality/`](src/features/data-quality/). |
 | **Sponsor** | A standalone `/sponsor` page on a real Stripe donation loop (one-time + monthly, WeChat Pay via Stripe). Custom amounts (PWYW) via `price_data.recurring`. GitHub avatar wall grouped by tier. |
 | **Feedback** | In-app feedback box + admin governance (open / planned / shipped / closed + one-line replies). The vertical-slice template for any feature you add on top. |
 | **Auth** | Email/password + Google OAuth via [better-auth](https://better-auth.com). OAuth buttons hide themselves when env vars are unset. |
@@ -38,8 +38,8 @@ The pricing registry lives in [`src/features/calculator/model-prices.ts`](src/fe
 
 - **[TanStack Start](https://tanstack.com/start)** (React 19, file-based routing, server functions)
 - **[Cloudflare Workers](https://workers.cloudflare.com)** runtime via `@cloudflare/vite-plugin`
-- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)** for auth, sponsors, feedback, waitlist
-- **[KV](https://developers.cloudflare.com/kv/)** for caching, **[R2](https://developers.cloudflare.com/r2/)** for avatar storage and submitted correction reports
+- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)** for auth, sponsors, feedback, waitlist and correction reports
+- **[KV](https://developers.cloudflare.com/kv/)** for rate-limit caching, **[R2](https://developers.cloudflare.com/r2/)** for avatar storage
 - **[better-auth](https://better-auth.com)** + **[Stripe](https://stripe.com)** + **[Resend](https://resend.com)**
 - **[Tailwind CSS v4](https://tailwindcss.com)** + **[Vitest](https://vitest.dev)** (Node unit tests + Workers/D1 integration tests)
 

@@ -11,8 +11,9 @@ import type { DataReportRow } from './data-report.server'
  * an optional Turnstile check — and both degrade gracefully when the KV
  * binding or the Turnstile secret is missing.
  *
- * The reports themselves are **files**, not rows: one JSON object per report
- * in the R2 bucket. See the "Where data lives" rule in AGENTS.md.
+ * The reports themselves are rows in the `data_report` D1 table. See the
+ * "Where data lives" rule in AGENTS.md: published data is files, submitted
+ * intake (like this and the waitlist) is a table.
  */
 
 export type SubmitDataReportStatus =
@@ -38,6 +39,7 @@ export const submitDataReportFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }): Promise<{ status: SubmitDataReportStatus }> => {
     const { env } = await import('@/lib/env')
+    const { createDb } = await import('@/db/client')
     const { getRequestHeader } = await import('@tanstack/react-start/server')
     const { verifyTurnstile } = await import('@/features/waitlist/turnstile')
     const { fixedWindowLimit } = await import('@/features/waitlist/rate-limit')
@@ -64,7 +66,7 @@ export const submitDataReportFn = createServerFn({ method: 'POST' })
 
     try {
       const result = await createDataReport(
-        env.BUCKET,
+        createDb(env.DB),
         {
           modelId: data.modelId,
           kind: data.kind,
@@ -89,10 +91,11 @@ export const listDataReportsFn = createServerFn({ method: 'GET' })
   }))
   .handler(async ({ data }): Promise<{ rows: DataReportRow[]; total: number }> => {
     const { env } = await import('@/lib/env')
+    const { createDb } = await import('@/db/client')
     const { assertAdmin } = await import('@/features/admin/assert-admin.server')
     const { listDataReports } = await import('./data-report.server')
     await assertAdmin()
-    return listDataReports(env.BUCKET, data)
+    return listDataReports(createDb(env.DB), data)
   })
 
 /** Admin only — triage a report. */
@@ -106,10 +109,11 @@ export const setDataReportStatusFn = createServerFn({ method: 'POST' })
   })
   .handler(async ({ data }): Promise<void> => {
     const { env } = await import('@/lib/env')
+    const { createDb } = await import('@/db/client')
     const { assertAdmin } = await import('@/features/admin/assert-admin.server')
     const { setDataReportStatus } = await import('./data-report.server')
     const { isDataReportStatus } = await import('./data-report.shared')
     await assertAdmin()
     if (!isDataReportStatus(data.status)) throw new Error(`invalid status: ${data.status}`)
-    await setDataReportStatus(env.BUCKET, data.id, data.status, Date.now())
+    await setDataReportStatus(createDb(env.DB), data.id, data.status, Date.now())
   })

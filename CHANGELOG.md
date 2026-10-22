@@ -37,12 +37,11 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
   evaluation vs a reference table, what changed since the previous version,
   and which boards it was measured on. Visitors can report a stale price, a
   wrong version or two contradictory scores, and the reports are triaged in
-  the admin console. Each report is a **JSON file** in the R2 bucket, not a
-  database row: this project's data lives in files, and a report is a claim
-  about the world in exactly the same way a price is.
+  the admin console. Reports are rows in the `data_report` D1 table; the fix
+  a report produces is still an edit to the price file.
 - **Storage** — Cloudflare R2 object storage wired end-to-end, with a working
   avatar upload (validated upload + private serving route). Zero-config locally
-  via miniflare. See [`src/content/docs/storage.md`](src/content/docs/storage.md).
+  via miniflare. See [`src/features/storage/`](src/features/storage/).
 - **Security headers** — baseline headers (X-Content-Type-Options, X-Frame-Options,
   Referrer-Policy, Permissions-Policy, HSTS) on every response, plus a production
   Content-Security-Policy, via a custom worker entry.
@@ -145,15 +144,17 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ### Notes
 
-- **This release ships no D1 migration — nothing to apply before deploying.**
-  The correction-report intake stores each report as one JSON file in the R2
-  bucket (`data-reports/`), not as a row in a table, so there is no schema to
-  create and no `pnpm db:migrate:prod` step to remember. The deploy workflow
-  (`.github/workflows/deploy.yml`) builds and deploys the Worker but never runs
-  `wrangler d1 migrations apply`, so a table would have been a manual step
-  that had to not be forgotten. A report is a claim about the world, exactly
-  like the price it disputes — so it is a file, and the fix it produces is an
-  edit to the price file.
+- **This release ships a D1 migration.** Migration `0022` creates the
+  `data_report` table used by the correction-report intake. The deploy
+  workflow (`.github/workflows/deploy.yml`) builds and deploys the Worker but
+  never runs `wrangler d1 migrations apply`, so `pnpm db:migrate:prod` is a
+  required manual step after this deploy. The report only records a claim;
+  the fix it produces is still an edit to the price file.
+- **Cloudflare resources now share the `evaledger-*` name.** The production
+  D1, R2 and KV resources were recreated/renamed as `evaledger-db-prod`,
+  `evaledger-files-prod` and `evaledger-cache-prod`. The production Worker
+  name stays `tokencalculator-production` to avoid a custom-domain cutover.
+  The unused staging environment was removed from the Wrangler config.
 - **The drizzle snapshot chain was repaired.** `drizzle/meta/0020_snapshot.json`
   and `drizzle/meta/0021_snapshot.json` had a colliding `prevId` — both
   pointed at `0018`, and `0021` reused `0020`'s `id` — which broke

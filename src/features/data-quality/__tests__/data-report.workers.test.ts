@@ -1,35 +1,40 @@
-import { describe, test, expect, beforeEach } from 'vitest'
+import { describe, test, expect, beforeAll, beforeEach } from 'vitest'
 import { env } from 'cloudflare:test'
+import { createDb } from '@/db/client'
 import {
   createDataReport,
   listDataReports,
   setDataReportStatus,
-  reportKey,
-  REPORT_PREFIX,
 } from '../data-report.server'
 import { DETAIL_MAX } from '../data-report.shared'
 
 /**
- * The correction-report workers integration test — real R2 (miniflare BUCKET
- * binding).
- *
- * A report is a file, not a row: there is no schema to create, so this test
- * has no `beforeAll` table setup. Each test starts from an empty prefix.
+ * The correction-report workers integration test — real D1 (miniflare DB
+ * binding). The workers pool does not apply migrations, so the table is
+ * created by hand here.
  */
-async function clearReports(): Promise<void> {
-  const listed = await env.BUCKET.list({ prefix: REPORT_PREFIX })
-  const keys = listed.objects.map((o) => o.key)
-  if (keys.length > 0) await env.BUCKET.delete(keys)
-}
-
-beforeEach(async () => {
-  await clearReports()
+beforeAll(async () => {
+  await env.DB.exec(
+    `CREATE TABLE IF NOT EXISTS data_report (` +
+    `id TEXT PRIMARY KEY NOT NULL, model_id TEXT, kind TEXT NOT NULL, ` +
+    `detail TEXT NOT NULL, source_url TEXT, email TEXT, ` +
+    `status TEXT DEFAULT 'open' NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`,
+  )
+  await env.DB.exec(
+    `CREATE INDEX IF NOT EXISTS data_report_createdAt_idx ON data_report (created_at)`,
+  )
 })
 
+beforeEach(async () => {
+  await env.DB.exec('DELETE FROM data_report')
+})
+
+const db = () => createDb(env.DB)
+
 describe('createDataReport', () => {
-  test('合法提交 → 落成一个文件，状态为 open，文本 trim 过', async () => {
+  test('合法提交 → 落库一行，状态为 open，文本 trim 过', async () => {
     const r = await createDataReport(
-      env.BUCKET,
+      db(),
       {
         modelId: 'gpt-6-astra',
         kind: 'stale-price',
@@ -41,7 +46,7 @@ describe('createDataReport', () => {
     )
     expect(r.ok).toBe(true)
     if (!r.ok) throw new Error('setup failed')
-    const { rows } = await listDataReports(env.BUCKET, { page: 0, pageSize: 50 })
+    const { rows } = await listDataReports(db(), { page: 0, pageSize: 50 })
     const row = rows.find((x) => x.id === r.id)!
     expect(row.kind).toBe('stale-price')
     expect(row.detail).toBe('OpenAI lists $8 now, not $10.')
@@ -51,41 +56,43 @@ describe('createDataReport', () => {
     expect(new Date(row.createdAt).getTime()).toBe(1000)
   })
 
-  test('每个报告是桶里的一个 JSON 文件', async () => {
-    const r = await createDataReport(env.BUCKET, { kind: 'other', detail: 'file probe' }, 1100)
+  test('每个报告是 data_report 表里的一行', async () => {
+    const r = await createDataReport(db(), { kind: 'other', detail: 'row probe' }, 1100)
     if (!r.ok) throw new Error('setup failed')
-    const listed = await env.BUCKET.list({ prefix: REPORT_PREFIX })
-    expect(listed.objects).toHaveLength(1)
-    expect(listed.objects[0].key).toBe(reportKey(r.id))
-    const object = await env.BUCKET.get(reportKey(r.id))
-    expect(object?.httpMetadata?.contentType).toBe('application/json')
-    expect((await object!.json<{ detail: string }>()).detail).toBe('file probe')
+    const raw = await env.DB
+      .prepare('SELECT id, detail, status FROM data_report WHERE id = ?')
+      .bind(r.id)
+      .first<{ id: string; detail: string; status: string }>()
+    expect(raw?.detail).toBe('row probe')
+    expect(raw?.status).toBe('open')
+    const counted = await env.DB.prepare('SELECT COUNT(*) AS c FROM data_report').first<{ c: number }>()
+    expect(counted?.c).toBe(1)
   })
 
-  test('未知 kind → 拒绝，不落文件', async () => {
-    const before = (await listDataReports(env.BUCKET, { page: 0, pageSize: 100 })).total
-    expect(await createDataReport(env.BUCKET, { kind: 'nonsense', detail: 'x' }, 2000)).toEqual({
+  test('未知 kind → 拒绝，不落库', async () => {
+    const before = (await listDataReports(db(), { page: 0, pageSize: 100 })).total
+    expect(await createDataReport(db(), { kind: 'nonsense', detail: 'x' }, 2000)).toEqual({
       ok: false,
       reason: 'kind',
     })
-    const after = (await listDataReports(env.BUCKET, { page: 0, pageSize: 100 })).total
+    const after = (await listDataReports(db(), { page: 0, pageSize: 100 })).total
     expect(after).toBe(before)
   })
 
   test('空详情 / 超长详情 → 拒绝', async () => {
-    expect(await createDataReport(env.BUCKET, { kind: 'other', detail: '   ' }, 2000)).toEqual({
+    expect(await createDataReport(db(), { kind: 'other', detail: '   ' }, 2000)).toEqual({
       ok: false,
       reason: 'detail',
     })
     expect(
-      await createDataReport(env.BUCKET, { kind: 'other', detail: 'x'.repeat(DETAIL_MAX + 1) }, 2000),
+      await createDataReport(db(), { kind: 'other', detail: 'x'.repeat(DETAIL_MAX + 1) }, 2000),
     ).toEqual({ ok: false, reason: 'detail' })
   })
 
   test('可选字段留空 → null（不是空串）', async () => {
-    const r = await createDataReport(env.BUCKET, { kind: 'other', detail: 'site wide note' }, 2100)
+    const r = await createDataReport(db(), { kind: 'other', detail: 'site wide note' }, 2100)
     if (!r.ok) throw new Error('setup failed')
-    const { rows } = await listDataReports(env.BUCKET, { page: 0, pageSize: 100 })
+    const { rows } = await listDataReports(db(), { page: 0, pageSize: 100 })
     const row = rows.find((x) => x.id === r.id)!
     expect(row.modelId).toBeNull()
     expect(row.sourceUrl).toBeNull()
@@ -97,25 +104,25 @@ describe('listDataReports', () => {
   test('按创建时间倒序，分页切片正确', async () => {
     const ids: string[] = []
     for (let i = 0; i < 3; i++) {
-      const r = await createDataReport(env.BUCKET, { kind: 'other', detail: `page probe ${i}` }, 3000 + i)
+      const r = await createDataReport(db(), { kind: 'other', detail: `page probe ${i}` }, 3000 + i)
       if (!r.ok) throw new Error('setup failed')
       ids.push(r.id)
     }
-    const first = await listDataReports(env.BUCKET, { page: 0, pageSize: 1 })
+    const first = await listDataReports(db(), { page: 0, pageSize: 1 })
     expect(first.rows.length).toBe(1)
     expect(first.rows[0].id).toBe(ids[ids.length - 1]) // 最新在前
-    const second = await listDataReports(env.BUCKET, { page: 1, pageSize: 1 })
+    const second = await listDataReports(db(), { page: 1, pageSize: 1 })
     expect(second.rows[0].id).not.toBe(first.rows[0].id)
     expect(first.total).toBe(second.total)
   })
 })
 
 describe('setDataReportStatus', () => {
-  test('状态流转写回文件，updatedAt 跟着走', async () => {
-    const r = await createDataReport(env.BUCKET, { kind: 'wrong-version', detail: 'version mismatch' }, 4000)
+  test('状态流转写回行，updatedAt 跟着走', async () => {
+    const r = await createDataReport(db(), { kind: 'wrong-version', detail: 'version mismatch' }, 4000)
     if (!r.ok) throw new Error('setup failed')
-    await setDataReportStatus(env.BUCKET, r.id, 'accepted', 5000)
-    const { rows } = await listDataReports(env.BUCKET, { page: 0, pageSize: 100 })
+    await setDataReportStatus(db(), r.id, 'accepted', 5000)
+    const { rows } = await listDataReports(db(), { page: 0, pageSize: 100 })
     const row = rows.find((x) => x.id === r.id)!
     expect(row.status).toBe('accepted')
     expect(new Date(row.updatedAt).getTime()).toBe(5000)
@@ -123,10 +130,10 @@ describe('setDataReportStatus', () => {
   })
 
   test('非法状态 → 抛错（状态词表是封闭的）', async () => {
-    const r = await createDataReport(env.BUCKET, { kind: 'other', detail: 'invalid status probe' }, 6000)
+    const r = await createDataReport(db(), { kind: 'other', detail: 'invalid status probe' }, 6000)
     if (!r.ok) throw new Error('setup failed')
     await expect(
-      setDataReportStatus(env.BUCKET, r.id, 'bogus' as never, 6100),
+      setDataReportStatus(db(), r.id, 'bogus' as never, 6100),
     ).rejects.toThrow(/invalid status/)
   })
 })

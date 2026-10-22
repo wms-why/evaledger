@@ -36,8 +36,8 @@
 
 - **[TanStack Start](https://tanstack.com/start)** (React 19,基于文件的路由,server functions)
 - **[Cloudflare Workers](https://workers.cloudflare.com)** 运行时,通过 `@cloudflare/vite-plugin` 部署
-- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)**(账号、赞助、反馈、候补名单)
-- **[KV](https://developers.cloudflare.com/kv/)** 缓存、**[R2](https://developers.cloudflare.com/r2/)** 头像存储
+- **[D1](https://developers.cloudflare.com/d1/)** (SQLite) + **[Drizzle ORM](https://orm.drizzle.team)**(账号、赞助、反馈、候补名单、数据修正报告)
+- **[KV](https://developers.cloudflare.com/kv/)** 限流缓存、**[R2](https://developers.cloudflare.com/r2/)** 头像存储
 - **[better-auth](https://better-auth.com)** + **[Stripe](https://stripe.com)** + **[Resend](https://resend.com)**
 - **[Tailwind CSS v4](https://tailwindcss.com)** + **[Vitest](https://vitest.dev)**(Node 单元测试 + Workers/D1 集成测试)
 
