@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
-import { getOptionalUser, getTurnstileSiteKey } from '@/features/auth/middleware'
+import { getOptionalUser } from '@/features/auth/middleware'
 import { DataQualitySummary } from '@/features/data-quality/components/DataQualitySummary'
 import { DataQualityTable } from '@/features/data-quality/components/DataQualityTable'
 import { DataReportForm } from '@/features/data-quality/components/DataReportForm'
@@ -18,15 +18,12 @@ const rootRoute = getRouteApi('__root__')
 
 export const Route = createFileRoute('/{-$locale}/data-quality')({
   loader: async () => {
-    const [origin, user, turnstileSiteKey] = await Promise.all([
-      getOrigin(),
-      getOptionalUser(),
-      getTurnstileSiteKey(),
-    ])
+    const [origin, user] = await Promise.all([getOrigin(), getOptionalUser()])
     return {
       origin,
-      loggedIn: !!user,
-      turnstileSiteKey,
+      // The report form needs the account email (it is the contact address);
+      // an anonymous visitor sees the sign-in gate instead.
+      viewer: user ? { email: user.email } : null,
       quality: modelQuality(),
       summary: dataQualitySummary(),
       sources: scoreSources(),
@@ -53,11 +50,11 @@ export const Route = createFileRoute('/{-$locale}/data-quality')({
 
 function DataQualityPage() {
   const { theme } = rootRoute.useLoaderData()
-  const { loggedIn, turnstileSiteKey, quality, summary, sources, models } = Route.useLoaderData()
+  const { viewer, quality, summary, sources, models } = Route.useLoaderData()
   const { t } = useTranslation()
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SiteNav theme={theme} loggedIn={loggedIn} />
+      <SiteNav theme={theme} loggedIn={!!viewer} />
       <main className="mx-auto flex max-w-6xl flex-col gap-10 px-5 py-12 md:px-7 md:py-16">
         <header>
           <h1 className="text-[28px] font-semibold leading-tight tracking-tight md:text-[32px]">
@@ -93,7 +90,7 @@ function DataQualityPage() {
               <CardDescription>{t('dataQuality.report.intro')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <DataReportForm models={models} turnstileSiteKey={turnstileSiteKey} />
+              <DataReportForm models={models} viewer={viewer} />
               <a
                 href="#data-quality-table"
                 className="mt-4 inline-block text-[13px] text-primary underline-offset-4 hover:underline"

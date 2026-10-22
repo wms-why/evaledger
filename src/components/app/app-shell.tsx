@@ -87,7 +87,7 @@ export function AppShell({
     return (
       <>
         <div className={rail ? 'brand justify-center' : 'brand'}>
-          <Logo compact={rail} asLink={false} />
+          <Logo compact={rail} />
         </div>
         {grp(t('app.navWorkspace'))}
         <Link to="/{-$locale}/app" activeProps={{}} className={item(active === 'dashboard')} title={t('app.dashboard')}>

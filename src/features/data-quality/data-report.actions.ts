@@ -6,17 +6,18 @@ import type { DataReportRow } from './data-report.server'
 /**
  * The correction-report server functions.
  *
- * The submit endpoint is **public**: reporting a wrong price must not
- * require an account. That makes it an abuse target, so it carries the same
- * two dampers the waitlist form does — a per-IP fixed-window limit on KV and
- * an optional Turnstile check — and both degrade gracefully when the KV
- * binding or the Turnstile secret is missing.
+ * **Filing a report requires an account.** The rule is the same on
+ * `/data-quality` and `/app/reports`: a report belongs to a person who can
+ * edit or withdraw it until triage and who can be told when it is fixed. The
+ * public page gates the form behind `/login`; this module enforces the same
+ * rule on the server, so there is no anonymous create path left to abuse.
  *
- * The `my*` endpoints are the signed-in half of the same table: they require
- * an account, skip the captcha (the session is the damper), and only ever
- * touch rows the caller owns and that are still `open`. Triage is the cutoff —
- * once an admin has ruled on a report it is a governance record, not editable
- * intake.
+ * A signed-in submit carries no captcha — the session is the damper — but
+ * keeps the per-IP fixed window and the per-account open-report ceiling.
+ * An expired session returns `{ status: 'auth' }` instead of throwing a
+ * redirect: the reader may have written a paragraph, and a redirect would
+ * throw it away. The client re-opens the login page with `?next=` and the
+ * draft is restored from sessionStorage.
  *
  * The reports themselves are rows in the `data_report` D1 table. See the
  * "Where data lives" rule in AGENTS.md: published data is files, submitted
@@ -27,8 +28,8 @@ export type SubmitDataReportStatus =
   | 'submitted'
   | 'invalid'
   | 'rate-limited'
-  | 'captcha'
   | 'limit'
+  | 'auth'
   | 'error'
 
 /** The signed-in caller, or a login redirect (same contract as feedback). */
@@ -39,7 +40,7 @@ async function currentUser() {
   return user
 }
 
-/** Per-IP damper shared by the public form and the dashboard. Fail-open. */
+/** Per-IP damper for every create path. Fail-open. */
 async function withinRateLimit(cache: KVNamespace, ip: string, now: number) {
   const { fixedWindowLimit } = await import('@/features/waitlist/rate-limit')
   try {
@@ -50,66 +51,6 @@ async function withinRateLimit(cache: KVNamespace, ip: string, now: number) {
     return true
   }
 }
-
-/** Public, unauthenticated — but attributed when a session is present. */
-export const submitDataReportFn = createServerFn({ method: 'POST' })
-  .validator((d: { modelId?: string; kind?: string; detail?: string; sourceUrl?: string; email?: string; turnstileToken?: string }) => {
-    const o = (d ?? {}) as Record<string, unknown>
-    const str = (v: unknown): string => (typeof v === 'string' ? v : '')
-    return {
-      modelId: str(o.modelId).slice(0, 120),
-      kind: str(o.kind).slice(0, 40),
-      detail: str(o.detail).slice(0, 4000),
-      sourceUrl: str(o.sourceUrl).slice(0, 500),
-      email: str(o.email).slice(0, 200),
-      turnstileToken: str(o.turnstileToken).slice(0, 4096),
-    }
-  })
-  .handler(async ({ data }): Promise<{ status: SubmitDataReportStatus }> => {
-    const { env } = await import('@/lib/env')
-    const { createDb } = await import('@/db/client')
-    const { getRequestHeader } = await import('@tanstack/react-start/server')
-    const { readUser } = await import('@/features/auth/readUser.server')
-    const { verifyTurnstile } = await import('@/features/waitlist/turnstile')
-    const { createDataReport } = await import('./data-report.server')
-    const { isDataReportKind } = await import('./data-report.shared')
-
-    // 每 IP 5 次 / 10 分钟：够真人反复改错重提，挡得住脚本灌库。
-    const ip = getRequestHeader('cf-connecting-ip') ?? 'unknown'
-    if (!(await withinRateLimit(env.CACHE, ip, Date.now()))) return { status: 'rate-limited' }
-
-    // 先校验正文再消费 Turnstile token：siteverify 的 token 是一次性的，
-    // 先消费再报错会让用户改正后的第二次提交莫名撞上「验证码失败」。
-    if (!isDataReportKind(data.kind)) return { status: 'invalid' }
-    if (!data.detail.trim()) return { status: 'invalid' }
-
-    const ok = await verifyTurnstile(data.turnstileToken, env.TURNSTILE_SECRET_KEY)
-    if (!ok) return { status: 'captcha' }
-
-    // A logged-in reporter owns their row (so it shows up in /app/reports);
-    // a failed session lookup must not block a public report.
-    const user = await readUser().catch(() => null)
-
-    try {
-      const result = await createDataReport(
-        createDb(env.DB),
-        {
-          userId: user?.id ?? null,
-          modelId: data.modelId,
-          kind: data.kind,
-          detail: data.detail,
-          sourceUrl: data.sourceUrl,
-          email: data.email,
-        },
-        Date.now(),
-      )
-      if (result.ok) return { status: 'submitted' }
-      return { status: result.reason === 'limit' ? 'limit' : 'invalid' }
-    } catch (err) {
-      console.error('[data-report] submit failed', err)
-      return { status: 'error' }
-    }
-  })
 
 /** Signed in — the caller's own reports, newest first. */
 export const getMyDataReportsFn = createServerFn({ method: 'GET' }).handler(
@@ -124,11 +65,14 @@ export const getMyDataReportsFn = createServerFn({ method: 'GET' }).handler(
 )
 
 /**
- * Signed in — file a report from the dashboard.
+ * Signed in — file a report, from the dashboard or the public form.
  *
  * No Turnstile: an authenticated account plus the per-IP window is the damper,
  * and the account carries its own open-report ceiling. The account email is
  * stored as the contact address so a triager can reply without asking.
+ *
+ * A missing session is reported as `auth`, not thrown as a redirect — see the
+ * module comment.
  */
 export const submitMyDataReportFn = createServerFn({ method: 'POST' })
   .validator((d: { modelId?: string; kind?: string; detail?: string; sourceUrl?: string }) => {
@@ -145,8 +89,10 @@ export const submitMyDataReportFn = createServerFn({ method: 'POST' })
     const { env } = await import('@/lib/env')
     const { createDb } = await import('@/db/client')
     const { getRequestHeader } = await import('@tanstack/react-start/server')
+    const { readUser } = await import('@/features/auth/readUser.server')
     const { createDataReport } = await import('./data-report.server')
-    const user = await currentUser()
+    const user = await readUser()
+    if (!user) return { status: 'auth' }
 
     const ip = getRequestHeader('cf-connecting-ip') ?? 'unknown'
     if (!(await withinRateLimit(env.CACHE, ip, Date.now()))) return { status: 'rate-limited' }

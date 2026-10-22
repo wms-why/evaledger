@@ -8,7 +8,7 @@ export function Logo({
 }: {
   size?: number
   compact?: boolean
-  /** Wrap in a locale-aware link to the home route. Disable for in-app brand marks (e.g. workspace sidebar). */
+  /** Wrap in a locale-aware link to the home route. Disable only when the mark sits inside another link (e.g. the auth card). */
   asLink?: boolean
 }) {
   const content = (
@@ -41,7 +41,7 @@ export function Logo({
     <Link
       to="/{-$locale}"
       aria-label="EvalLedger"
-      className="shrink-0"
+      className="shrink-0 transition-opacity hover:opacity-80"
       // 只把首页当“当前页”：/zh 是 /zh/* 的父路径，不加 exact 会在所有中文页命中
       activeOptions={{ exact: true }}
     >

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useTranslation } from '@/features/i18n/provider'
+import { localizePath } from '@/features/i18n/locale'
 import { fmtDateTime } from '@/lib/format-date'
 import {
   deleteMyDataReportFn,
@@ -170,7 +171,7 @@ export function MyDataReports({
   email: string
   models: DataReportModelOption[]
 }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const router = useRouter()
   const [createDraft, setCreateDraft] = useState<Draft>(EMPTY)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -193,7 +194,14 @@ export function MyDataReports({
       if (status === 'limit') toast.error(t('app.myReports.limit', { n: OPEN_REPORT_LIMIT }))
       else if (status === 'rate-limited') toast.error(t('app.myReports.rateLimited'))
       else if (status === 'invalid') toast.error(t('app.myReports.invalid'))
-      else toast.error(t('app.myReports.error'))
+      else if (status === 'auth') {
+        // The loader gates this page, so this only happens when the session
+        // expired mid-form. Send the reader to login and come back here.
+        void router.navigate({
+          to: '/{-$locale}/login',
+          search: { next: localizePath(locale, '/app/reports') },
+        })
+      } else toast.error(t('app.myReports.error'))
     } finally {
       setBusy(false)
     }
