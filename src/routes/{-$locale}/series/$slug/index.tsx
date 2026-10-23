@@ -14,6 +14,7 @@ import { SeriesLadder } from '@/features/series/components/SeriesLadder'
 import { seriesRows, seriesScoreModels, seriesSteps, seriesVerdict } from '@/features/series/data'
 import { findSeries, seriesPairs } from '@/features/series/select'
 import { getReleases } from '@/features/releases/releases.fns'
+import { pickPrimaryRelease } from '@/features/releases/primary-post'
 
 /**
  * One product line, every version of it, side by side.
@@ -36,10 +37,14 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
       getReleases({ data: locale }),
     ])
     const memberIds = new Set(series.members.flatMap((m) => [m.priceId, m.scoreId]))
-    const relatedRelease = releases.find(
-      (entry) =>
-        (entry.modelSlug && memberIds.has(entry.modelSlug)) ||
-        memberIds.has(entry.modelId),
+    // Prefer the line's launch analyses over a later piece that mentions the
+    // same weights (see `pickPrimaryRelease`).
+    const relatedRelease = pickPrimaryRelease(
+      releases.filter(
+        (entry) =>
+          (entry.modelSlug && memberIds.has(entry.modelSlug)) ||
+          memberIds.has(entry.modelId),
+      ),
     )
     // Pairs are resolved against the live rows so the links carry the current
     // display names, not the registry ids.

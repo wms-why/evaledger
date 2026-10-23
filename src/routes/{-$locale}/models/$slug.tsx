@@ -9,6 +9,7 @@ import { Footer } from '@/components/marketing/footer'
 import { ModelProfile } from '@/features/leaderboard/components/ModelProfile'
 import { findLeaderboardModel } from '@/features/leaderboard/models'
 import { getReleases } from '@/features/releases/releases.fns'
+import { pickPrimaryRelease } from '@/features/releases/primary-post'
 import { seriesForPriceId, seriesForScoreId } from '@/features/series/select'
 
 const rootRoute = getRouteApi('__root__')
@@ -24,7 +25,11 @@ export const Route = createFileRoute('/{-$locale}/models/$slug')({
       getOptionalUser(),
       getReleases({ data: locale }),
     ])
-    const relatedRelease = entries.find((e) => e.modelSlug === model.id)
+    // A model can have more than one post that mentions it: the launch
+    // analysis, and a later piece about the same weights (DeepInfer). The
+    // model page wants the launch one, so the pick prefers it over a later
+    // article instead of taking whichever appears first in the list.
+    const relatedRelease = pickPrimaryRelease(entries.filter((e) => e.modelSlug === model.id))
     // The line this model belongs to, matched on the score row first and on
     // the price row second (a member can have one without the other).
     const series =

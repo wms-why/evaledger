@@ -8,6 +8,7 @@ import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { LEADERBOARD, findLeaderboardModel } from '@/features/leaderboard/models'
 import type { LeaderboardModel } from '@/features/leaderboard/types'
 import { releaseSlugFromPath } from '../select'
+import { isToolchainVersion } from '../toolchain'
 
 /**
  * Integrity guard for the release series.
@@ -310,9 +311,10 @@ const VERSION_TOKENS = (() => {
 /**
  * Bare decimals that read like a score ("90.9", "36.8").
  *
- * Skips: percentages, multipliers ("2.5×"), yuan restatements ("¥0.1") and
- * version fragments taken from the model / benchmark names. What is left has
- * to be a live score of a model the post depends on.
+ * Skips: percentages, multipliers ("2.5×"), yuan restatements ("¥0.1"),
+ * version fragments taken from the model / benchmark names, and toolchain
+ * versions ("Python 3.12" — see `../toolchain`). What is left has to be a
+ * live score of a model the post depends on.
  */
 function scoreClaims(text: string): number[] {
   const out: number[] = []
@@ -328,6 +330,8 @@ function scoreClaims(text: string): number[] {
     if (before === '$') continue
     // percentage or multiplier
     if (after === '%' || after === '×' || after === 'x' || afterWord === '倍') continue
+    // a toolchain requirement ("Python 3.12"), not a measurement
+    if (isToolchainVersion(text.slice(0, m.index))) continue
     out.push(Number(raw))
   }
   return out
