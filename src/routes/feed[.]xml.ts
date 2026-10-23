@@ -39,9 +39,13 @@ const handler = async () => {
       const zh = r.path.includes('.zh')
       const link = `${origin}${zh ? '/zh' : ''}/releases/${r.slug}`
       const price = releasePriceRows(r)[0]
+      // A pending post has no price row yet — say what it is instead of
+      // leaving an empty line in the item description.
       const priceLine = price
         ? `${price.displayName} — $${price.inputPricePer1M} input / $${price.outputPricePer1M} output per 1M tokens`
-        : ''
+        : r.pending
+          ? 'Pre-release watch post — no published price or benchmark set yet'
+          : ''
       return [
         '    <item>',
         `      <title>${escapeXml(r.title)}</title>`,

@@ -44,6 +44,11 @@ export const releases = defineCollections({
     compareSlugs: z.array(z.string()).default([]),    // LEADERBOARD.id[] ——跑分对比行
     sourceUrl: z.string(),
     sourceTitle: z.string(),
+    // 厂商自己的片子的本地镜像（放在 public/ 下）。
+    // 正文是 .md，裸 HTML 会被剥掉，所以 <video> 只能走 frontmatter。
+    videoSrc: z.string().optional(),      // 站内相对路径，例如 /media/x.mp4
+    videoPoster: z.string().optional(),   // 封面帧
+    videoCaption: z.string().optional(),  // 图注（中英各一份）
     published: z.boolean().default(true),
   }),
 })
@@ -68,6 +73,8 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
     · 「你的用量要多少钱」：1M input + 500K output 的月度估算（实时算）
     · 跑分表：有 modelSlug 才有；没有就渲染诚实的空状态
     · context window / cached input 单价 / 各自 sourceUrl + lastVerified
+    · pending 文章：以上全部换成一句「还没正式上线」的说明
+[Video]     ← 有 videoSrc 才渲染（controls + poster + 图注）
 [MDX 正文]  ← 纯散文
 [CTA]  → /compare?a=<主角>&b=<对手>  /token-calculator
 [Source]  sourceUrl + sourceTitle + checkedAt
@@ -99,6 +106,7 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 | `deepseek-v4-1-flash` | DeepSeek | DeepSeek V4.1-Flash 0910 | `deepseek-flash-0910` | `deepseek-v4.1-flash` | `2026-09-10` |
 | `deepseek-v4-1-flash-1017` | DeepSeek | DeepSeek V4.1-Flash 1017 | `deepseek-flash` | `deepseek-v4.1-flash-1017` | `2026-10-17` |
 | `minimax-m3-1-flash` | MiniMax | MiniMax M3.1 Flash | `minimax-m3.1-flash` | `minimax-m3.1-flash` | `2026-10-19` |
+| `kimi-k3-1` | Moonshot | Kimi K3.1（**未发布**，`pending: true`） | `kimi-k3.1` | — | — |
 
 `gpt-6-astra` 与 `claude-opus-5-5` **故意不给** `modelSlug`：
 榜单里没有这两个 SKU 的可溯源跑分，就不编。正文里要写明「还没有核验过的跑分」。
@@ -107,6 +115,47 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 （`deepseek-flash`）下滚动更新 checkpoint：0910 首发与 1017 当前版的权重不同、
 跑分不同、公告也不同，所以价格行、榜单行、发布文章各一份，两篇互链。
 **不要把两套分数并到一行，也不要让一篇文章引用另一套分数。**
+
+### 4.1 发布前观察文（`pending: true`）
+
+厂商已经亮出名字、但还没给模型卡 / API ID / 定价 / 跑分时，写一篇
+`pending: true` 的观察文 —— 这是本系列唯一的「无数据」形态，规则比正常文章更严：
+
+- **不渲染任何表。** 页面顶部的事实表换成 `releases.pendingTitle` +
+  `releases.pendingNote` 的说明块；列表页卡片只显示「尚未发布」徽章，
+  不显示价格 / 跑分。
+- **正文不许出现任何价格或分数。** `modelId` 还不在 REGISTRY 里，护栏给出的
+  允许集合只有 `publishedNumbers` —— 正文里写一个 `$4` 或一个 `55.7` 就会红。
+  厂商自己公布过、而你要引用的数字（例如前代的参数量 2.8）必须逐条列进
+  `publishedNumbers`，别的一律不写。
+- **`modelName` 必填。** REGISTRY 里没有这一行，页面没法从注册表取名字。
+- **`releasedAt` / `modelSlug` / `compareModelIds` 必须缺省。** 没发布就没有上线日、
+  没有榜单行、没有可比价的价格行；填了就说明你在编。
+- **`pending` 与 REGISTRY 互斥。** 模型一旦进了注册表就算发布，护栏会要求你
+  去掉 `pending` 并重写全文 —— 这是刻意设计：这篇文是「等」，不是「快照」。
+
+**厂商的片子走 frontmatter，不走正文。** 正文是 `.md`，裸 HTML 会被剥掉，
+所以 `<video>` 写进正文等于白写。把片子镜像到 `public/media/`，然后填
+`videoSrc`（站内相对路径）+ `videoPoster` + `videoCaption`；护栏会检查这两个路径
+确实指向 `public/` 下的文件，e2e 会检查它真的能读出元数据（`readyState > 0`）。
+不要热链厂商 CDN 的地址——那些链接会轮换。
+
+**发布当天的清单（按顺序做，缺一项护栏就会红）：**
+
+1. REGISTRY 加价格行（`kimi-k3-1`）→ `status: 'active'`，`lastVerified` = 当天，
+   `REGISTRY.fetchedAt` = 当天；前代 SKU 按「换 checkpoint」规则处置。
+2. LEADERBOARD 加分数行（`kimi-k3.1`）+ `priceId` 指回第 1 步；
+   只登厂商表格或第三方榜单里真实存在的项，缺项就空着。
+3. `src/features/records/ledger.ts` 加记录（新版本 = 新记录，`supersedes` 指向前代）；
+   `pnpm records:pins` 拿模板。
+4. 若这条线要做 `/series`，`src/features/series/series.ts` 加成员。
+5. 删掉 `POST_EXEMPTIONS` 里的占位（如果当时加过）。
+6. **改这篇文本身**：删 `pending` / `modelName` / `publishedNumbers`，
+   把 `modelId` 改成注册表里的 id，填 `releasedAt` / `modelSlug` /
+   `compareModelIds` / `compareSlugs`，正文从「观察」重写成「发布 + 成本 + 换型」，
+   `dataCheckedAt` 推到当天。`videoSrc` 那几行可以留着。
+7. `pnpm test` + `pnpm typecheck` + `pnpm build`，再单独跑
+   `npx playwright test e2e/releases.spec.ts`。
 
 ### 6.1 每篇的事实清单（写正文时直接用，不要自己算）
 
@@ -256,14 +305,22 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
    `vendor` / `modelId` / `sourceUrl` / `sourceTitle`）；
 2. `modelId` / `compareModelIds` 都能在 REGISTRY 找到；
    `modelSlug` / `compareSlugs` 都能在 LEADERBOARD 找到；
+   —— **`pending: true` 的文章例外**：它的 `modelId` 还不在注册表里（那正是它
+   要观察的对象），护栏只要求 `modelName` 存在；
 3. en 与 zh 两种文件一一对应（slug 集合相同）；
 4. **文章里引用的每个价格，必须是「本文依赖的模型」当前的价格**；
    每个分数（以及两个分数之差）必须来自本文依赖的模型；
    —— 表格更新了而正文没跟上，这里会红；
+   —— `pending` 文章的允许集合只有 `publishedNumbers`，正文里任何价格 / 分数都会红；
 5. **文章不能比它引用的数据旧**：依赖模型的价格 `lastVerified` 或分数
    `observedAt` 晚于本文的 `dataCheckedAt` 时报错；
 6. 榜单上每个模型都要有发布页，没有的必须写进测试里的 `POST_EXEMPTIONS`
-   （这张豁免表要随着文章增加而变短）。
+   （这张豁免表要随着文章增加而变短）；
+7. **`pending` 标记必须诚实**：模型已经在 REGISTRY 里却还挂着 `pending: true`
+   会红；`pending` 文章带了 `releasedAt` / `modelSlug` 也会红；
+   反过来，已发布文章带了 `publishedNumbers` 也会红；
+8. **视频路径必须真实**：`videoSrc` / `videoPoster` 必须是站内相对路径，
+   且指向 `public/` 下真实存在的文件；只有 poster 没有 src 也会红。
 
 > 豁免规则、¥ 折算、版本号（`Opus 5.5`、`Terminal-Bench 2.1`）这些噪声，
 > 护栏里都做了处理：版本号从模型名 / 基准名反推，新增模型自动生效。

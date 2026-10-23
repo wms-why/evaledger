@@ -59,8 +59,36 @@ export const releases = defineCollections({
       'glm',
       'kimi',
     ]),
-    /** REGISTRY.id of the model this post is about. */
+    /**
+     * True while the model has NOT been released yet.
+     *
+     * A pending post is a *watch* post: the vendor has shown the model (a
+     * teaser, a config entry, an announcement) but has published no model
+     * card, no API price and no benchmark set — so there is no REGISTRY row
+     * and no LEADERBOARD row to point at. The post therefore renders no
+     * price table and no score table, and the guard test forbids it from
+     * quoting a price or a score at all. When the model ships, flip this to
+     * false, add the two registry rows and rewrite the analysis.
+     */
+    pending: z.boolean().default(false),
+    /**
+     * REGISTRY.id of the model this post is about. For a pending post this is
+     * the id the model will carry once it ships — it is not in the registry
+     * yet, and the guard test knows that.
+     */
     modelId: z.string(),
+    /**
+     * Display name of a pending post's model — the registry has no row for
+     * it yet, so the page cannot resolve the name from the registries.
+     */
+    modelName: z.string().optional(),
+    /**
+     * Figures the vendor has published that a pending post may quote (the
+     * predecessor's parameter count, a context window, …). A pending post
+     * has no registry rows, so this list is the *only* set of non-registry
+     * numbers it is allowed to state.
+     */
+    publishedNumbers: z.array(z.number()).default([]),
     /** LEADERBOARD.id — enables the benchmark table when present. */
     modelSlug: z.string().optional(),
     /** REGISTRY.ids rendered as extra rows in the price table. */
@@ -71,6 +99,19 @@ export const releases = defineCollections({
     sourceUrl: z.string(),
     /** Human-readable title of that announcement. */
     sourceTitle: z.string(),
+    /**
+     * The vendor's own clip, when the post is built around one.
+     *
+     * `src` / `poster` are site-relative paths under `public/` (we mirror the
+     * clip rather than hot-link a CDN that can rotate its URLs). The route
+     * renders a `<video controls>` element; an `.md` body cannot carry one,
+     * because raw HTML in a `.md` collection is stripped.
+     */
+    videoSrc: z.string().optional(),
+    /** Poster frame shown before playback. */
+    videoPoster: z.string().optional(),
+    /** Caption printed under the clip. Bilingual: one per language file. */
+    videoCaption: z.string().optional(),
     published: z.boolean().default(true),
   }),
 })

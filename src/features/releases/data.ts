@@ -69,6 +69,9 @@ export function findPriceModel(id: string): ModelPrice | undefined {
 /**
  * Build the price table for a post: the subject first, then every
  * `compareModelIds` entry that still exists in the registry.
+ *
+ * A **pending** post has no subject row — the model has not shipped, so
+ * there is no price to show. The table is empty and the page says so.
  */
 export function releasePriceRows(meta: ReleaseMeta): ReleasePriceRow[] {
   const subject = findPriceModel(meta.modelId)

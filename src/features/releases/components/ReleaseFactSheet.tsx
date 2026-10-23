@@ -64,6 +64,18 @@ export function ReleaseFactSheet({ meta }: { meta: ReleaseMeta }) {
   const offPeak = releaseOffPeakEstimate(meta)
   const offPeakDiffers = estimate && offPeak && estimate.totalCost !== offPeak.totalCost
 
+  // A pre-release watch post: the model has no price row and no score row
+  // yet, so there is nothing to tabulate. Say so instead of rendering an
+  // empty table.
+  if (meta.pending) {
+    return (
+      <section>
+        <h2 className="text-[18px] font-semibold">{t('releases.pendingTitle')}</h2>
+        <p className="mt-1 text-[13px] leading-relaxed text-fg-3">{t('releases.pendingNote')}</p>
+      </section>
+    )
+  }
+
   if (priceRows.length === 0) return null
 
   return (

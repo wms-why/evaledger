@@ -106,18 +106,24 @@ function ReleasesIndex() {
                   )}
 
                   <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {price && (
-                      <Badge className="tabular-nums">
-                        {formatReleasePrice(price.inputPricePer1M)} /{" "}
-                        {formatReleasePrice(price.outputPricePer1M)}
-                      </Badge>
-                    )}
-                    {scores ? (
-                      <Badge>
-                        {t("releases.scoreCount", { n: scores.rows.length })}
-                      </Badge>
+                    {entry.pending ? (
+                      <Badge>{t("releases.pendingBadge")}</Badge>
                     ) : (
-                      <Badge>{t("releases.noScores")}</Badge>
+                      <>
+                        {price && (
+                          <Badge className="tabular-nums">
+                            {formatReleasePrice(price.inputPricePer1M)} /{" "}
+                            {formatReleasePrice(price.outputPricePer1M)}
+                          </Badge>
+                        )}
+                        {scores ? (
+                          <Badge>
+                            {t("releases.scoreCount", { n: scores.rows.length })}
+                          </Badge>
+                        ) : (
+                          <Badge>{t("releases.noScores")}</Badge>
+                        )}
+                      </>
                     )}
                     <Link
                       to="/{-$locale}/releases/$slug"

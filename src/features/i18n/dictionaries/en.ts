@@ -476,6 +476,10 @@ export const en = {
     empty: 'No release analyses published yet.',
     scoreCount: '{n} benchmarks tracked',
     noScores: 'No verified scores yet',
+    pendingBadge: 'Pre-release',
+    pendingTitle: 'Not released yet',
+    pendingNote:
+      'The vendor has shown this model, but has published no price, no benchmark set and no API model id. So this page carries no price table and no score table — we publish neither until the numbers are real. When the model ships, this page is updated in place with the live figures.',
     priceTitle: 'What it costs',
     priceNote:
       'USD per 1M tokens, read live from the provider pricing page — so this table can never go stale.',

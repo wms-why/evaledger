@@ -167,6 +167,37 @@ describe('sortByReleasedAt', () => {
     sortByReleasedAt(input)
     expect(input.map((e) => e.slug)).toEqual(before)
   })
+
+  it('leads with a pending post, ahead of every shipped model', () => {
+    const pending: ReleaseMeta = {
+      ...metaOf(raw[1]!),
+      slug: 'kimi-k3-1',
+      title: 'Kimi K3.1',
+      pending: true,
+      date: '2026-10-23',
+    }
+    const out = sortByReleasedAt([
+      metaOf(raw[0]!, '2026-09-10'),
+      metaOf({ ...raw[3]!, published: true }, '2026-10-19'),
+      pending,
+    ])
+    // A watch post has no launch day — it still leads the page, because it is
+    // the newest thing the series has to say.
+    expect(out[0]?.slug).toBe('kimi-k3-1')
+    expect(out.slice(1).map((e) => e.slug)).toEqual(['draft', 'deepseek-v4-1-flash'])
+  })
+
+  it('orders two pending posts by publish date, newest first', () => {
+    const base = metaOf(raw[1]!)
+    const newer: ReleaseMeta = { ...base, slug: 'newer', pending: true, date: '2026-10-23' }
+    const older: ReleaseMeta = { ...base, slug: 'older', pending: true, date: '2026-10-20' }
+    const shipped = metaOf(raw[0]!, '2026-09-10')
+    expect(sortByReleasedAt([older, shipped, newer]).map((e) => e.slug)).toEqual([
+      'newer',
+      'older',
+      'deepseek-v4-1-flash',
+    ])
+  })
 })
 
 describe('findReleaseBySlug', () => {

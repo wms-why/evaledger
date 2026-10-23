@@ -454,6 +454,10 @@ export const zh: Dict = {
     empty: '还没有发布解读。',
     scoreCount: '已收录 {n} 项跑分',
     noScores: '暂无核验过的跑分',
+    pendingBadge: '尚未发布',
+    pendingTitle: '还没正式上线',
+    pendingNote:
+      '厂商已经把这个模型露了面，但既没有公布价格，也没有公布跑分和 API 模型 ID。所以这一页不放价格表，也不放跑分表——数字没落地之前我们不登。正式发布之后，这一页会就地更新成带实时数据的完整分析。',
     priceTitle: '成本是多少',
     priceNote: '单位为每 100 万 token 的美元价格，实时读取厂商定价页 —— 所以这张表不会过期。',
     colModel: '模型',

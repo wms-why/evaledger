@@ -24,6 +24,10 @@ interface PostFrontmatter {
   date: string
   modelId: string
   compareModelIds: string[]
+  /** True while the model has not shipped — no price table, no score table. */
+  pending: boolean
+  /** Site-relative clip rendered above the article body, when there is one. */
+  videoSrc: string
 }
 
 function unquote(value: string): string {
@@ -62,6 +66,8 @@ function readPost(file: string): PostFrontmatter {
     date: scalars.date ?? '',
     modelId: scalars.modelId ?? '',
     compareModelIds: lists.compareModelIds ?? [],
+    pending: scalars.pending === 'true',
+    videoSrc: scalars.videoSrc ?? '',
   }
 }
 
@@ -130,6 +136,33 @@ for (const slug of RELEASE_SLUGS) {
     ).toBeVisible()
     await expect(page.getByText(`${t('en', 'releases.publishedOn')} ${post.date}`)).toBeVisible()
 
+    if (post.videoSrc) {
+      // A mirrored clip must actually be playable on the page — a poster with
+      // a broken source renders as a dead grey box and nobody notices.
+      const video = page.locator('video').first()
+      await expect(video).toBeVisible()
+      await expect(video.locator('source')).toHaveAttribute('src', post.videoSrc)
+      // `readyState >= 1` means the browser read the metadata: the file is
+      // real, served from `public/`, and encoded in a format the page plays.
+      await expect
+        .poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState), { timeout: 15_000 })
+        .toBeGreaterThan(0)
+    }
+
+    if (post.pending) {
+      // A pre-release post has no price table at all — the model has not
+      // shipped, so there is nothing to resolve from the registry.
+      await expect(
+        page.getByRole('heading', { level: 2, name: t('en', 'releases.pendingTitle'), exact: true }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole('columnheader', { name: t('en', 'releases.colModel'), exact: true }),
+      ).toHaveCount(0)
+      expect(pageErrors).toEqual([])
+      expect(ownErrors(consoleErrors)).toEqual([])
+      return
+    }
+
     // The price table: the subject first, then every model the post compares.
     const table = page
       .getByRole('columnheader', { name: t('en', 'releases.colModel'), exact: true })
@@ -167,6 +200,21 @@ for (const slug of RELEASE_SLUGS) {
     // A native rewrite, not the English text.
     expect(zh.title).not.toBe(en.title)
     expect(zh.title).toMatch(/[一-鿿]/)
+
+    if (zh.pending) {
+      // Pre-release: no price table in either language, so the Chinese page
+      // is checked on its own empty-state copy instead of a column header.
+      await expect(
+        page.getByRole('heading', { level: 2, name: t('zh', 'releases.pendingTitle'), exact: true }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole('columnheader', { name: t('zh', 'releases.colModel'), exact: true }),
+      ).toHaveCount(0)
+      expect(pageErrors).toEqual([])
+      expect(ownErrors(consoleErrors)).toEqual([])
+      return
+    }
+
     // The Chinese page quotes the Chinese column names.
     await expect(
       page.getByRole('columnheader', { name: t('zh', 'releases.colModel'), exact: true }),

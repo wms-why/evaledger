@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { calculateCost } from '@/features/calculator/cost'
@@ -45,7 +45,6 @@ const POST_EXEMPTIONS = new Set([
   'deepseek-v4-flash-0731', // older snapshot, no post yet
   'minimax-m3', // covered by the minimax-m3-1-flash post (same line, newer SKU)
   'glm-5.3', // no post yet
-  'kimi-k3', // no post yet
 ])
 
 type Frontmatter = Record<string, string | string[] | boolean>
@@ -61,6 +60,12 @@ interface Post {
   compareModelIds: string[]
   compareSlugs: string[]
   dataCheckedAt: string
+  /** True while the model has not shipped — a watch post with no live data. */
+  pending: boolean
+  /** Display name of the subject, for a post whose model has no registry row. */
+  modelName?: string
+  /** Figures the vendor has published that a pending post may quote. */
+  publishedNumbers: number[]
 }
 
 function unquote(s: string): string {
@@ -129,6 +134,9 @@ function readPosts(): Post[] {
       compareModelIds: (data.compareModelIds as string[] | undefined) ?? [],
       compareSlugs: (data.compareSlugs as string[] | undefined) ?? [],
       dataCheckedAt: String(data.dataCheckedAt ?? ''),
+      pending: data.pending === true,
+      modelName: data.modelName ? String(data.modelName) : undefined,
+      publishedNumbers: ((data.publishedNumbers as string[] | undefined) ?? []).map(Number),
     }
   })
 }
@@ -213,6 +221,10 @@ function allowedPrices(post: Post): number[] {
 /** Every score a dependency model currently holds, plus the gaps between them. */
 function allowedScores(post: Post): number[] {
   const out: number[] = []
+  // Figures the vendor published about the model itself (a pending post has
+  // no score rows yet, so its own published numbers are the only figures it
+  // may state).
+  out.push(...post.publishedNumbers)
   for (const slug of leaderboardDependencies(post)) {
     const m = findLeaderboardModel(slug)
     if (!m) continue
@@ -316,11 +328,12 @@ const VERSION_TOKENS = (() => {
  * versions ("Python 3.12" — see `../toolchain`). What is left has to be a
  * live score of a model the post depends on.
  */
-function scoreClaims(text: string): number[] {
+function scoreClaims(text: string, extraVersionTokens: Set<string> = new Set()): number[] {
   const out: number[] = []
   for (const m of text.matchAll(/(?<![\d.])([0-9]+\.[0-9]+)(?![0-9])/g)) {
     const raw = m[0]!
     if (VERSION_TOKENS.has(raw)) continue
+    if (extraVersionTokens.has(raw)) continue
     const before = text[m.index - 1] ?? ''
     const after = text[m.index + raw.length] ?? ''
     const afterWord = text.slice(m.index + raw.length).match(/^\s*(\S)/)?.[1] ?? ''
@@ -335,6 +348,21 @@ function scoreClaims(text: string): number[] {
     out.push(Number(raw))
   }
   return out
+}
+
+/**
+ * Version fragments of a post's own subject — "Kimi K3.1" contributes "3.1".
+ *
+ * A pending post names a model the registries do not know yet, so its version
+ * token is not in {@link VERSION_TOKENS}. Without this, "K3.1" in the prose
+ * would be read as a score claim.
+ */
+function subjectVersionTokens(post: Post): Set<string> {
+  const tokens = new Set<string>()
+  for (const name of [post.modelName ?? '', post.modelId, post.data.title ?? '']) {
+    for (const m of String(name).matchAll(/([0-9]+\.[0-9]+)/g)) tokens.add(m[1]!)
+  }
+  return tokens
 }
 
 const EPSILON = 1e-6
@@ -371,7 +399,11 @@ describe('release posts', () => {
     const priceIds = new Set(REGISTRY.models.map((m) => m.id))
     const leaderboardIds = new Set(LEADERBOARD.models.map((m) => m.id))
     for (const p of posts) {
-      expect(priceIds.has(p.modelId), `${p.file}: unknown modelId "${p.modelId}"`).toBe(true)
+      // A pending post points at a model that has NOT shipped: there is no
+      // registry row for it yet, and that is the whole point of the post.
+      if (!p.pending) {
+        expect(priceIds.has(p.modelId), `${p.file}: unknown modelId "${p.modelId}"`).toBe(true)
+      }
       for (const id of p.compareModelIds) {
         expect(priceIds.has(id), `${p.file}: unknown compareModelId "${id}"`).toBe(true)
       }
@@ -388,6 +420,69 @@ describe('release posts', () => {
     const en = posts.filter((p) => !p.zh).map((p) => p.slug).sort()
     const zh = posts.filter((p) => p.zh).map((p) => p.slug).sort()
     expect(zh).toEqual(en)
+  })
+
+  it.skipIf(posts.length === 0)('point the video at files that exist', () => {
+    for (const p of posts) {
+      const src = p.data.videoSrc
+      if (!src) {
+        // A poster with no clip would render nothing — say so instead of
+        // silently shipping a dead field.
+        expect(p.data.videoPoster, `${p.file}: videoPoster without videoSrc`).toBeFalsy()
+        expect(p.data.videoCaption, `${p.file}: videoCaption without videoSrc`).toBeFalsy()
+        continue
+      }
+      // Site-relative, under `public/` — a hot-linked CDN path would rot, and
+      // an absolute URL would escape the repo's own copy of the clip.
+      expect(String(src), `${p.file}: videoSrc must be a site-relative path`).toMatch(/^\/[\w./-]+$/)
+      const file = fileURLToPath(new URL(`../../../../public${src}`, import.meta.url))
+      expect(existsSync(file), `${p.file}: videoSrc "${src}" is not a file under public/`).toBe(true)
+
+      const poster = p.data.videoPoster
+      if (poster) {
+        expect(String(poster), `${p.file}: videoPoster must be a site-relative path`).toMatch(
+          /^\/[\w./-]+$/,
+        )
+        const posterFile = fileURLToPath(new URL(`../../../../public${poster}`, import.meta.url))
+        expect(
+          existsSync(posterFile),
+          `${p.file}: videoPoster "${poster}" is not a file under public/`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  it.skipIf(posts.length === 0)('keep the pending flag honest', () => {
+    const priceIds = new Set(REGISTRY.models.map((m) => m.id))
+    for (const p of posts) {
+      if (p.pending) {
+        // A pending post is a *watch* post about a model that has not
+        // shipped. If the model is in the registry, it shipped — the post has
+        // to become a normal one, with the live tables.
+        expect(
+          priceIds.has(p.modelId),
+          `${p.file}: marked pending, but "${p.modelId}" is already in the registry — ` +
+            `drop the pending flag and rewrite the post against the live data.`,
+        ).toBe(false)
+        expect(
+          p.data.modelName,
+          `${p.file}: a pending post needs modelName — the registries have no row to name the model`,
+        ).toBeTruthy()
+        expect(
+          p.data.releasedAt,
+          `${p.file}: a pending post has no release date — it is what we are waiting for`,
+        ).toBeFalsy()
+        expect(
+          p.data.modelSlug,
+          `${p.file}: a pending post has no score row, so it cannot set modelSlug`,
+        ).toBeFalsy()
+      } else {
+        expect(
+          p.data.publishedNumbers,
+          `${p.file}: publishedNumbers is only for a pending post — a shipped model has registry rows`,
+        ).toBeFalsy()
+      }
+    }
   })
 
   it.skipIf(posts.length === 0)('cover every model on the leaderboard, or list it as exempt', () => {
@@ -426,7 +521,7 @@ describe('release posts', () => {
             `${p.file}: ${amount} is not a current price of a model this post depends on`,
           ).toBe(true)
         }
-        for (const amount of scoreClaims(text)) {
+        for (const amount of scoreClaims(text, subjectVersionTokens(p))) {
           expect(
             isAllowed(amount, scores),
             `${p.file}: ${amount} is not a current score of a model this post depends on`,

@@ -67,7 +67,9 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
             publisher: { '@type': 'Organization', name: 'EvalLedger', url: origin },
             about: model
               ? { '@type': 'Thing', name: model.displayName, description: `LLM pricing analysis` }
-              : undefined,
+              : entry.modelName
+                ? { '@type': 'Thing', name: entry.modelName, description: `LLM pricing analysis` }
+                : undefined,
           }),
         ]
       : undefined
@@ -110,6 +112,9 @@ function ReleasePage() {
             <p className="mt-3 text-[15px] leading-relaxed text-fg-2">{entry.description}</p>
           )}
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-fg-3">
+            {entry.pending && (
+              <span className="font-medium text-primary">{t('releases.pendingBadge')}</span>
+            )}
             <span>
               {t('releases.publishedOn')} {fmtDate(entry.date)}
             </span>
@@ -127,6 +132,25 @@ function ReleasePage() {
         <section className="mt-10 rounded-[16px] border border-border bg-bg-alt/40 p-5 md:p-6">
           <ReleaseFactSheet meta={entry} />
         </section>
+
+        {entry.videoSrc && (
+          <figure className="mt-10">
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster={entry.videoPoster}
+              className="w-full rounded-[14px] border border-border bg-black"
+            >
+              <source src={entry.videoSrc} type="video/mp4" />
+            </video>
+            {entry.videoCaption && (
+              <figcaption className="mt-2 text-[12px] leading-relaxed text-fg-3">
+                {entry.videoCaption}
+              </figcaption>
+            )}
+          </figure>
+        )}
 
         <article className="prose dark:prose-invert mt-12 max-w-none">
           <Suspense>{clientLoader.useContent(entry.path)}</Suspense>
@@ -147,7 +171,7 @@ function ReleasePage() {
             )}
             <Link
               to="/{-$locale}/token-calculator"
-              search={{ model: entry.modelId }}
+              search={entry.pending ? {} : { model: entry.modelId }}
               className="rounded-[8px] border border-border px-4 py-2 text-[13px] font-medium text-fg-2 hover:text-foreground"
             >
               {t('releases.ctaCalculator')}

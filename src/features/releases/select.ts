@@ -43,12 +43,18 @@ export function selectReleases(entries: ReleaseRaw[], locale: string): ReleaseMe
       checkedAt: e.checkedAt,
       releasedAt: e.releasedAt,
       vendor: e.vendor,
+      pending: e.pending ?? false,
       modelId: e.modelId,
+      modelName: e.modelName,
+      publishedNumbers: e.publishedNumbers ?? [],
       modelSlug: e.modelSlug,
       compareModelIds: e.compareModelIds ?? [],
       compareSlugs: e.compareSlugs ?? [],
       sourceUrl: e.sourceUrl,
       sourceTitle: e.sourceTitle,
+      videoSrc: e.videoSrc,
+      videoPoster: e.videoPoster,
+      videoCaption: e.videoCaption,
     }))
 }
 
@@ -67,9 +73,19 @@ function time(iso: string | undefined): number | null {
  * the launch day — but it is optional, and a post without a verifiable launch
  * date cannot be placed on that timeline, so it sinks to the end (still
  * newest-published first among the undated ones).
+ *
+ * **Pending posts lead the list.** A watch post is about a model that has not
+ * shipped yet, so it has no launch day to sort by — but it is the newest thing
+ * the series has to say, and burying it under a year of launches would make
+ * the page read as if the model had already come and gone. They are ordered
+ * among themselves by publish date.
  */
 export function sortByReleasedAt(entries: ReleaseMeta[]): ReleaseMeta[] {
   return [...entries].sort((a, b) => {
+    const pa = a.pending === true
+    const pb = b.pending === true
+    if (pa !== pb) return pa ? -1 : 1
+    if (pa && pb) return (time(b.date) ?? 0) - (time(a.date) ?? 0)
     const ra = time(a.releasedAt)
     const rb = time(b.releasedAt)
     if (ra !== null && rb !== null && ra !== rb) return rb - ra
