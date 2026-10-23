@@ -48,6 +48,7 @@ const OFFICIAL_PROVIDERS: ReadonlySet<Provider> = new Set<Provider>([
   'google',
   'deepseek',
   'minimax',
+  'stepfun',
   'grok',
 ])
 

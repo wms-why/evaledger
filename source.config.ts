@@ -55,6 +55,7 @@ export const releases = defineCollections({
       'grok',
       'deepseek',
       'minimax',
+      'stepfun',
       'glm',
       'kimi',
     ]),

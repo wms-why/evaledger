@@ -20,6 +20,10 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  *    `note` when the harness differs from the reference table.
  *  - MiniMax M3.1 Flash comes from the vendor launch post (2026-10-19);
  *    its scores carry that post as `sourceUrl` and its coverage is partial.
+ *  - Step 5 Preview comes from StepFun's own launch table (2026-09-20), which
+ *    prints it at High effort against rivals at Max. We keep only the rows
+ *    with a benchmark id here; every score's note quotes the rival columns
+ *    as StepFun's measurements.
  *  - MiniMax M3 comes from the vendor's launch post and its own model-card
  *    comparison table. Scores the post states are cited to the post; the rest
  *    are cited to the model card, which is the only place MiniMax publishes
@@ -66,6 +70,12 @@ const OPENROUTER_ASTRA = 'https://openrouter.ai/openai/gpt-6-astra'
 /** MiniMax M3 model card — carries the vendor's own comparison table. */
 const MINIMAX_M3_CARD = 'https://huggingface.co/MiniMaxAI/MiniMax-M3'
 /**
+ * StepFun's Step 5 Preview launch page ("Advancing the Pareto Frontier",
+ * 2026-09-20). Its 39-row table is the only place StepFun publishes scores
+ * for this model, so every Step 5 Preview score is cited to it.
+ */
+const STEPFUN_LAUNCH = 'https://www.stepfun.com/step-5-preview'
+/**
  * Google's official evaluation methodology for Gemini 4 Argon (5 pp.). It
  * carries the results table on page 5 and, more importantly, the per-row
  * footnotes: which rows Google ran itself, which come from a public
@@ -86,6 +96,8 @@ const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
 const OBSERVED_AT = '2026-10-20T15:30:00+08:00'
 /** Timestamp of the 2026-10-20 late pass that added Gemini 4 Argon. */
 const ARGON_OBSERVED_AT = '2026-10-20T21:20:00+08:00'
+/** Timestamp of the 2026-10-23 pass that added Step 5 Preview. */
+const STEP_OBSERVED_AT = '2026-10-23T10:00:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
 /** The 1017 checkpoint shipped 2026-10-17 (vendor announcement date). */
@@ -579,9 +591,65 @@ const minimaxM3: LeaderboardModel = {
   ],
 }
 
+/**
+ * Step 5 Preview — StepFun's first flagship (preview, 2026-09-20; open weights
+ * 2026-10-15). The scores below are the rows of StepFun's own launch table
+ * that have an id in our benchmark registry; the rest of its 39-row table
+ * (SWE-Marathon, StepCodeBench, GDPval-AA, GDP.pdf, the FinStepBench suites,
+ * MMMU-Pro) has no benchmark here and is absent rather than mapped onto one.
+ *
+ * Two things travel with every number: the effort setting is not matched
+ * (Step 5 Preview ran at High, the rival columns at Max), and the rival
+ * figures are StepFun's measurements of other vendors' models — quoted as
+ * "in StepFun's table", never as ours.
+ */
+const step5Preview: LeaderboardModel = {
+  id: 'step-5-preview',
+  vendor: 'stepfun',
+  kind: 'other',
+  version: '5-preview',
+  displayName: 'Step 5 Preview',
+  priceId: 'step-5-preview',
+  releaseDate: '2026-09-20',
+  introduced: '2026-09-20',
+  updatedAt: STEP_OBSERVED_AT,
+  scores: [
+    sc('gpqa-diamond', 93.5, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: "StepFun launch table, High effort (rivals at Max). Same table: GPT-6 Astra 96.1, Claude Opus 5 93.2",
+    }),
+    sc('hle', 46.5, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: "StepFun launch table, High effort; no tools. Same table: GPT-6 Astra 54.7, Claude Opus 5 54.9",
+    }),
+    sc('deepswe-v1.1', 67.7, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: "StepFun launch table, High effort (rivals at Max). Same table: GPT-6 Astra 74.1, Claude Opus 5 74.0",
+    }),
+    sc('terminal-bench-4.0', 33.3, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: 'StepFun launch table, High effort. Same table: GPT-6 Astra 57.9, Claude Opus 5 52.3',
+    }),
+    sc('agents-last-exam', 29.5, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: 'StepFun launch table, ALE-CLI row, High effort. Same table: GPT-6 Astra 33.3, Claude Opus 5 28.6',
+    }),
+    sc('browsecompc', 88.7, {
+      source: STEPFUN_LAUNCH,
+      observedAt: STEP_OBSERVED_AT,
+      note: "StepFun launch table, High effort. Same table: GPT-6 Astra 91.5, Claude Opus 5 90.2",
+    }),
+  ],
+}
+
 export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: ARGON_OBSERVED_AT,
+  fetchedAt: STEP_OBSERVED_AT,
   sourceNote:
     'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours.',
   models: [
@@ -600,6 +668,7 @@ export const LEADERBOARD: LeaderboardRegistry = {
     kimiK3,
     minimaxM31Flash,
     minimaxM3,
+    step5Preview,
   ],
   history: [],
 }

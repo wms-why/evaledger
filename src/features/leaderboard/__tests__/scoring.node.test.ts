@@ -215,10 +215,10 @@ describe('normalization', () => {
 
   it('a benchmark with no percent score in the pool has no field best', () => {
     // BrowseComp is carried by exactly one model in the registry.
-    const pool = LEADERBOARD.models.filter((m) => m.id !== 'minimax-m3')
+    const pool = LEADERBOARD.models.filter((m) => m.id !== 'minimax-m3' && m.id !== 'step-5-preview')
     expect(fieldBest('browsecompc', pool)).toBeUndefined()
     expect(fieldBestDetail('browsecompc', pool)).toBeUndefined()
-    expect(fieldBest('browsecompc')).toBe(83.5)
+    expect(fieldBest('browsecompc')).toBe(88.7)
   })
 })
 

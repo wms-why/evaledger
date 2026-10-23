@@ -535,6 +535,7 @@ const VENDOR_DOT: Record<string, string> = {
   grok: '#111111',
   deepseek: '#4D6BFE',
   minimax: '#E5484D',
+  stepfun: '#1B3ED2',
   glm: '#3B4CCA',
   kimi: '#7C3AED',
 }

@@ -14,6 +14,7 @@ export type Provider =
   | 'google'
   | 'deepseek'
   | 'minimax'
+  | 'stepfun'
   | 'grok'
   | 'openrouter'
 

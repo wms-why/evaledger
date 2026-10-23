@@ -22,6 +22,7 @@ export type Vendor =
   | 'grok'
   | 'deepseek'
   | 'minimax'
+  | 'stepfun'
   | 'glm'
   | 'kimi'
 

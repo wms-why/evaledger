@@ -9,6 +9,7 @@ const VENDOR_LABELS: Record<Vendor, string> = {
   grok: 'xAI',
   deepseek: 'DeepSeek',
   minimax: 'MiniMax',
+  stepfun: '阶跃星辰',
   glm: '智谱',
   kimi: '月之暗面',
 }

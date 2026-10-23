@@ -31,6 +31,7 @@ export const zh: Dict = {
     vendorGrok: 'xAI',
     vendorDeepseek: 'DeepSeek',
     vendorMinimax: 'MiniMax',
+    vendorStepfun: '阶跃星辰',
     vendorGlm: '智谱',
     vendorKimi: '月之暗面',
     modelSelect: {
@@ -883,6 +884,7 @@ export const zh: Dict = {
     providerGoogle: 'Google',
     providerDeepSeek: 'DeepSeek',
     providerMinimax: 'MiniMax',
+    providerStepfun: '阶跃星辰',
     providerGrok: 'Grok',
     providerOpenRouter: 'OpenRouter',
     openrouterCurrentMarkup: '当前平均加价:×{multiplier}({pct}%)',

@@ -67,7 +67,7 @@ describe('freshness window', () => {
   })
 
   test('注册表里的行按快照算：核对当天的行是 fresh', () => {
-    const row = REGISTRY.models.find((m) => m.id === 'gpt-6-astra')!
+    const row = REGISTRY.models.find((m) => m.id === 'step-5-preview')!
     const quality = priceQuality('gpt-6-astra', row)
     expect(quality.freshness).toBe('fresh')
     expect(quality.ageDays).toBe(0)

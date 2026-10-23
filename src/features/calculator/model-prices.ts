@@ -34,7 +34,7 @@ export const REGISTRY_VERSION = '0.8.0'
  */
 export const REGISTRY: ModelRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: '2026-10-20',
+  fetchedAt: '2026-10-23',
   sourceNote:
     'Prices sourced from each provider\'s official pricing page. Verify before relying on for billing.',
   openRouterMarkup: 1.05,
@@ -884,6 +884,29 @@ export const REGISTRY: ModelRegistry = {
       sourceUrl: 'https://platform.minimax.io/docs/pricing/overview',
       lastVerified: '2026-10-20',
       note: 'Released 2026-06-01. service_tier=priority costs 1.5× ($0.45 / $1.80 / $0.09). No separate cache-write charge. The cached-input rate above 512k doubles to $0.12; cost.ts applies the input multiplier to the cached rate as well.',
+    },
+
+    // ──────────────────────── 阶跃星辰 StepFun ────────────────────────
+    // StepFun prices in CNY on the Chinese console and in USD on the English
+    // one; the row below is the USD list. Step 5 Preview is the family's
+    // first flagship — there is no earlier Step-5 row to supersede.
+    // Verified 2026-10-23 against platform.stepfun.ai (English pricing page).
+    {
+      id: 'step-5-preview',
+      provider: 'stepfun',
+      channel: 'official',
+      displayName: 'Step 5 Preview',
+      family: 'step-5',
+      status: 'active',
+      // 1M input / 64k output — the window is input-only, so the context
+      // column reads 1,000,000 and the output cap lives in the note.
+      contextWindow: 1_000_000,
+      inputPricePer1M: 1.0,
+      outputPricePer1M: 2.7,
+      cachedInputPricePer1M: 0.1,
+      sourceUrl: 'https://platform.stepfun.ai/docs/en/guides/pricing/details',
+      lastVerified: '2026-10-23',
+      note: 'Preview release (2026-09-20); open weights followed on 2026-10-15. Cache-miss input includes writing to the cache; output tokens include the reasoning trace.',
     },
 
     // ───────────────────────── Grok ─────────────────────────

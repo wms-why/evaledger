@@ -12,6 +12,7 @@ export const VENDOR_ORDER: readonly Vendor[] = [
   'grok',
   'deepseek',
   'minimax',
+  'stepfun',
   'glm',
   'kimi',
 ]
@@ -24,6 +25,7 @@ export const VENDOR_LABEL_KEY: Record<Vendor, string> = {
   grok: 'leaderboard.vendorGrok',
   deepseek: 'leaderboard.vendorDeepseek',
   minimax: 'leaderboard.vendorMinimax',
+  stepfun: 'leaderboard.vendorStepfun',
   glm: 'leaderboard.vendorGlm',
   kimi: 'leaderboard.vendorKimi',
 }

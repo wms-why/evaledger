@@ -17,6 +17,7 @@ export type ReleaseVendor =
   | 'grok'
   | 'deepseek'
   | 'minimax'
+  | 'stepfun'
   | 'glm'
   | 'kimi'
 

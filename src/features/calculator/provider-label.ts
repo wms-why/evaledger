@@ -7,6 +7,7 @@ const PROVIDER_KEYS: Record<string, string> = {
   google: 'calculator.providerGoogle',
   deepseek: 'calculator.providerDeepSeek',
   minimax: 'calculator.providerMinimax',
+  stepfun: 'calculator.providerStepfun',
   grok: 'calculator.providerGrok',
   openrouter: 'calculator.providerOpenRouter',
 }

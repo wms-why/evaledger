@@ -69,6 +69,10 @@ export const SOURCES: Record<string, SourceInfo> = {
     name: 'MiniMax — M3 model card',
     kind: 'vendor',
   },
+  'https://www.stepfun.com/step-5-preview': {
+    name: 'StepFun — Step 5 Preview: Advancing the Pareto Frontier',
+    kind: 'vendor',
+  },
 
   // ── third-party sources ────────────────────────────────────────────────
   'https://benchlm.ai/compare/gemini-3-1-pro-vs-grok-4-7': {

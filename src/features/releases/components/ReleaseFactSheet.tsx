@@ -19,6 +19,7 @@ const VENDOR_LABEL_KEY: Record<ReleaseVendor, string> = {
   grok: 'leaderboard.vendorGrok',
   deepseek: 'leaderboard.vendorDeepseek',
   minimax: 'leaderboard.vendorMinimax',
+  stepfun: 'leaderboard.vendorStepfun',
   glm: 'leaderboard.vendorGlm',
   kimi: 'leaderboard.vendorKimi',
 }

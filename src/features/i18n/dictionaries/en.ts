@@ -29,6 +29,7 @@ export const en = {
     vendorGrok: 'xAI',
     vendorDeepseek: 'DeepSeek',
     vendorMinimax: 'MiniMax',
+    vendorStepfun: 'StepFun',
     vendorGlm: 'Zhipu',
     vendorKimi: 'Moonshot',
     modelSelect: {
@@ -927,6 +928,7 @@ export const en = {
     providerGoogle: 'Google',
     providerDeepSeek: 'DeepSeek',
     providerMinimax: 'MiniMax',
+    providerStepfun: 'StepFun',
     providerGrok: 'Grok',
     providerOpenRouter: 'OpenRouter',
     openrouterCurrentMarkup: 'Current average markup: ×{multiplier} ({pct}%)',
