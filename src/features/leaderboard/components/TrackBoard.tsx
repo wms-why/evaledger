@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import type { ReactNode } from 'react'
 import { useTranslation } from '@/features/i18n/provider'
 import { Badge } from '@/components/ui/badge'
 import { BENCHMARKS } from '../benchmarks'
+import { bestCategoryForTrack, bestCategoryLabel } from '../board-links'
 import { findPrice } from '../leaderboard'
 import { LEADERBOARD } from '../models'
 import { sourceInfo } from '../sources'
@@ -27,6 +29,8 @@ export function TrackBoard({ track }: { track: ScoreTrack }) {
   const { t } = useTranslation()
   const { ranked, incomplete } = rankTrack(track)
   const label = t(track.labelKey)
+  // The board's `/best/` twin — only when the category registry has one.
+  const bestCategory = bestCategoryForTrack(track.slug)
 
   return (
     <div className="space-y-10">
@@ -43,6 +47,23 @@ export function TrackBoard({ track }: { track: ScoreTrack }) {
         <p className="mt-3 max-w-[720px] text-[14px] leading-relaxed text-fg-3">
           {t('leaderboard.track.intro')}
         </p>
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
+          {bestCategory ? (
+            <Link
+              to="/{-$locale}/best/$category"
+              params={{ category: bestCategory }}
+              className="font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+            >
+              {bestCategoryLabel(t, bestCategory)} →
+            </Link>
+          ) : null}
+          <Link
+            to="/{-$locale}/benchmarks"
+            className="font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+          >
+            {t('linking.benchmark.hubLink')} →
+          </Link>
+        </div>
       </header>
 
       <FormulaPanel track={track} />
@@ -62,11 +83,20 @@ export function TrackBoard({ track }: { track: ScoreTrack }) {
                 <tr className="border-b border-border text-left text-[12px] uppercase tracking-wide text-fg-3">
                   <th className="px-3 py-2 font-medium">{t('leaderboard.colRank')}</th>
                   <th className="px-3 py-2 font-medium">{t('leaderboard.colModel')}</th>
-                  {track.core.map((core) => (
-                    <th key={core.id} className="px-3 py-2 text-right font-medium">
-                      {BENCHMARKS.find((b) => b.id === core.id)?.name ?? core.id}
-                    </th>
-                  ))}
+                  {track.core.map((core) => {
+                    const benchmark = BENCHMARKS.find((b) => b.id === core.id)
+                    return (
+                      <th key={core.id} className="px-3 py-2 text-right font-medium">
+                        <Link
+                          to="/{-$locale}/benchmarks/$slug"
+                          params={{ slug: core.id }}
+                          className="hover:text-foreground"
+                        >
+                          {benchmark?.name ?? core.id}
+                        </Link>
+                      </th>
+                    )
+                  })}
                   <th className="px-3 py-2 text-right font-medium">
                     {t('leaderboard.track.composite')}
                   </th>
@@ -105,11 +135,7 @@ export function TrackBoard({ track }: { track: ScoreTrack }) {
                   {entry.model.displayName}
                 </Link>
                 <span className="text-[12px] text-fg-3">
-                  {t('leaderboard.track.notRankedReason', {
-                    benchmarks: entry.score.missing
-                      .map((id) => BENCHMARKS.find((b) => b.id === id)?.name ?? id)
-                      .join(', '),
-                  })}
+                  {sentenceWithBenchmarkLinks(t, entry.score.missing)}
                 </span>
               </li>
             ))}
@@ -264,7 +290,15 @@ function FormulaPanel({ track }: { track: ScoreTrack }) {
           <ul className="mt-2 flex flex-wrap gap-1.5">
             {track.context.map((id) => (
               <li key={id}>
-                <Badge variant="free">{BENCHMARKS.find((b) => b.id === id)?.name ?? id}</Badge>
+                <Badge variant="free">
+                  <Link
+                    to="/{-$locale}/benchmarks/$slug"
+                    params={{ slug: id }}
+                    className="hover:text-primary"
+                  >
+                    {BENCHMARKS.find((b) => b.id === id)?.name ?? id}
+                  </Link>
+                </Badge>
               </li>
             ))}
           </ul>
@@ -318,6 +352,51 @@ function SourceLegend() {
 function formatRaw(score: number, unit: string): string {
   if (unit === 'rating' || unit === 'elo') return String(Math.round(score))
   return `${score}%`
+}
+
+/**
+ * A sentinel that cannot occur in a dictionary string, used to put the
+ * benchmark names back into a translated sentence as links.
+ */
+const LINK_SENTINEL = '\u0001'
+
+/**
+ * The reason a model is not ranked, with every benchmark it is missing linked
+ * to that benchmark's own page.
+ *
+ * The dictionary templates the sentence around a `{benchmarks}` placeholder,
+ * so the names are put back as links by splitting the translated string on a
+ * sentinel: the sentence keeps its grammar in every language, and every
+ * benchmark name it names becomes a link instead of dead text.
+ */
+function sentenceWithBenchmarkLinks(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  missingIds: string[],
+): ReactNode {
+  const parts = t('leaderboard.track.notRankedReason', {
+    benchmarks: LINK_SENTINEL,
+  }).split(LINK_SENTINEL)
+  const before = parts[0] ?? ''
+  const after = parts.slice(1).join('')
+
+  return (
+    <>
+      {before}
+      {missingIds.map((id, index) => (
+        <span key={id}>
+          {index > 0 ? ', ' : ''}
+          <Link
+            to="/{-$locale}/benchmarks/$slug"
+            params={{ slug: id }}
+            className="hover:text-primary"
+          >
+            {BENCHMARKS.find((b) => b.id === id)?.name ?? id}
+          </Link>
+        </span>
+      ))}
+      {after}
+    </>
+  )
 }
 
 /** The price a model is sold at, if it has one. */

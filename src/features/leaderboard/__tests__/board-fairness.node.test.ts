@@ -156,8 +156,25 @@ describe('the leaderboard board', () => {
 })
 
 describe('the best-of category pages', () => {
+  /**
+   * Only the score-ranked categories are boards.
+   *
+   * The coverage gate — a model is ranked only if it was measured on every
+   * benchmark of the category — exists because the ranking comes from
+   * benchmark scores, and a partial set of benchmarks would give two models
+   * different denominators. The attribute-ranked pages (cheapest, 1M context,
+   * prompt caching) sort by a number the price registry publishes for every
+   * model, so there is no denominator to equalise and no gate to pass.
+   */
+  const scoreCategories = BEST_CATEGORIES.filter((c) => (c.kind ?? 'score') === 'score')
+  const attributeCategories = BEST_CATEGORIES.filter((c) => (c.kind ?? 'score') !== 'score')
+
+  it('has at least one score-ranked category to guard', () => {
+    expect(scoreCategories.length).toBeGreaterThan(0)
+  })
+
   it('rank a category only over models measured on every benchmark of it', () => {
-    for (const category of BEST_CATEGORIES) {
+    for (const category of scoreCategories) {
       const rows = categoryRows(category)
       for (const row of rows) {
         // A ranked row has a composite, which means it was measured on all
@@ -171,11 +188,59 @@ describe('the best-of category pages', () => {
   })
 
   it('keeps the categories sorted by composite, best first', () => {
-    for (const category of BEST_CATEGORIES) {
+    for (const category of scoreCategories) {
       const rows = categoryRows(category)
       for (let i = 1; i < rows.length; i++) {
         expect((rows[i - 1]!.composite as number) >= (rows[i]!.composite as number)).toBe(true)
       }
+    }
+  })
+
+  it('gives an attribute-ranked page no composite to sort by', () => {
+    for (const category of attributeCategories) {
+      for (const row of categoryRows(category)) {
+        expect(row.composite).toBeUndefined()
+      }
+    }
+  })
+
+  it('sorts the cheapest category by blended price, cheapest first', () => {
+    const category = BEST_CATEGORIES.find((c) => c.kind === 'price')
+    expect(category).toBeDefined()
+    const rows = categoryRows(category!)
+    expect(rows.length).toBeGreaterThan(0)
+    for (const row of rows) {
+      expect(row.blendedPricePer1M).toBeDefined()
+    }
+    for (let i = 1; i < rows.length; i++) {
+      expect(rows[i - 1]!.blendedPricePer1M!).toBeLessThanOrEqual(rows[i]!.blendedPricePer1M!)
+    }
+  })
+
+  it('lists only models that really reach the context threshold', () => {
+    const category = BEST_CATEGORIES.find((c) => c.kind === 'context')
+    expect(category).toBeDefined()
+    const min = category!.minContext!
+    const rows = categoryRows(category!)
+    expect(rows.length).toBeGreaterThan(0)
+    for (const row of rows) {
+      expect(row.contextWindow!).toBeGreaterThanOrEqual(min)
+      // The context window the row shows is the registry's, not a copy.
+      expect(row.contextWindow).toBe(row.price?.contextWindow)
+    }
+  })
+
+  it('gives a cache-ranked row a real discount, and drops models with no cache rate', () => {
+    const category = BEST_CATEGORIES.find((c) => c.kind === 'cache')
+    expect(category).toBeDefined()
+    const rows = categoryRows(category!)
+    expect(rows.length).toBeGreaterThan(0)
+    for (const row of rows) {
+      expect(row.cachedInputPricePer1M).toBeDefined()
+      expect(row.cacheDiscountPct!).toBeGreaterThan(0)
+    }
+    for (let i = 1; i < rows.length; i++) {
+      expect(rows[i - 1]!.cacheDiscountPct!).toBeGreaterThanOrEqual(rows[i]!.cacheDiscountPct!)
     }
   })
 })

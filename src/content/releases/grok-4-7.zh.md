@@ -61,5 +61,5 @@ published: true
 - **模型页** — [/models/grok-4.7](/zh/models/grok-4.7)
 - **DeepSWE 到底测什么** — [/benchmarks/deepswe-v1.1](/zh/benchmarks/deepswe-v1.1)、[/benchmarks/terminal-bench-4.0](/zh/benchmarks/terminal-bench-4.0)
 - **和 Gemini 3.1 Pro 并排比** — [/compare?a=grok-4.7&b=gemini-3.1-pro](/zh/compare?a=grok-4.7&b=gemini-3.1-pro)
-- **算你自己的账** — [/token-calculator](/zh/token-calculator)
+- **算你自己的账** — [Token 成本计算器](/zh/token-cost-calculator)
 - **本文的数据出处** — xAI 官方 API 定价文档，价格最后核对于 2026-10-20。

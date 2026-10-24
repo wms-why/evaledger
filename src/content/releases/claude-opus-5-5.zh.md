@@ -58,7 +58,7 @@ published: true
 
 ## 延伸阅读
 
-- **先算自己的账** — [/token-calculator](/zh/token-calculator)
+- **先算自己的账** — [Token 成本计算器](/zh/token-cost-calculator)
 - **两个模型并排看** — [/compare](/zh/compare)
 - **Opus 5.5 模型页，四项跑分都在** — [/models/claude-opus-5.5](/zh/models/claude-opus-5.5)
 - **上一代，用来看价差** — [/models/claude-opus-5](/zh/models/claude-opus-5)

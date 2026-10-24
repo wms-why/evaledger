@@ -25,6 +25,7 @@
  */
 import { relative, resolve, sep } from 'node:path'
 
+import { buildChangelogDraft, buildChangelogPayload } from './changelog.ts'
 import { buildDraftMarkdown, buildFactsPayload } from './draft.ts'
 import { assertOutputDirSafe, DEFAULT_OUT_DIR, writeDraftFiles } from './output.ts'
 import { launchBrowser } from '../shared/browser.ts'
@@ -185,6 +186,8 @@ async function main(): Promise<void> {
   let written = 0
   let skipped = 0
   let failed = 0
+  let changelogWritten = 0
+  let changelogSkipped = 0
   // Facts after the `--max-chars` cap — this is what actually lands on disk,
   // so the summary reports these numbers.
   const writtenFacts = new Map<string, ReleaseFacts>()
@@ -204,9 +207,34 @@ async function main(): Promise<void> {
     } else {
       skipped++
     }
+
+    // Rule: every scraped model launch also emits a changelog draft. The
+    // site's /changelog is published content (a file in git, reviewed in a
+    // diff) — the scraper never writes there. It writes a skeleton into
+    // <outDir>/changelog/ that a human fills in and moves to
+    // src/content/changelog/ when the release ships. See
+    // scripts/releases/changelog.ts and scripts/releases/README.md.
+    const changelogDir = resolve(outDir, 'changelog')
+    const changelogMarkdown = buildChangelogDraft(facts, today)
+    const changelogPayload = buildChangelogPayload(facts, today)
+    const changelogOutcome = await writeDraftFiles(
+      changelogDir,
+      result.slug,
+      changelogMarkdown,
+      changelogPayload,
+      args.force,
+    )
+    if (changelogOutcome === 'written') {
+      changelogWritten++
+    } else {
+      changelogSkipped++
+    }
   }
 
-  printSummary(results, writtenFacts, { written, skipped, failed }, outDir)
+  printSummary(results, writtenFacts, { written, skipped, failed }, outDir, {
+    changelogWritten,
+    changelogSkipped,
+  })
 
   if (failed > 0 && written + skipped === 0) {
     // Every source failed — that is a systemic problem (offline, blocked,
@@ -231,6 +259,7 @@ function printSummary(
   writtenFacts: Map<string, ReleaseFacts>,
   counts: { written: number; skipped: number; failed: number },
   outDir: string,
+  changelogCounts: { changelogWritten: number; changelogSkipped: number },
 ): void {
   console.log('')
   for (const result of results) {
@@ -258,12 +287,19 @@ function printSummary(
   console.log(
     `Drafts written: ${counts.written} · skipped (exists): ${counts.skipped} · failed: ${counts.failed}`,
   )
+  console.log(
+    `Changelog drafts written: ${changelogCounts.changelogWritten} · skipped (exists): ${changelogCounts.changelogSkipped}`,
+  )
   console.log(`Output: ${displayPath(outDir)}`)
   console.log('')
   console.log('Next: open each draft, fill in modelId / prices / conclusions by hand,')
   console.log('      then move it into src/content/releases/ per')
   console.log('      src/features/releases/README.md §1/§4, and run:')
   console.log('      pnpm typecheck && pnpm test')
+  console.log('')
+  console.log('Each draft also got a changelog skeleton in <out>/changelog/ — the')
+  console.log('/changelog page is published content, so fill it in by hand and move')
+  console.log('it to src/content/changelog/ (see scripts/releases/README.md §changelog).')
 }
 
 function pad(s: string, n: number): string {

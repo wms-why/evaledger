@@ -31,12 +31,22 @@ export const PUBLIC_PATHS = [
   '/waitlist',
   '/terms',
   '/privacy',
+  // The calculator family. `/token-cost-calculator` is the canonical address
+  // of the calculator; `/token-calculator` is its 301 alias and is therefore
+  // NOT listed here — a sitemap is a list of the addresses you want indexed,
+  // and a redirect is not one of them.
   '/token-cost-calculator',
   '/openrouter-pricing-calculator',
   '/claude-token-cost-calculator',
   '/chatgpt-api-pricing',
   '/deepseek-api-pricing',
-  '/token-calculator',
+  '/gemini-api-pricing',
+  '/grok-api-pricing',
+  '/minimax-api-pricing',
+  '/kimi-api-pricing',
+  // The two directories: every benchmark, every "best model for X" page.
+  '/benchmarks',
+  '/best',
   '/leaderboard-history',
   '/methodology',
   '/data-quality',

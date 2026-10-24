@@ -74,4 +74,4 @@ published: true
 - **Google 的评测方法——上面每个分数和每条备注的出处** — https://deepmind.google/models/evals-methodology/gemini-4-argon
 - **模型卡** — https://deepmind.google/models/model-cards/gemini-4-argon/
 - **API 定价页** — https://ai.google.dev/gemini-api/docs/pricing
-- **算你自己的账** — [/token-calculator](/zh/token-calculator)
+- **算你自己的账** — [Token 成本计算器](/zh/token-cost-calculator)

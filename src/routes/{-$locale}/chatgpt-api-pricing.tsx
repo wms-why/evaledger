@@ -12,6 +12,9 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ChatGPTSection } from '@/features/calculator/components/ChatGPTSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
+import { chatgptFaq } from '@/features/calculator/copy'
+import { stripModelMarkers } from '@/features/calculator/model-links'
+import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 
 const rootRoute = getRouteApi('__root__')
@@ -41,25 +44,17 @@ export const Route = createFileRoute('/{-$locale}/chatgpt-api-pricing')({
       description,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', category: 'Free' },
     }
+    // The FAQPage JSON-LD carries exactly the pairs the page renders, in
+    // the same order, so the structured data and the visible copy can never
+    // disagree. The answers are stripped of their model markers — schema.org
+    // takes plain text, and a `[[model:…]]` marker in a rich result is a bug.
     const faq = {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        dict.calculator.chatgptFaq1Q, dict.calculator.chatgptFaq1A,
-        dict.calculator.chatgptFaq2Q, dict.calculator.chatgptFaq2A,
-        dict.calculator.chatgptFaq3Q, dict.calculator.chatgptFaq3A,
-        dict.calculator.chatgptFaq4Q, dict.calculator.chatgptFaq4A,
-        dict.calculator.chatgptFaq5Q, dict.calculator.chatgptFaq5A,
-        dict.calculator.chatgptFaq6Q, dict.calculator.chatgptFaq6A,
-        dict.calculator.chatgptFaq7Q, dict.calculator.chatgptFaq7A,
-        dict.calculator.chatgptFaq8Q, dict.calculator.chatgptFaq8A,
-      ].reduce<{ q: string; a: string }[]>((acc, _, i, arr) => {
-        if (i % 2 === 0) acc.push({ q: arr[i] as string, a: arr[i + 1] as string })
-        return acc
-      }, []).map(({ q, a }) => ({
+      mainEntity: chatgptFaq((key, params) => translate(dict, key, params)).map((entry) => ({
         '@type': 'Question',
-        name: q,
-        acceptedAnswer: { '@type': 'Answer', text: a },
+        name: entry.q,
+        acceptedAnswer: { '@type': 'Answer', text: stripModelMarkers(entry.a) },
       })),
     }
 
@@ -77,6 +72,7 @@ export const Route = createFileRoute('/{-$locale}/chatgpt-api-pricing')({
 })
 
 function ChatGPTCalculatorPage() {
+  const { t } = useTranslation()
   const { loggedIn } = Route.useLoaderData()
   const { theme } = rootRoute.useLoaderData()
   return (
@@ -87,8 +83,13 @@ function ChatGPTCalculatorPage() {
         subtitleKey="calculator.subtitleChatgpt"
         fetchedAt={REGISTRY.fetchedAt}
       />
+      {/*
+        The page's own vendor first — see the note on the Claude page. The
+        reader who searched "ChatGPT API pricing" came for OpenAI's prices,
+        and the grid opens on GPT-6 Astra with the cross-vendor rows below.
+      */}
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
-        <Calculator />
+        <Calculator initialModelId="gpt-6-astra" />
       </div>
       <PricingTLDR itemsKey="calculator.chatgptTldrItems" />
       <ChatGPTSection />
@@ -97,17 +98,8 @@ function ChatGPTCalculatorPage() {
         id="faq"
         kickerKey="calculator.kicker"
         titleKey="calculator.faqTitle"
-        faqs={[
-          { qKey: 'calculator.chatgptFaq1Q', aKey: 'calculator.chatgptFaq1A' },
-          { qKey: 'calculator.chatgptFaq2Q', aKey: 'calculator.chatgptFaq2A' },
-          { qKey: 'calculator.chatgptFaq3Q', aKey: 'calculator.chatgptFaq3A' },
-          { qKey: 'calculator.chatgptFaq4Q', aKey: 'calculator.chatgptFaq4A' },
-          { qKey: 'calculator.chatgptFaq5Q', aKey: 'calculator.chatgptFaq5A' },
-          { qKey: 'calculator.chatgptFaq6Q', aKey: 'calculator.chatgptFaq6A' },
-          { qKey: 'calculator.chatgptFaq7Q', aKey: 'calculator.chatgptFaq7A' },
-          { qKey: 'calculator.chatgptFaq8Q', aKey: 'calculator.chatgptFaq8A' },
-        ]}
-      />
+        faqs={chatgptFaq(t).map((entry) => ({ qKey: entry.q, aKey: entry.a, translated: true, linkModels: true }))}
+/>
       <RelatedCalculators exclude="chatgpt" />
       <Footer theme={theme} />
     </div>

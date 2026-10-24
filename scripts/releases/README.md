@@ -17,6 +17,42 @@ page → copy the body*. Everything else stays human.
 | Fill in `modelId` / `modelSlug` / `compareModelIds` / `compareSlugs` | The script doesn't know which model the article is about — a human decides. |
 | Write conclusions | "Should you switch?" is the whole point of the series; a scraper can't answer it. |
 | Overwrite an existing draft | A draft is half-finished work. Existing files are skipped unless you pass `--force`. |
+| Auto-publish the changelog | The `/changelog` page is published site content (a file in git). The script writes a **changelog draft** into `<out>/changelog/`; a human fills it in and moves it to `src/content/changelog/`. |
+
+## Changelog drafts
+
+**Rule: every scraped model launch also produces a changelog draft.** The site's
+`/changelog` page is a fumadocs collection under `src/content/changelog/` —
+one file per shipped change. Because it is published content, the scraper
+never writes there; it emits a skeleton next to the release draft that a
+human expands and moves.
+
+```
+data/release-drafts/
+  gpt-6-astra.md              # the release draft
+  gpt-6-astra.json
+  changelog/
+    gpt-6-astra.md            # the changelog draft (same slug)
+    gpt-6-astra.changelog.json
+```
+
+The changelog draft is skeletal by design:
+
+- `title` / `description` / `version` are TODO placeholders — the changelog
+  entry is prose about a shipped change, and the scraper only knows that
+  *something* appeared, not what it means for the product. `version` stays
+  `TBD` because the release train is a human decision.
+- `published` stays `false` — it is not a live entry until a human fills it in.
+- The body lists the traceable facts the scraper extracted (vendor, slug,
+  source URL, scraped date) and stops there. **No prices, no benchmarks.**
+
+The release draft and the changelog draft share one slug so a reviewer can
+never lose track of which model a given draft belongs to. Both are skipped
+without `--force`.
+
+When a release ships, move the finished changelog entry to
+`src/content/changelog/<version>-<slug>.md` (+ `.zh.md`), fill in the
+frontmatter, and flip `published` to `true` — then run `pnpm typecheck && pnpm test`.
 
 ## Install
 
@@ -101,6 +137,14 @@ failed (offline / blocked), `2` = Chromium could not be launched.
 
    Both languages share one slug. The collection has to be registered in
    `source.config.ts` (see `src/features/releases/README.md` §1).
+
+4.5 **Write the changelog entry.** The scraper already wrote a skeleton into
+   `data/release-drafts/changelog/<slug>.md`. Fill in `title` / `description`
+   / `version` (drop the `TBD`), write the prose under "Added" / "Details",
+   then move the finished entry to `src/content/changelog/<version>-<slug>.md`
+   (+ `.zh.md`) and flip `published` to `true`. The changelog records that a
+   model shipped — quote prices/scores only by reference to REGISTRY /
+   LEADERBOARD, never hand-copied.
 
 5. **Verify.**
 

@@ -79,7 +79,7 @@ export function SeriesLadder({ rows }: { rows: SeriesRow[] }) {
                 ) : null}
                 {row.priceId ? (
                   <Link
-                    to="/{-$locale}/token-calculator"
+                    to="/{-$locale}/token-cost-calculator"
                     search={{ model: row.priceId }}
                     className="mt-1 inline-block whitespace-nowrap text-[11px] text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
                   >

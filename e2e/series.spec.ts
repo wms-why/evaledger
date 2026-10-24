@@ -78,8 +78,10 @@ test.describe('the series index', () => {
     for (const series of [SERIES[0], SERIES[3], SERIES[SERIES.length - 1]]) {
       const heading = page.getByRole('heading', { name: series.name, level: 3, exact: true })
       await expect(heading).toBeVisible()
-      // The card wraps the heading: the link is the card itself.
-      const card = page.getByRole('link').filter({ has: heading })
+      // The title is the anchor: the link sits INSIDE the heading (the whole
+      // card used to be one link whose text was every number on it). So the
+      // heading is the link's parent, not its child — filter the other way.
+      const card = heading.getByRole('link')
       await expect(card).toHaveAttribute('href', `/series/${series.slug}`)
     }
 

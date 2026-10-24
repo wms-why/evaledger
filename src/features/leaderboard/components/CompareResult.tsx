@@ -269,7 +269,15 @@ export function CompareResult({
                         <Minus size={13} strokeWidth={2.5} aria-hidden />
                       </button>
                     ) : null}
-                    {bm.name}
+                    {bm.name ? (
+                      <Link
+                        to="/{-$locale}/benchmarks/$slug"
+                        params={{ slug: bm.id }}
+                        className="hover:text-primary"
+                      >
+                        {bm.name}
+                      </Link>
+                    ) : null}
                   </td>
                   {scores.map((score, index) => (
                     <td

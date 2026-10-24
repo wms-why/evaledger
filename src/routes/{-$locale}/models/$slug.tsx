@@ -11,6 +11,8 @@ import { findLeaderboardModel } from '@/features/leaderboard/models'
 import { getReleases } from '@/features/releases/releases.fns'
 import { pickPrimaryRelease } from '@/features/releases/primary-post'
 import { seriesForPriceId, seriesForScoreId } from '@/features/series/select'
+import { modelMeta } from '@/features/landing/data'
+import { translate } from '@/features/i18n/locale'
 
 const rootRoute = getRouteApi('__root__')
 
@@ -41,20 +43,27 @@ export const Route = createFileRoute('/{-$locale}/models/$slug')({
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const model = loaderData?.model
-    const title = model
-      ? `${model.displayName} — ${dict.leaderboard.model.metaTitleSuffix}`
-      : dict.leaderboard.model.metaTitleSuffix
-    const description = model
-      ? dict.leaderboard.model.metaDescription.replace('{model}', model.displayName)
-      : dict.marketing.brandMetaDescription
-    const { meta, links } = localeHead({
+    const path = `/models/${params.slug}`
+
+    // The long-tail title: a model page's search intent is not "the model's
+    // name" but "[model] API pricing, benchmarks and context window" — the
+    // three things the page actually carries. The year comes from the price
+    // registry's own snapshot, so a page never advertises a year its data
+    // does not belong to.
+    const meta = model
+      ? modelMeta(model, (key, params) => translate(dict, key, params))
+      : undefined
+    const title = meta?.title ?? dict.leaderboard.model.metaTitleSuffix
+    const description = meta?.description ?? dict.marketing.brandMetaDescription
+
+    const { meta: metaTags, links } = localeHead({
       origin,
       locale,
-      path: `/models/${params.slug}`,
+      path,
       title,
       description,
     })
-    return { meta, links }
+    return { meta: metaTags, links }
   },
   component: ModelPage,
 })

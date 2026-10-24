@@ -1,4 +1,9 @@
 import type { Dict } from './en'
+import { hub } from './hub'
+import { linking } from './linking'
+import { calc } from './calc'
+import { landing } from './landing'
+import { site } from './site'
 
 export const zh: Dict = {
   common: { appName: 'EvalLedger', toggleTheme: '切换主题', language: '语言' },
@@ -171,6 +176,34 @@ export const zh: Dict = {
       'for-coding': {
         title: '最佳编程大模型',
         intro: '按真实仓库任务、程序合成和命令行智能体基准排名。',
+      },
+      // 两条原先没有落地页的能力榜:基准集就是该榜自己的核心集,
+      // 因此页面与榜单排的是同一批模型——页面只是回答搜索
+      // ("智能体模型排行"),而不是榜单要回答的那个问题。
+      'for-agents': {
+        title: '最佳智能体与工具调用大模型',
+        intro:
+          '按终端任务、长程工具使用和自动化排名——衡量的是模型在真实环境里干的活,而不是聊天窗口里的表现。',
+      },
+      'for-reasoning': {
+        title: '最佳推理与数学大模型',
+        intro: '按前沿知识、高难度竞赛数学和长程图遍历排名——把演绎能力与记忆量区分开。',
+      },
+      // 三个按属性排序的页面。它们不是榜单:价格、上下文窗口和缓存折扣
+      // 都不是分数,所以按各自的数字排序,也不设覆盖门槛。
+      'cheapest-llms': {
+        title: '每百万 token 最便宜的 LLM API',
+        intro:
+          '按混合价(输入与输出相加除以二)排序,取当天实际生效的价格——涵盖我们记录价格的全部模型。',
+      },
+      '1m-context-window': {
+        title: '最佳长上下文大模型——100 万 token 起',
+        intro: '只列上下文窗口真正达到 100 万 token 的模型,窗口从大到小排,并给出各自的单价。',
+      },
+      'prompt-caching': {
+        title: '最适合用 prompt 缓存省钱的大模型',
+        intro:
+          '按缓存输入价相对同一模型标准输入价的折扣排序。未公布缓存价的模型不列入——拿一个不存在的价格去算折扣就是编数字。',
       },
     },
     tokenCalculator: {
@@ -1111,4 +1144,12 @@ export const zh: Dict = {
     chatgptCacheTitle: 'Prompt cache · 约 9 折',
     chatgptCacheBody: 'OpenAI 自动缓存 1024 token 以上的 prompt 前缀,持续 5–10 分钟(GPT-5/6 更长)。缓存读按标准输入价约 10% 计费。任何带重复前缀(系统提示词、工具 schema、大文档上下文)的工作负载,缓存都是最大单一省费项——多数生产栈启用后输入开销直降 50–80%。',
   },
+  // ───── 特性切片字典 ─────
+  // 各切片自带一份文案,在这里汇总;两种语言的键集必须一致,而 `zh` 的类型
+  // 来自 `en`,因此缺一个中文键就是编译错误,而不是运行时静默回退成原始 key。
+  hub: hub.zh,
+  linking: linking.zh,
+  calc: calc.zh,
+  landing: landing.zh,
+  site: site.zh,
 }

@@ -68,5 +68,5 @@ published: true
 - **The model page, with all 19 scores** — [/models/deepseek-v4.1-flash](/models/deepseek-v4.1-flash)
 - **Head to head with an OpenAI flagship** — [/compare?a=deepseek-v4.1-flash&b=gpt-5.6-sol](/compare?a=deepseek-v4.1-flash&b=gpt-5.6-sol)
 - **Chinese models on one board** — [/best/chinese-model](/best/chinese-model), and the coding picks in [/best/for-coding](/best/for-coding)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — the DeepSeek V4.1 Flash launch announcement, with prices last verified on 2026-10-20.

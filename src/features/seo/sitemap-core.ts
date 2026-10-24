@@ -40,7 +40,7 @@
 export const CORE_PATHS = [
   // The brand anchor: the landing page, and the calculator it sells.
   '/',
-  '/token-calculator',
+  '/token-cost-calculator',
   // The comparison entry point.
   '/compare',
   // The per-provider pricing landings — one per name people type.
@@ -48,10 +48,14 @@ export const CORE_PATHS = [
   '/chatgpt-api-pricing',
   '/deepseek-api-pricing',
   '/openrouter-pricing-calculator',
+  '/gemini-api-pricing',
+  '/grok-api-pricing',
+  '/minimax-api-pricing',
+  '/kimi-api-pricing',
   // The hand-picked head-to-heads between the models with the most scores.
+  '/compare/claude-opus-5.5-vs-gpt-6-astra',
+  '/compare/deepseek-v4.1-flash-1017-vs-gpt-6-astra',
   '/compare/claude-opus-5-vs-gpt-5.6-sol',
-  '/compare/deepseek-v4.1-flash-vs-gpt-5.6-sol',
-  '/compare/claude-opus-5-vs-deepseek-v4.1-flash',
   '/compare/gpt-5.6-sol-vs-kimi-k3',
   // The two benchmark pages that clear the floor and carry a known name.
   '/benchmarks/hle',
@@ -90,9 +94,13 @@ export const CORE_PATHS = [
  */
 export const CORE_ZH_PATHS = [
   '/',
-  '/token-calculator',
+  '/token-cost-calculator',
   '/claude-token-cost-calculator',
   '/chatgpt-api-pricing',
   '/deepseek-api-pricing',
   '/openrouter-pricing-calculator',
+  '/gemini-api-pricing',
+  '/grok-api-pricing',
+  '/minimax-api-pricing',
+  '/kimi-api-pricing',
 ] as const

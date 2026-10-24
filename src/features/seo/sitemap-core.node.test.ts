@@ -52,11 +52,16 @@ test('every core path clears its indexability floor', () => {
 })
 
 test('the core list stays short — that is the point of the split', () => {
-  // The full sitemap is ~230 URLs; the core is the short list a crawler
+  // The full sitemap is ~250 URLs; the core is the short list a crawler
   // meets first. If this number grows, the list has stopped being a
   // curation and has become a dump.
-  expect(CORE_PATHS.length).toBeLessThanOrEqual(24)
-  expect(CORE_ZH_PATHS.length).toBeLessThanOrEqual(8)
+  //
+  // The list grew by exactly the four new per-provider pricing landings
+  // (Gemini, Grok, MiniMax, Kimi): a pricing page carries the vendor name
+  // people actually type, so it is the one long-tail family that earns a
+  // place in the core bid for the index.
+  expect(CORE_PATHS.length).toBeLessThanOrEqual(26)
+  expect(CORE_ZH_PATHS.length).toBeLessThanOrEqual(12)
 })
 
 test('the core list publishes every page exactly once', () => {
@@ -74,7 +79,7 @@ test('the Chinese core pages are the ones the product is written for', () => {
   // stays out of the core list: the site's target market is English.
   for (const path of CORE_ZH_PATHS) {
     expect(
-      path === '/' || path.startsWith('/token-calculator') || path.endsWith('-calculator') || path.endsWith('-pricing'),
+      path === '/' || path.startsWith('/token-cost-calculator') || path.endsWith('-calculator') || path.endsWith('-pricing'),
       `${path} is an odd member of the Chinese core list`,
     ).toBe(true)
   }

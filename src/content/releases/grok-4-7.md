@@ -61,5 +61,5 @@ published: true
 - **The model page** — every score we hold for Grok 4.7: [/models/grok-4.7](/models/grok-4.7)
 - **What DeepSWE measures** — [/benchmarks/deepswe-v1.1](/benchmarks/deepswe-v1.1), and [/benchmarks/terminal-bench-4.0](/benchmarks/terminal-bench-4.0)
 - **Head to head with Gemini 3.1 Pro** — [/compare?a=grok-4.7&b=gemini-3.1-pro](/compare?a=grok-4.7&b=gemini-3.1-pro)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — xAI's API pricing documentation, with prices last verified on 2026-10-20.

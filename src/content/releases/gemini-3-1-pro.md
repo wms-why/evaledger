@@ -63,6 +63,6 @@ published: true
 - **The model page, with every score we hold** — [/models/gemini-3.1-pro](/models/gemini-3.1-pro)
 - **Head to head with an OpenAI flagship** — [/compare?a=gemini-3.1-pro&b=gpt-5.6-sol](/compare?a=gemini-3.1-pro&b=gpt-5.6-sol)
 - **The GPT-6 flagship that took the GPQA row** — [/models/gpt-6-astra](/models/gpt-6-astra)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **What GPQA and HLE actually measure** — [/benchmarks/gpqa-diamond](/benchmarks/gpqa-diamond) and [/benchmarks/hle](/benchmarks/hle)
 - **Source of truth for this page** — Google's Gemini API pricing page, with prices last verified on 2026-10-20.

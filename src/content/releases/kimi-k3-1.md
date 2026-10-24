@@ -77,5 +77,5 @@ published: true
 - **The model page** — every score we hold, with its provenance: [/models/kimi-k3.1-pro](/models/kimi-k3.1-pro)
 - **The K3 line, side by side** — K3.1 Pro, the Highspeed twin and K3: [/series/kimi-k3](/series/kimi-k3)
 - **Head to head with the closest rival** — [/compare?a=kimi-k3.1-pro&b=claude-opus-5.5](/compare?a=kimi-k3.1-pro&b=claude-opus-5.5)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — Moonshot's launch announcement, checked on 2026-10-24; the prices come from the Kimi API pricing page, verified the same day.

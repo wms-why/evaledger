@@ -169,28 +169,40 @@ interface Landing {
 }
 
 const LANDINGS: Landing[] = [
-  { path: '/token-calculator', h1Key: 'leaderboard.tokenCalculator.h1', models: ['claude-haiku-4.5', 'gpt-6-sol', 'deepseek-v4-pro'] },
   { path: '/token-cost-calculator', h1Key: 'calculator.h1Token', models: ACTIVE.map((m) => m.id) },
   { path: '/claude-token-cost-calculator', h1Key: 'calculator.h1Claude', provider: 'anthropic', models: activeIdsOf('anthropic') },
   { path: '/chatgpt-api-pricing', h1Key: 'calculator.h1Chatgpt', provider: 'openai', models: activeIdsOf('openai') },
   { path: '/deepseek-api-pricing', h1Key: 'calculator.h1Deepseek', provider: 'deepseek', models: activeIdsOf('deepseek') },
   { path: '/openrouter-pricing-calculator', h1Key: 'calculator.h1Openrouter', models: ['gpt-6-sol', 'claude-haiku-4.5'], markup: true },
+  // The four vendor pages generated from the price registry. Each one is
+  // pre-filtered to its own provider, so the grid shows that vendor's models
+  // first — the reader who searched "Gemini API pricing" must not land on an
+  // all-providers table whose first row is some other vendor's model.
+  { path: '/gemini-api-pricing', h1Key: 'landing.vendor.gemini.h1', provider: 'google', models: activeIdsOf('google') },
+  { path: '/grok-api-pricing', h1Key: 'landing.vendor.grok.h1', provider: 'grok', models: activeIdsOf('grok') },
+  { path: '/minimax-api-pricing', h1Key: 'landing.vendor.minimax.h1', provider: 'minimax', models: activeIdsOf('minimax') },
+  { path: '/kimi-api-pricing', h1Key: 'landing.vendor.kimi.h1', provider: 'kimi', models: activeIdsOf('kimi') },
 ]
 
 /** Check one page in one language: headline, price table, provider prices. */
 async function expectLanding(page: Page, landing: Landing, locale: Locale): Promise<void> {
   await visit(page, localePath(landing.path, locale))
 
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(t(locale, landing.h1Key))
-  await expect(
-    page.getByRole('heading', {
-      name: t(locale, 'calculator.resultsTitle', { n: ACTIVE.length }),
-    }),
-  ).toBeVisible()
-
+  // A vendor landing is pre-filtered to its own provider, so its grid carries
+  // that vendor's model count — not the whole registry's. That is the point
+  // of the page: the reader who searched "Gemini API pricing" must land on
+  // Gemini's prices, not on an all-providers table.
   const shown = landing.provider
     ? ACTIVE.filter((m) => m.provider === landing.provider).length
     : ACTIVE.length
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(t(locale, landing.h1Key))
+  await expect(
+    page.getByRole('heading', {
+      name: t(locale, 'calculator.resultsTitle', { n: shown }),
+    }),
+  ).toBeVisible()
+
   const expected = {
     cards: shown,
     models: Object.fromEntries(
@@ -234,10 +246,10 @@ test('the calculator renders and quotes the registry for a typed workload', asyn
   consoleErrors,
   pageErrors,
 }) => {
-  await visit(page, '/token-calculator')
+  await visit(page, '/token-cost-calculator')
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    t('en', 'leaderboard.tokenCalculator.h1'),
+    t('en', 'calculator.h1Token'),
   )
   await expect(
     page.getByRole('heading', {
@@ -275,7 +287,7 @@ test('selecting a model changes the total', async ({
   consoleErrors,
   pageErrors,
 }) => {
-  await visit(page, '/token-calculator')
+  await visit(page, '/token-cost-calculator')
 
   await expect
     .poll(
@@ -299,7 +311,7 @@ test('selecting a model changes the total', async ({
     .toEqual({ before: '$0.700', after: '$0.350', cards: 4, pressed: 'true' })
 
   // The ?model= deep link selects a model and narrows the grid to its provider.
-  await visit(page, '/token-calculator?model=claude-opus-5.5')
+  await visit(page, '/token-cost-calculator?model=claude-opus-5.5')
 
   await expect
     .poll(

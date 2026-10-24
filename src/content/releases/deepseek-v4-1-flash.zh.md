@@ -68,5 +68,5 @@ published: true
 - **模型页（19 项跑分都在这）** — [/models/deepseek-v4.1-flash](/zh/models/deepseek-v4.1-flash)
 - **和 OpenAI 旗舰并排比** — [/compare?a=deepseek-v4.1-flash&b=gpt-5.6-sol](/zh/compare?a=deepseek-v4.1-flash&b=gpt-5.6-sol)
 - **国产模型集中在一张表上** — [/best/chinese-model](/zh/best/chinese-model)，以及编程场景的 [/best/for-coding](/zh/best/for-coding)
-- **算你自己的账** — [/token-calculator](/zh/token-calculator)
+- **算你自己的账** — [Token 成本计算器](/zh/token-cost-calculator)
 - **本文的数据出处** — DeepSeek V4.1 Flash 发布公告，价格最后核对于 2026-10-20。

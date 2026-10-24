@@ -70,6 +70,12 @@ function ReleasesIndex() {
             {entries.map((entry) => {
               const price = releasePriceRows(entry)[0];
               const scores = releaseScoreTable(entry);
+              // The card's own title — the post's front-matter title — is the
+              // single primary anchor. The old second link ("Read the
+              // analysis →", eight times in a row) told a crawler nothing, so
+              // it became the link's accessible description instead.
+              const descId = `release-desc-${entry.slug}`;
+              const hintId = `release-hint-${entry.slug}`;
               return (
                 <article
                   key={entry.path}
@@ -93,14 +99,15 @@ function ReleasesIndex() {
                     <Link
                       to="/{-$locale}/releases/$slug"
                       params={{ slug: entry.slug }}
-                      className="hover:text-primary"
+                      aria-describedby={entry.description ? `${descId} ${hintId}` : hintId}
+                      className="underline decoration-dotted underline-offset-4 hover:text-primary"
                     >
                       {entry.title}
                     </Link>
                   </h2>
 
                   {entry.description && (
-                    <p className="mt-2 text-[14px] leading-relaxed text-fg-2">
+                    <p id={descId} className="mt-2 text-[14px] leading-relaxed text-fg-2">
                       {entry.description}
                     </p>
                   )}
@@ -125,13 +132,11 @@ function ReleasesIndex() {
                         )}
                       </>
                     )}
-                    <Link
-                      to="/{-$locale}/releases/$slug"
-                      params={{ slug: entry.slug }}
-                      className="text-[13px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
-                    >
-                      {t("releases.readMore")} →
-                    </Link>
+                    {/* The generic "Read the analysis →" is no longer a second
+                        link — it is the accessible description of the title. */}
+                    <span id={hintId} className="sr-only">
+                      {t("site.releases.readAnalysis")}
+                    </span>
                   </div>
                 </article>
               );

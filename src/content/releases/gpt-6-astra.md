@@ -59,7 +59,7 @@ published: true
 
 ## Where to go next
 
-- **Run your own numbers** — the token calculator prices every model in this family against your real input/output mix: [/token-calculator](/token-calculator)
+- **Run your own numbers** — the token calculator prices every model in this family against your real input/output mix: [Token Cost Calculator](/token-cost-calculator)
 - **Put two models side by side** — benchmark deltas, context window and a monthly estimate: [/compare](/compare)
 - **The astra model page, with all four scores** — [/models/gpt-6-astra](/models/gpt-6-astra)
 - **The previous generation, for the price delta** — [/models/gpt-5.6-sol](/models/gpt-5.6-sol)

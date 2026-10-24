@@ -70,5 +70,5 @@ published: true
 - **The 0910 launch post** — what the API served before this checkpoint, with its 19 benchmarks: [/releases/deepseek-v4-1-flash](/releases/deepseek-v4-1-flash)
 - **Head to head with GPT-5.6 sol** — [/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol](/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol)
 - **DeepSeek pricing in full** — the off-peak schedule, cache pricing and V4-Pro: [/deepseek-api-pricing](/deepseek-api-pricing)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — the DeepSeek-V4.1-Flash-1017 announcement, with prices last verified on 2026-10-20.

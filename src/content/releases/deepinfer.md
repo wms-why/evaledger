@@ -110,5 +110,5 @@ python examples/offline_inference.py --ep 2 --dp 8
 - **The model's own launch analysis** — what changed in 1017 and whether the switch is worth it: [/releases/deepseek-v4-1-flash-1017](/releases/deepseek-v4-1-flash-1017)
 - **The price card in full** — peak, off-peak and cache rates, with the dated bands: [/deepseek-api-pricing](/deepseek-api-pricing)
 - **Head to head against the frontier** — [/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol](/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — the DeepInfer repository, re-checked on 2026-10-23. Prices come from the DeepSeek pricing page, verified 2026-10-20.

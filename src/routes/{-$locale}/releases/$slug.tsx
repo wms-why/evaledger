@@ -170,7 +170,7 @@ function ReleasePage() {
               </Link>
             )}
             <Link
-              to="/{-$locale}/token-calculator"
+              to="/{-$locale}/token-cost-calculator"
               search={entry.pending ? {} : { model: entry.modelId }}
               className="rounded-[8px] border border-border px-4 py-2 text-[13px] font-medium text-fg-2 hover:text-foreground"
             >

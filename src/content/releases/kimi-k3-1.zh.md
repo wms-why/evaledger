@@ -77,5 +77,5 @@ published: true
 - **模型页** — 我们收录的每一项跑分及其出处：[/models/kimi-k3.1-pro](/zh/models/kimi-k3.1-pro)
 - **K3 这条线，并排看** — K3.1 Pro、高速版与 K3：[/series/kimi-k3](/zh/series/kimi-k3)
 - **和最接近的对手正面比** — [/compare?a=kimi-k3.1-pro&b=claude-opus-5.5](/zh/compare?a=kimi-k3.1-pro&b=claude-opus-5.5)
-- **算我自己的用量** — [/token-calculator](/zh/token-calculator)
+- **算我自己的用量** — [Token 成本计算器](/zh/token-cost-calculator)
 - **本文的数据出处** — 月之暗面官方发布公告，核对于 2026-10-24；价格取自 Kimi API 开放平台定价页，同日核对。英文原文见 [kimi.com 的发布说明](https://kimi.com/blog/kimi-k3-1-pro)。

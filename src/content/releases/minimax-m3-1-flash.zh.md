@@ -63,5 +63,5 @@ published: true
 - **模型页（我们有的分数和厂商口径说明）** — [/models/minimax-m3.1-flash](/zh/models/minimax-m3.1-flash)
 - **DeepSWE 到底测什么** — [/benchmarks/deepswe-v1.1](/zh/benchmarks/deepswe-v1.1)
 - **和另一个 Flash 档并排比** — [/compare?a=minimax-m3.1-flash&b=deepseek-v4.1-flash](/zh/compare?a=minimax-m3.1-flash&b=deepseek-v4.1-flash)
-- **算你自己的账** — [/token-calculator](/zh/token-calculator)
+- **算你自己的账** — [Token 成本计算器](/zh/token-cost-calculator)
 - **本文的数据出处** — MiniMax M3.1 Flash 官方发布，价格最后核对于 2026-10-20。

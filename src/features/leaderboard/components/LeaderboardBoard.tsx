@@ -13,6 +13,7 @@ import {
 } from '../custom-weights'
 import { formatScore } from '../leaderboard'
 import { LEADERBOARD } from '../models'
+import { BOARD_LABEL_KEY, bestCategoryForTrack, bestCategoryLabel } from '../board-links'
 import {
   rankTrack,
   scoreAgainstCore,
@@ -73,7 +74,18 @@ export function LeaderboardBoard() {
   )
 }
 
-/** The board switcher: the four capability boards, plus custom weights. */
+/**
+ * The board switcher: the four capability boards, plus custom weights.
+ *
+ * Every board is a **link** to its own page (`/leaderboard/<track>`): the
+ * tabs used to be `<button>`s that only flipped React state, so a crawler
+ * saw no link and no URL for "best coding LLM" — the four boards were
+ * second-level islands with no path in from the home page.
+ *
+ * A plain click still switches the table in place (the old behaviour); the
+ * href is there for the crawler and for a modified click, which opens the
+ * board's own page.
+ */
 function BoardSelector({
   track,
   onTrack,
@@ -94,20 +106,29 @@ function BoardSelector({
       {TRACK_IDS.map((slug) => {
         const active = !custom && track === slug
         return (
-          <button
+          <Link
             key={slug}
-            type="button"
-            onClick={() => onTrack(slug)}
-            aria-pressed={active}
+            to="/{-$locale}/leaderboard/$track"
+            params={{ track: slug }}
+            onClick={(event) => {
+              // A plain click keeps the tab switch in place. A modified click
+              // (new tab, new window) falls through to the router and opens
+              // the board's own page.
+              if (event.button !== 0) return
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+              event.preventDefault()
+              onTrack(slug)
+            }}
+            aria-current={active ? 'true' : undefined}
             className={cn(
-              'rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors',
+              'inline-block rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors',
               active
                 ? 'bg-soft text-primary'
                 : 'bg-bg-alt text-fg-2 hover:bg-bg-inset hover:text-foreground',
             )}
           >
-            {t(TRACKS[slug].labelKey)}
-          </button>
+            {t(BOARD_LABEL_KEY[slug])}
+          </Link>
         )
       })}
       <button
@@ -131,6 +152,8 @@ function BoardSelector({
 function TrackTable({ track }: { track: ScoreTrack }) {
   const { t } = useTranslation()
   const { ranked, incomplete } = useMemo(() => rankTrack(track), [track])
+  // The board's `/best/` twin — only when the category registry has one.
+  const bestCategory = bestCategoryForTrack(track.slug)
 
   return (
     <div className="space-y-3">
@@ -141,8 +164,20 @@ function TrackTable({ track }: { track: ScoreTrack }) {
           params={{ track: track.slug }}
           className="text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
         >
-          {t('leaderboard.track.compareAll')} →
+          {t('linking.board.full', { track: t(track.labelKey) })} →
         </Link>
+        {bestCategory ? (
+          <>
+            {' · '}
+            <Link
+              to="/{-$locale}/best/$category"
+              params={{ category: bestCategory }}
+              className="text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+            >
+              {bestCategoryLabel(t, bestCategory)} →
+            </Link>
+          </>
+        ) : null}
       </p>
 
       <div className="overflow-x-auto rounded-[14px] border border-border bg-card">
@@ -151,11 +186,20 @@ function TrackTable({ track }: { track: ScoreTrack }) {
             <tr className="border-b border-border text-left text-[12px] uppercase tracking-wide">
               <th className="px-3 py-2 font-medium text-fg-3">{t('leaderboard.colRank')}</th>
               <th className="px-3 py-2 font-medium text-fg-3">{t('leaderboard.colModel')}</th>
-              {track.core.map((core) => (
-                <th key={core.id} className="px-3 py-2 text-right font-medium text-fg-3">
-                  {BENCHMARKS.find((b) => b.id === core.id)?.name ?? core.id}
-                </th>
-              ))}
+              {track.core.map((core) => {
+                const benchmark = BENCHMARKS.find((b) => b.id === core.id)
+                return (
+                  <th key={core.id} className="px-3 py-2 text-right font-medium text-fg-3">
+                    <Link
+                      to="/{-$locale}/benchmarks/$slug"
+                      params={{ slug: core.id }}
+                      className="hover:text-foreground"
+                    >
+                      {benchmark?.name ?? core.id}
+                    </Link>
+                  </th>
+                )
+              })}
               <th className="px-3 py-2 text-right font-medium text-fg-3">
                 {t('leaderboard.track.composite')}
               </th>
@@ -244,6 +288,12 @@ function RankedRow({
  * It stays visible — dropping it would hide a model the user is looking for
  * — but it carries no composite, because a partial average is not
  * comparable. The missing benchmarks are named.
+ *
+ * The label used to be a dead end: "Not tested" read as "no data at all",
+ * which is wrong — the model is published with partial data. It is now a
+ * link to the model's own page that says how much data there is (counted
+ * from the model's own scores, never hardcoded), and the hover hint still
+ * names the benchmarks it is missing.
  */
 function UnrankedRow({
   entry,
@@ -254,12 +304,15 @@ function UnrankedRow({
 }) {
   const { t } = useTranslation()
   const { model, score } = entry
+  const missingNames = score.missing
+    .map((id) => BENCHMARKS.find((b) => b.id === id)?.name ?? id)
+    .join(', ')
 
   return (
     <tr className="border-b border-border/60 last:border-0">
       <td className="px-3 py-2.5 text-fg-3">—</td>
       <td className="px-3 py-2.5">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span
             className="inline-block size-2 shrink-0 rounded-full opacity-40"
             style={{ background: VENDOR_DOT[model.vendor] }}
@@ -272,12 +325,14 @@ function UnrankedRow({
           >
             {model.displayName}
           </Link>
-          <span
-            className="text-[11px] text-fg-3"
-            title={t('leaderboard.track.untestedHint')}
+          <Link
+            to="/{-$locale}/models/$slug"
+            params={{ slug: model.id }}
+            className="text-[11px] text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+            title={t('leaderboard.track.notRankedReason', { benchmarks: missingNames })}
           >
-            {t('leaderboard.track.untested')}
-          </span>
+            {t('linking.track.unrankedTracked', { n: model.scores.length })} →
+          </Link>
         </div>
       </td>
       {track.core.map((core) => {
@@ -294,11 +349,7 @@ function UnrankedRow({
       })}
       <td
         className="px-3 py-2.5 text-right text-fg-3"
-        title={t('leaderboard.track.notRankedReason', {
-          benchmarks: score.missing
-            .map((id) => BENCHMARKS.find((b) => b.id === id)?.name ?? id)
-            .join(', '),
-        })}
+        title={t('leaderboard.track.notRankedReason', { benchmarks: missingNames })}
       >
         {t('leaderboard.track.untested')}
       </td>

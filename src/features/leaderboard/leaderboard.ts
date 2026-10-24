@@ -119,6 +119,21 @@ export const COMPARE_PAIRS: ComparePair[] = [
   { a: 'gemini-4-argon', b: 'gpt-6-astra', kind: 'technical' },
   { a: 'gemini-4-argon', b: 'claude-opus-5.5', kind: 'technical' },
   { a: 'gemini-4-argon', b: 'gemini-3.1-pro', kind: 'technical' },
+  // The current frontier row — the models the home board and the release
+  // pages currently push. A comparison page that only links last year's
+  // pairs is a page no one searches for, so the pairs that answer
+  // "is the new checkpoint worth switching to?" live here too.
+  { a: 'claude-opus-5.5', b: 'gpt-6-astra', kind: 'technical' },
+  { a: 'claude-opus-5.5', b: 'claude-opus-5', kind: 'plan' },
+  { a: 'claude-opus-5.5', b: 'grok-4.7', kind: 'ecosystem' },
+  { a: 'gpt-6-astra', b: 'grok-4.7', kind: 'technical' },
+  { a: 'gpt-6-astra', b: 'minimax-m3.1-flash', kind: 'technical' },
+  { a: 'deepseek-v4.1-flash-1017', b: 'gpt-6-astra', kind: 'technical' },
+  { a: 'deepseek-v4.1-flash-1017', b: 'gemini-4-argon', kind: 'technical' },
+  { a: 'deepseek-v4.1-flash-1017', b: 'deepseek-v4.1-flash', kind: 'plan' },
+  { a: 'kimi-k3.1-pro', b: 'claude-opus-5.5', kind: 'technical' },
+  { a: 'kimi-k3.1-pro', b: 'kimi-k3', kind: 'plan' },
+  { a: 'minimax-m3.1-flash', b: 'minimax-m3', kind: 'plan' },
 ]
 
 export interface ComparePairEntry extends ComparePair {
@@ -142,12 +157,40 @@ export function findComparePair(slug: string): ComparePairEntry | undefined {
 
 // ───────────────────────── Best categories ─────────────────────────
 
+/**
+ * How a "best model for X" page ranks its rows.
+ *
+ * - `score` — by benchmark composite, through the coverage gate below.
+ *   This is the only kind that is a **board**: a model is ranked only if it
+ *   was measured on every benchmark of the category.
+ * - `price` — by blended price per million tokens, cheapest first. Not a
+ *   board: a price is not a score, so there is no coverage gate to pass.
+ * - `context` — by context window, largest first. Not a board either.
+ * - `cache` — by the discount a vendor's cached-input rate gives against its
+ *   own uncached input rate. Not a board.
+ *
+ * The split matters because the coverage gate only makes sense where the
+ * ranking comes from benchmarks: it prevents a model measured on two easy
+ * tests from outranking one measured on six hard ones. A price table has no
+ * such risk — it sorts by a number that is always measured the same way.
+ */
+export type BestCategoryKind = 'score' | 'price' | 'context' | 'cache'
+
 export interface BestCategory {
   slug: string
-  /** Benchmarks used to rank models in this category. */
+  /**
+   * Benchmarks used to rank models in this category.
+   *
+   * Empty for the non-score kinds (`price` / `context` / `cache`), which
+   * rank by an attribute of the price row instead of by a benchmark score.
+   */
   benchmarkIds: string[]
   /** Optional vendor restriction. */
   vendors?: string[]
+  /** How the page ranks its rows. Defaults to `score`. */
+  kind?: BestCategoryKind
+  /** For `context`: the minimum context window (in tokens) a model must reach. */
+  minContext?: number
 }
 
 export const BEST_CATEGORIES: BestCategory[] = [
@@ -165,34 +208,113 @@ export const BEST_CATEGORIES: BestCategory[] = [
     slug: 'for-coding',
     benchmarkIds: ['deepswe-v1.1', 'programbench', 'nl2repo-bench', 'terminal-bench-2.1'],
   },
+  // The two capability boards that had no long-tail page of their own.
+  // Their benchmarks are the board's own core set, so the page and the board
+  // rank the same models — the page just answers the search ("best LLM for
+  // agents") instead of the board's question ("how is the agent board built").
+  {
+    slug: 'for-agents',
+    benchmarkIds: ['terminal-bench-4.0', 'agents-last-exam', 'automation-bench'],
+  },
+  {
+    slug: 'for-reasoning',
+    benchmarkIds: ['gpqa-diamond', 'hle', 'matharena-apex'],
+  },
+  // The attribute-ranked pages: price, context window and cache discount.
+  {
+    slug: 'cheapest-llms',
+    benchmarkIds: [],
+    kind: 'price',
+  },
+  {
+    slug: '1m-context-window',
+    benchmarkIds: [],
+    kind: 'context',
+    minContext: 1_000_000,
+  },
+  {
+    slug: 'prompt-caching',
+    benchmarkIds: [],
+    kind: 'cache',
+  },
 ]
 
 export function findBestCategory(slug: string): BestCategory | undefined {
   return BEST_CATEGORIES.find((c) => c.slug === slug)
 }
 
+/** A row of a "best model for X" page, with the fields its kind adds. */
+export interface CategoryRow extends LeaderboardRow {
+  /** Context window in tokens (`context`-ranked pages). */
+  contextWindow?: number
+  /** Cached-input $/1M in force (`cache`-ranked pages). */
+  cachedInputPricePer1M?: number
+  /** Discount the cached rate gives vs the uncached input rate, in percent. */
+  cacheDiscountPct?: number
+}
+
 /**
  * The rows of a "best model for X" page.
  *
  * These pages used to average each model over whatever benchmarks it
- * happened to have — the same unfairness the main board had. They now go
- * through the same coverage gate: a model is ranked only if it was
- * measured on every benchmark of the category, and its score is the
+ * happened to have — the same unfairness the main board had. The score-ranked
+ * ones now go through the same coverage gate: a model is ranked only if it
+ * was measured on every benchmark of the category, and its score is the
  * weighted mean of the field-best-normalized scores.
+ *
+ * The attribute-ranked pages (`price` / `context` / `cache`) sort by a number
+ * the price registry publishes for every model, so there is nothing to gate —
+ * but they still resolve through `priceDetail`, so the price they show is the
+ * rate in force on the registry's snapshot day, the same one the calculator
+ * charges.
  */
-export function categoryRows(category: BestCategory): LeaderboardRow[] {
-  const core: TrackBenchmark[] = category.benchmarkIds.map((id) => ({ id, weight: 1 }))
+export function categoryRows(category: BestCategory): CategoryRow[] {
   const rows = leaderboardRows().filter(
     (r) => !category.vendors || category.vendors.includes(r.model.vendor),
   )
-  const scored = rows.map((r) => {
-    const score = scoreAgainstCore(r.model, core)
-    return { row: r, composite: score.composite }
-  })
-  return scored
-    .filter((s) => s.composite !== undefined)
-    .sort((x, y) => (y.composite as number) - (x.composite as number))
-    .map((s) => ({ ...s.row, composite: s.composite }))
+
+  switch (category.kind ?? 'score') {
+    case 'price':
+      return rows
+        .filter((r) => r.blendedPricePer1M != null)
+        .sort((a, b) => (a.blendedPricePer1M as number) - (b.blendedPricePer1M as number))
+
+    case 'context': {
+      const min = category.minContext ?? 1_000_000
+      return rows
+        .filter((r) => (r.price?.contextWindow ?? 0) >= min)
+        .sort((a, b) => (b.price?.contextWindow ?? 0) - (a.price?.contextWindow ?? 0))
+        .map((r) => ({ ...r, contextWindow: r.price?.contextWindow }))
+    }
+
+    case 'cache':
+      return rows
+        .map((r): CategoryRow => {
+          const detail = r.price ? priceDetail(r.price) : undefined
+          const cached = detail?.cached
+          const input = detail?.input
+          if (cached == null || input == null || input <= 0) return { ...r }
+          return {
+            ...r,
+            cachedInputPricePer1M: cached,
+            cacheDiscountPct: (1 - cached / input) * 100,
+          }
+        })
+        .filter((r): r is CategoryRow & { cacheDiscountPct: number } => r.cacheDiscountPct != null)
+        .sort((a, b) => b.cacheDiscountPct - a.cacheDiscountPct)
+
+    default: {
+      const core: TrackBenchmark[] = category.benchmarkIds.map((id) => ({ id, weight: 1 }))
+      const scored = rows.map((r) => {
+        const score = scoreAgainstCore(r.model, core)
+        return { row: r, composite: score.composite }
+      })
+      return scored
+        .filter((s) => s.composite !== undefined)
+        .sort((x, y) => (y.composite as number) - (x.composite as number))
+        .map((s) => ({ ...s.row, composite: s.composite }))
+    }
+  }
 }
 
 /** Compact column headings for dense tables. */

@@ -1,91 +1,36 @@
-import { createFileRoute, getRouteApi } from '@tanstack/react-router'
-import { jsonLd, localeHead } from '@/features/seo/seo'
-import { getOrigin } from '@/features/seo/seo.fns'
-import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
-import { SiteNav } from '@/components/marketing/site-nav'
-import { Footer } from '@/components/marketing/footer'
-import { FAQ } from '@/components/marketing/faq'
-import { Calculator } from '@/features/calculator/calculator'
-import { CalculatorHero } from '@/features/calculator/components/CalculatorHero'
-import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { REGISTRY } from '@/features/calculator/model-prices'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { canonicalPath } from '@/features/seo/aliases'
 
-const rootRoute = getRouteApi('__root__')
-
+/**
+ * The calculator's historical alias.
+ *
+ * The page used to be published under two names — `/token-calculator` and
+ * `/token-cost-calculator` — and the site's own chrome pointed at one here
+ * and the other there, so the same labelled link resolved to two different
+ * addresses and each one collected half the internal link equity.
+ *
+ * `/token-cost-calculator` is the canonical address: it says what the page
+ * does (it prices a cost per token), and it is the one the sitemap, the
+ * footer and the sibling calculator landings already point at. This file
+ * stays because the URL is live and bookmarked — it answers with a **301**,
+ * which is the one signal that says "this address moved here for good".
+ *
+ * The `?model=` deep link survives the move: the calculator's shareable
+ * per-model links are built on it, and a redirect that dropped the query
+ * would break every one of them.
+ */
 export const Route = createFileRoute('/{-$locale}/token-calculator')({
   validateSearch: (search: Record<string, unknown>): { model?: string } => ({
     model: typeof search.model === 'string' ? search.model : undefined,
   }),
-  loader: async () => {
-    const [origin, user] = await Promise.all([getOrigin(), getOptionalUser()])
-    return { origin, loggedIn: !!user }
-  },
-  head: ({ loaderData, params }) => {
-    const origin = loaderData?.origin ?? ''
-    const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
-    const dict = dictionaries[locale]
-    // This route renders a 5-pair subset of the shared FAQ list (see the
-    // <FAQ> call below) — the JSON-LD must carry exactly those pairs, in the
-    // same order, so the structured data and the visible copy agree.
-    const faqPairs: [string, string][] = [
-      [dict.calculator.faq1Q, dict.calculator.faq1A],
-      [dict.calculator.faq3Q, dict.calculator.faq3A],
-      [dict.calculator.faq4Q, dict.calculator.faq4A],
-      [dict.calculator.faq5Q, dict.calculator.faq5A],
-      [dict.calculator.faq8Q, dict.calculator.faq8A],
-    ]
-    const faq = {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: faqPairs.map(([q, a]) => ({
-        '@type': 'Question',
-        name: q,
-        acceptedAnswer: { '@type': 'Answer', text: a },
-      })),
-    }
-    const { meta, links, scripts } = localeHead({
-      origin,
-      locale,
-      path: '/token-calculator',
-      title: dict.leaderboard.tokenCalculator.title,
-      description: dict.leaderboard.tokenCalculator.metaDescription,
-      scripts: [jsonLd(faq)],
+  beforeLoad: ({ params, location }) => {
+    const locale = (params as { locale?: string }).locale
+    const prefix = locale ? `/${locale}` : ''
+    const model = new URLSearchParams(location.search).get('model')
+    const query = model ? `?model=${encodeURIComponent(model)}` : ''
+    throw redirect({
+      href: `${prefix}${canonicalPath('/token-calculator')}${query}`,
+      statusCode: 301,
     })
-    return { meta, links, scripts }
   },
-  component: TokenCalculatorPage,
 })
-
-function TokenCalculatorPage() {
-  const { theme } = rootRoute.useLoaderData()
-  const { loggedIn } = Route.useLoaderData()
-  const { model } = Route.useSearch()
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <SiteNav theme={theme} loggedIn={loggedIn} />
-      <CalculatorHero
-        h1Key="leaderboard.tokenCalculator.h1"
-        subtitleKey="leaderboard.tokenCalculator.subtitle"
-        fetchedAt={REGISTRY.fetchedAt}
-      />
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
-        <Calculator initialModelId={model} />
-      </div>
-      <FAQ
-        id="faq"
-        kickerKey="calculator.kicker"
-        titleKey="calculator.faqTitle"
-        faqs={[
-          { qKey: 'calculator.faq1Q', aKey: 'calculator.faq1A' },
-          { qKey: 'calculator.faq3Q', aKey: 'calculator.faq3A' },
-          { qKey: 'calculator.faq4Q', aKey: 'calculator.faq4A' },
-          { qKey: 'calculator.faq5Q', aKey: 'calculator.faq5A' },
-          { qKey: 'calculator.faq8Q', aKey: 'calculator.faq8A' },
-        ]}
-      />
-      <RelatedCalculators exclude="token" />
-      <Footer theme={theme} />
-    </div>
-  )
-}

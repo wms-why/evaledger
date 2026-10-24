@@ -64,6 +64,6 @@ published: true
 - **模型页（我们有的全部跑分）** — [/models/gemini-3.1-pro](/zh/models/gemini-3.1-pro)
 - **和 OpenAI 旗舰并排比** — [/compare?a=gemini-3.1-pro&b=gpt-5.6-sol](/zh/compare?a=gemini-3.1-pro&b=gpt-5.6-sol)
 - **抢走 GPQA 榜首的 GPT-6 旗舰** — [/models/gpt-6-astra](/zh/models/gpt-6-astra)
-- **算你自己的账** — [/token-calculator](/zh/token-calculator)
+- **算你自己的账** — [Token 成本计算器](/zh/token-cost-calculator)
 - **GPQA 和 HLE 到底测什么** — [/benchmarks/gpqa-diamond](/zh/benchmarks/gpqa-diamond)、[/benchmarks/hle](/zh/benchmarks/hle)
 - **本文的数据出处** — Google Gemini API 定价页，价格最后核对于 2026-10-20。

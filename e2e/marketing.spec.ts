@@ -10,34 +10,42 @@ import type { Locator, Page } from '@playwright/test'
  * here as a failing expectation instead of a silently stale assertion.
  */
 
-/** The header surfaces, and the path each nav link must point at. */
+/**
+ * The header surfaces, and the path each nav link must point at.
+ *
+ * The nav labels live in the chrome's own dictionary (`site.nav.*`) — the
+ * Chinese ones are search terms (大模型排行榜 / Token 价格计算器 …), not a
+ * literal translation of the English.
+ */
 const NAV_TARGETS = [
-  { label: t('en', 'leaderboard.navBoard'), href: '/' },
-  { label: t('en', 'leaderboard.navCompare'), href: '/compare' },
-  { label: t('en', 'leaderboard.navCalculator'), href: '/token-calculator' },
-  { label: t('en', 'releases.nav'), href: '/releases' },
-  { label: t('en', 'series.nav'), href: '/series' },
-  { label: t('en', 'marketing.navChangelog'), href: '/changelog' },
+  { label: t('en', 'site.nav.board'), href: '/' },
+  { label: t('en', 'site.nav.compare'), href: '/compare' },
+  { label: t('en', 'site.nav.calculator'), href: '/token-cost-calculator' },
+  { label: t('en', 'site.nav.releases'), href: '/releases' },
+  { label: t('en', 'site.nav.series'), href: '/series' },
+  { label: t('en', 'site.nav.methodology'), href: '/methodology' },
+  { label: t('en', 'site.nav.dataQuality'), href: '/data-quality' },
+  { label: t('en', 'site.nav.changelog'), href: '/changelog' },
 ] as const
 
 /** The footer's internal links. */
 const FOOTER_TARGETS = [
-  { label: t('en', 'leaderboard.navBoard'), href: '/' },
-  { label: t('en', 'leaderboard.navCompare'), href: '/compare' },
+  { label: t('en', 'site.nav.board'), href: '/' },
+  { label: t('en', 'site.nav.compare'), href: '/compare' },
   { label: t('en', 'marketing.footerProductToken'), href: '/token-cost-calculator' },
-  { label: t('en', 'releases.nav'), href: '/releases' },
-  { label: t('en', 'marketing.footerChangelog'), href: '/changelog' },
+  { label: t('en', 'site.nav.releases'), href: '/releases' },
+  { label: t('en', 'site.nav.changelog'), href: '/changelog' },
   { label: t('en', 'marketing.footerTerms'), href: '/terms' },
   { label: t('en', 'marketing.footerPrivacy'), href: '/privacy' },
 ] as const
 
 /** The "Browse" block at the bottom of the landing page. */
 const BROWSE_TARGETS = [
-  { label: t('en', 'leaderboard.navCalculator'), href: '/token-calculator' },
+  { label: t('en', 'leaderboard.navCalculator'), href: '/token-cost-calculator' },
   { label: t('en', 'releases.nav'), href: '/releases' },
   { label: t('en', 'leaderboard.navHistory'), href: '/leaderboard-history' },
-  { label: t('en', 'leaderboard.navBenchmarks'), href: '/benchmarks/gpqa-diamond' },
-  { label: t('en', 'leaderboard.navBest'), href: '/best/for-coding' },
+  { label: t('en', 'leaderboard.navBenchmarks'), href: '/benchmarks' },
+  { label: t('en', 'leaderboard.navBest'), href: '/best' },
 ] as const
 
 /** A page that threw or logged an error is broken, even when it rendered. */
@@ -170,8 +178,8 @@ test.describe('header nav', () => {
   test('the current page is marked with aria-current', async ({ page, consoleErrors, pageErrors }) => {
     // the landing page marks the home item, the changelog marks its own
     for (const [path, current] of [
-      ['/', t('en', 'leaderboard.navBoard')],
-      ['/changelog', t('en', 'marketing.navChangelog')],
+      ['/', t('en', 'site.nav.board')],
+      ['/changelog', t('en', 'site.nav.changelog')],
     ] as const) {
       await visit(page, path)
       const header = page.locator('header')
@@ -194,14 +202,16 @@ test.describe('header nav', () => {
 
     const header = page.locator('header')
     await expectLinks(header, [
-      { label: t('zh', 'leaderboard.navBoard'), href: '/zh' },
-      { label: t('zh', 'leaderboard.navCompare'), href: '/zh/compare' },
-      { label: t('zh', 'leaderboard.navCalculator'), href: '/zh/token-calculator' },
-      { label: t('zh', 'releases.nav'), href: '/zh/releases' },
-      { label: t('zh', 'series.nav'), href: '/zh/series' },
-      { label: t('zh', 'marketing.navChangelog'), href: '/zh/changelog' },
+      { label: t('zh', 'site.nav.board'), href: '/zh' },
+      { label: t('zh', 'site.nav.compare'), href: '/zh/compare' },
+      { label: t('zh', 'site.nav.calculator'), href: '/zh/token-cost-calculator' },
+      { label: t('zh', 'site.nav.releases'), href: '/zh/releases' },
+      { label: t('zh', 'site.nav.series'), href: '/zh/series' },
+      { label: t('zh', 'site.nav.methodology'), href: '/zh/methodology' },
+      { label: t('zh', 'site.nav.dataQuality'), href: '/zh/data-quality' },
+      { label: t('zh', 'site.nav.changelog'), href: '/zh/changelog' },
     ])
-    await expect(header.getByRole('link', { name: t('zh', 'leaderboard.navBoard'), exact: true })).toHaveAttribute(
+    await expect(header.getByRole('link', { name: t('zh', 'site.nav.board'), exact: true })).toHaveAttribute(
       'aria-current',
       'page',
     )

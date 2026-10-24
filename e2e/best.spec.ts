@@ -6,7 +6,6 @@ import {
   categoryRows,
   findBestCategory,
 } from '@/features/leaderboard/leaderboard'
-import { formatPrice } from '@/features/leaderboard/components/PriceCell'
 
 /**
  * The "best model for X" pages: `/best/<category>`.
@@ -43,8 +42,19 @@ test.describe('best-of pages', () => {
       // A header row plus one row per model in the category.
       await expect(table.getByRole('row')).toHaveCount(rows.length + 1)
 
-      const avgColumn = await columnIndex(table, t('en', 'leaderboard.track.composite'))
-      const priceColumn = await columnIndex(table, t('en', 'leaderboard.colPrice'))
+      // The column each page sorts by is the one its ranking kind defines:
+      // a score-ranked page shows a composite, a price-ranked page a blended
+      // rate, a context-ranked page a window, a cache-ranked page a discount.
+      const kind = category.kind ?? 'score'
+      const rankingColumn =
+        kind === 'score'
+          ? t('en', 'leaderboard.track.composite')
+          : kind === 'price'
+            ? t('en', 'landing.best.colBlended')
+            : kind === 'context'
+              ? t('en', 'landing.common.colContext')
+              : t('en', 'landing.best.colDiscount')
+      const rankColumnIndex = await columnIndex(table, rankingColumn)
 
       for (const [index, row] of rows.entries()) {
         const tr = table.getByRole('row').nth(index + 1)
@@ -53,11 +63,14 @@ test.describe('best-of pages', () => {
           'href',
           `/models/${row.model.id}`,
         )
-        await expect(tr.getByRole('cell').nth(avgColumn)).toHaveText(
-          row.composite != null ? row.composite.toFixed(1) : '—',
-        )
-        await expect(tr.getByRole('cell').nth(priceColumn)).toContainText(
-          row.blendedPricePer1M != null ? formatPrice(row.blendedPricePer1M) : '—',
+        await expect(tr.getByRole('cell').nth(rankColumnIndex)).toHaveText(
+          kind === 'score'
+            ? (row.composite?.toFixed(1) ?? '—')
+            : kind === 'price'
+              ? `$${row.blendedPricePer1M}`
+              : kind === 'context'
+                ? (row.contextWindow?.toLocaleString('en-US') ?? '—')
+                : `${row.cacheDiscountPct}%`,
         )
       }
 

@@ -147,8 +147,19 @@ test.describe('landing leaderboard board', () => {
     for (const slug of TRACK_IDS) {
       const track = TRACKS[slug]
       const { ranked } = rankTrack(track)
-      const button = page.getByRole('button', { name: t('en', track.labelKey), exact: true })
-      await button.click()
+      // The board tabs are LINKS now, not buttons: a board with no URL of its
+      // own is invisible to a crawler, so "best coding LLM" had no page to
+      // land on. A plain click still re-ranks the table in place; a modified
+      // click opens the board's own page.
+      //
+      // The anchor text is the destination-naming string from the linking
+      // dictionary ("Best coding LLMs"), not the board's own label — the spec
+      // asserts against the dictionary so a copy change cannot silently break
+      // it (and so the test documents that the anchor names the page).
+      const tab = page
+        .getByRole('link', { name: t('en', `linking.board.${slug}`), exact: true })
+        .first()
+      await tab.click()
 
       // The board that is selected now decides the ranking.
       await expect(firstRow).toHaveText(ranked[0].model.displayName)

@@ -67,14 +67,24 @@ export const TRACK_ROUTES: RouteCase[] = TRACK_IDS.map((slug) => ({
   group: 'leaderboard' as const,
 }))
 
-/** The calculator and the per-provider pricing landings. */
+/**
+ * The calculator and the per-provider pricing landings.
+ *
+ * `/token-calculator` is deliberately NOT here: it is a 301 redirect to the
+ * canonical `/token-cost-calculator`, and a redirect is not a page — listing
+ * it would make the suite drive a browser at an address that no longer serves
+ * content of its own.
+ */
 export const CALCULATOR_ROUTES: RouteCase[] = [
-  { path: '/token-calculator', name: 'token calculator', group: 'calculator' },
   { path: '/token-cost-calculator', name: 'token cost calculator landing', group: 'calculator' },
   { path: '/claude-token-cost-calculator', name: 'claude pricing landing', group: 'calculator' },
   { path: '/chatgpt-api-pricing', name: 'chatgpt pricing landing', group: 'calculator' },
   { path: '/deepseek-api-pricing', name: 'deepseek pricing landing', group: 'calculator' },
   { path: '/openrouter-pricing-calculator', name: 'openrouter pricing landing', group: 'calculator' },
+  { path: '/gemini-api-pricing', name: 'gemini pricing landing', group: 'calculator' },
+  { path: '/grok-api-pricing', name: 'grok pricing landing', group: 'calculator' },
+  { path: '/minimax-api-pricing', name: 'minimax pricing landing', group: 'calculator' },
+  { path: '/kimi-api-pricing', name: 'kimi pricing landing', group: 'calculator' },
 ]
 
 /** `/models/$slug` — one page per leaderboard row. */

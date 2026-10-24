@@ -59,7 +59,7 @@ published: true
 
 ## 延伸阅读
 
-- **先算自己的账** — 把真实的输入/输出比例代进去：[/token-calculator](/zh/token-calculator)
+- **先算自己的账** — 把真实的输入/输出比例代进去：[Token 成本计算器](/zh/token-cost-calculator)
 - **两个模型并排看** — 跑分差、上下文、月度成本：[/compare](/zh/compare)
 - **astra 模型页，四项跑分都在** — [/models/gpt-6-astra](/zh/models/gpt-6-astra)
 - **上一代，用来看价差** — [/models/gpt-5.6-sol](/zh/models/gpt-5.6-sol)

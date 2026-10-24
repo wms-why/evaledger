@@ -1,3 +1,9 @@
+import { hub } from './hub'
+import { linking } from './linking'
+import { calc } from './calc'
+import { landing } from './landing'
+import { site } from './site'
+
 export const en = {
   common: { appName: 'EvalLedger', toggleTheme: 'Toggle theme', language: 'Language' },
   home: {
@@ -185,6 +191,38 @@ export const en = {
         title: 'Best LLMs for coding',
         intro:
           'Ranked on real repository tasks, program synthesis, and command-line agent benchmarks.',
+      },
+      // The two capability boards that had no long-tail page of their own.
+      // Their benchmark sets are the board's own core, so the page and the
+      // board rank the same models — the page just answers the search
+      // ("best LLM for agents") instead of the board's question.
+      'for-agents': {
+        title: 'Best LLMs for AI agents & tool use',
+        intro:
+          'Ranked on terminal tasks, long-horizon tool use, and automation — the benchmarks that measure work a model does in a real environment, not a chat window.',
+      },
+      'for-reasoning': {
+        title: 'Best LLMs for reasoning & math',
+        intro:
+          'Ranked on frontier knowledge, hard competition mathematics, and long-horizon graph traversal — the benchmarks that isolate deduction from recall.',
+      },
+      // The three attribute-ranked pages. Not boards: a price, a context
+      // window and a cache discount are not scores, so they sort by their own
+      // number and carry no coverage gate.
+      'cheapest-llms': {
+        title: 'Cheapest LLM APIs per million tokens',
+        intro:
+          'Every model we price, ordered by blended price per million tokens — input plus output divided by two, at the rate actually in force today.',
+      },
+      '1m-context-window': {
+        title: 'Best long-context LLMs — 1M tokens and up',
+        intro:
+          'Only the models whose context window actually reaches one million tokens, largest window first, with the rate each one charges.',
+      },
+      'prompt-caching': {
+        title: 'Best LLMs for prompt caching discounts',
+        intro:
+          'Ordered by the discount a cached-input rate gives against the same model’s uncached input rate. A model that publishes no cached rate is not listed — there is no honest discount to show.',
       },
     },
     tokenCalculator: {
@@ -1162,6 +1200,16 @@ export const en = {
     apiLinkLabel: 'Machine-readable: /api/prices.json',
     lastUpdated: 'Last updated: {date}',
   },
+  // ───── Feature-slice dictionaries ─────
+  // Each slice owns its own copy and wires it in here; the key sets are
+  // identical in both languages, and `zh` is typed against this shape, so a
+  // missing Chinese key is a compile error rather than a silent fallback to
+  // the raw key. See `docs/seo-internal-linking-plan.md`.
+  hub: hub.en,
+  linking: linking.en,
+  calc: calc.en,
+  landing: landing.en,
+  site: site.en,
 } as const
 
 /** Recursively widen all leaf string literals to `string` so other locales can satisfy this type. */

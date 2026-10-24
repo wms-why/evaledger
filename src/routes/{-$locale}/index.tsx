@@ -140,7 +140,7 @@ function Home() {
         <section className="mt-14 border-t border-border pt-8">
           <h2 className="text-[15px] font-semibold">{t('leaderboard.home.browse')}</h2>
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
-            <Link to="/{-$locale}/token-calculator" className="text-primary hover:text-foreground">
+            <Link to="/{-$locale}/token-cost-calculator" className="text-primary hover:text-foreground">
               {t('leaderboard.navCalculator')}
             </Link>
             <Link to="/{-$locale}/releases" className="text-fg-2 hover:text-primary">
@@ -149,18 +149,10 @@ function Home() {
             <Link to="/{-$locale}/leaderboard-history" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navHistory')}
             </Link>
-            <Link
-              to="/{-$locale}/benchmarks/$slug"
-              params={{ slug: 'gpqa-diamond' }}
-              className="text-fg-2 hover:text-primary"
-            >
+            <Link to="/{-$locale}/benchmarks" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navBenchmarks')}
             </Link>
-            <Link
-              to="/{-$locale}/best/$category"
-              params={{ category: 'for-coding' }}
-              className="text-fg-2 hover:text-primary"
-            >
+            <Link to="/{-$locale}/best" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navBest')}
             </Link>
           </div>

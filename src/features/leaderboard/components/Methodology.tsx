@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
 import { BENCHMARKS } from '../benchmarks'
+import { bestCategoryForTrack, bestCategoryLabel } from '../board-links'
 import { fieldBestDetail, TRACKS, TRACK_IDS } from '../scoring'
 
 /**
@@ -43,17 +44,39 @@ export function Methodology() {
         <div className="mt-4 space-y-4">
           {TRACK_IDS.map((slug) => {
             const track = TRACKS[slug]
+            // The board's `/best/` twin — only when the category registry has
+            // one. `general` has none and must not be given one.
+            const bestCategory = bestCategoryForTrack(slug)
             return (
               <article key={slug} className="rounded-[14px] border border-border bg-card p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-[16px] font-semibold">{t(track.labelKey)}</h3>
-                  <Link
-                    to="/{-$locale}/leaderboard/$track"
-                    params={{ track: slug }}
-                    className="text-[13px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
-                  >
-                    {t('leaderboard.track.compareAll')} →
-                  </Link>
+                  <h3 className="text-[16px] font-semibold">
+                    <Link
+                      to="/{-$locale}/leaderboard/$track"
+                      params={{ track: slug }}
+                      className="hover:text-primary"
+                    >
+                      {t(track.labelKey)}
+                    </Link>
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <Link
+                      to="/{-$locale}/leaderboard/$track"
+                      params={{ track: slug }}
+                      className="text-[13px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+                    >
+                      {t('linking.board.full', { track: t(track.labelKey) })} →
+                    </Link>
+                    {bestCategory ? (
+                      <Link
+                        to="/{-$locale}/best/$category"
+                        params={{ category: bestCategory }}
+                        className="text-[13px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+                      >
+                        {bestCategoryLabel(t, bestCategory)} →
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
                 <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-fg-2">
                   {t(track.scopeKey)}
@@ -83,7 +106,13 @@ export function Methodology() {
                         return (
                           <tr key={core.id} className="border-b border-border/60 last:border-0">
                             <td className="px-4 py-2">
-                              {benchmark?.name ?? core.id}
+                              <Link
+                                to="/{-$locale}/benchmarks/$slug"
+                                params={{ slug: core.id }}
+                                className="text-foreground hover:text-primary"
+                              >
+                                {benchmark?.name ?? core.id}
+                              </Link>
                               {benchmark?.version && (
                                 <span className="ml-2 text-[11px] text-fg-3">
                                   {benchmark.version}
@@ -130,7 +159,7 @@ export function Methodology() {
             hash="data-quality-sources"
             className="text-[14px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
           >
-            {t('leaderboard.methodology.sourcesLink')} →
+            {t('linking.methodology.sourcesLink')} →
           </Link>
           <Link
             to="/{-$locale}/data-quality"

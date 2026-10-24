@@ -8,6 +8,11 @@ import type { Series } from '../types'
 /**
  * One line on the `/series` index: how many versions it has, what the newest
  * one costs, and what the cheapest option in the line is.
+ *
+ * The card's **title is its only anchor**: the anchor text is the line's own
+ * name, so a crawler knows exactly where the link goes (the whole card used
+ * to be one link, whose text was every number on the card). The stretched
+ * link keeps the card itself clickable.
  */
 export function SeriesIndexCard({ series, rows }: { series: Series; rows: SeriesRow[] }) {
   const { t } = useTranslation()
@@ -15,14 +20,18 @@ export function SeriesIndexCard({ series, rows }: { series: Series; rows: Series
   const cheapest = rows.find((row) => row.isCheapest)
 
   return (
-    <Link
-      to="/{-$locale}/series/$slug"
-      params={{ slug: series.slug }}
-      className="group block rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-soft/40"
-    >
+    <article className="group relative rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-soft/40">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-[16px] font-semibold text-foreground">{series.name}</h3>
+          <h3 className="text-[16px] font-semibold text-foreground">
+            <Link
+              to="/{-$locale}/series/$slug"
+              params={{ slug: series.slug }}
+              className="after:absolute after:inset-0 after:content-[''] hover:text-primary"
+            >
+              {series.name}
+            </Link>
+          </h3>
           <p className="mt-0.5 text-[12px] text-fg-3">
             {t(VENDOR_LABEL_KEY[series.vendor])} · {t('series.versionCount', { n: rows.length })}
           </p>
@@ -57,6 +66,6 @@ export function SeriesIndexCard({ series, rows }: { series: Series; rows: Series
           </dd>
         </div>
       </dl>
-    </Link>
+    </article>
   )
 }

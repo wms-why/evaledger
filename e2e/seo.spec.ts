@@ -32,7 +32,7 @@ const SAMPLE_PAGES = [
   COMPARE_PAIR_ROUTES[0]?.path ?? '/compare',
   // A series *line*, not the index — the index is already sampled above.
   SERIES_ROUTES.find((route) => route.path !== '/series')?.path ?? '/series',
-  '/token-calculator',
+  '/token-cost-calculator',
 ]
 
 /**
@@ -109,8 +109,12 @@ test.describe('the machine-readable endpoints', () => {
         `${origin}/zh${path === '/' ? '' : path}`,
       )
     }
-    // The core list is short — that is the whole point of the split.
-    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(32)
+    // The core list is short — that is the whole point of the split. It grew
+    // by exactly the four new per-provider pricing landings (Gemini, Grok,
+    // MiniMax, Kimi): a pricing page carries the vendor name people actually
+    // type, so it is the one long-tail family that earns a place here. The
+    // node-side caps live in `sitemap-core.node.test.ts` (26 en / 12 zh).
+    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(37)
   })
 
   test('/sitemap-core.xml is the same list as /sitemap.xml', async ({ page }) => {

@@ -90,6 +90,30 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 - Never auto-merge prices. `cacheWrite` / `longContext` / `peakOffPeak` / `promo` / `status` are human-only.
 - See `scripts/prices/README.md` for selector-debugging workflow and provider mapping.
 
+## A model launch is a changelog entry
+
+**Rule: every time new model information is scraped, a changelog record is
+produced — never skip it.** The `/changelog` page is published site content
+(a file in `src/content/changelog/`, reviewed in a diff), so the scraper
+**never** writes there. It writes a **changelog draft** next to the release
+draft; a human fills it in and moves it when the launch ships.
+
+- `pnpm releases:fetch` now emits, per scraped vendor, both the release draft
+  and a changelog draft at `data/release-drafts/changelog/<slug>.md` (+
+  `<slug>.changelog.json`). The two share one slug so a reviewer can never
+  lose track of which model a draft belongs to.
+- The changelog draft is skeletal: `title` / `description` / `version` are
+  TODO placeholders (`version` stays `TBD` — the release train is a human
+  decision), `published` stays `false`, and the body lists only the facts the
+  scraper extracted. **No prices, no benchmarks** — quote them by reference
+  to REGISTRY / LEADERBOARD, never hand-copied.
+- When the launch ships: fill the draft, move it to
+  `src/content/changelog/<version>-<slug>.md` (+ `.zh.md`), flip
+  `published: true`, and run `pnpm typecheck && pnpm test`.
+- The rule is enforced in code (`scripts/releases/changelog.ts`, tested in
+  `scripts/releases/__tests__/changelog.node.test.ts`) and documented in
+  `scripts/releases/README.md` §"Changelog drafts".
+
 ## A price is a timeline, not a number
 
 A model with a promotion is not "one price" — it is a timeline. The registry
@@ -131,7 +155,7 @@ The join keys:
 
 | Change | What must move with it |
 | --- | --- |
-| A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) + a member row in the series it belongs to (`src/features/series/series.ts`) |
+| A model ships | A REGISTRY entry + a LEADERBOARD row + a release page (en **and** zh) + a member row in the series it belongs to (`src/features/series/series.ts`) + a changelog entry (en **and** zh) in `src/content/changelog/` |
 | A checkpoint ships (same SKU, new weights) | **A separate record, never a merged one**: a new REGISTRY row (the old checkpoint flips to `status: 'delisted'` and keeps its price), a new LEADERBOARD row (the old row keeps its scores), and a new release page — the two pages cross-link. Never fold two checkpoints' scores into one row, and never let one article quote the other checkpoint's numbers |
 | A price changes | The REGISTRY price + `lastVerified` = today + `REGISTRY.fetchedAt` = today + every affected release page re-read with its `dataCheckedAt` bumped to today |
 | A score is corrected or added | The LEADERBOARD score (+ a `history` snapshot when it overwrites one) + every affected release page re-read with its `dataCheckedAt` bumped to today |
@@ -247,7 +271,10 @@ launch, rewritten as a cost-and-switch analysis. Full contract in
   or leaves a leaderboard model without a release page.
 - **Drafting:** `pnpm releases:fetch` scrapes the vendor announcement into
   `data/release-drafts/` — drafts only, never `src/content/releases/`, never
-  prices or conclusions.
+  prices or conclusions. Per the "A model launch is a changelog entry" rule,
+  it also emits a changelog draft into `data/release-drafts/changelog/`; a
+  human fills it in and moves it to `src/content/changelog/` when the launch
+  ships.
 
 ## Model Series (`/series`)
 

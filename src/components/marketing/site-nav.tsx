@@ -15,26 +15,38 @@ const LOCALE_SEGMENT = '/{-$locale}'
  * Header links. `also` lists locale-less paths that belong to the same surface
  * but live on their own SEO URL (e.g. the calculator's per-provider landings),
  * so the current item still lights up there.
+ *
+ * Every `to` is a **canonical** path: `/token-cost-calculator` is the
+ * calculator's canonical URL and `/token-calculator` is its 301 alias, so the
+ * header points at the canonical one.
+ *
+ * The labels live in the chrome's own dictionary (`site.nav.*`) rather than in
+ * the feature dictionaries: the Chinese labels are search terms
+ * (大模型排行榜 / Token 价格计算器 / 评分标准 …), not a literal translation of
+ * the English.
  */
 const NAV_ITEMS = [
-  { to: '/{-$locale}', labelKey: 'leaderboard.navBoard', also: ['/leaderboard-history'] },
-  { to: '/{-$locale}/compare', labelKey: 'leaderboard.navCompare', also: [] },
+  { to: '/{-$locale}', labelKey: 'site.nav.board', also: ['/leaderboard-history'] },
+  { to: '/{-$locale}/compare', labelKey: 'site.nav.compare', also: [] },
   {
-    to: '/{-$locale}/token-calculator',
-    labelKey: 'leaderboard.navCalculator',
+    to: '/{-$locale}/token-cost-calculator',
+    labelKey: 'site.nav.calculator',
     also: [
-      '/token-cost-calculator',
       '/claude-token-cost-calculator',
       '/chatgpt-api-pricing',
       '/deepseek-api-pricing',
       '/openrouter-pricing-calculator',
+      '/gemini-api-pricing',
+      '/grok-api-pricing',
+      '/minimax-api-pricing',
+      '/kimi-api-pricing',
     ],
   },
-  { to: '/{-$locale}/releases', labelKey: 'releases.nav', also: [] },
-  { to: '/{-$locale}/series', labelKey: 'series.nav', also: [] },
-  { to: '/{-$locale}/methodology', labelKey: 'leaderboard.track.nav', also: [] },
-  { to: '/{-$locale}/data-quality', labelKey: 'dataQuality.title', also: [] },
-  { to: '/{-$locale}/changelog', labelKey: 'marketing.navChangelog', also: [] },
+  { to: '/{-$locale}/releases', labelKey: 'site.nav.releases', also: [] },
+  { to: '/{-$locale}/series', labelKey: 'site.nav.series', also: [] },
+  { to: '/{-$locale}/methodology', labelKey: 'site.nav.methodology', also: [] },
+  { to: '/{-$locale}/data-quality', labelKey: 'site.nav.dataQuality', also: [] },
+  { to: '/{-$locale}/changelog', labelKey: 'site.nav.changelog', also: [] },
 ] as const
 
 const LINK_CLASS = 'rounded-md px-3 py-2 text-[14px] font-normal transition-colors'

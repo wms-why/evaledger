@@ -12,6 +12,9 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ClaudeSubscriptionSection } from '@/features/calculator/components/ClaudeSubscriptionSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
+import { claudeFaq } from '@/features/calculator/copy'
+import { stripModelMarkers } from '@/features/calculator/model-links'
+import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 
 const rootRoute = getRouteApi('__root__')
@@ -41,25 +44,17 @@ export const Route = createFileRoute('/{-$locale}/claude-token-cost-calculator')
       description,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', category: 'Free' },
     }
+    // The FAQPage JSON-LD carries exactly the pairs the page renders, in
+    // the same order, so the structured data and the visible copy can never
+    // disagree. The answers are stripped of their model markers — schema.org
+    // takes plain text, and a `[[model:…]]` marker in a rich result is a bug.
     const faq = {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        dict.calculator.claudeFaq1Q, dict.calculator.claudeFaq1A,
-        dict.calculator.claudeFaq2Q, dict.calculator.claudeFaq2A,
-        dict.calculator.claudeFaq3Q, dict.calculator.claudeFaq3A,
-        dict.calculator.claudeFaq4Q, dict.calculator.claudeFaq4A,
-        dict.calculator.claudeFaq5Q, dict.calculator.claudeFaq5A,
-        dict.calculator.claudeFaq6Q, dict.calculator.claudeFaq6A,
-        dict.calculator.claudeFaq7Q, dict.calculator.claudeFaq7A,
-        dict.calculator.claudeFaq8Q, dict.calculator.claudeFaq8A,
-      ].reduce<{ q: string; a: string }[]>((acc, _, i, arr) => {
-        if (i % 2 === 0) acc.push({ q: arr[i] as string, a: arr[i + 1] as string })
-        return acc
-      }, []).map(({ q, a }) => ({
+      mainEntity: claudeFaq((key, params) => translate(dict, key, params)).map((entry) => ({
         '@type': 'Question',
-        name: q,
-        acceptedAnswer: { '@type': 'Answer', text: a },
+        name: entry.q,
+        acceptedAnswer: { '@type': 'Answer', text: stripModelMarkers(entry.a) },
       })),
     }
 
@@ -77,6 +72,7 @@ export const Route = createFileRoute('/{-$locale}/claude-token-cost-calculator')
 })
 
 function ClaudeCalculatorPage() {
+  const { t } = useTranslation()
   const { loggedIn } = Route.useLoaderData()
   const { theme } = rootRoute.useLoaderData()
   return (
@@ -87,8 +83,18 @@ function ClaudeCalculatorPage() {
         subtitleKey="calculator.subtitleClaude"
         fetchedAt={REGISTRY.fetchedAt}
       />
+      {/*
+        The page's own vendor first.
+
+        A visitor who searched "Claude token cost calculator" came for Claude's
+        prices, and the grid used to open on whichever model happened to be
+        cheapest across every provider — so the first thing they saw was some
+        other vendor's model. `initialModelId` derives the provider filter from
+        the model, so the grid opens on Anthropic; the cross-vendor rows stay
+        below, reachable with the "All providers" chip.
+      */}
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
-        <Calculator />
+        <Calculator initialModelId="claude-opus-5.5" />
       </div>
       <PricingTLDR />
       <ClaudeSubscriptionSection />
@@ -97,17 +103,8 @@ function ClaudeCalculatorPage() {
         id="faq"
         kickerKey="calculator.kicker"
         titleKey="calculator.faqTitle"
-        faqs={[
-          { qKey: 'calculator.claudeFaq1Q', aKey: 'calculator.claudeFaq1A' },
-          { qKey: 'calculator.claudeFaq2Q', aKey: 'calculator.claudeFaq2A' },
-          { qKey: 'calculator.claudeFaq3Q', aKey: 'calculator.claudeFaq3A' },
-          { qKey: 'calculator.claudeFaq4Q', aKey: 'calculator.claudeFaq4A' },
-          { qKey: 'calculator.claudeFaq5Q', aKey: 'calculator.claudeFaq5A' },
-          { qKey: 'calculator.claudeFaq6Q', aKey: 'calculator.claudeFaq6A' },
-          { qKey: 'calculator.claudeFaq7Q', aKey: 'calculator.claudeFaq7A' },
-          { qKey: 'calculator.claudeFaq8Q', aKey: 'calculator.claudeFaq8A' },
-        ]}
-      />
+        faqs={claudeFaq(t).map((entry) => ({ qKey: entry.q, aKey: entry.a, translated: true, linkModels: true }))}
+/>
       <RelatedCalculators exclude="claude" />
       <Footer theme={theme} />
     </div>

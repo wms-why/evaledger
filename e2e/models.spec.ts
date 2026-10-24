@@ -152,11 +152,17 @@ test.describe('model pages', () => {
     await visit(page, '/zh/models/gpt-6-astra')
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(model.displayName)
+    // Level 2 and exact: the footer's new "价格与计算器" column is an <h4>
+    // whose text contains "价格", so an unscoped substring match finds it too.
     await expect(
-      page.getByRole('heading', { name: t('zh', 'leaderboard.model.pricing') }),
+      page.getByRole('heading', {
+        name: t('zh', 'leaderboard.model.pricing'),
+        level: 2,
+        exact: true,
+      }),
     ).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: t('zh', 'leaderboard.model.scores') }),
+      page.getByRole('heading', { name: t('zh', 'leaderboard.model.scores'), level: 2 }),
     ).toBeVisible()
 
     expect(pageErrors).toEqual([])

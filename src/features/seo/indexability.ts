@@ -2,6 +2,7 @@ import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { findTrack, rankTrack } from '@/features/leaderboard/scoring'
 import { findSeries, findSeriesPair } from '@/features/series/select'
+import { isAliasPath } from './aliases'
 
 /**
  * Which pages this site is willing to have indexed.
@@ -133,6 +134,11 @@ export function isIndexableTrack(trackSlug: string): boolean {
  */
 export function isIndexablePath(path: string): boolean {
   const clean = path.split('?')[0].split('#')[0].replace(/^\/(en|zh)/, '') || '/'
+
+  // An alias is a redirect, not a page: it must never compete for the index
+  // budget, and it must never appear in a sitemap (the canonical address it
+  // points at is the one that gets indexed).
+  if (isAliasPath(clean)) return false
 
   let match = /^\/benchmarks\/([^/]+)\/history$/.exec(clean)
   if (match) return isIndexableBenchmarkHistory(match[1])

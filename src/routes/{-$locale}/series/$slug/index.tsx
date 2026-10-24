@@ -5,6 +5,7 @@ import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
+import { VENDOR_LABEL_KEY } from '@/features/leaderboard/vendors'
 import { SeriesChanges } from '@/features/series/components/SeriesChanges'
 import { SeriesCostCalc } from '@/features/series/components/SeriesCostCalc'
 import { SeriesScoreMatrix } from '@/features/series/components/SeriesScoreMatrix'
@@ -13,8 +14,8 @@ import { SeriesWhichToUse } from '@/features/series/components/SeriesWhichToUse'
 import { SeriesLadder } from '@/features/series/components/SeriesLadder'
 import { seriesRows, seriesScoreModels, seriesSteps, seriesVerdict } from '@/features/series/data'
 import { findSeries, seriesPairs } from '@/features/series/select'
+import { seriesRelease, vendorPricingPage } from '@/features/series/vendor-links'
 import { getReleases } from '@/features/releases/releases.fns'
-import { pickPrimaryRelease } from '@/features/releases/primary-post'
 
 /**
  * One product line, every version of it, side by side.
@@ -36,17 +37,12 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
       getOptionalUser(),
       getReleases({ data: locale }),
     ])
-    const memberIds = new Set(series.members.flatMap((m) => [m.priceId, m.scoreId]))
-    // Prefer the line's launch analyses over a later piece that mentions the
-    // same weights (see `pickPrimaryRelease`).
-    const relatedRelease = pickPrimaryRelease(
-      releases.filter(
-        (entry) =>
-          (entry.modelSlug && memberIds.has(entry.modelSlug)) ||
-          memberIds.has(entry.modelId),
-      ),
-    )
-    // Pairs are resolved against the live rows so the links carry the current
+    // The line's own launch analysis: the newest member's post when it has
+    // one, matched by the model's registry / leaderboard id — never by a
+    // guessed slug (see `seriesRelease`).
+    const relatedRelease = seriesRelease(releases, series.members)
+    // The vendor's own pricing landing — derived from the line's `vendor`.
+    const pricingPage = vendorPricingPage(series.vendor)    // Pairs are resolved against the live rows so the links carry the current
     // display names, not the registry ids.
     const pairs = seriesPairs(series)
       .map((pair) => {
@@ -69,6 +65,7 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
       relatedRelease: relatedRelease
         ? { slug: relatedRelease.slug, title: relatedRelease.title }
         : undefined,
+      pricingPage: pricingPage ?? undefined,
     }
   },
   head: ({ loaderData, params }) => {
@@ -113,7 +110,8 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
 })
 
 function SeriesPage() {
-  const { series, rows, steps, verdict, scoreModels, pairs, relatedRelease } = Route.useLoaderData()
+  const { series, rows, steps, verdict, scoreModels, pairs, relatedRelease, pricingPage } =
+    Route.useLoaderData()
   const { t } = useTranslation()
 
   return (
@@ -199,20 +197,38 @@ function SeriesPage() {
         </div>
       </section>
 
-      {relatedRelease ? (
+      {relatedRelease || pricingPage ? (
         <aside className="rounded-[12px] border border-border bg-bg-alt/40 p-5">
           <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-fg-3">
-            {t('series.releaseAnalysis')}
+            {t('site.series.nextTitle')}
           </p>
-          <p className="mt-2 text-[15px] font-medium">
-            <Link
-              to="/{-$locale}/releases/$slug"
-              params={{ slug: relatedRelease.slug }}
-              className="hover:text-primary"
-            >
-              {relatedRelease.title}
-            </Link>
-          </p>
+          <ul className="mt-3 space-y-3">
+            {pricingPage ? (
+              <li>
+                <Link
+                  to={pricingPage.to}
+                  className="text-[15px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground"
+                >
+                  {t(pricingPage.labelKey)} →
+                </Link>
+                <p className="mt-0.5 text-[12.5px] text-fg-3">
+                  {t('site.series.pricingTitle')} · {t(VENDOR_LABEL_KEY[series.vendor])}
+                </p>
+              </li>
+            ) : null}
+            {relatedRelease ? (
+              <li>
+                <Link
+                  to="/{-$locale}/releases/$slug"
+                  params={{ slug: relatedRelease.slug }}
+                  className="text-[15px] font-medium underline decoration-dotted underline-offset-2 hover:text-primary"
+                >
+                  {relatedRelease.title} →
+                </Link>
+                <p className="mt-0.5 text-[12.5px] text-fg-3">{t('site.series.releaseTitle')}</p>
+              </li>
+            ) : null}
+          </ul>
         </aside>
       ) : null}
 

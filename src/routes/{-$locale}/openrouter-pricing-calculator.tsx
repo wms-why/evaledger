@@ -12,6 +12,9 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { OpenRouterSection } from '@/features/calculator/components/OpenRouterSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
+import { openrouterFaq } from '@/features/calculator/copy'
+import { stripModelMarkers } from '@/features/calculator/model-links'
+import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 
 const rootRoute = getRouteApi('__root__')
@@ -41,25 +44,17 @@ export const Route = createFileRoute('/{-$locale}/openrouter-pricing-calculator'
       description,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', category: 'Free' },
     }
+    // The FAQPage JSON-LD carries exactly the pairs the page renders, in
+    // the same order, so the structured data and the visible copy can never
+    // disagree. The answers are stripped of their model markers — schema.org
+    // takes plain text, and a `[[model:…]]` marker in a rich result is a bug.
     const faq = {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        dict.calculator.openrouterFaq1Q, dict.calculator.openrouterFaq1A,
-        dict.calculator.openrouterFaq2Q, dict.calculator.openrouterFaq2A,
-        dict.calculator.openrouterFaq3Q, dict.calculator.openrouterFaq3A,
-        dict.calculator.openrouterFaq4Q, dict.calculator.openrouterFaq4A,
-        dict.calculator.openrouterFaq5Q, dict.calculator.openrouterFaq5A,
-        dict.calculator.openrouterFaq6Q, dict.calculator.openrouterFaq6A,
-        dict.calculator.openrouterFaq7Q, dict.calculator.openrouterFaq7A,
-        dict.calculator.openrouterFaq8Q, dict.calculator.openrouterFaq8A,
-      ].reduce<{ q: string; a: string }[]>((acc, _, i, arr) => {
-        if (i % 2 === 0) acc.push({ q: arr[i] as string, a: arr[i + 1] as string })
-        return acc
-      }, []).map(({ q, a }) => ({
+      mainEntity: openrouterFaq((key, params) => translate(dict, key, params)).map((entry) => ({
         '@type': 'Question',
-        name: q,
-        acceptedAnswer: { '@type': 'Answer', text: a },
+        name: entry.q,
+        acceptedAnswer: { '@type': 'Answer', text: stripModelMarkers(entry.a) },
       })),
     }
 
@@ -77,6 +72,7 @@ export const Route = createFileRoute('/{-$locale}/openrouter-pricing-calculator'
 })
 
 function OpenRouterCalculatorPage() {
+  const { t } = useTranslation()
   const { loggedIn } = Route.useLoaderData()
   const { theme } = rootRoute.useLoaderData()
   return (
@@ -97,17 +93,8 @@ function OpenRouterCalculatorPage() {
         id="faq"
         kickerKey="calculator.kicker"
         titleKey="calculator.faqTitle"
-        faqs={[
-          { qKey: 'calculator.openrouterFaq1Q', aKey: 'calculator.openrouterFaq1A' },
-          { qKey: 'calculator.openrouterFaq2Q', aKey: 'calculator.openrouterFaq2A' },
-          { qKey: 'calculator.openrouterFaq3Q', aKey: 'calculator.openrouterFaq3A' },
-          { qKey: 'calculator.openrouterFaq4Q', aKey: 'calculator.openrouterFaq4A' },
-          { qKey: 'calculator.openrouterFaq5Q', aKey: 'calculator.openrouterFaq5A' },
-          { qKey: 'calculator.openrouterFaq6Q', aKey: 'calculator.openrouterFaq6A' },
-          { qKey: 'calculator.openrouterFaq7Q', aKey: 'calculator.openrouterFaq7A' },
-          { qKey: 'calculator.openrouterFaq8Q', aKey: 'calculator.openrouterFaq8A' },
-        ]}
-      />
+        faqs={openrouterFaq(t).map((entry) => ({ qKey: entry.q, aKey: entry.a, translated: true, linkModels: true }))}
+/>
       <RelatedCalculators exclude="openrouter" />
       <Footer theme={theme} />
     </div>

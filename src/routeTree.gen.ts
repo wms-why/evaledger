@@ -25,8 +25,12 @@ import { Route as Char123LocaleChar125ChatgptApiPricingRouteImport } from './rou
 import { Route as Char123LocaleChar125ClaudeTokenCostCalculatorRouteImport } from './routes/{-$locale}/claude-token-cost-calculator'
 import { Route as Char123LocaleChar125DataQualityRouteImport } from './routes/{-$locale}/data-quality'
 import { Route as Char123LocaleChar125DeepseekApiPricingRouteImport } from './routes/{-$locale}/deepseek-api-pricing'
+import { Route as Char123LocaleChar125GeminiApiPricingRouteImport } from './routes/{-$locale}/gemini-api-pricing'
+import { Route as Char123LocaleChar125GrokApiPricingRouteImport } from './routes/{-$locale}/grok-api-pricing'
+import { Route as Char123LocaleChar125KimiApiPricingRouteImport } from './routes/{-$locale}/kimi-api-pricing'
 import { Route as Char123LocaleChar125LeaderboardHistoryRouteImport } from './routes/{-$locale}/leaderboard-history'
 import { Route as Char123LocaleChar125MethodologyRouteImport } from './routes/{-$locale}/methodology'
+import { Route as Char123LocaleChar125MinimaxApiPricingRouteImport } from './routes/{-$locale}/minimax-api-pricing'
 import { Route as Char123LocaleChar125OpenrouterPricingCalculatorRouteImport } from './routes/{-$locale}/openrouter-pricing-calculator'
 import { Route as Char123LocaleChar125PrivacyRouteImport } from './routes/{-$locale}/privacy'
 import { Route as Char123LocaleChar125SponsorRouteImport } from './routes/{-$locale}/sponsor'
@@ -52,7 +56,9 @@ import { Route as Char123LocaleChar125AppIndexRouteImport } from './routes/{-$lo
 import { Route as Char123LocaleChar125AppAccountRouteImport } from './routes/{-$locale}/app/account'
 import { Route as Char123LocaleChar125AppFeedbackRouteImport } from './routes/{-$locale}/app/feedback'
 import { Route as Char123LocaleChar125AppReportsRouteImport } from './routes/{-$locale}/app/reports'
+import { Route as Char123LocaleChar125BenchmarksIndexRouteImport } from './routes/{-$locale}/benchmarks/index'
 import { Route as Char123LocaleChar125BenchmarksSlugRouteRouteImport } from './routes/{-$locale}/benchmarks/$slug/route'
+import { Route as Char123LocaleChar125BestIndexRouteImport } from './routes/{-$locale}/best/index'
 import { Route as Char123LocaleChar125BestCategoryRouteImport } from './routes/{-$locale}/best/$category'
 import { Route as Char123LocaleChar125CompareIndexRouteImport } from './routes/{-$locale}/compare/index'
 import { Route as Char123LocaleChar125ComparePairRouteImport } from './routes/{-$locale}/compare/$pair'
@@ -155,6 +161,24 @@ const Char123LocaleChar125DeepseekApiPricingRoute =
     path: '/deepseek-api-pricing',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125GeminiApiPricingRoute =
+  Char123LocaleChar125GeminiApiPricingRouteImport.update({
+    id: '/gemini-api-pricing',
+    path: '/gemini-api-pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125GrokApiPricingRoute =
+  Char123LocaleChar125GrokApiPricingRouteImport.update({
+    id: '/grok-api-pricing',
+    path: '/grok-api-pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125KimiApiPricingRoute =
+  Char123LocaleChar125KimiApiPricingRouteImport.update({
+    id: '/kimi-api-pricing',
+    path: '/kimi-api-pricing',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125LeaderboardHistoryRoute =
   Char123LocaleChar125LeaderboardHistoryRouteImport.update({
     id: '/leaderboard-history',
@@ -165,6 +189,12 @@ const Char123LocaleChar125MethodologyRoute =
   Char123LocaleChar125MethodologyRouteImport.update({
     id: '/methodology',
     path: '/methodology',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125MinimaxApiPricingRoute =
+  Char123LocaleChar125MinimaxApiPricingRouteImport.update({
+    id: '/minimax-api-pricing',
+    path: '/minimax-api-pricing',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125OpenrouterPricingCalculatorRoute =
@@ -314,10 +344,22 @@ const Char123LocaleChar125AppReportsRoute =
     path: '/app/reports',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125BenchmarksIndexRoute =
+  Char123LocaleChar125BenchmarksIndexRouteImport.update({
+    id: '/benchmarks/',
+    path: '/benchmarks/',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125BenchmarksSlugRouteRoute =
   Char123LocaleChar125BenchmarksSlugRouteRouteImport.update({
     id: '/benchmarks/$slug',
     path: '/benchmarks/$slug',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125BestIndexRoute =
+  Char123LocaleChar125BestIndexRouteImport.update({
+    id: '/best/',
+    path: '/best/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125BestCategoryRoute =
@@ -415,8 +457,12 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
+  '/{-$locale}/gemini-api-pricing': typeof Char123LocaleChar125GeminiApiPricingRoute
+  '/{-$locale}/grok-api-pricing': typeof Char123LocaleChar125GrokApiPricingRoute
+  '/{-$locale}/kimi-api-pricing': typeof Char123LocaleChar125KimiApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
+  '/{-$locale}/minimax-api-pricing': typeof Char123LocaleChar125MinimaxApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -449,6 +495,8 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
+  '/{-$locale}/benchmarks/': typeof Char123LocaleChar125BenchmarksIndexRoute
+  '/{-$locale}/best/': typeof Char123LocaleChar125BestIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/series/': typeof Char123LocaleChar125SeriesIndexRoute
@@ -472,8 +520,12 @@ export interface FileRoutesByTo {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
+  '/{-$locale}/gemini-api-pricing': typeof Char123LocaleChar125GeminiApiPricingRoute
+  '/{-$locale}/grok-api-pricing': typeof Char123LocaleChar125GrokApiPricingRoute
+  '/{-$locale}/kimi-api-pricing': typeof Char123LocaleChar125KimiApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
+  '/{-$locale}/minimax-api-pricing': typeof Char123LocaleChar125MinimaxApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -504,6 +556,8 @@ export interface FileRoutesByTo {
   '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app': typeof Char123LocaleChar125AppIndexRoute
+  '/{-$locale}/benchmarks': typeof Char123LocaleChar125BenchmarksIndexRoute
+  '/{-$locale}/best': typeof Char123LocaleChar125BestIndexRoute
   '/{-$locale}/compare': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/series': typeof Char123LocaleChar125SeriesIndexRoute
@@ -530,8 +584,12 @@ export interface FileRoutesById {
   '/{-$locale}/claude-token-cost-calculator': typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   '/{-$locale}/data-quality': typeof Char123LocaleChar125DataQualityRoute
   '/{-$locale}/deepseek-api-pricing': typeof Char123LocaleChar125DeepseekApiPricingRoute
+  '/{-$locale}/gemini-api-pricing': typeof Char123LocaleChar125GeminiApiPricingRoute
+  '/{-$locale}/grok-api-pricing': typeof Char123LocaleChar125GrokApiPricingRoute
+  '/{-$locale}/kimi-api-pricing': typeof Char123LocaleChar125KimiApiPricingRoute
   '/{-$locale}/leaderboard-history': typeof Char123LocaleChar125LeaderboardHistoryRoute
   '/{-$locale}/methodology': typeof Char123LocaleChar125MethodologyRoute
+  '/{-$locale}/minimax-api-pricing': typeof Char123LocaleChar125MinimaxApiPricingRoute
   '/{-$locale}/openrouter-pricing-calculator': typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   '/{-$locale}/privacy': typeof Char123LocaleChar125PrivacyRoute
   '/{-$locale}/sponsor': typeof Char123LocaleChar125SponsorRoute
@@ -564,6 +622,8 @@ export interface FileRoutesById {
   '/{-$locale}/releases/$slug': typeof Char123LocaleChar125ReleasesSlugRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125AdminIndexRoute
   '/{-$locale}/app/': typeof Char123LocaleChar125AppIndexRoute
+  '/{-$locale}/benchmarks/': typeof Char123LocaleChar125BenchmarksIndexRoute
+  '/{-$locale}/best/': typeof Char123LocaleChar125BestIndexRoute
   '/{-$locale}/compare/': typeof Char123LocaleChar125CompareIndexRoute
   '/{-$locale}/releases/': typeof Char123LocaleChar125ReleasesIndexRoute
   '/{-$locale}/series/': typeof Char123LocaleChar125SeriesIndexRoute
@@ -591,8 +651,12 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
+    | '/{-$locale}/gemini-api-pricing'
+    | '/{-$locale}/grok-api-pricing'
+    | '/{-$locale}/kimi-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
+    | '/{-$locale}/minimax-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -625,6 +689,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin/'
     | '/{-$locale}/app/'
+    | '/{-$locale}/benchmarks/'
+    | '/{-$locale}/best/'
     | '/{-$locale}/compare/'
     | '/{-$locale}/releases/'
     | '/{-$locale}/series/'
@@ -648,8 +714,12 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
+    | '/{-$locale}/gemini-api-pricing'
+    | '/{-$locale}/grok-api-pricing'
+    | '/{-$locale}/kimi-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
+    | '/{-$locale}/minimax-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -680,6 +750,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin'
     | '/{-$locale}/app'
+    | '/{-$locale}/benchmarks'
+    | '/{-$locale}/best'
     | '/{-$locale}/compare'
     | '/{-$locale}/releases'
     | '/{-$locale}/series'
@@ -705,8 +777,12 @@ export interface FileRouteTypes {
     | '/{-$locale}/claude-token-cost-calculator'
     | '/{-$locale}/data-quality'
     | '/{-$locale}/deepseek-api-pricing'
+    | '/{-$locale}/gemini-api-pricing'
+    | '/{-$locale}/grok-api-pricing'
+    | '/{-$locale}/kimi-api-pricing'
     | '/{-$locale}/leaderboard-history'
     | '/{-$locale}/methodology'
+    | '/{-$locale}/minimax-api-pricing'
     | '/{-$locale}/openrouter-pricing-calculator'
     | '/{-$locale}/privacy'
     | '/{-$locale}/sponsor'
@@ -739,6 +815,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/releases/$slug'
     | '/{-$locale}/admin/'
     | '/{-$locale}/app/'
+    | '/{-$locale}/benchmarks/'
+    | '/{-$locale}/best/'
     | '/{-$locale}/compare/'
     | '/{-$locale}/releases/'
     | '/{-$locale}/series/'
@@ -878,6 +956,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125DeepseekApiPricingRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/gemini-api-pricing': {
+      id: '/{-$locale}/gemini-api-pricing'
+      path: '/gemini-api-pricing'
+      fullPath: '/{-$locale}/gemini-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125GeminiApiPricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/grok-api-pricing': {
+      id: '/{-$locale}/grok-api-pricing'
+      path: '/grok-api-pricing'
+      fullPath: '/{-$locale}/grok-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125GrokApiPricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/kimi-api-pricing': {
+      id: '/{-$locale}/kimi-api-pricing'
+      path: '/kimi-api-pricing'
+      fullPath: '/{-$locale}/kimi-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125KimiApiPricingRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/leaderboard-history': {
       id: '/{-$locale}/leaderboard-history'
       path: '/leaderboard-history'
@@ -890,6 +989,13 @@ declare module '@tanstack/react-router' {
       path: '/methodology'
       fullPath: '/{-$locale}/methodology'
       preLoaderRoute: typeof Char123LocaleChar125MethodologyRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/minimax-api-pricing': {
+      id: '/{-$locale}/minimax-api-pricing'
+      path: '/minimax-api-pricing'
+      fullPath: '/{-$locale}/minimax-api-pricing'
+      preLoaderRoute: typeof Char123LocaleChar125MinimaxApiPricingRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/openrouter-pricing-calculator': {
@@ -1067,11 +1173,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AppReportsRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/benchmarks/': {
+      id: '/{-$locale}/benchmarks/'
+      path: '/benchmarks'
+      fullPath: '/{-$locale}/benchmarks/'
+      preLoaderRoute: typeof Char123LocaleChar125BenchmarksIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/benchmarks/$slug': {
       id: '/{-$locale}/benchmarks/$slug'
       path: '/benchmarks/$slug'
       fullPath: '/{-$locale}/benchmarks/$slug'
       preLoaderRoute: typeof Char123LocaleChar125BenchmarksSlugRouteRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/best/': {
+      id: '/{-$locale}/best/'
+      path: '/best'
+      fullPath: '/{-$locale}/best/'
+      preLoaderRoute: typeof Char123LocaleChar125BestIndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/best/$category': {
@@ -1239,8 +1359,12 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125ClaudeTokenCostCalculatorRoute: typeof Char123LocaleChar125ClaudeTokenCostCalculatorRoute
   Char123LocaleChar125DataQualityRoute: typeof Char123LocaleChar125DataQualityRoute
   Char123LocaleChar125DeepseekApiPricingRoute: typeof Char123LocaleChar125DeepseekApiPricingRoute
+  Char123LocaleChar125GeminiApiPricingRoute: typeof Char123LocaleChar125GeminiApiPricingRoute
+  Char123LocaleChar125GrokApiPricingRoute: typeof Char123LocaleChar125GrokApiPricingRoute
+  Char123LocaleChar125KimiApiPricingRoute: typeof Char123LocaleChar125KimiApiPricingRoute
   Char123LocaleChar125LeaderboardHistoryRoute: typeof Char123LocaleChar125LeaderboardHistoryRoute
   Char123LocaleChar125MethodologyRoute: typeof Char123LocaleChar125MethodologyRoute
+  Char123LocaleChar125MinimaxApiPricingRoute: typeof Char123LocaleChar125MinimaxApiPricingRoute
   Char123LocaleChar125OpenrouterPricingCalculatorRoute: typeof Char123LocaleChar125OpenrouterPricingCalculatorRoute
   Char123LocaleChar125PrivacyRoute: typeof Char123LocaleChar125PrivacyRoute
   Char123LocaleChar125SponsorRoute: typeof Char123LocaleChar125SponsorRoute
@@ -1264,6 +1388,8 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125ModelsSlugRoute: typeof Char123LocaleChar125ModelsSlugRoute
   Char123LocaleChar125ReleasesSlugRoute: typeof Char123LocaleChar125ReleasesSlugRoute
   Char123LocaleChar125AppIndexRoute: typeof Char123LocaleChar125AppIndexRoute
+  Char123LocaleChar125BenchmarksIndexRoute: typeof Char123LocaleChar125BenchmarksIndexRoute
+  Char123LocaleChar125BestIndexRoute: typeof Char123LocaleChar125BestIndexRoute
   Char123LocaleChar125CompareIndexRoute: typeof Char123LocaleChar125CompareIndexRoute
   Char123LocaleChar125ReleasesIndexRoute: typeof Char123LocaleChar125ReleasesIndexRoute
   Char123LocaleChar125SeriesIndexRoute: typeof Char123LocaleChar125SeriesIndexRoute
@@ -1282,9 +1408,17 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125DataQualityRoute: Char123LocaleChar125DataQualityRoute,
     Char123LocaleChar125DeepseekApiPricingRoute:
       Char123LocaleChar125DeepseekApiPricingRoute,
+    Char123LocaleChar125GeminiApiPricingRoute:
+      Char123LocaleChar125GeminiApiPricingRoute,
+    Char123LocaleChar125GrokApiPricingRoute:
+      Char123LocaleChar125GrokApiPricingRoute,
+    Char123LocaleChar125KimiApiPricingRoute:
+      Char123LocaleChar125KimiApiPricingRoute,
     Char123LocaleChar125LeaderboardHistoryRoute:
       Char123LocaleChar125LeaderboardHistoryRoute,
     Char123LocaleChar125MethodologyRoute: Char123LocaleChar125MethodologyRoute,
+    Char123LocaleChar125MinimaxApiPricingRoute:
+      Char123LocaleChar125MinimaxApiPricingRoute,
     Char123LocaleChar125OpenrouterPricingCalculatorRoute:
       Char123LocaleChar125OpenrouterPricingCalculatorRoute,
     Char123LocaleChar125PrivacyRoute: Char123LocaleChar125PrivacyRoute,
@@ -1319,6 +1453,9 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125ReleasesSlugRoute:
       Char123LocaleChar125ReleasesSlugRoute,
     Char123LocaleChar125AppIndexRoute: Char123LocaleChar125AppIndexRoute,
+    Char123LocaleChar125BenchmarksIndexRoute:
+      Char123LocaleChar125BenchmarksIndexRoute,
+    Char123LocaleChar125BestIndexRoute: Char123LocaleChar125BestIndexRoute,
     Char123LocaleChar125CompareIndexRoute:
       Char123LocaleChar125CompareIndexRoute,
     Char123LocaleChar125ReleasesIndexRoute:

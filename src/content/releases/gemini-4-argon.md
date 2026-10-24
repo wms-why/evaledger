@@ -74,4 +74,4 @@ published: true
 - **Google's evaluation methodology — the source of every score and caveat above** — https://deepmind.google/models/evals-methodology/gemini-4-argon
 - **The model card** — https://deepmind.google/models/model-cards/gemini-4-argon/
 - **The API pricing page** — https://ai.google.dev/gemini-api/docs/pricing
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)

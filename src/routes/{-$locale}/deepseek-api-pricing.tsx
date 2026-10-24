@@ -12,6 +12,9 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { DeepSeekSection } from '@/features/calculator/components/DeepSeekSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
+import { deepseekFaq } from '@/features/calculator/copy'
+import { stripModelMarkers } from '@/features/calculator/model-links'
+import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 
 const rootRoute = getRouteApi('__root__')
@@ -41,25 +44,17 @@ export const Route = createFileRoute('/{-$locale}/deepseek-api-pricing')({
       description,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', category: 'Free' },
     }
+    // The FAQPage JSON-LD carries exactly the pairs the page renders, in
+    // the same order, so the structured data and the visible copy can never
+    // disagree. The answers are stripped of their model markers — schema.org
+    // takes plain text, and a `[[model:…]]` marker in a rich result is a bug.
     const faq = {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        dict.calculator.deepseekFaq1Q, dict.calculator.deepseekFaq1A,
-        dict.calculator.deepseekFaq2Q, dict.calculator.deepseekFaq2A,
-        dict.calculator.deepseekFaq3Q, dict.calculator.deepseekFaq3A,
-        dict.calculator.deepseekFaq4Q, dict.calculator.deepseekFaq4A,
-        dict.calculator.deepseekFaq5Q, dict.calculator.deepseekFaq5A,
-        dict.calculator.deepseekFaq6Q, dict.calculator.deepseekFaq6A,
-        dict.calculator.deepseekFaq7Q, dict.calculator.deepseekFaq7A,
-        dict.calculator.deepseekFaq8Q, dict.calculator.deepseekFaq8A,
-      ].reduce<{ q: string; a: string }[]>((acc, _, i, arr) => {
-        if (i % 2 === 0) acc.push({ q: arr[i] as string, a: arr[i + 1] as string })
-        return acc
-      }, []).map(({ q, a }) => ({
+      mainEntity: deepseekFaq((key, params) => translate(dict, key, params)).map((entry) => ({
         '@type': 'Question',
-        name: q,
-        acceptedAnswer: { '@type': 'Answer', text: a },
+        name: entry.q,
+        acceptedAnswer: { '@type': 'Answer', text: stripModelMarkers(entry.a) },
       })),
     }
 
@@ -77,6 +72,7 @@ export const Route = createFileRoute('/{-$locale}/deepseek-api-pricing')({
 })
 
 function DeepSeekPricingPage() {
+  const { t } = useTranslation()
   const { loggedIn } = Route.useLoaderData()
   const { theme } = rootRoute.useLoaderData()
   return (
@@ -87,8 +83,14 @@ function DeepSeekPricingPage() {
         subtitleKey="calculator.subtitleDeepseek"
         fetchedAt={REGISTRY.fetchedAt}
       />
+      {/*
+        The page's own vendor first — see the note on the Claude page. The
+        reader who searched "DeepSeek API pricing" came for DeepSeek's prices,
+        and the grid opens on the V4.1-Flash row with V4-Pro and the
+        cross-vendor rows below.
+      */}
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
-        <Calculator />
+        <Calculator initialModelId="deepseek-flash" />
       </div>
       <PricingTLDR itemsKey="calculator.deepseekTldrItems" />
       <DeepSeekSection />
@@ -97,17 +99,8 @@ function DeepSeekPricingPage() {
         id="faq"
         kickerKey="calculator.kicker"
         titleKey="calculator.faqTitle"
-        faqs={[
-          { qKey: 'calculator.deepseekFaq1Q', aKey: 'calculator.deepseekFaq1A' },
-          { qKey: 'calculator.deepseekFaq2Q', aKey: 'calculator.deepseekFaq2A' },
-          { qKey: 'calculator.deepseekFaq3Q', aKey: 'calculator.deepseekFaq3A' },
-          { qKey: 'calculator.deepseekFaq4Q', aKey: 'calculator.deepseekFaq4A' },
-          { qKey: 'calculator.deepseekFaq5Q', aKey: 'calculator.deepseekFaq5A' },
-          { qKey: 'calculator.deepseekFaq6Q', aKey: 'calculator.deepseekFaq6A' },
-          { qKey: 'calculator.deepseekFaq7Q', aKey: 'calculator.deepseekFaq7A' },
-          { qKey: 'calculator.deepseekFaq8Q', aKey: 'calculator.deepseekFaq8A' },
-        ]}
-      />
+        faqs={deepseekFaq(t).map((entry) => ({ qKey: entry.q, aKey: entry.a, translated: true, linkModels: true }))}
+/>
       <RelatedCalculators exclude="deepseek" />
       <Footer theme={theme} />
     </div>

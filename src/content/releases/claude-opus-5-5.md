@@ -57,7 +57,7 @@ published: true
 
 ## Where to go next
 
-- **Run your own numbers** — price Opus 5.5, Sonnet 5 and Haiku 4.5 against your real mix: [/token-calculator](/token-calculator)
+- **Run your own numbers** — price Opus 5.5, Sonnet 5 and Haiku 4.5 against your real mix: [Token Cost Calculator](/token-cost-calculator)
 - **Two models, side by side** — [/compare](/compare)
 - **The Opus 5.5 model page, with all four scores** — [/models/claude-opus-5.5](/models/claude-opus-5.5)
 - **The previous generation, for the price delta** — [/models/claude-opus-5](/models/claude-opus-5)

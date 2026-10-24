@@ -82,7 +82,7 @@ export function PriceCell({
   if (view === 'calculator') {
     return (
       <Link
-        to="/{-$locale}/token-calculator"
+        to="/{-$locale}/token-cost-calculator"
         search={{ model: price.id }}
         className={cn(
           'text-[13px] font-medium text-primary underline decoration-dotted underline-offset-2 hover:text-foreground',

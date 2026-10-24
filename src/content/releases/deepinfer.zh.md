@@ -110,5 +110,5 @@ python examples/offline_inference.py --ep 2 --dp 8
 - **模型自己的发布解读** —— 1017 改了什么、值不值得换：[/releases/deepseek-v4-1-flash-1017](/releases/deepseek-v4-1-flash-1017)
 - **完整费率卡** —— 高峰、非高峰与缓存价，带生效日期区间：[/deepseek-api-pricing](/deepseek-api-pricing)
 - **跟前沿模型正面比** —— [/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol](/compare?a=deepseek-v4.1-flash-1017&b=gpt-5.6-sol)
-- **算一算你自己的流量** —— [/token-calculator](/token-calculator)
+- **算一算你自己的流量** —— [Token Cost Calculator](/token-cost-calculator)
 - **本页的事实来源** —— DeepInfer 仓库，2026-10-23 复核。价格来自 DeepSeek 定价页，2026-10-20 核验。

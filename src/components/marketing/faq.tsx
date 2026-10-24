@@ -1,8 +1,29 @@
 import { useTranslation } from '@/features/i18n/provider'
+import { LinkedText } from '@/features/calculator/components/LinkedText'
 
 export interface FAQItem {
   qKey: string
   aKey: string
+  /** Values the answer interpolates, resolved at render time. */
+  params?: Record<string, string | number>
+  /**
+   * Render the answer's model names as links.
+   *
+   * Off by default so every other page keeps its plain-text answers. The
+   * calculator pages turn it on: their answers name models, and a model name
+   * that is not a link is a dead end.
+   */
+  linkModels?: boolean
+  /**
+   * `qKey` / `aKey` already hold the **translated** strings.
+   *
+   * Set by the pages whose copy is built at render time from a registry (the
+   * calculator landings interpolate their numbers from the price registry, so
+   * they hold sentences rather than dictionary keys). Without it, `t()` would
+   * treat a sentence as a key and hand it back unchanged — which works by
+   * accident and breaks the day a sentence happens to collide with a key.
+   */
+  translated?: boolean
 }
 
 const DEFAULT_FAQS: FAQItem[] = [
@@ -45,13 +66,17 @@ export function FAQ({
           {t(titleKey)}
         </h2>
         <dl className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-border bg-card divide-y divide-border">
-          {faqs.map(({ qKey, aKey }) => (
+          {faqs.map(({ qKey, aKey, params, linkModels, translated }) => (
             <div key={qKey} className="px-6 py-5">
               <dt className="text-[17px] font-medium leading-snug text-foreground">
-                {t(qKey)}
+                {translated ? qKey : t(qKey)}
               </dt>
               <dd className="mt-2 text-[15px] leading-relaxed text-fg-2">
-                {t(aKey)}
+                {linkModels ? (
+                  <LinkedText text={translated ? aKey : t(aKey, params)} />
+                ) : (
+                  (translated ? aKey : t(aKey, params))
+                )}
               </dd>
             </div>
           ))}

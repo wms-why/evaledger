@@ -63,5 +63,5 @@ published: true
 - **The model page** — every score we hold, with the vendor-measurement caveat: [/models/minimax-m3.1-flash](/models/minimax-m3.1-flash)
 - **What DeepSWE measures** — [/benchmarks/deepswe-v1.1](/benchmarks/deepswe-v1.1)
 - **Head to head with the other Flash tier** — [/compare?a=minimax-m3.1-flash&b=deepseek-v4.1-flash](/compare?a=minimax-m3.1-flash&b=deepseek-v4.1-flash)
-- **Price your own traffic** — [/token-calculator](/token-calculator)
+- **Price your own traffic** — [Token Cost Calculator](/token-cost-calculator)
 - **Source of truth for this page** — the MiniMax M3.1 Flash launch post, with prices last verified on 2026-10-20.
