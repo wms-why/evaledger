@@ -1,9 +1,9 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { isIndexableSeriesLine } from '@/features/seo/indexability'
-import { jsonLd, localeHead } from '@/features/seo/seo'
+import { jsonLd, localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
 import { VENDOR_LABEL_KEY } from '@/features/leaderboard/vendors'
 import { SeriesChanges } from '@/features/series/components/SeriesChanges'
@@ -102,6 +102,11 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/')({
           description,
           itemListElement: items,
         }),
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.series'), path: '/series' },
+          { name, path },
+        ]),
       ],
     })
     return { meta, links }

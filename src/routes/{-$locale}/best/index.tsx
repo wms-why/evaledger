@@ -1,8 +1,8 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
-import { localeHead, jsonLd } from '@/features/seo/seo'
+import { localeHead, jsonLd, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, localizePath, translate, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { hubText } from '@/features/i18n/dictionaries/hub'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
@@ -45,7 +45,6 @@ export const Route = createFileRoute('/{-$locale}/best/')({
     const dict = dictionaries[locale]
     const title = hubString(locale, 'hub.best.title')
     const description = hubString(locale, 'hub.best.metaDescription')
-    const url = `${origin}${localizePath(locale, '/best')}`
 
     // The same Q/A pairs the page renders, so the structured data and the
     // visible copy can never drift apart.
@@ -59,24 +58,12 @@ export const Route = createFileRoute('/{-$locale}/best/')({
       })),
     }
 
-    const breadcrumbs = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: dict.common.appName,
-          item: `${origin}${localizePath(locale, '/')}`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: title,
-          item: url,
-        },
-      ],
-    }
+    // The shared builder — the same trail every other page in the hierarchy
+    // uses, so the hub's breadcrumb and a detail page's agree.
+    const breadcrumbs = breadcrumbLd(origin, locale, [
+      { name: dict.common.appName, path: '/' },
+      { name: title, path: '/best' },
+    ])
 
     const { meta, links, scripts } = localeHead({
       origin,
@@ -84,7 +71,7 @@ export const Route = createFileRoute('/{-$locale}/best/')({
       path: '/best',
       title: `${title} — ${dict.common.appName}`,
       description,
-      scripts: [jsonLd(faq), jsonLd(breadcrumbs)],
+      scripts: [jsonLd(faq), breadcrumbs],
     })
     return { meta, links, scripts }
   },

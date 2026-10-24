@@ -76,6 +76,16 @@ export const CORE_PATHS = [
   // The launch analysis of the newest model: what it costs, and what the
   // vendor's own numbers do and do not prove.
   '/releases/kimi-k3-1',
+  // The three pages that answer the searches the site's clusters are built
+  // around, and that had no entry until now:
+  //   - "LLM benchmark methodology"   → the scoring rules every board uses.
+  //   - "best LLM for coding"          → the use-case ranking itself.
+  //   - "best cheap model for coding"  → the same models, ordered by price.
+  // They are stable hub pages rather than one launch's long tail, so they
+  // earn a place in the bid on their own account.
+  '/methodology',
+  '/best/for-coding',
+  '/best/cheapest-coding',
 ] as const
 
 /**

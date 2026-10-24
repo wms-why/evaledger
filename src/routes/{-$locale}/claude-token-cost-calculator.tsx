@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ClaudeSubscriptionSection } from '@/features/calculator/components/ClaudeSubscriptionSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { claudeFaq } from '@/features/calculator/copy'
+import { claudeFaq, modelRateSummary } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -29,7 +29,10 @@ export const Route = createFileRoute('/{-$locale}/claude-token-cost-calculator')
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const title = dict.home.claudeTitle
+    // The rates are the registry's, resolved at render time.
+    const rates = modelRateSummary('claude-opus-5.5')
     const description = translate(dict, 'marketing.claudeMetaDescription', {
+      model: rates.model,
       date: REGISTRY.fetchedAt,
     })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/claude-token-cost-calculator`

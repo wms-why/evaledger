@@ -40,6 +40,11 @@ export const landing = {
       source: 'Source',
       updated: 'Prices as of {date}',
       promoNote: '{label} until {date}',
+      // The sentence the vendor FAQ appends when the rate in force is a
+      // temporary band. `promoNote` is the fragment the rate table shows in
+      // its notes column; this is the same fact told as a sentence, because
+      // it lands mid-paragraph at the end of an FAQ answer.
+      promoClause: 'This is the {label}, in force until {date}.',
       longContextNote: 'above {threshold} tokens: input ×{inputMult}, output ×{outputMult}',
       cacheWriteNote: 'cache write {rates}',
       tierNote: '{label} ×{multiplier}',
@@ -211,11 +216,20 @@ export const landing = {
       alternativesTitle: '{model} vs Alternatives',
       alternativesIntro:
         'Models in the same price tier, with the head-to-head page wherever one exists.',
-      compareLink: '{a} vs {b}',
-      modelLink: '{model} model page',
+      // The anchor text of the alternatives list. `{model}` is the model the
+      // reader is ON, `{other}` is the model being linked to — so the compare
+      // link reads "Claude Opus 5.5 vs GPT-6 Astra" and the model link reads
+      // "GPT-6 Astra model page". Both name their destination; neither leaves
+      // an interpolation hole for a reader to see.
+      compareLink: '{model} vs {other}',
+      modelLink: '{other} model page',
       alternativesEmpty: 'No other model sits in the same price tier yet.',
       factsTitle: 'What you pay for',
       factsPrice: 'Blended price',
+      // The VALUE of the blended-price tile. It is a separate key from the
+      // label because the label is a noun ("Blended price") and the value is
+      // the number ("$12.00") — one key cannot be both.
+      factsPriceValue: '{blended}',
       factsInput: 'Input /1M',
       factsOutput: 'Output /1M',
       factsCached: 'Cached input /1M',
@@ -243,6 +257,15 @@ export const landing = {
           '{model} sits in the middle of the price range — {blended} per 1M blended ({input} in, {output} out) — with {composite} on the {track} board, {rank} of {ranked}. Neither the cheapest nor the strongest: the pick depends on your workload.',
         unproven:
           '{model} is {blended} per 1M blended ({input} in, {output} out) — the {tier} of the {priced} models we price — and it has no board composite, so there is no score to weigh against the price. Judge it on the vendor’s own numbers.',
+        // A model with a score but no published API price. It must NOT reuse
+        // `unproven`: that sentence says "it has no board composite", which is
+        // the exact opposite of the truth here, and it would print an em-dash
+        // where a price should be.
+        unpriced:
+          '{model} scores {composite} on the {track} board — {rank} of {ranked} — but we have no published API price for it, so there is no cost to weigh against the score. Judge it on the vendor’s own numbers.',
+        // Neither a published price nor a board composite. Nothing to weigh.
+        unscored:
+          '{model} has no published API price and no board composite, so there is nothing here to weigh against anything. Judge it on the vendor’s own numbers.',
       },
     },
 
@@ -287,6 +310,7 @@ export const landing = {
       source: '来源',
       updated: '价格截至 {date}',
       promoNote: '{label}适用至 {date}',
+      promoClause: '当前是{label},适用至 {date}。',
       longContextNote: '超过 {threshold} token:输入 ×{inputMult},输出 ×{outputMult}',
       cacheWriteNote: '缓存写入 {rates}',
       tierNote: '{label} ×{multiplier}',
@@ -454,11 +478,12 @@ export const landing = {
         '结论由注册表价格与榜单综合分算出来,不是手写的:下面的数字就是它自己的价格和它自己的分数。',
       alternativesTitle: '{model} 与其他模型对比',
       alternativesIntro: '同一价格档位上的其他模型,能进入正面对比页的都会给链接。',
-      compareLink: '{a} 对比 {b}',
-      modelLink: '{model} 模型页',
+      compareLink: '{model} 对比 {other}',
+      modelLink: '{other} 模型页',
       alternativesEmpty: '暂时没有其他模型落在同一个价格档位。',
       factsTitle: '你要付的钱',
       factsPrice: '混合价',
+      factsPriceValue: '{blended}',
       factsInput: '输入 /1M',
       factsOutput: '输出 /1M',
       factsCached: '缓存输入 /1M',
@@ -486,6 +511,10 @@ export const landing = {
           '{model} 处在价格区间的中段——混合价 {blended} /1M(输入 {input},输出 {output})——{track} 榜 {composite} 分,{ranked} 个里排第 {rank}。既不是最便宜,也不是最强:选哪个取决于你的负载。',
         unproven:
           '{model} 的混合价是 {blended} /1M(输入 {input},输出 {output}),在我们收录的 {priced} 个模型里属于{tier}——而且它没有榜单综合分,没有分数可以和价格互相权衡。只能看厂商自己的数字。',
+        unpriced:
+          '{model} 在 {track} 榜上拿到 {composite} 分,{ranked} 个里排第 {rank}——但我们没有收录它的 API 价格,所以没有成本可以和分数互相权衡。只能看厂商自己的数字。',
+        unscored:
+          '{model} 既没有收录 API 价格,也没有榜单综合分,这里没有任何可以互相权衡的东西。只能看厂商自己的数字。',
       },
     },
 

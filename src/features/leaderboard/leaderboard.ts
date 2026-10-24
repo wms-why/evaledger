@@ -215,6 +215,18 @@ export interface BestCategory {
   kind?: BestCategoryKind
   /** For `context`: the minimum context window (in tokens) a model must reach. */
   minContext?: number
+  /**
+   * The benchmarks a model must be **measured on** to be listed at all.
+   *
+   * Only meaningful for an attribute-ranked page: the page still sorts by
+   * its own attribute (a price), but a model that was never measured on
+   * these benchmarks is not listed, because "cheap" and "can actually do
+   * the job" are two different questions and the page answers both.
+   *
+   * Empty (the default) means no gate — the page lists every model the
+   * attribute applies to.
+   */
+  gateBenchmarkIds?: string[]
 }
 
 export const BEST_CATEGORIES: BestCategory[] = [
@@ -261,6 +273,26 @@ export const BEST_CATEGORIES: BestCategory[] = [
     benchmarkIds: [],
     kind: 'cache',
   },
+  /**
+   * "Best cheap model for coding" — the intersection of the two questions
+   * the other two coding pages answer separately.
+   *
+   * `for-coding` ranks by SCORE among the models that clear the coding
+   * benchmarks; `cheapest-llms` ranks by PRICE among every model we price.
+   * Neither answers "which of the models that can actually do the job
+   * costs the least?" — so this page does, with the same gate as
+   * `for-coding` and the same ordering as `cheapest-llms`.
+   *
+   * The gate set is deliberately identical to `for-coding`: the two pages
+   * list the SAME models and differ only in the order, so a reader moving
+   * between them is never confused about which models are in play.
+   */
+  {
+    slug: 'cheapest-coding',
+    benchmarkIds: ['deepswe-v1.1', 'programbench', 'nl2repo-bench', 'terminal-bench-2.1'],
+    kind: 'price',
+    gateBenchmarkIds: ['deepswe-v1.1', 'programbench', 'nl2repo-bench', 'terminal-bench-2.1'],
+  },
 ]
 
 export function findBestCategory(slug: string): BestCategory | undefined {
@@ -298,10 +330,24 @@ export function categoryRows(category: BestCategory): CategoryRow[] {
   )
 
   switch (category.kind ?? 'score') {
-    case 'price':
-      return rows
+    case 'price': {
+      // The gate, when the page has one: a model is listed only if it was
+      // measured on EVERY gate benchmark. The SAME arithmetic the
+      // score-ranked pages use, so "clears the coding gate" means the same
+      // thing on both pages — and a model that was never measured is
+      // absent, never ranked last.
+      const gate = category.gateBenchmarkIds ?? []
+      const gated =
+        gate.length === 0
+          ? rows
+          : rows.filter((r) => {
+              const core: TrackBenchmark[] = gate.map((id) => ({ id, weight: 1 }))
+              return scoreAgainstCore(r.model, core).composite !== undefined
+            })
+      return gated
         .filter((r) => r.blendedPricePer1M != null)
         .sort((a, b) => (a.blendedPricePer1M as number) - (b.blendedPricePer1M as number))
+    }
 
     case 'context': {
       const min = category.minContext ?? 1_000_000

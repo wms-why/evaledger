@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ChatGPTSection } from '@/features/calculator/components/ChatGPTSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { chatgptFaq } from '@/features/calculator/copy'
+import { chatgptFaq, modelRateSummary } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -29,7 +29,15 @@ export const Route = createFileRoute('/{-$locale}/chatgpt-api-pricing')({
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const title = dict.home.chatgptTitle
+    // The rates are the registry's, resolved at render time — a price typed
+    // into a meta description is a claim that goes stale silently.
+    const rates = modelRateSummary('gpt-6-astra')
     const description = translate(dict, 'marketing.chatgptMetaDescription', {
+      model: rates.model,
+      input: rates.input,
+      output: rates.output,
+      cached: rates.cached,
+      cachedPct: rates.cachedPct,
       date: REGISTRY.fetchedAt,
     })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/chatgpt-api-pricing`

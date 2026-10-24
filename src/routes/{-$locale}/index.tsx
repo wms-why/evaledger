@@ -2,7 +2,7 @@ import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router'
 import { localeHead, jsonLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
@@ -33,7 +33,12 @@ export const Route = createFileRoute('/{-$locale}/')({
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const title = dict.leaderboard.home.title
-    const description = dict.leaderboard.home.metaDescription
+    // The model count is the registry's, not a literal: the description used
+    // to say "9 frontier LLMs" while the board carried 18, and nothing would
+    // have told the two apart except a reader counting the rows.
+    const description = translate(dict, 'leaderboard.home.metaDescription', {
+      n: LEADERBOARD.models.length,
+    })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}`
 
     const organization = {
@@ -139,21 +144,53 @@ function Home() {
 
         <section className="mt-14 border-t border-border pt-8">
           <h2 className="text-[15px] font-semibold">{t('leaderboard.home.browse')}</h2>
+          {/*
+            The browse row is the home page's link map, so it names every
+            cluster it points at: the capability boards, the use-case
+            rankings, the benchmark directory, the methodology, the
+            calculator, the comparison tool and the release series. The
+            anchor text is the destination's own name — a row of "Best
+            models" and "Benchmarks" told a crawler nothing it could use.
+          */}
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
-            <Link to="/{-$locale}/token-cost-calculator" className="text-primary hover:text-foreground">
+            <Link to="/{-$locale}/leaderboard/$track" params={{ track: 'coding' }} className="text-primary hover:text-foreground">
+              {t('linking.board.coding')}
+            </Link>
+            <Link to="/{-$locale}/leaderboard/$track" params={{ track: 'agent' }} className="text-fg-2 hover:text-primary">
+              {t('linking.board.agent')}
+            </Link>
+            <Link to="/{-$locale}/leaderboard/$track" params={{ track: 'reasoning' }} className="text-fg-2 hover:text-primary">
+              {t('linking.board.reasoning')}
+            </Link>
+            <Link to="/{-$locale}/best/$category" params={{ category: 'for-coding' }} className="text-fg-2 hover:text-primary">
+              {t('linking.best.forCoding')}
+            </Link>
+            <Link to="/{-$locale}/best/$category" params={{ category: 'for-agents' }} className="text-fg-2 hover:text-primary">
+              {t('linking.best.forAgents')}
+            </Link>
+            <Link to="/{-$locale}/best/$category" params={{ category: 'for-reasoning' }} className="text-fg-2 hover:text-primary">
+              {t('linking.best.forReasoning')}
+            </Link>
+            <Link to="/{-$locale}/best" className="text-fg-2 hover:text-primary">
+              {t('linking.home.browseBest')}
+            </Link>
+            <Link to="/{-$locale}/benchmarks" className="text-fg-2 hover:text-primary">
+              {t('linking.home.browseBenchmarks')}
+            </Link>
+            <Link to="/{-$locale}/methodology" className="text-fg-2 hover:text-primary">
+              {t('leaderboard.methodology.title')}
+            </Link>
+            <Link to="/{-$locale}/token-cost-calculator" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navCalculator')}
+            </Link>
+            <Link to="/{-$locale}/compare" className="text-fg-2 hover:text-primary">
+              {t('leaderboard.compare.title')}
             </Link>
             <Link to="/{-$locale}/releases" className="text-fg-2 hover:text-primary">
               {t('releases.nav')}
             </Link>
             <Link to="/{-$locale}/leaderboard-history" className="text-fg-2 hover:text-primary">
               {t('leaderboard.navHistory')}
-            </Link>
-            <Link to="/{-$locale}/benchmarks" className="text-fg-2 hover:text-primary">
-              {t('leaderboard.navBenchmarks')}
-            </Link>
-            <Link to="/{-$locale}/best" className="text-fg-2 hover:text-primary">
-              {t('leaderboard.navBest')}
             </Link>
           </div>
         </section>

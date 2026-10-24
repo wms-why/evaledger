@@ -1,6 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
+import { REGISTRY } from '@/features/calculator/model-prices'
+import { priceDetail } from '@/features/calculator/pricing-detail'
 import { categoryRows, getBenchmark, type BestCategory } from '../leaderboard'
+import { trackForBestCategory } from '../board-links'
+import { TRACKS } from '../scoring'
 import { PriceCell } from './PriceCell'
 
 /**
@@ -28,6 +32,11 @@ export function BestCategoryPage({ category }: { category: BestCategory }) {
   const { t } = useTranslation()
   const rows = categoryRows(category)
   const kind = category.kind ?? 'score'
+  // The capability board this page is the twin of, when there is one.
+  const track = trackForBestCategory(category.slug)
+  // The benchmarks a model must be measured on to be listed at all — set on
+  // an attribute-ranked page that also answers "can it do the job?".
+  const gate = category.gateBenchmarkIds ?? []
 
   return (
     <div className="space-y-8">
@@ -94,34 +103,38 @@ export function BestCategoryPage({ category }: { category: BestCategory }) {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, i) => (
-                <tr key={r.model.id} className="border-b border-border/60 last:border-0">
-                  <td className="px-4 py-2.5 tabular-nums text-fg-3">{i + 1}</td>
-                  <td className="px-4 py-2.5">
-                    <Link
-                      to="/{-$locale}/models/$slug"
-                      params={{ slug: r.model.id }}
-                      className="font-medium text-foreground hover:text-primary"
-                    >
-                      {r.model.displayName}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-foreground">
-                    {r.blendedPricePer1M != null ? `$${r.blendedPricePer1M}` : '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
-                    {r.price != null ? `$${r.price.inputPricePer1M}` : '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
-                    {r.price != null ? `$${r.price.outputPricePer1M}` : '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
-                    {r.price?.cachedInputPricePer1M != null
-                      ? `$${r.price.cachedInputPricePer1M}`
-                      : t('landing.best.noCachedRate')}
-                  </td>
-                </tr>
-              ))}
+              {rows.map((r, i) => {
+                // The rate IN FORCE, not the registry's base rate: a
+                // promotional band must not be quoted as the standing price.
+                // Same resolution the calculator charges with.
+                const detail = r.price ? priceDetail(r.price) : undefined
+                return (
+                  <tr key={r.model.id} className="border-b border-border/60 last:border-0">
+                    <td className="px-4 py-2.5 tabular-nums text-fg-3">{i + 1}</td>
+                    <td className="px-4 py-2.5">
+                      <Link
+                        to="/{-$locale}/models/$slug"
+                        params={{ slug: r.model.id }}
+                        className="font-medium text-foreground hover:text-primary"
+                      >
+                        {r.model.displayName}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-foreground">
+                      {r.blendedPricePer1M != null ? `$${r.blendedPricePer1M}` : '—'}
+                    </td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
+                      {detail ? `$${detail.input}` : '—'}
+                    </td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
+                      {detail ? `$${detail.output}` : '—'}
+                    </td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
+                      {detail?.cached != null ? `$${detail.cached}` : t('landing.best.noCachedRate')}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -213,30 +226,97 @@ export function BestCategoryPage({ category }: { category: BestCategory }) {
         </div>
       )}
 
-      {kind === 'score' && (
+      {(kind === 'score' || gate.length > 0) && (
         <p className="text-[12px] text-fg-3">
           {t('leaderboard.best.scoredOn')}:{' '}
-          {category.benchmarkIds.map((id) => getBenchmark(id)?.name ?? id).join(', ')} ·{' '}
+          <BenchmarkLinks ids={kind === 'score' ? category.benchmarkIds : gate} /> ·{' '}
+          {track ? (
+            <Link
+              to="/{-$locale}/leaderboard/$track"
+              params={{ track }}
+              className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+            >
+              {/* The TRACK's own label ("Coding"), not the board link's
+                  ("Best coding LLMs") — "See the full Coding leaderboard"
+                  reads as a sentence, the other does not. */}
+              {t('linking.board.full', { track: t(TRACKS[track].labelKey) })}
+            </Link>
+          ) : (
+            <Link
+              to="/{-$locale}"
+              className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+            >
+              {t('leaderboard.best.fullBoard')}
+            </Link>
+          )}{' '}
+          ·{' '}
           <Link
-            to="/{-$locale}"
+            to="/{-$locale}/best"
             className="underline decoration-dotted underline-offset-2 hover:text-foreground"
           >
-            {t('leaderboard.best.fullBoard')}
+            {t('linking.breadcrumb.best')}
           </Link>
         </p>
       )}
 
       {kind !== 'score' && (
         <p className="text-[12px] text-fg-3">
-          {t(`landing.best.caption${kind === 'price' ? 'Price' : kind === 'context' ? 'Context' : 'Cache'}`)} ·{' '}
+          {t(
+            `landing.best.caption${kind === 'price' ? 'Price' : kind === 'context' ? 'Context' : 'Cache'}`,
+            // The caption states WHEN the rate is the one in force and HOW BIG
+            // the context threshold is — both are facts, not copy, so they
+            // come from the registry and the category, never from a literal.
+            kind === 'price'
+              ? { date: REGISTRY.fetchedAt.slice(0, 10) }
+              : kind === 'context'
+                ? { threshold: (category.minContext ?? 1_000_000).toLocaleString('en-US') }
+                : {},
+          )}{' '}
+          ·{' '}
           <Link
             to="/{-$locale}"
             className="underline decoration-dotted underline-offset-2 hover:text-foreground"
           >
             {t('leaderboard.best.fullBoard')}
+          </Link>{' '}
+          ·{' '}
+          <Link
+            to="/{-$locale}/best"
+            className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+          >
+            {t('linking.breadcrumb.best')}
           </Link>
         </p>
       )}
     </div>
+  )
+}
+
+/**
+ * The benchmarks a category ranks on, each one a link to its own page.
+ *
+ * A benchmark name in a table is a link everywhere else on the site — the
+ * board, the comparison matrix, the model page, the `/best` hub — so the
+ * category page is the one place that must not leave the name as plain text.
+ */
+function BenchmarkLinks({ ids }: { ids: string[] }) {
+  return (
+    <>
+      {ids.map((id, index) => {
+        const benchmark = getBenchmark(id)
+        return (
+          <span key={id}>
+            {index > 0 && ' · '}
+            <Link
+              to="/{-$locale}/benchmarks/$slug"
+              params={{ slug: id }}
+              className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+            >
+              {benchmark?.name ?? id}
+            </Link>
+          </span>
+        )
+      })}
+    </>
   )
 }

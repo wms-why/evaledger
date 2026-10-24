@@ -243,4 +243,48 @@ describe('the best-of category pages', () => {
       expect(rows[i - 1]!.cacheDiscountPct!).toBeGreaterThanOrEqual(rows[i]!.cacheDiscountPct!)
     }
   })
+
+  /**
+   * A price-ranked page that also carries a GATE.
+   *
+   * `/best/cheapest-coding` answers "which of the models that can actually
+   * do the job costs the least?" — the intersection of the two questions
+   * the coding page and the cheapest page answer separately. Its rows are
+   * still sorted by price, but a model that was never measured on every
+   * gate benchmark is ABSENT: it is neither listed nor ranked last.
+   */
+  const gatedCategories = BEST_CATEGORIES.filter((c) => (c.gateBenchmarkIds?.length ?? 0) > 0)
+
+  it('has at least one gated category to guard', () => {
+    expect(gatedCategories.length).toBeGreaterThan(0)
+  })
+
+  it('lists only models measured on every gate benchmark', () => {
+    for (const category of gatedCategories) {
+      const rows = categoryRows(category)
+      expect(rows.length, `${category.slug} should list at least one model`).toBeGreaterThan(0)
+      for (const row of rows) {
+        for (const benchmarkId of category.gateBenchmarkIds!) {
+          expect(
+            row.model.scores.some((score) => score.benchmark === benchmarkId),
+            `${row.model.displayName} is listed on ${category.slug} without a ${benchmarkId} score`,
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('sorts a gated page by the attribute it ranks by, not by score', () => {
+    for (const category of gatedCategories) {
+      const rows = categoryRows(category)
+      const values = rows.map((row) => row.blendedPricePer1M!)
+      for (let i = 1; i < values.length; i++) {
+        expect(values[i - 1]).toBeLessThanOrEqual(values[i])
+      }
+      // The page carries no composite — it sorts by price, not by score.
+      for (const row of rows) {
+        expect(row.composite).toBeUndefined()
+      }
+    }
+  })
 })

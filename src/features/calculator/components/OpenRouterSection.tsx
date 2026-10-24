@@ -3,6 +3,7 @@ import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing-detail'
 import { applyOpenRouterMarkup } from '@/features/calculator/cost'
+import { leaderboardIdForPriceId } from '@/features/leaderboard/models'
 
 /**
  * Page-specific block for /openrouter-pricing-calculator.
@@ -101,28 +102,40 @@ export function OpenRouterSection() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr key={row.id} className="border-b border-border/60 last:border-0">
-                    <td className="px-4 py-2.5 font-medium text-foreground">
-                      <Link
-                        to="/{-$locale}/models/$slug"
-                        params={{ slug: row.id }}
-                        className="hover:text-primary"
-                      >
-                        {row.displayName}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
-                      ${row.directInput} / ${row.directOutput}
-                    </td>
-                    <td className="px-4 py-2.5 text-right font-medium tabular-nums text-primary">
-                      ${row.routerInput} / ${row.routerOutput}
-                    </td>
-                    <td className="px-4 py-2.5 text-right tabular-nums text-fg-3">
-                      +{markupPct}%
-                    </td>
-                  </tr>
-                ))}
+                {rows.map((row) => {
+                  // The model page is addressed by the LEADERBOARD id; the
+                  // price row carries the REGISTRY id. They are different
+                  // namespaces, so a link built from `row.id` would 404 for
+                  // every model whose two ids differ. No leaderboard row
+                  // means no model page — the name is then plain text.
+                  const leaderboardId = leaderboardIdForPriceId(row.id)
+                  return (
+                    <tr key={row.id} className="border-b border-border/60 last:border-0">
+                      <td className="px-4 py-2.5 font-medium text-foreground">
+                        {leaderboardId ? (
+                          <Link
+                            to="/{-$locale}/models/$slug"
+                            params={{ slug: leaderboardId }}
+                            className="hover:text-primary"
+                          >
+                            {row.displayName}
+                          </Link>
+                        ) : (
+                          row.displayName
+                        )}
+                      </td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-fg-2">
+                        ${row.directInput} / ${row.directOutput}
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-medium tabular-nums text-primary">
+                        ${row.routerInput} / ${row.routerOutput}
+                      </td>
+                      <td className="px-4 py-2.5 text-right tabular-nums text-fg-3">
+                        +{markupPct}%
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

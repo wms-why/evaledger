@@ -1,8 +1,8 @@
 import { createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { CompareResult } from '@/features/leaderboard/components/CompareResult'
@@ -46,7 +46,20 @@ export const Route = createFileRoute('/{-$locale}/compare/$pair')({
             .replace('{b}', b.displayName)
         : dict.leaderboard.compare.metaDescription
     const path = `/compare/${loaderData?.entry.slug ?? params.pair}`
-    const { meta, links } = localeHead({ origin, locale, path, title, description })
+    const { meta, links } = localeHead({
+      origin,
+      locale,
+      path,
+      title,
+      description,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.compare'), path: '/compare' },
+          { name: title, path },
+        ]),
+      ],
+    })
     return { meta, links }
   },
   component: ComparePairPage,

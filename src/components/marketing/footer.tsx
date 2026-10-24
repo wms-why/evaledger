@@ -76,6 +76,10 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
         <FooterCol title={t('marketing.footerResources')}>
           <a className="foot-link" href={X_URL} target="_blank" rel="noreferrer">{t('marketing.footerTwitter')}</a>
           <Link className="foot-link" to="/{-$locale}/releases">{t('site.nav.releases')}</Link>
+          <Link className="foot-link" to="/{-$locale}/series">{t('site.nav.series')}</Link>
+          <Link className="foot-link" to="/{-$locale}/methodology">{t('site.nav.methodology')}</Link>
+          <Link className="foot-link" to="/{-$locale}/data-quality">{t('site.nav.dataQuality')}</Link>
+          <Link className="foot-link" to="/{-$locale}/leaderboard-history">{t('leaderboard.navHistory')}</Link>
           <Link className="foot-link" to="/{-$locale}/changelog">{t('site.nav.changelog')}</Link>
         </FooterCol>
 

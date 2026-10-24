@@ -76,6 +76,40 @@ function timesCheaper(dear: number, cheap: number): number {
   return dear / cheap
 }
 
+/**
+ * A model's rates, formatted for a meta description.
+ *
+ * A page's meta description is copy the site publishes, so a price written
+ * into it is a claim that goes stale the moment the vendor changes it. This
+ * resolves the numbers from the registry at render time, exactly like the
+ * body of the page does, so the description can never contradict the table
+ * underneath it.
+ *
+ * A model the registry does not carry comes back with an em-dash for every
+ * rate — a visible "we have no price for this", never a fabricated zero.
+ */
+export function modelRateSummary(modelId: string): {
+  model: string
+  input: string
+  output: string
+  cached: string
+  cachedPct: string
+} {
+  const model = findModel(modelId)
+  if (!model) {
+    return { model: modelId, input: '—', output: '—', cached: '—', cachedPct: '—' }
+  }
+  const detail = priceDetail(model, registrySnapshotDate())
+  const saving = detail.cached != null && detail.input > 0 ? 1 - detail.cached / detail.input : 0
+  return {
+    model: model.displayName,
+    input: formatMoney(detail.input),
+    output: formatMoney(detail.output),
+    cached: detail.cached != null ? formatMoney(detail.cached) : '—',
+    cachedPct: formatPct(saving),
+  }
+}
+
 /** The fraction of a rate saved by using the cached rate instead. */
 function cacheSaving(input: number, cached: number | undefined): number {
   if (cached === undefined || input <= 0) return 0

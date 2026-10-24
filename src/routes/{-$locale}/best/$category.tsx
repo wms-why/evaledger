@@ -1,5 +1,5 @@
 import { createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
@@ -23,12 +23,22 @@ export const Route = createFileRoute('/{-$locale}/best/$category')({
     const dict = dictionaries[locale]
     const slug = params.category
     const title = translate(dict, `leaderboard.best.${slug}.title`)
+    // Each category has its OWN description. One shared sentence across
+    // every use-case page told a crawler that nine pages were the same page.
+    const description = translate(dict, `leaderboard.best.${slug}.metaDescription`)
     const { meta, links } = localeHead({
       origin,
       locale,
       path: `/best/${slug}`,
       title: `${title} — ${dict.common.appName}`,
-      description: dict.leaderboard.best.metaDescription,
+      description,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.best'), path: '/best' },
+          { name: title, path: `/best/${slug}` },
+        ]),
+      ],
     })
     return { meta, links }
   },

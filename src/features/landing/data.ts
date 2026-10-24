@@ -190,6 +190,8 @@ export type VerdictCode =
   | 'overpriced'
   | 'balanced'
   | 'unproven'
+  | 'unpriced'
+  | 'unscored'
 
 export interface ModelVerdict {
   code: VerdictCode
@@ -234,6 +236,14 @@ export function modelVerdict(model: LeaderboardModel): ModelVerdict {
     if (tier === 'value') code = topHalf ? 'cheapStrong' : 'cheapWeak'
     else if (tier === 'premium') code = topHalf ? 'flagship' : 'overpriced'
     else code = 'balanced'
+  } else if (!entry && board) {
+    // A score but no published price. `unproven` would claim the opposite —
+    // "it has no board composite" — right under a tile that prints the
+    // composite, so this case gets its own sentence.
+    code = 'unpriced'
+  } else if (!entry && !board) {
+    // Neither a price nor a score: there is nothing to weigh.
+    code = 'unscored'
   }
 
   return {

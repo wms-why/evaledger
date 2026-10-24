@@ -6,7 +6,11 @@ import { dictionaries, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
-import { CompareTool } from '@/features/leaderboard/components/CompareTool'
+import {
+  AllComparisons,
+  CompareBoards,
+  CompareTool,
+} from '@/features/leaderboard/components/CompareTool'
 import {
   availableScoreIds,
   resolveCompareIds,
@@ -91,6 +95,13 @@ function ComparePage() {
             navigateCompare(ids, serializeCompareScores(next, availableScores))
           }
         />
+        {/* The directory of every published head-to-head, and the boards the
+            tool is an alternative to. Without them the comparison pages were
+            reachable only from the model pages that happen to mention them. */}
+        <div className="mt-12 space-y-8">
+          <AllComparisons />
+          <CompareBoards />
+        </div>
       </div>
       <Footer theme={theme} />
     </div>

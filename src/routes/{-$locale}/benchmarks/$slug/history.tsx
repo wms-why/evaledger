@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { isIndexableBenchmarkHistory } from '@/features/seo/indexability'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { BenchmarkTimeline } from '@/features/leaderboard/components/BenchmarkTimeline'
 import { getBenchmark } from '@/features/leaderboard/leaderboard'
 
@@ -28,6 +28,14 @@ export const Route = createFileRoute('/{-$locale}/benchmarks/$slug/history')({
       // With no snapshot on record this page has no series to draw — it falls
       // back to the parent page. Slug-only, so both languages agree.
       indexable: isIndexableBenchmarkHistory(params.slug),
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.benchmarks'), path: '/benchmarks' },
+          { name, path: `/benchmarks/${params.slug}` },
+          { name: translate(dict, 'linking.breadcrumb.history'), path: `/benchmarks/${params.slug}/history` },
+        ]),
+      ],
     })
     return { meta, links }
   },

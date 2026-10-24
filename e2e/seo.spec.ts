@@ -9,6 +9,8 @@ import {
 import { REGISTRY } from '@/features/calculator/model-prices'
 import { CORE_PATHS, CORE_ZH_PATHS } from '@/features/seo/sitemap-core'
 import { isIndexablePath } from '@/features/seo/indexability'
+import { LEADERBOARD } from '@/features/leaderboard/models'
+import { BEST_CATEGORIES } from '@/features/leaderboard/leaderboard'
 import type { Page } from '@playwright/test'
 
 /**
@@ -25,6 +27,10 @@ const SAMPLE_PAGES = [
   '/zh/compare',
   '/series',
   '/zh/series',
+  // The two directory hubs — they carry a breadcrumb of their own, and a
+  // breadcrumb that ends at the wrong page is invisible in a diff.
+  '/benchmarks',
+  '/best',
   '/releases',
   '/zh/releases',
   RELEASE_SLUGS[0] ? `/releases/${RELEASE_SLUGS[0]}` : '/releases',
@@ -113,8 +119,8 @@ test.describe('the machine-readable endpoints', () => {
     // by exactly the four new per-provider pricing landings (Gemini, Grok,
     // MiniMax, Kimi): a pricing page carries the vendor name people actually
     // type, so it is the one long-tail family that earns a place here. The
-    // node-side caps live in `sitemap-core.node.test.ts` (26 en / 12 zh).
-    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(37)
+    // node-side caps live in `sitemap-core.node.test.ts` (28 en / 12 zh).
+    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(39)
   })
 
   test('/sitemap-core.xml is the same list as /sitemap.xml', async ({ page }) => {
@@ -246,5 +252,104 @@ test.describe('the head of every page', () => {
 
     expect(pageErrors).toEqual([])
     expect(ownErrors(consoleErrors)).toEqual([])
+  })
+
+  /**
+   * The rendered page carries no template residue.
+   *
+   * `translate()` returns the KEY when a key is missing and leaves a
+   * `{placeholder}` in the string when the caller did not supply it — both
+   * are invisible in a diff and very visible to a reader. The site shipped
+   * a model page whose comparison links read `{a} vs {b}` and a release
+   * page whose cost tile read `releases.costPeak`.
+   *
+   * So the body text of every sampled page is checked for both shapes.
+   */
+  const DICTIONARY_SECTIONS = [
+    'releases',
+    'landing',
+    'leaderboard',
+    'series',
+    'hub',
+    'linking',
+    'site',
+    'calc',
+    'marketing',
+    'common',
+    'app',
+    'storage',
+    'feedback',
+    'sponsor',
+    'waitlist',
+    'changelog',
+    'dataQuality',
+  ]
+  const RAW_KEY = new RegExp(`\\b(?:${DICTIONARY_SECTIONS.join('|')})\\.[a-zA-Z]`, 'g')
+
+  for (const path of SAMPLE_PAGES) {
+    test(`${path} renders no template residue and no raw dictionary key`, async ({ page }) => {
+      await visit(page, path)
+      const text = (await read(() => page.locator('body').innerText())) ?? ''
+
+      // A `{placeholder}` in the visible text.
+      const hole = text.match(/\{[A-Za-z_][\w]*\}/)
+      expect(hole, `${path} renders a template placeholder: ${hole?.[0] ?? ''}`).toBeNull()
+
+      // A dictionary key printed as text.
+      const raw = text.match(RAW_KEY)
+      expect(raw, `${path} renders a raw dictionary key: ${raw?.[0] ?? ''}`).toBeNull()
+    })
+  }
+
+  test('the use-case rankings each carry their own description', async ({ page }) => {
+    // One shared description across eight pages told a crawler they were
+    // the same page.
+    const seen = new Map<string, string>()
+    for (const category of BEST_CATEGORIES) {
+      await visit(page, `/best/${category.slug}`)
+      const description =
+        (await read(() => page.locator('meta[name="description"]').getAttribute('content'))) ?? ''
+      expect(description.length, `/best/${category.slug} needs a description`).toBeGreaterThan(60)
+      const previous = seen.get(description)
+      expect(previous, `/best/${category.slug} shares a description with ${previous}`).toBeUndefined()
+      seen.set(description, `/best/${category.slug}`)
+    }
+  })
+
+  test('the home page description quotes the registry, not a typed count', async ({ page }) => {
+    await visit(page, '/')
+    const description =
+      (await read(() => page.locator('meta[name="description"]').getAttribute('content'))) ?? ''
+    expect(description).toContain(String(LEADERBOARD.models.length))
+    expect(description).not.toContain('{n}')
+  })
+
+  test('every breadcrumb ends at the page it belongs to', async ({ page }) => {
+    // A `BreadcrumbList` whose last item is not the page's own canonical
+    // points the crawler at a different page. It is an easy mistake to make
+    // and an invisible one in a diff, so it is checked.
+    for (const path of SAMPLE_PAGES) {
+      await visit(page, path)
+      const canonical =
+        (await read(() => page.locator('link[rel="canonical"]').getAttribute('href'))) ?? ''
+      const trails = await read(() =>
+        page.locator('script[type="application/ld+json"]').allTextContents(),
+      )
+      for (const trail of trails) {
+        const payload = JSON.parse(trail) as {
+          '@type'?: string
+          itemListElement?: { item?: string }[]
+        }
+        if (payload['@type'] !== 'BreadcrumbList') continue
+        const items = payload.itemListElement ?? []
+        expect(items.length, `${path} has an empty breadcrumb`).toBeGreaterThan(0)
+        const last = items[items.length - 1]?.item
+        expect(last, `${path} has a breadcrumb but no last item`).toBeTruthy()
+        expect(
+          new URL(last!).pathname,
+          `${path} has a breadcrumb that ends somewhere else`,
+        ).toBe(new URL(canonical).pathname)
+      }
+    }
   })
 })

@@ -101,6 +101,37 @@ export function jsonLd(obj: Record<string, unknown>): HeadMeta {
   return { 'script:ld+json': obj }
 }
 
+/**
+ * A `BreadcrumbList` for a page that lives inside the site's hierarchy.
+ *
+ * The site's shape is Home → a hub → the page itself (Home → Benchmarks →
+ * GPQA Diamond, Home → Best models → Best LLMs for coding). A crawler
+ * reading only the structured data would otherwise see a set of flat URLs
+ * with no relation between them, and a reader arriving from a search result
+ * would have no way back up to the directory the page belongs to.
+ *
+ * The trail is given as `[{ name, path }]`, locale-less, in order from the
+ * root. `path` is the page's own canonical path — the same string the
+ * canonical link carries — so the breadcrumb can never point somewhere the
+ * page does not live.
+ */
+export function breadcrumbLd(
+  origin: string,
+  locale: Locale,
+  trail: readonly { name: string; path: string }[],
+): HeadMeta {
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: `${origin}${localizePath(locale, crumb.path)}`,
+    })),
+  })
+}
+
 export function localeHead(input: {
   origin: string
   locale: Locale
@@ -108,6 +139,17 @@ export function localeHead(input: {
   title: string
   description: string
   scripts?: HeadMeta[]
+  /**
+   * The Open Graph type of the page.
+   *
+   * The root route declares `og:type: website` for the whole site, so a
+   * page that is not a website — a release post is an article — has to say
+   * so itself. The child's value wins over the root's: TanStack de-duplicates
+   * `og:*` by property, keeping the deepest route's entry.
+   */
+  ogType?: 'website' | 'article'
+  /** The publication date of an article, as an ISO date. */
+  articlePublishedTime?: string
   /**
    * `false` marks the page as **noindex**: a thin page that stays reachable
    * and linked, but does not compete for the site's index budget.
@@ -118,7 +160,17 @@ export function localeHead(input: {
    */
   indexable?: boolean
 }): { meta: HeadMeta[]; links: HeadLink[]; scripts?: HeadMeta[] } {
-  const { origin, locale, path, title, description, scripts, indexable = true } = input
+  const {
+    origin,
+    locale,
+    path,
+    title,
+    description,
+    scripts,
+    ogType,
+    articlePublishedTime,
+    indexable = true,
+  } = input
   const canonical = `${origin}${localizePath(locale, path)}`
   const links: HeadLink[] = [{ rel: 'canonical', href: canonical }]
   if (indexable) {
@@ -140,6 +192,10 @@ export function localeHead(input: {
     { property: 'og:url', content: canonical },
     { property: 'og:locale', content: OG_LOCALE[locale] },
     { property: 'og:image', content: `${origin}/logo512.png` },
+    ...(ogType ? [{ property: 'og:type', content: ogType } as HeadMeta] : []),
+    ...(articlePublishedTime
+      ? [{ property: 'article:published_time', content: articlePublishedTime } as HeadMeta]
+      : []),
     { name: 'twitter:card', content: 'summary_large_image' },
     // JSON-LD rides along in `meta` — a `scripts[]` array is not rendered.
     ...(scripts ?? []),

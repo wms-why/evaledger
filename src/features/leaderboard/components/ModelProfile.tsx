@@ -158,7 +158,10 @@ function WorthItSection({ model }: { model: LeaderboardModel }) {
   if (verdict.blended != null) {
     facts.push({
       labelKey: 'landing.model.factsPrice',
-      valueKey: 'landing.model.factsPrice',
+      // The VALUE tile is its own key: the label is the noun "Blended price",
+      // the value is the number. One key cannot be both, and reusing the
+      // label printed the label twice instead of the price.
+      valueKey: 'landing.model.factsPriceValue',
       params: { blended: `$${verdict.blended}` },
     })
   }
@@ -267,7 +270,10 @@ function AlternativesSection({
                 className="text-[14px] font-medium text-foreground hover:text-primary"
               >
                 {link.kind === 'compare'
-                  ? t('landing.model.compareLink', { other: link.other.displayName })
+                  ? t('landing.model.compareLink', {
+                      model: model.displayName,
+                      other: link.other.displayName,
+                    })
                   : t('landing.model.modelLink', { other: link.other.displayName })}
               </Link>
               <span className="text-[12px] text-fg-3">{t(VENDOR_LABEL_KEY[link.other.vendor])}</span>

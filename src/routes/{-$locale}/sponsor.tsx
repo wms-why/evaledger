@@ -8,7 +8,7 @@ import { SponsorPanel } from '@/features/sponsor/components/sponsor-panel'
 import { SponsorsWall } from '@/features/sponsor/components/sponsors-wall'
 import { getSponsorConfig, getSponsorManageLink } from '@/features/sponsor/actions'
 import { useTranslation } from '@/features/i18n/provider'
-import type { Locale } from '@/features/i18n/locale'
+import { dictionaries, type Locale } from '@/features/i18n/locale'
 
 const rootRoute = getRouteApi('__root__')
 
@@ -25,15 +25,16 @@ export const Route = createFileRoute('/{-$locale}/sponsor')({
   head: ({ loaderData, params }) => {
     const origin = loaderData?.origin ?? ''
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
+    // The head reads the SAME dictionary the page's H1 reads. They used to
+    // come from two places, so the <title> and the <h1> agreed only by
+    // coincidence.
+    const dict = dictionaries[locale]
     const { meta, links } = localeHead({
       origin,
       locale,
       path: '/sponsor',
-      title: locale === 'zh' ? '支持 EvalLedger' : 'Support EvalLedger',
-      description:
-        locale === 'zh'
-          ? '赞助这个开源项目，一次性或按月均可。'
-          : 'Sponsor this open-source project. One-time or monthly.',
+      title: dict.sponsor.title,
+      description: dict.sponsor.metaDescription,
     })
     return { meta, links }
   },

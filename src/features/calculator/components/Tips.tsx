@@ -4,6 +4,14 @@ interface TipsProps {
   /** Override the i18n key for the bullet list. Defaults to 'calculator.tips'
    *  (the shared money-saving tips used by every calculator page). */
   itemsKey?: string
+  /**
+   * The tip list itself, when the caller has already resolved it.
+   *
+   * A page whose copy is **computed** cannot name it with a dictionary key,
+   * so it hands the lines over directly. Passing `items` wins over
+   * `itemsKey`.
+   */
+  items?: string[]
 }
 
 /**
@@ -11,9 +19,9 @@ interface TipsProps {
  * concrete number (cache-hit %, model price, hour window) so the tip is
  * quotable on its own and useful in featured snippets.
  */
-export function Tips({ itemsKey = 'calculator.tips' }: TipsProps = {}) {
+export function Tips({ itemsKey = 'calculator.tips', items }: TipsProps = {}) {
   const { t, lookup } = useTranslation()
-  const items: string[] = lookup<string[]>(itemsKey) ?? []
+  const lines: string[] = items ?? lookup<string[]>(itemsKey) ?? []
 
   return (
     <section className="border-t border-border py-12">
@@ -25,7 +33,7 @@ export function Tips({ itemsKey = 'calculator.tips' }: TipsProps = {}) {
           {t('calculator.tipsTitle')}
         </h2>
         <ol className="mx-auto mt-6 max-w-3xl space-y-3">
-          {items.map((line, i) => (
+          {lines.map((line, i) => (
             <li
               key={i}
               className="flex gap-4 rounded-[12px] border border-border bg-card p-4"

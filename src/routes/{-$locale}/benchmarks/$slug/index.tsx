@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { isIndexableBenchmark } from '@/features/seo/indexability'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { BenchmarkDetail } from '@/features/leaderboard/components/BenchmarkDetail'
 import { getBenchmark } from '@/features/leaderboard/leaderboard'
 
@@ -29,6 +29,13 @@ export const Route = createFileRoute('/{-$locale}/benchmarks/$slug/')({
       // compete for the index budget. The decision comes from the slug only,
       // so the zh twin of a thin page is thin too.
       indexable: isIndexableBenchmark(params.slug),
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.benchmarks'), path: '/benchmarks' },
+          { name, path: `/benchmarks/${params.slug}` },
+        ]),
+      ],
     })
     return { meta, links }
   },

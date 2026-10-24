@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { DeepSeekSection } from '@/features/calculator/components/DeepSeekSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { deepseekFaq } from '@/features/calculator/copy'
+import { deepseekFaq, modelRateSummary } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -29,7 +29,12 @@ export const Route = createFileRoute('/{-$locale}/deepseek-api-pricing')({
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const title = dict.home.deepseekTitle
+    // The rates are the registry's, resolved at render time.
+    const rates = modelRateSummary('deepseek-flash')
     const description = translate(dict, 'marketing.deepseekMetaDescription', {
+      model: rates.model,
+      input: rates.input,
+      output: rates.output,
       date: REGISTRY.fetchedAt,
     })
     const url = `${origin}${locale === 'en' ? '' : '/' + locale}/deepseek-api-pricing`

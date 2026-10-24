@@ -85,6 +85,29 @@ const en = {
     boardsTitle: 'Or compare on a capability board',
     /** A link to the benchmark hub from the compare page. */
     benchmarksHub: 'Every LLM benchmark and its scores',
+    /** The heading of the directory of every published head-to-head. */
+    allTitle: 'All model comparisons',
+    /** What the directory above it is for. */
+    allNote:
+      'Every published head-to-head on the site — the two models, their benchmark scores and their prices, side by side.',
+  },
+  /**
+   * The levels of the breadcrumb trail.
+   *
+   * A breadcrumb names the DIRECTORY a page belongs to, so these are the
+   * directory names — short, and the word a reader would use for it. The
+   * full page titles are far too long for a trail ("LLM Benchmarks — Every
+   * Benchmark We Track" is not a level of a hierarchy).
+   */
+  breadcrumb: {
+    home: 'Home',
+    benchmarks: 'Benchmarks',
+    best: 'Best models',
+    models: 'Models',
+    compare: 'Compare LLMs',
+    releases: 'Model releases',
+    series: 'Model version series',
+    history: 'Score history',
   },
 }
 
@@ -125,6 +148,18 @@ const zh: typeof en = {
   compare: {
     boardsTitle: '或按能力维度对比',
     benchmarksHub: '全部大模型基准测试及分数',
+    allTitle: '全部模型对比',
+    allNote: '站内已发布的全部一对一对比——两个模型的跑分与价格,并排放在一起。',
+  },
+  breadcrumb: {
+    home: '首页',
+    benchmarks: '基准测试',
+    best: '最佳模型',
+    models: '模型',
+    compare: '模型对比',
+    releases: '新模型发布',
+    series: '模型版本演进',
+    history: '分数历史',
   },
 }
 

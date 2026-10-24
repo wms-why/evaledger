@@ -44,10 +44,12 @@ export const en = {
       exhausted: 'No models left to add',
     },
     home: {
-      title: 'LLM Leaderboard — Benchmark Scores & Token Prices in One Table',
+      // The title carries the brand and the three things the page actually
+      // answers: the benchmark scores, the ranking, and the API price.
+      title: 'LLM Leaderboard: Benchmarks, Rankings & API Prices | EvalLedger',
       metaDescription:
-        'Compare 9 frontier LLMs on GPQA, HLE, DeepSWE, and more — next to their per-token price. One table, one source of truth, updated by hand.',
-      h1: 'LLM Leaderboard',
+        'Compare {n} LLMs on GPQA, HLE, DeepSWE and more — benchmark scores next to per-token API price. One table, one source of truth, updated by hand.',
+      h1: 'LLM Leaderboard: Compare AI Models by Benchmark and Price',
       updated: 'Updated',
       positioning:
         'Every score here is traceable to a named source, and every price to a provider page. No interpolation, no marketing charts — just the numbers you can defend.',
@@ -177,20 +179,29 @@ export const en = {
         'Best LLMs by use case — Chinese models, open weights, and coding — ranked on the benchmarks that actually measure the job.',
       scoredOn: 'Scored on',
       fullBoard: 'See the full leaderboard',
+      // Every category carries its OWN meta description. One shared sentence
+      // across eight pages told a crawler they were the same page; the
+      // description is the line that has to name what THIS page answers.
       'chinese-model': {
         title: 'Best Chinese LLMs',
         intro:
           'DeepSeek, GLM, and Kimi ranked on reasoning, agentic coding, and automation benchmarks.',
+        metaDescription:
+          'Best Chinese LLMs (DeepSeek, GLM, Kimi) ranked on GPQA Diamond, HLE, DeepSWE and automation benchmarks — with the API price of each one.',
       },
       'open-source': {
         title: 'Best open-weight LLMs',
         intro:
           'Models you can self-host or route through any provider, ranked on coding and automation benchmarks.',
+        metaDescription:
+          'Best open-weight LLMs you can self-host or route through any provider, ranked on DeepSWE, NL2Repo and automation benchmarks — with API prices.',
       },
       'for-coding': {
         title: 'Best LLMs for coding',
         intro:
           'Ranked on real repository tasks, program synthesis, and command-line agent benchmarks.',
+        metaDescription:
+          'Best LLMs for coding, ranked on DeepSWE, ProgramBench, NL2Repo and Terminal-Bench — the models that clear every coding benchmark, with their API price.',
       },
       // The two capability boards that had no long-tail page of their own.
       // Their benchmark sets are the board's own core, so the page and the
@@ -200,11 +211,15 @@ export const en = {
         title: 'Best LLMs for AI agents & tool use',
         intro:
           'Ranked on terminal tasks, long-horizon tool use, and automation — the benchmarks that measure work a model does in a real environment, not a chat window.',
+        metaDescription:
+          'Best LLMs for coding agents and tool use, ranked on Terminal-Bench 4.0, Agent\'s Last Exam and automation benchmarks — with the API price of each.',
       },
       'for-reasoning': {
         title: 'Best LLMs for reasoning & math',
         intro:
           'Ranked on frontier knowledge, hard competition mathematics, and long-horizon graph traversal — the benchmarks that isolate deduction from recall.',
+        metaDescription:
+          'Best LLMs for reasoning and math, ranked on GPQA Diamond, HLE and MathArena Apex — the models that clear every reasoning benchmark, with API prices.',
       },
       // The three attribute-ranked pages. Not boards: a price, a context
       // window and a cache discount are not scores, so they sort by their own
@@ -213,16 +228,29 @@ export const en = {
         title: 'Cheapest LLM APIs per million tokens',
         intro:
           'Every model we price, ordered by blended price per million tokens — input plus output divided by two, at the rate actually in force today.',
+        metaDescription:
+          'Cheapest LLM API pricing per million tokens — every model we price, ordered by blended input/output rate, with the cached-input rate and context window of each.',
       },
       '1m-context-window': {
         title: 'Best long-context LLMs — 1M tokens and up',
         intro:
           'Only the models whose context window actually reaches one million tokens, largest window first, with the rate each one charges.',
+        metaDescription:
+          'Best long-context LLMs — the models with a 1M token context window and up, largest window first, with the price per million tokens each one charges.',
       },
       'prompt-caching': {
         title: 'Best LLMs for prompt caching discounts',
         intro:
           'Ordered by the discount a cached-input rate gives against the same model’s uncached input rate. A model that publishes no cached rate is not listed — there is no honest discount to show.',
+        metaDescription:
+          'Best LLM prompt caching discounts — ranked by how much each model’s cached-input rate saves against its own uncached input price, with the rates side by side.',
+      },
+      'cheapest-coding': {
+        title: 'Cheapest LLMs for coding',
+        intro:
+          'The models that clear every benchmark on our coding board, ordered by blended price per million tokens. A model we never measured on all of them is not listed.',
+        metaDescription:
+          'Cheapest LLM API for coding — the models that clear every coding benchmark (DeepSWE, ProgramBench, NL2Repo, Terminal-Bench), ordered by price per million tokens.',
       },
     },
     tokenCalculator: {
@@ -393,6 +421,8 @@ export const en = {
   changelog: {
     title: 'Changelog',
     subtitle: 'Product updates and improvements.',
+    metaDescription:
+      'Every EvalLedger release, in order: what changed in the price and score registries, which pages were added, and which benchmark or model coverage moved.',
   },
   dataQuality: {
     title: 'Data quality',
@@ -534,6 +564,10 @@ export const en = {
     costTitle: 'What your usage would cost',
     costNote: '1M input + 500K output tokens per month, at list price.',
     costBreakdown: '{input} input + {output} output',
+    // The label of the standard-rate tile when the provider also publishes an
+    // off-peak rate. Without it the tile would repeat the section heading and
+    // the reader could not tell which of the two tiles is the peak.
+    costPeak: 'Peak hours',
     costOffPeak: 'Off-peak hours',
     costOffPeakNote: 'The same workload scheduled outside this provider’s peak window.',
     scoreTitle: 'How it scores',
@@ -549,6 +583,7 @@ export const en = {
     ctaCompare: 'Compare it head to head',
     ctaCalculator: 'Price your own usage',
     ctaModel: 'See the full model page',
+    ctaSeries: 'Compare every {series} version',
     backToIndex: 'All model releases',
     relatedTitle: 'More release analyses',
   },
@@ -653,6 +688,8 @@ export const en = {
   waitlist: {
     title: 'Join the waitlist',
     subtitle: "We'll let you know the moment we launch.",
+    metaDescription:
+      'Join the EvalLedger waitlist and be the first to know when we launch — the free LLM token cost calculator. One email, and only when there is something to say.',
     emailLabel: 'Email',
     submit: 'Join',
     added: "You're on the list — thanks!",
@@ -844,15 +881,15 @@ export const en = {
     calculatorMetaDescription:
       'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
     deepseekMetaDescription:
-      'DeepSeek V4-Pro ($1.32 input / $3.96 output per 1M) and V4.1-Flash ($0.30 / $1.20) pricing — plus V3.2, off-peak hours, prompt cache, and comparison to GPT-5 / Claude / Gemini. Updated {date}.',
+      'DeepSeek API pricing — {model} at {input} input / {output} output per 1M, plus off-peak hours, prompt cache, and comparison to GPT-6 / Claude / Gemini. Updated {date}.',
     homeMetaDescription:
       'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
     openrouterMetaDescription:
       'See what OpenRouter really charges after the markup — and when going direct to OpenAI, Claude, Gemini, or DeepSeek is cheaper. Updated {date}.',
     claudeMetaDescription:
-      'See what Claude Opus 4.5, Sonnet 4.5, and Haiku 4.5 cost per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated {date}.',
+      'See what {model} costs per token — and when the Anthropic API is cheaper than Pro / Max subscriptions. Updated {date}.',
     chatgptMetaDescription:
-      'ChatGPT API pricing — GPT-6 astra at $10 input / $50 output per 1M, GPT-5 cached input at $0.125/M (90% off), and the Batch API at 50% off. Updated {date}.',
+      'ChatGPT API pricing — {model} at {input} input / {output} output per 1M, cached input {cached} ({cachedPct}% off), and the Batch API at 50% off. Updated {date}.',
     brandTitle: 'EvalLedger — Compare Prices Across OpenAI, Claude, Gemini & DeepSeek',
     brandDescription: 'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest.',
     brandOgDescription: 'The token cost calculator for engineers comparing LLM prices. Free, no signup.',
@@ -884,6 +921,8 @@ export const en = {
     navSponsor: 'Sponsor', footerSponsor: 'Sponsor',
     kicker: 'support the project',
     title: 'Sponsor EvalLedger', titleHl: 'EvalLedger',
+    metaDescription:
+      'Sponsor EvalLedger, the free LLM token cost calculator. One-time or monthly — every contribution funds fresh price checks, new calculators and the servers that keep the tool free.',
     subtitle: 'EvalLedger helps engineers see what their LLM tokens actually cost, across every major model. Sponsorships fund fresh price updates, new calculators, and the infra that keeps the tool free — and put your avatar on the sponsor wall.',
     monthly: 'Monthly', once: 'One-time', perMo: '/mo',
     popular: 'Recommended',

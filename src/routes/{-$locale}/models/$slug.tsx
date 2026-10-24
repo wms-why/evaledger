@@ -1,5 +1,6 @@
 import { Link, createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
+import { isIndexableModel } from '@/features/seo/indexability'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, type Locale } from '@/features/i18n/locale'
@@ -62,6 +63,16 @@ export const Route = createFileRoute('/{-$locale}/models/$slug')({
       path,
       title,
       description,
+      // The SAME question the sitemap asks. Without it the page head and
+      // `isIndexablePath()` could disagree — the sitemap would drop a model
+      // page while the page still told search engines to index it.
+      indexable: isIndexableModel(params.slug),
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: model?.displayName ?? params.slug, path },
+        ]),
+      ],
     })
     return { meta: metaTags, links }
   },

@@ -32,6 +32,8 @@ const en = {
     /** Where every price and score came from, and how fresh it is. */
     dataQuality: 'Data quality',
     changelog: 'Changelog',
+    /** The accessible name of the mobile menu button. */
+    menu: 'Menu',
   },
   /**
    * The calculator landing pages, named after the page they point at.
@@ -87,6 +89,7 @@ const zh: typeof en = {
     methodology: '评分标准',
     dataQuality: '数据溯源',
     changelog: '更新日志',
+    menu: '菜单',
   },
   pricing: {
     token: 'Token 价格计算器',

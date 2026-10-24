@@ -45,10 +45,10 @@ export const zh: Dict = {
       exhausted: '没有可添加的模型',
     },
     home: {
-      title: 'LLM 榜单 — 基准分数与 Token 价格一表看全',
+      title: 'LLM 榜单：基准分数、排名与 API 价格 | EvalLedger',
       metaDescription:
-        '把 9 个前沿大模型在 GPQA、HLE、DeepSWE 等基准上的分数和每 Token 价格放在同一张表里对照。一个来源，人工维护。',
-      h1: 'LLM 榜单',
+        '把 {n} 个大模型在 GPQA、HLE、DeepSWE 等基准上的分数和每 Token API 价格放在同一张表里对照。一个来源，人工维护。',
+      h1: 'LLM 榜单：按基准与价格对比大模型',
       updated: '更新于',
       positioning:
         '这里的每个分数都能追溯到具名来源，每个价格都能追溯到厂商页面。不插值、不画营销图——只给你站得住脚的数字。',
@@ -168,14 +168,20 @@ export const zh: Dict = {
       'chinese-model': {
         title: '最佳国产大模型',
         intro: 'DeepSeek、GLM、Kimi 在推理、智能体编程和自动化基准上的排名。',
+        metaDescription:
+          '最佳国产大模型(DeepSeek、GLM、Kimi)——按 GPQA Diamond、HLE、DeepSWE 与自动化基准排名,并附各自的 API 价格。',
       },
       'open-source': {
         title: '最佳开源权重模型',
         intro: '可自托管或经任意服务商调用的模型，按编程和自动化基准排名。',
+        metaDescription:
+          '最佳开源权重大模型——可自托管或经任意服务商调用,按 DeepSWE、NL2Repo 与自动化基准排名,附 API 价格。',
       },
       'for-coding': {
         title: '最佳编程大模型',
         intro: '按真实仓库任务、程序合成和命令行智能体基准排名。',
+        metaDescription:
+          '最适合编程的大模型——按 DeepSWE、ProgramBench、NL2Repo 与 Terminal-Bench 排名,通过全部编程基准的模型才列入,附 API 价格。',
       },
       // 两条原先没有落地页的能力榜:基准集就是该榜自己的核心集,
       // 因此页面与榜单排的是同一批模型——页面只是回答搜索
@@ -184,10 +190,14 @@ export const zh: Dict = {
         title: '最佳智能体与工具调用大模型',
         intro:
           '按终端任务、长程工具使用和自动化排名——衡量的是模型在真实环境里干的活,而不是聊天窗口里的表现。',
+        metaDescription:
+          '最适合编程智能体与工具调用的大模型——按 Terminal-Bench 4.0、Agent’s Last Exam 与自动化基准排名,附各自的 API 价格。',
       },
       'for-reasoning': {
         title: '最佳推理与数学大模型',
         intro: '按前沿知识、高难度竞赛数学和长程图遍历排名——把演绎能力与记忆量区分开。',
+        metaDescription:
+          '最佳推理与数学大模型——按 GPQA Diamond、HLE 与 MathArena Apex 排名,通过全部推理基准的模型才列入,附 API 价格。',
       },
       // 三个按属性排序的页面。它们不是榜单:价格、上下文窗口和缓存折扣
       // 都不是分数,所以按各自的数字排序,也不设覆盖门槛。
@@ -195,15 +205,28 @@ export const zh: Dict = {
         title: '每百万 token 最便宜的 LLM API',
         intro:
           '按混合价(输入与输出相加除以二)排序,取当天实际生效的价格——涵盖我们记录价格的全部模型。',
+        metaDescription:
+          '每百万 token 最便宜的 LLM API 价格——按混合输入/输出价排序,列出我们收录价格的全部模型,附缓存输入价与上下文窗口。',
       },
       '1m-context-window': {
         title: '最佳长上下文大模型——100 万 token 起',
         intro: '只列上下文窗口真正达到 100 万 token 的模型,窗口从大到小排,并给出各自的单价。',
+        metaDescription:
+          '最佳长上下文大模型——上下文窗口达到 100 万 token 及以上的模型,窗口从大到小排,附各自每百万 token 的价格。',
       },
       'prompt-caching': {
         title: '最适合用 prompt 缓存省钱的大模型',
         intro:
           '按缓存输入价相对同一模型标准输入价的折扣排序。未公布缓存价的模型不列入——拿一个不存在的价格去算折扣就是编数字。',
+        metaDescription:
+          '大模型 prompt 缓存折扣最大的型号——按缓存输入价相对同一模型标准输入价省下的比例排序,两种价格并排给出。',
+      },
+      'cheapest-coding': {
+        title: '最适合编程的便宜大模型',
+        intro:
+          '通过我们编程榜全部基准的模型,按每百万 token 的混合价排序。我们没测全的模型不列入。',
+        metaDescription:
+          '最适合编程的便宜 LLM API——通过全部编程基准(DeepSWE、ProgramBench、NL2Repo、Terminal-Bench)的模型,按每百万 token 价格排序。',
       },
     },
     tokenCalculator: {
@@ -371,6 +394,8 @@ export const zh: Dict = {
   changelog: {
     title: '更新日志',
     subtitle: '产品更新与改进。',
+    metaDescription:
+      'EvalLedger 的每一次发布,按时间排列:价格与跑分注册表改了什么、新增了哪些页面、哪个基准或模型的覆盖变了。',
   },
   dataQuality: {
     title: '数据质量',
@@ -506,6 +531,7 @@ export const zh: Dict = {
     costTitle: '你的用量要花多少',
     costNote: '每月 100 万输入 + 50 万输出 token，按官方定价计算。',
     costBreakdown: '输入 {input} + 输出 {output}',
+    costPeak: '高峰时段',
     costOffPeak: '非高峰时段',
     costOffPeakNote: '同样的用量，挪到该厂商的高峰窗口之外。',
     scoreTitle: '跑分如何',
@@ -521,6 +547,7 @@ export const zh: Dict = {
     ctaCompare: '两两对比',
     ctaCalculator: '算我的用量',
     ctaModel: '看完整模型页',
+    ctaSeries: '对比全部 {series} 版本',
     backToIndex: '全部新模型发布',
     relatedTitle: '更多发布解读',
   },
@@ -621,6 +648,8 @@ export const zh: Dict = {
   waitlist: {
     title: '加入候补名单',
     subtitle: '我们一上线就第一时间通知你。',
+    metaDescription:
+      '加入 EvalLedger 候补名单,第一时间知道我们什么时候上线——免费的大模型 token 成本计算器。只发一封邮件,而且只在真有消息时才发。',
     emailLabel: '邮箱',
     submit: '加入',
     added: '已加入候补名单，谢谢！',
@@ -796,15 +825,15 @@ export const zh: Dict = {
     calculatorMetaDescription:
       '免费计算器,一站比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 token 价格。粘贴提示词,几秒看清每个模型的成本。更新于 {date}。',
     deepseekMetaDescription:
-      'DeepSeek V4-Pro($1.32 输入 / $3.96 输出 每 1M)、V4.1-Flash($0.30 / $1.20) 价格——含 V3.2、非高峰时段、prompt cache,并对比 GPT-5 / Claude / Gemini。更新于 {date}。',
+      'DeepSeek API 价格——{model} 每 1M 输入 {input} / 输出 {output},含非高峰时段、prompt cache,并对比 GPT-6 / Claude / Gemini。更新于 {date}。',
     homeMetaDescription:
       '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。更新于 {date}。',
     openrouterMetaDescription:
       '看清 OpenRouter 加价后实际收多少——以及什么时候直连 OpenAI、Claude、Gemini 或 DeepSeek 反而更划算。更新于 {date}。',
     claudeMetaDescription:
-      '看清 Claude Opus 4.5、Sonnet 4.5、Haiku 4.5 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 {date}。',
+      '看清 {model} 每 token 多少钱——以及什么时候 Anthropic API 比 Pro / Max 订阅更划算。更新于 {date}。',
     chatgptMetaDescription:
-      'ChatGPT API 价格——GPT-6 astra 每 1M 输入 $10 / 输出 $50,GPT-5 缓存输入 $0.125/M(打 1 折),Batch API 5 折。更新于 {date}。',
+      'ChatGPT API 价格——{model} 每 1M 输入 {input} / 输出 {output},缓存输入 {cached}(省 {cachedPct}%),Batch API 5 折。更新于 {date}。',
     brandTitle: 'EvalLedger — 一站式比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax 与 Grok 的 LLM 价格',
     brandDescription: '看清你的 LLM token 在 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok 上到底多少钱。OpenAI 真实分词器,其余模型高精度近似估算。',
     brandOgDescription: '给工程师用的 LLM 价格比对计算器。免费,无需注册。',
@@ -836,6 +865,8 @@ export const zh: Dict = {
     navSponsor: '赞助', footerSponsor: '赞助',
     kicker: '支持这个项目',
     title: '支持 EvalLedger', titleHl: 'EvalLedger',
+    metaDescription:
+      '赞助 EvalLedger——免费的大模型 token 成本计算器。一次性或按月均可;每一笔赞助都用于价格核对、新计算器,以及让这个工具保持免费的服务器。',
     subtitle: 'EvalLedger 帮助工程师看清 LLM token 在每一家主流模型上的真实成本。你的赞助将用于价格核对、新计算器开发,以及让这个工具保持免费的服务器——同时把你的头像展示在官网赞助墙。',
     monthly: '每月', once: '一次性', perMo: '/月',
     popular: '推荐',

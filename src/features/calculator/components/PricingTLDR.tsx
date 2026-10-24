@@ -5,6 +5,14 @@ interface PricingTLDRProps {
   /** Override the i18n key for the bullet list. Defaults to
    *  'calculator.tldrItems' (the shared TLDR used by every calculator page). */
   itemsKey?: string
+  /**
+   * The bullet list itself, when the caller has already resolved it.
+   *
+   * A page whose copy is **computed** (numbers pulled out of the price
+   * registry at render time) cannot name it with a dictionary key, so it
+   * hands the lines over directly. Passing `items` wins over `itemsKey`.
+   */
+  items?: string[]
 }
 
 /**
@@ -12,9 +20,9 @@ interface PricingTLDRProps {
  * Google for the featured-snippet position — keep each item a complete
  * sentence that answers one specific question.
  */
-export function PricingTLDR({ itemsKey = 'calculator.tldrItems' }: PricingTLDRProps = {}) {
+export function PricingTLDR({ itemsKey = 'calculator.tldrItems', items }: PricingTLDRProps = {}) {
   const { t, lookup } = useTranslation()
-  const items = lookup<string[]>(itemsKey) ?? []
+  const lines = items ?? lookup<string[]>(itemsKey) ?? []
   const title = t('calculator.tldrTitle')
 
   return (
@@ -24,7 +32,7 @@ export function PricingTLDR({ itemsKey = 'calculator.tldrItems' }: PricingTLDRPr
           <Sparkles size={12} aria-hidden="true" /> {title}
         </span>
         <ul className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          {items.map((line, i) => (
+          {lines.map((line, i) => (
             <li
               key={i}
               className="flex gap-3 rounded-[12px] border border-border bg-card p-4 text-[14px] leading-relaxed text-fg-2"

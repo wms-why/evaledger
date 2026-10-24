@@ -11,7 +11,7 @@ import { CalculatorHero } from '@/features/calculator/components/CalculatorHero'
 import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { tokenFaq } from '@/features/calculator/copy'
+import { tokenFaq, sharedTldr, sharedTips } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -94,8 +94,8 @@ function TokenCostCalculatorPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
         <Calculator initialModelId={model} />
       </div>
-      <PricingTLDR itemsKey="calc.tldrItems" />
-      <Tips itemsKey="calc.tips" />
+      <PricingTLDR items={sharedTldr(t)} />
+      <Tips items={sharedTips(t)} />
       <FAQ
         id="faq"
         kickerKey="calculator.kicker"

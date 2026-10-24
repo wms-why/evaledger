@@ -51,7 +51,7 @@ export const Route = createFileRoute('/{-$locale}/changelog')({
       locale,
       path: '/changelog',
       title: `${dict.changelog.title} — EvalLedger`,
-      description: dict.changelog.subtitle,
+      description: dict.changelog.metaDescription,
     })
     return { meta, links }
   },

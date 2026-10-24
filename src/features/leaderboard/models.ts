@@ -878,3 +878,20 @@ export const LEADERBOARD: LeaderboardRegistry = {
 export function findLeaderboardModel(id: string): LeaderboardModel | undefined {
   return LEADERBOARD.models.find((m) => m.id === id)
 }
+
+/**
+ * The leaderboard row that prices a given **registry** model.
+ *
+ * The two registries use different id namespaces and they are not the same
+ * set: `gemini-3.1-pro` is a leaderboard id whose price row is
+ * `gemini-3.1-pro-preview`, and `deepseek-v4.1-flash-1017` is a leaderboard
+ * id whose price row is `deepseek-flash`. A link built from a registry id
+ * therefore does NOT address a model page — it 404s.
+ *
+ * So every link from a price row to a model page goes through here: the
+ * registry id is resolved to the leaderboard id, and when the model has no
+ * leaderboard row the caller renders plain text instead of a dead link.
+ */
+export function leaderboardIdForPriceId(priceId: string): string | undefined {
+  return LEADERBOARD.models.find((m) => m.priceId === priceId)?.id
+}

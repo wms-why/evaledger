@@ -92,6 +92,7 @@ const en = {
       'cheapest-llms': 'Cheapest LLM APIs per Million Tokens',
       '1m-context-window': 'Best Long-Context LLMs (1M+ Tokens)',
       'prompt-caching': 'Best LLMs for Prompt Caching Discounts',
+      'cheapest-coding': 'Cheapest LLMs for Coding',
     },
     /** One line per category: what the page is for. */
     descriptions: {
@@ -111,6 +112,8 @@ const en = {
         'The models that take a million tokens of context — the ones built for whole codebases and long documents.',
       'prompt-caching':
         'The models that cost least when you send the same prompt over and over.',
+      'cheapest-coding':
+        'The models that clear every coding benchmark, ordered by what they cost — the cheap ones that can actually do the job.',
     },
     /**
      * How each page ranks its rows — a score board and a price table are not
@@ -197,6 +200,7 @@ const zh: typeof en = {
       'cheapest-llms': '最便宜的 LLM API 价格对比',
       '1m-context-window': '百万 Token 长上下文大模型',
       'prompt-caching': 'Prompt 缓存折扣最优的大模型',
+      'cheapest-coding': '最适合编程的便宜大模型',
     },
     descriptions: {
       'chinese-model': 'DeepSeek、GLM、Kimi 在推理、智能体编程和自动化基准上的排名。',
@@ -207,6 +211,7 @@ const zh: typeof en = {
       'cheapest-llms': '每个模型每百万 Token 的输入 + 输出价格，方便按同一份用量横向比价。',
       '1m-context-window': '能吃下百万 Token 上下文的模型——适合整个代码库和超长文档的那种。',
       'prompt-caching': '同一个提示词反复调用时，缓存输入最便宜的模型。',
+      'cheapest-coding': '通过全部编程基准的模型,按价格排序——便宜,而且真能干活的那批。',
     },
     rankLabels: {
       score: '按基准分数排名',

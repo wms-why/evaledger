@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
 import { formatScore } from '@/features/leaderboard/leaderboard'
+import { leaderboardIdForPriceId } from '@/features/leaderboard/models'
 import { cn } from '@/lib/utils'
 import {
   releaseCostEstimate,
@@ -191,7 +192,23 @@ export function ReleaseFactSheet({ meta }: { meta: ReleaseMeta }) {
                   )}
                 >
                   <td className="px-4 py-2.5">
-                    <span className="text-foreground">{row.displayName}</span>
+                    {/*
+                      The model name is a link to that model's page. The
+                      price table lists the models the post compares — a
+                      reader who wants to know more about one of them had
+                      no way to get there.
+                    */}
+                    {leaderboardIdForPriceId(row.id) ? (
+                      <Link
+                        to="/{-$locale}/models/$slug"
+                        params={{ slug: leaderboardIdForPriceId(row.id) as string }}
+                        className="text-foreground hover:text-primary"
+                      >
+                        {row.displayName}
+                      </Link>
+                    ) : (
+                      <span className="text-foreground">{row.displayName}</span>
+                    )}
                     {row.status !== 'active' && (
                       <span className="ml-2 text-[11px] text-fg-3">
                         ({t(STATUS_LABEL_KEY[row.status])})

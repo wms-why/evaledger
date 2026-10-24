@@ -1,12 +1,12 @@
 import { Link, createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { localeHead, jsonLd } from '@/features/seo/seo'
+import { localeHead, jsonLd, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { useTranslation } from '@/features/i18n/provider'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { findReleaseBySlug } from '@/features/releases/select'
 import { getReleases } from '@/features/releases/releases.fns'
 import {
@@ -14,6 +14,7 @@ import {
   releaseVendorLabel,
 } from '@/features/releases/components/ReleaseFactSheet'
 import { findPriceModel } from '@/features/releases/data'
+import { seriesForScoreId } from '@/features/series/select'
 import { fmtDate } from '@/lib/format-date'
 import browserCollections from 'collections/browser'
 
@@ -38,7 +39,13 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
     if (!entry) throw notFound()
     await clientLoader.preload(entry.path)
     const related = entries.filter((e) => e.slug !== entry.slug).slice(0, 3)
-    return { origin, loggedIn: !!user, entry, related }
+    // The version line this model belongs to: a release post answers "what
+    // does this launch change", the series page answers "is the version I
+    // already run worth switching to". Neither question can answer the other.
+    const series = entry.modelSlug
+      ? (seriesForScoreId(entry.modelSlug) ?? undefined)
+      : undefined
+    return { origin, loggedIn: !!user, entry, related, series }
   },
   head: ({ loaderData, params }) => {
     const origin = loaderData?.origin ?? ''
@@ -60,7 +67,10 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
             headline: entry.title,
             description,
             datePublished: entry.date,
-            dateModified: entry.checkedAt,
+            // NO `dateModified`: `checkedAt` is the day the PRICES were last
+            // re-verified, not the day the article was edited. Publishing it
+            // as a modification date would tell a search engine the prose
+            // changed every time somebody re-checked a rate.
             inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
             isBasedOn: entry.sourceUrl,
             url: `${origin}${locale === 'zh' ? `/zh${path}` : path}`,
@@ -71,10 +81,26 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
                 ? { '@type': 'Thing', name: entry.modelName, description: `LLM pricing analysis` }
                 : undefined,
           }),
+          breadcrumbLd(origin, locale, [
+            { name: dict.common.appName, path: '/' },
+            { name: translate(dict, 'linking.breadcrumb.releases'), path: '/releases' },
+            { name: entry.title, path },
+          ]),
         ]
       : undefined
 
-    const { meta, links } = localeHead({ origin, locale, path, title, description, scripts })
+    const { meta, links } = localeHead({
+      origin,
+      locale,
+      path,
+      title,
+      description,
+      scripts,
+      // A release post is an article, not a website — the root sets
+      // `og:type: website` for the whole site, and this page says otherwise.
+      ogType: 'article',
+      articlePublishedTime: entry?.date,
+    })
     return { meta, links, scripts }
   },
   component: ReleasePage,
@@ -82,7 +108,7 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
 
 function ReleasePage() {
   const { theme } = rootRoute.useLoaderData()
-  const { loggedIn, entry, related } = Route.useLoaderData()
+  const { loggedIn, entry, related, series } = Route.useLoaderData()
   const { t } = useTranslation()
 
   const compareTarget = entry.modelSlug
@@ -183,6 +209,15 @@ function ReleasePage() {
                 className="rounded-[8px] border border-border px-4 py-2 text-[13px] font-medium text-fg-2 hover:text-foreground"
               >
                 {t('releases.ctaModel')}
+              </Link>
+            )}
+            {series && (
+              <Link
+                to="/{-$locale}/series/$slug"
+                params={{ slug: series.slug }}
+                className="rounded-[8px] border border-border px-4 py-2 text-[13px] font-medium text-fg-2 hover:text-foreground"
+              >
+                {t('releases.ctaSeries', { series: series.name })}
               </Link>
             )}
           </div>

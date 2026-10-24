@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
-import { findLeaderboardModel } from '@/features/leaderboard/models'
+import { leaderboardIdForPriceId } from '@/features/leaderboard/models'
 import { priceWindowLabel } from '@/features/calculator/model-notes'
 import { REGISTRY } from '@/features/calculator/model-prices'
 import { formatContext, formatThreshold, type VendorPriceRow } from './data'
@@ -55,7 +55,12 @@ export function VendorRateTable({
             <tbody>
               {rows.map((row) => {
                 const { model, detail } = row
-                const leaderboardId = findLeaderboardModel(model.id)?.id
+                // The model page is addressed by the LEADERBOARD id; this row
+                // carries the REGISTRY id. Resolving by id alone would miss
+                // every model whose two ids differ (Gemini 3.1 Pro is
+                // `gemini-3.1-pro` on the board and `gemini-3.1-pro-preview`
+                // in the price registry) and the link would be lost.
+                const leaderboardId = leaderboardIdForPriceId(model.id)
                 const notes = notesFor(row, t)
 
                 return (

@@ -23,6 +23,21 @@ const BOARD_BEST_CATEGORY: Partial<Record<TrackSlug, string>> = {
 }
 
 /**
+ * The capability board a "best model for X" page is the twin of.
+ *
+ * The inverse of `bestCategoryForTrack`: a board points at its `/best/`
+ * twin, and the twin points back at the board. Without the second half the
+ * page answered "which model is best for coding" and gave the reader no way
+ * to reach the ranking that explains how the answer was computed.
+ */
+export function trackForBestCategory(slug: string): TrackSlug | undefined {
+  for (const [track, category] of Object.entries(BOARD_BEST_CATEGORY)) {
+    if (category === slug) return track as TrackSlug
+  }
+  return undefined
+}
+
+/**
  * The `/best/<category>` slug a board points at, or undefined.
  *
  * Returns undefined when the board has no twin (general) **or** when the

@@ -5,7 +5,8 @@ import { isIndexablePath } from '@/features/seo/indexability'
 import { buildSitemap } from '@/features/seo/seo'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
-import { COMPARE_PAIR_ENTRIES } from '@/features/leaderboard/leaderboard'
+import { BEST_CATEGORIES, COMPARE_PAIR_ENTRIES } from '@/features/leaderboard/leaderboard'
+import { TRACK_IDS } from '@/features/leaderboard/scoring'
 import { SERIES } from '@/features/series/series'
 import { allSeriesPairs } from '@/features/series/select'
 import { publicRoutePaths, releasePostPaths } from './__tests__/route-files'
@@ -32,6 +33,8 @@ function livePaths(): Set<string> {
     paths.add(`/benchmarks/${benchmark.id}/history`)
   }
   for (const pair of COMPARE_PAIR_ENTRIES) paths.add(`/compare/${pair.slug}`)
+  for (const category of BEST_CATEGORIES) paths.add(`/best/${category.slug}`)
+  for (const track of TRACK_IDS) paths.add(`/leaderboard/${track}`)
   for (const series of SERIES) paths.add(`/series/${series.slug}`)
   for (const pair of allSeriesPairs()) paths.add(`/series/${pair.seriesSlug}/${pair.pairSlug}`)
   for (const post of releasePostPaths()) paths.add(post)
@@ -60,7 +63,12 @@ test('the core list stays short — that is the point of the split', () => {
   // (Gemini, Grok, MiniMax, Kimi): a pricing page carries the vendor name
   // people actually type, so it is the one long-tail family that earns a
   // place in the core bid for the index.
-  expect(CORE_PATHS.length).toBeLessThanOrEqual(26)
+  // The cap grew from 26 to 28 with the three cluster pages the list was
+  // missing: `/methodology` ("LLM benchmark methodology"), `/best/for-coding`
+  // ("best LLM for coding") and `/best/cheapest-coding` ("best cheap model
+  // for coding"). They are hub pages, not one launch's long tail, so they
+  // are not the kind of entry this cap was written to keep out.
+  expect(CORE_PATHS.length).toBeLessThanOrEqual(28)
   expect(CORE_ZH_PATHS.length).toBeLessThanOrEqual(12)
 })
 
