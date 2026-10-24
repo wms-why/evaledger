@@ -47,6 +47,8 @@ const envSchema = z
     TURNSTILE_SITE_KEY: optional,
     TURNSTILE_SECRET_KEY: optional,
     CF_ANALYTICS_TOKEN: optional,
+    // GA4 measurement id, e.g. "G-XXXXXXXXXX" (public, not a secret).
+    GA4_MEASUREMENT_ID: optional,
     SENTRY_DSN: optional,
     // AI provider raw API keys — the selector resolves these lazily by row.kind
     // (mmx → MMX_API_KEY, deepseek → DEEPSEEK_API_KEY, replicate → REPLICATE_API_TOKEN).

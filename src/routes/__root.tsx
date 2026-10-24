@@ -2,7 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts, useParams } from '@tanst
 import { dictionaries, isLocale, locales, defaultLocale, type Locale } from '@/features/i18n/locale'
 import { getPreferences } from '@/server/preferences'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { getAnalyticsToken } from '@/features/analytics/analytics'
+import { getAnalyticsToken, getGtagConfig } from '@/features/analytics/analytics'
 import { Toaster } from '@/components/ui/sonner'
 import { useResolvedTheme } from '@/features/theme/use-resolved-theme'
 import appCss from '@/styles/app.css?url'
@@ -45,9 +45,10 @@ export const Route = createRootRoute({
       const { theme, themeFromCookie } = await getPreferences()
       const user = await getOptionalUser()
       const analyticsToken = await getAnalyticsToken()
-      return { theme, themeFromCookie, user, analyticsToken }
+      const gtag = await getGtagConfig()
+      return { theme, themeFromCookie, user, analyticsToken, gtag }
     } catch {
-      return { theme: 'dark' as const, themeFromCookie: false, user: null, analyticsToken: null }
+      return { theme: 'dark' as const, themeFromCookie: false, user: null, analyticsToken: null, gtag: null }
     }
   },
   component: RootComponent,
@@ -60,7 +61,7 @@ export const Route = createRootRoute({
 const THEME_BOOT_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)theme=(light|dark)/);var theme=m?m[1]:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.toggle('dark',theme==='dark');document.documentElement.classList.toggle('light',theme==='light')}catch(e){}})()`
 
 function RootComponent() {
-  const { theme, analyticsToken } = Route.useLoaderData()
+  const { theme, analyticsToken, gtag } = Route.useLoaderData()
   const params = useParams({ strict: false }) as { locale?: string }
   // Validate before use: on 404s the optional {-$locale} param swallows the
   // first path segment, so `/no-such-page` would otherwise become lang="no-such-page".
@@ -76,6 +77,17 @@ function RootComponent() {
         <Outlet />
         <Scripts />
         <Toaster theme={resolvedTheme} />
+        {/* Google Analytics 4 (gtag.js) — only when a measurement id is configured. */}
+        {gtag && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtag.measurementId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gtag.measurementId}');`,
+              }}
+            />
+          </>
+        )}
         {/* Cloudflare Web Analytics — only when a beacon token is configured. */}
         {analyticsToken && (
           <script

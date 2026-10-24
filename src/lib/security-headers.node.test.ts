@@ -31,6 +31,8 @@ test('CSP is set in production and allows Turnstile/analytics', () => {
   expect(csp).toContain("default-src 'self'")
   expect(csp).toContain('https://challenges.cloudflare.com') // Turnstile
   expect(csp).toContain('https://static.cloudflareinsights.com') // Web Analytics
+  expect(csp).toContain('https://www.googletagmanager.com') // GA4 gtag.js
+  expect(csp).toContain('https://www.google-analytics.com') // GA4 collection
   expect(csp).not.toContain('fonts.googleapis.com') // fonts are self-hosted
   expect(csp).not.toContain('fonts.gstatic.com')
   expect(csp).toContain("frame-ancestors 'none'")

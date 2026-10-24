@@ -101,6 +101,7 @@
 		"TURNSTILE_SITE_KEY": "",
 		"TURNSTILE_SECRET_KEY": "",
 		"CF_ANALYTICS_TOKEN": "",
+		"GA4_MEASUREMENT_ID": "",
 		"SENTRY_DSN": "",
 		"RESEND_AUDIENCE_ID": "",
 		// AI provider raw API keys (secrets in production; empty locally).
@@ -165,7 +166,9 @@
 				// fill it in by hand when deploying from a local checkout.
 				"BETTER_AUTH_URL": "",
 				// Extra origins allowed to call the auth endpoints (comma-separated).
-				"AUTH_TRUSTED_ORIGINS": ""
+				"AUTH_TRUSTED_ORIGINS": "",
+				// GA4 measurement id (public, not a secret). Empty disables GA4.
+				"GA4_MEASUREMENT_ID": "G-BR478GDNZQ"
 			}
 		}
 	}
