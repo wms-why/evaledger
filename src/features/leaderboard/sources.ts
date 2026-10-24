@@ -73,6 +73,22 @@ export const SOURCES: Record<string, SourceInfo> = {
     name: 'StepFun — Step 5 Preview: Advancing the Pareto Frontier',
     kind: 'vendor',
   },
+  'https://kimi.com/blog/kimi-k3-1-pro': {
+    name: 'Kimi — Introducing Kimi K3.1 Pro',
+    kind: 'vendor',
+  },
+  'https://mp.weixin.qq.com/s/Q6Z-skAUH_na9g37VWbHew': {
+    name: 'Moonshot Kimi — Kimi K3.1 Pro launch post (WeChat)',
+    kind: 'vendor',
+  },
+  'https://www.anthropic.com/claude-opus-5-5-system-card': {
+    name: 'Anthropic — Claude Opus 5.5 system card',
+    kind: 'vendor',
+  },
+  'https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card': {
+    name: 'Anthropic — Claude Fable 5.1 system card',
+    kind: 'vendor',
+  },
 
   // ── third-party sources ────────────────────────────────────────────────
   'https://benchlm.ai/compare/gemini-3-1-pro-vs-grok-4-7': {

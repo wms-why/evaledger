@@ -17,6 +17,26 @@ export const LOCALE_ROUTE_DIR = fileURLToPath(new URL('../../../routes/{-$locale
 /** Route groups the sitemap must not publish (noindex / robots-disallowed). */
 export const PRIVATE_GROUPS = ['(auth)', 'app', 'admin']
 
+/** The release posts — one Markdown file per post, one per language. */
+export const RELEASE_DIR = fileURLToPath(new URL('../../../content/releases/', import.meta.url))
+
+/**
+ * The release posts on disk, as sitemap paths.
+ *
+ * The posts live in the MDX collection, which a pure node test cannot read —
+ * so the slugs are read from the directory instead, the same way the e2e
+ * route inventory does. The zh file of a post (`<slug>.zh.md`) shares its
+ * URL slug, so it contributes the same path once.
+ */
+export function releasePostPaths(): string[] {
+  const slugs = new Set<string>()
+  for (const entry of readdirSync(RELEASE_DIR)) {
+    if (!entry.endsWith('.md')) continue
+    slugs.add(entry.replace(/\.zh\.md$/, '').replace(/\.md$/, ''))
+  }
+  return [...slugs].sort().map((slug) => `/releases/${slug}`)
+}
+
 /**
  * The public pages that live at a fixed path, derived from the route files.
  *

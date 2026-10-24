@@ -43,9 +43,27 @@ export interface ReleaseScoreCell {
   modelSlug: string
   displayName: string
   score?: number
+  /** Unit the score is recorded in — never compared across units. */
+  unit: ScoreUnit
   /** Caveat printed by the source — never dropped. */
   note?: string
   sourceUrl?: string
+  /**
+   * True for the cell that belongs to the model the post is about.
+   *
+   * This marks the **column**, not the value: it says "this is the model
+   * this post is about", and it says nothing about how the row was won.
+   */
+  isSubject: boolean
+  /**
+   * True for the highest score of the row — and only when it is a *unique*
+   * maximum.
+   *
+   * This marks the **value**: it says "this model won this benchmark",
+   * which is a different claim from `isSubject`. The subject does not win
+   * every row, and when it does not, the winner is still marked.
+   */
+  isBest: boolean
 }
 
 export interface ReleaseScoreRow {
@@ -57,7 +75,7 @@ export interface ReleaseScoreRow {
 
 /** The score table, or `null` when the subject model has no verified scores. */
 export interface ReleaseScoreTable {
-  columns: { modelSlug: string; displayName: string }[]
+  columns: { modelSlug: string; displayName: string; isSubject: boolean }[]
   rows: ReleaseScoreRow[]
 }
 
@@ -136,26 +154,64 @@ export function releaseScoreTable(meta: ReleaseMeta): ReleaseScoreTable | null {
   // Rows are driven by the subject's own scores so the table always reads as
   // "how did this model do", with competitors filling in where they have a
   // figure for the same benchmark.
-  const rows: ReleaseScoreRow[] = subject.scores.map((score) => ({
-    benchmark: score.benchmark,
-    benchmarkName: benchmarkName(score.benchmark),
-    unit: score.unit,
-    cells: columns.map((model) => {
+  const rows: ReleaseScoreRow[] = subject.scores.map((score) => {
+    const cells: ReleaseScoreCell[] = columns.map((model) => {
       const hit = model.scores.find((s) => s.benchmark === score.benchmark)
       return {
         modelSlug: model.id,
         displayName: model.displayName,
         score: hit?.score,
+        unit: hit?.unit ?? score.unit,
         note: hit?.note,
         sourceUrl: hit?.sourceUrl,
+        isSubject: model.id === subject.id,
+        isBest: false,
       }
-    }),
-  }))
+    })
+    return {
+      benchmark: score.benchmark,
+      benchmarkName: benchmarkName(score.benchmark),
+      unit: score.unit,
+      cells: markRowBest(cells, score.unit),
+    }
+  })
 
   return {
-    columns: columns.map((m) => ({ modelSlug: m.id, displayName: m.displayName })),
+    columns: columns.map((m) => ({
+      modelSlug: m.id,
+      displayName: m.displayName,
+      isSubject: m.id === subject.id,
+    })),
     rows,
   }
+}
+
+/**
+ * Mark the highest score of a row — but only a *unique* maximum.
+ *
+ * Two rules keep this honest, and both are the reason the winner is marked
+ * separately from the subject:
+ *
+ *  - A tie has no single leader, so neither model is marked. The compare
+ *    matrix uses the same rule; highlighting both would claim a win nobody
+ *    had.
+ *  - A row with fewer than two scored cells has nothing to win, so it is
+ *    left unmarked. Otherwise a lone subject figure would be dressed up as
+ *    a victory over nobody.
+ *
+ * Scores recorded in different units are never compared: a `rating` is not a
+ * `percent`, and a row that mixes them has no single maximum.
+ */
+function markRowBest(cells: ReleaseScoreCell[], rowUnit: ScoreUnit): ReleaseScoreCell[] {
+  const scored = cells.filter((cell) => cell.score != null && cell.unit === rowUnit)
+  if (scored.length < 2) return cells
+  const max = Math.max(...scored.map((cell) => cell.score as number))
+  const leaders = scored.filter((cell) => cell.score === max)
+  if (leaders.length !== 1) return cells
+  const winner = leaders[0].modelSlug
+  return cells.map((cell) =>
+    cell.modelSlug === winner ? { ...cell, isBest: true } : cell,
+  )
 }
 
 

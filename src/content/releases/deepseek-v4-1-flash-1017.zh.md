@@ -3,7 +3,7 @@ title: "DeepSeek V4.1-Flash 1017：还是 $0.30 / $1.20，但 checkpoint 换了�
 description: "DeepSeek V4.1-Flash 1017（2026-10-17）沿用 $0.30 / $1.20 的高峰价和 $0.006 的缓存读价，新公布 11 项跑分。这一篇讲清楚：到底换了什么、账单会不会变、你的流量该不该搬过来。"
 date: "2026-10-20"
 checkedAt: "2026-10-20"
-dataCheckedAt: "2026-10-21"
+dataCheckedAt: "2026-10-24"
 releasedAt: "2026-10-17"
 vendor: deepseek
 modelId: deepseek-flash

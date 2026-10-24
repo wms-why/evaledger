@@ -480,6 +480,9 @@ export const zh: Dict = {
       '这个模型我们还没有核验过可溯源的跑分，所以就不放。追不到出处的数字，不该出现在这个站上。',
     scoreNote:
       '数据来自榜单条目里标注的原始出处。各家模型的覆盖度不同 —— 空格表示该来源没有公布这项基准。',
+    scoreLegend:
+      '带底色的那一列是本文主角；每行里加粗的数字，是这张表中该基准的最高分 —— 并列第一时不加粗。',
+    subjectBadge: '本文主角',
     ctaTitle: '自己算一遍',
     ctaNote: '上面的表和计算器、对比工具用的是同一份数据。',
     ctaCompare: '两两对比',
@@ -890,6 +893,7 @@ export const zh: Dict = {
     providerMinimax: 'MiniMax',
     providerStepfun: '阶跃星辰',
     providerGrok: 'Grok',
+    providerKimi: '月之暗面',
     providerOpenRouter: 'OpenRouter',
     openrouterCurrentMarkup: '当前平均加价:×{multiplier}({pct}%)',
     claudeProCardTitle: 'Claude Pro · $20/月',

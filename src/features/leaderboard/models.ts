@@ -35,11 +35,18 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  *    benchmark registry; the other nine are absent rather than interpolated.
  *    The rival numbers Google prints ride along in the notes — they are
  *    Google's measurements of other vendors' models, quoted as such.
+ *  - Kimi K3.1 Pro comes from Moonshot's launch announcement (2026-10-24).
+ *    Its numbers are Kimi's own, measured on Kimi's harnesses at max thinking
+ *    effort; the rival columns are Moonshot's measurements of other vendors'
+ *    models, except where the footnote names a public leaderboard instead.
+ *    Claude Fable 5.1 is the odd one out: it has no Anthropic table behind
+ *    it, and its row is the rival column of that same Kimi announcement —
+ *    each note says where the figure itself comes from.
  *
  * Never drop a caveat the source printed. Missing benchmarks are simply
  * absent — no interpolation.
  */
-export const REGISTRY_VERSION = '0.7.0'
+export const REGISTRY_VERSION = '0.8.0'
 
 /** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
 const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
@@ -89,6 +96,12 @@ const ARGON_EVALS = 'https://deepmind.google/models/evals-methodology/gemini-4-a
  * caveat travels with every score it takes from the model card.
  */
 const VENDOR_MEASURED = 'Vendor-measured (MiniMax internal infra, Claude Code scaffolding)'
+/**
+ * Kimi's K3.1 Pro launch announcement (2026-10-24). The blog carries the
+ * English write-up and the footnotes; the WeChat post carries the same
+ * tables. Every Kimi K3.1 Pro score below is transcribed from it.
+ */
+const KIMI_K31_POST = 'https://kimi.com/blog/kimi-k3-1-pro'
 
 /** Timestamp of the original collection run — most scores were observed then. */
 const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
@@ -98,6 +111,8 @@ const OBSERVED_AT = '2026-10-20T15:30:00+08:00'
 const ARGON_OBSERVED_AT = '2026-10-20T21:20:00+08:00'
 /** Timestamp of the 2026-10-23 pass that added Step 5 Preview. */
 const STEP_OBSERVED_AT = '2026-10-23T10:00:00+08:00'
+/** Timestamp of the 2026-10-24 pass that added Kimi K3.1 Pro. */
+const KIMI_OBSERVED_AT = '2026-10-24T09:40:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
 /** The 1017 checkpoint shipped 2026-10-17 (vendor announcement date). */
@@ -418,6 +433,7 @@ const kimiK3: LeaderboardModel = {
   kind: 'other',
   version: 'k3',
   displayName: 'Kimi K3',
+  priceId: 'kimi-k3',
   updatedAt: COLLECTED_AT,
   scores: [
     sc('gpqa-diamond', 92.9),
@@ -436,6 +452,190 @@ const kimiK3: LeaderboardModel = {
     sc('chartography-tools', 68.1),
     sc('babyvision-tools', 85.7),
     sc('zerobench-main-tools', 41.0),
+  ],
+}
+
+/**
+ * Kimi K3.1 Pro — Moonshot's flagship, shipped 2026-10-24.
+ *
+ * Every score is Moonshot's own, from the launch announcement: Kimi measured
+ * the model itself (Claude Code harness on the coding rows, Kimi Code on
+ * Agents' Last Exam, the Kimi Agent harness on OSWorld) and published the
+ * rival columns next to it. Three things travel with every number:
+ *
+ *  - **The harness is Kimi's.** These are vendor-measured figures, not an
+ *    independent leaderboard's, and the rival columns are Moonshot's
+ *    measurements of other vendors' models except where the footnotes say
+ *    otherwise (Terminal-Bench, Terminal-Bench Science and SWE-Marathon quote
+ *    the public leaderboards, GDPVal-AA and GDP.pdf quote Artificial
+ *    Analysis).
+ *  - **Every model was run at max thinking effort.** No effort setting is
+ *    matched against the rivals.
+ *  - **The rows with no id in our benchmark registry are absent, not
+ *    interpolated.** Kimi's own internal Kimi Code Bench 3.0 is one of them:
+ *    a benchmark with a single vendor's numbers and no public leaderboard is
+ *    not a row on this site.
+ */
+const kimiK31Pro: LeaderboardModel = {
+  id: 'kimi-k3.1-pro',
+  vendor: 'kimi',
+  kind: 'other',
+  version: 'k3.1-pro',
+  displayName: 'Kimi K3.1 Pro',
+  priceId: 'kimi-k3.1-pro',
+  releaseDate: '2026-10-24',
+  introduced: '2026-10-24',
+  updatedAt: KIMI_OBSERVED_AT,
+  scores: [
+    sc('terminal-bench-4.0', 65.7, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Claude Code harness, max thinking effort. Same table: Claude Opus 5.5 66.4, GPT-6 Astra 58.2',
+    }),
+    sc('terminal-bench-science-0.1', 38.1, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Claude Code harness. Same table: Claude Fable 5.1 40.0',
+    }),
+    sc('agents-last-exam', 43.2, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Kimi Code harness on the official v1.1 dataset; runs that bypass the task requirements score zero. Same table: Claude Opus 5.5 42.6',
+    }),
+    sc('officeqa-pro-v2', 64.4, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Claude Code harness; the whole PDF corpus is given as rendered images',
+    }),
+    sc('gdpval-aa', 1846.0, {
+      unit: 'absolute',
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table; the score is cited from Artificial Analysis. Same table: Claude Opus 5.5 1866.0',
+    }),
+    sc('hle-tools', 79.8, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, full evaluation set with tools. Same table: Claude Opus 5.5 67.7',
+    }),
+    sc('chartography-tools', 90.2, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, averaged over five runs. Same table: GPT-6 Astra 91.0',
+    }),
+    sc('swe-marathon', 51.7, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Claude Code harness; the rival columns come from the official SWE-Marathon leaderboard',
+    }),
+    sc('benchcad', 92.7, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, with tools, Claude Code harness. Same table: Claude Opus 5.5 96.2, GPT-6 Astra 95.9',
+    }),
+    sc('frontier-finance', 58.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, official finance agent v2 harness. Same table: Claude Fable 5.1 60.8',
+    }),
+    sc('osworld-2.1', 79.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, Kimi Agent harness on the official OSWorld v2 repo. Same table: Claude Fable 5.1 80.7',
+    }),
+    sc('gdp-pdf', 34.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table; the PDF is processed in a sandbox with IPython and graded per rubric criterion. The GLM and DeepSeek columns are cited from Artificial Analysis',
+    }),
+    sc('zerobench-main-tools', 63.0, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: 'Vendor table, pass@5, averaged over five runs. Same table: Claude Opus 5.5 61.0',
+    }),
+  ],
+}
+
+/**
+ * Claude Fable 5.1 — Anthropic's other flagship line.
+ *
+ * This row has no Anthropic launch table behind it: the numbers are the
+ * rival columns of Moonshot's K3.1 Pro announcement, which is where the
+ * model appears next to Kimi K3.1 Pro. Each note says where the figure
+ * itself comes from (Anthropic's system card, a public leaderboard or
+ * Artificial Analysis) — Moonshot printed them, but it did not measure all
+ * of them itself.
+ */
+const claudeFable51: LeaderboardModel = {
+  id: 'claude-fable-5.1',
+  vendor: 'claude',
+  kind: 'fable',
+  version: 'fable-5.1',
+  displayName: 'Claude Fable 5.1',
+  priceId: 'claude-fable-5.1',
+  updatedAt: KIMI_OBSERVED_AT,
+  scores: [
+    sc('terminal-bench-4.0', 57.9, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the value is the maximum reported in the vendor blog or the official Terminal-Bench 4.0 leaderboard",
+    }),
+    sc('terminal-bench-science-0.1', 40.0, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the value comes from the official Terminal-Bench Science leaderboard",
+    }),
+    sc('officeqa-pro-v2', 54.5, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, Claude Code harness",
+    }),
+    sc('gdpval-aa', 1754.0, {
+      unit: 'absolute',
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the score is cited from Artificial Analysis",
+    }),
+    sc('hle-tools', 65.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, full evaluation set with tools",
+    }),
+    sc('chartography-tools', 88.4, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, averaged over five runs",
+    }),
+    sc('swe-marathon', 45.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the value comes from the official SWE-Marathon leaderboard",
+    }),
+    sc('benchcad', 92.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the announcement takes this value from the Claude Opus 5.5 system card",
+    }),
+    sc('frontier-finance', 60.8, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, official finance agent v2 harness",
+    }),
+    sc('osworld-2.1', 80.7, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, evaluated in the official OSWorld v2 repo with the Kimi Agent harness",
+    }),
+    sc('gdp-pdf', 27.6, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table; the PDF is processed in a sandbox with IPython and graded per rubric criterion",
+    }),
+    sc('zerobench-main-tools', 59.0, {
+      source: KIMI_K31_POST,
+      observedAt: KIMI_OBSERVED_AT,
+      note: "Moonshot's launch table, pass@5, averaged over five runs",
+    }),
   ],
 }
 
@@ -649,11 +849,12 @@ const step5Preview: LeaderboardModel = {
 
 export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: STEP_OBSERVED_AT,
+  fetchedAt: KIMI_OBSERVED_AT,
   sourceNote:
-    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours.',
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours. Kimi K3.1 Pro was added on 2026-10-24 from Moonshot\'s own launch announcement: the scores are Kimi\'s, measured on Kimi\'s harnesses at max thinking effort, and the rival columns are Moonshot\'s measurements of other vendors\' models unless the footnote says otherwise (Terminal-Bench, Terminal-Bench Science and SWE-Marathon quote the public leaderboards, GDPVal-AA and GDP.pdf quote Artificial Analysis). Claude Fable 5.1 has no Anthropic table behind it — its row is the rival column of that same Kimi announcement, and every note says where the figure itself comes from.',
   models: [
     claudeOpus55,
+    claudeFable51,
     gpt6Astra,
     claudeOpus5,
     gpt56Sol,
@@ -666,6 +867,7 @@ export const LEADERBOARD: LeaderboardRegistry = {
     deepseekV4Flash0731,
     glm53,
     kimiK3,
+    kimiK31Pro,
     minimaxM31Flash,
     minimaxM3,
     step5Preview,

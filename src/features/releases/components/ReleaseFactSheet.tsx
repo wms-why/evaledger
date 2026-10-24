@@ -80,6 +80,91 @@ export function ReleaseFactSheet({ meta }: { meta: ReleaseMeta }) {
 
   return (
     <div className="space-y-8">
+      {/* ── Score table ─────────────────────────────────────────────── */}
+      <section>
+        <h2 className="text-[18px] font-semibold">{t('releases.scoreTitle')}</h2>
+        {!scoreTable ? (
+          <p className="mt-3 text-[14px] text-fg-3">{t('releases.scoreEmpty')}</p>
+        ) : (
+          <>
+            <p className="mt-1 text-[13px] text-fg-3">{t('releases.scoreNote')}</p>
+            <div className="mt-3 overflow-x-auto rounded-[12px] border border-border">
+              <table className="w-full min-w-[560px] border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-border border-b text-left text-[12px] text-fg-3">
+                    <th className="px-4 py-2.5 font-medium">{t('releases.colBenchmark')}</th>
+                    {scoreTable.columns.map((c) => (
+                      <th
+                        key={c.modelSlug}
+                        className={cn(
+                          'px-4 py-2.5 text-right font-medium',
+                          // The subject is marked on the COLUMN, so the reader
+                          // knows which model the post is about before reading
+                          // a single number.
+                          c.isSubject && 'bg-primary/5 text-foreground',
+                        )}
+                      >
+                        {c.displayName}
+                        {c.isSubject && (
+                          <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 align-middle text-[10px] font-normal whitespace-nowrap text-primary">
+                            {t('releases.subjectBadge')}
+                          </span>
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {scoreTable.rows.map((row) => {
+                    const subjectNote = row.cells.find((cell) => cell.isSubject)?.note
+                    return (
+                      <tr
+                        key={row.benchmark}
+                        className="border-border even:bg-bg-alt/40 [&:not(:first-child)]:border-t"
+                      >
+                        <td className="px-4 py-2.5">
+                          <Link
+                            to="/{-$locale}/benchmarks/$slug"
+                            params={{ slug: row.benchmark }}
+                            className="text-fg-2 hover:text-primary"
+                          >
+                            {row.benchmarkName}
+                          </Link>
+                          {subjectNote && (
+                            <span className="ml-2 text-[11px] text-fg-3">({subjectNote})</span>
+                          )}
+                        </td>
+                        {row.cells.map((cell) => (
+                          <td
+                            key={cell.modelSlug}
+                            className={cn(
+                              'px-4 py-2.5 text-right tabular-nums',
+                              cell.isSubject && 'bg-primary/5',
+                              // The winner of the row is marked on the VALUE,
+                              // independently of the subject: a competitor that
+                              // beats the subject is marked too, and a subject
+                              // that loses is not dressed up as the winner.
+                              cell.score == null
+                                ? 'text-fg-3'
+                                : cell.isBest
+                                  ? 'font-semibold text-foreground'
+                                  : 'text-fg-2',
+                            )}
+                          >
+                            {cell.score == null ? '—' : formatScore(cell.score, row.unit)}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 text-[12px] text-fg-3">{t('releases.scoreLegend')}</p>
+          </>
+        )}
+      </section>
+
       {/* ── Price table ─────────────────────────────────────────────── */}
       <section>
         <h2 className="text-[18px] font-semibold">{t('releases.priceTitle')}</h2>
@@ -180,68 +265,6 @@ export function ReleaseFactSheet({ meta }: { meta: ReleaseMeta }) {
           </div>
         </section>
       )}
-
-      {/* ── Score table ─────────────────────────────────────────────── */}
-      <section>
-        <h2 className="text-[18px] font-semibold">{t('releases.scoreTitle')}</h2>
-        {!scoreTable ? (
-          <p className="mt-3 text-[14px] text-fg-3">{t('releases.scoreEmpty')}</p>
-        ) : (
-          <>
-            <p className="mt-1 text-[13px] text-fg-3">{t('releases.scoreNote')}</p>
-            <div className="mt-3 overflow-x-auto rounded-[12px] border border-border">
-              <table className="w-full min-w-[560px] border-collapse text-[13px]">
-                <thead>
-                  <tr className="border-border border-b text-left text-[12px] text-fg-3">
-                    <th className="px-4 py-2.5 font-medium">{t('releases.colBenchmark')}</th>
-                    {scoreTable.columns.map((c) => (
-                      <th key={c.modelSlug} className="px-4 py-2.5 text-right font-medium">
-                        {c.displayName}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {scoreTable.rows.map((row) => (
-                    <tr
-                      key={row.benchmark}
-                      className="border-border even:bg-bg-alt/40 [&:not(:first-child)]:border-t"
-                    >
-                      <td className="px-4 py-2.5">
-                        <Link
-                          to="/{-$locale}/benchmarks/$slug"
-                          params={{ slug: row.benchmark }}
-                          className="text-fg-2 hover:text-primary"
-                        >
-                          {row.benchmarkName}
-                        </Link>
-                        {row.cells[0]?.note && (
-                          <span className="ml-2 text-[11px] text-fg-3">({row.cells[0].note})</span>
-                        )}
-                      </td>
-                      {row.cells.map((cell) => (
-                        <td
-                          key={cell.modelSlug}
-                          className={cn(
-                            'px-4 py-2.5 text-right tabular-nums',
-                            cell.score == null
-                              ? 'text-fg-3'
-                              : cell.modelSlug === scoreTable.columns[0]?.modelSlug
-                                ? 'font-medium text-foreground'
-                                : 'text-fg-2',
-                          )}
-                        >
-                          {cell.score == null ? '—' : formatScore(cell.score, row.unit)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </section>
     </div>
   )
 }

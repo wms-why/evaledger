@@ -3,7 +3,7 @@ title: "DeepInfer 开源：DeepSeek 把 V4.1-Flash 背后的推理引擎放出�
 description: "2026-10-20，DeepSeek 以 Apache-2.0 开源了生产环境在用的推理框架 DeepInfer：只支持一个模型、只认 SM100 与昇腾 950、不含服务化那三层。它不改价格——$0.30 / $1.20 一个子儿没动——但它解释了那个价格是怎么来的。附部署步骤与选型对照。"
 date: "2026-10-23"
 checkedAt: "2026-10-23"
-dataCheckedAt: "2026-10-23"
+dataCheckedAt: "2026-10-24"
 releasedAt: "2026-10-20"
 vendor: deepseek
 modelId: deepseek-flash

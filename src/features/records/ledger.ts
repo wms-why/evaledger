@@ -349,9 +349,15 @@ export const LEDGER: RecordEntry[] = [
     },
   },
   {
+    // The scores of this record still come from the DeepSeek V4.1 Flash
+    // reference table of 2026-10-19; the price side is Kimi's own pricing
+    // page, verified 2026-10-24 — which is what `pnpm records:pins` prints
+    // for a record that has a price row.
     label: 'Kimi K3',
+    priceId: 'kimi-k3',
     scoreId: 'kimi-k3',
-    sourceUrl: 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg',
+    sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+    priceIdentity: { displayName: 'Kimi K3' },
     identity: { displayName: 'Kimi K3', version: 'k3' },
     scores: {
       'gpqa-diamond': 92.9,
@@ -371,6 +377,64 @@ export const LEDGER: RecordEntry[] = [
       'babyvision-tools': 85.7,
       'zerobench-main-tools': 41,
     },
+  },
+  {
+    label: 'Kimi K3.1 Pro',
+    priceId: 'kimi-k3.1-pro',
+    scoreId: 'kimi-k3.1-pro',
+    introduced: '2026-10-24',
+    sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+    priceIdentity: { displayName: 'Kimi K3.1 Pro' },
+    identity: { displayName: 'Kimi K3.1 Pro', version: 'k3.1-pro' },
+    scores: {
+      'terminal-bench-4.0': 65.7,
+      'terminal-bench-science-0.1': 38.1,
+      'agents-last-exam': 43.2,
+      'officeqa-pro-v2': 64.4,
+      'gdpval-aa': 1846,
+      'hle-tools': 79.8,
+      'chartography-tools': 90.2,
+      'swe-marathon': 51.7,
+      'benchcad': 92.7,
+      'frontier-finance': 58.6,
+      'osworld-2.1': 79.6,
+      'gdp-pdf': 34.6,
+      'zerobench-main-tools': 63,
+    },
+    notes: {
+      'terminal-bench-4.0':
+        'Vendor table, Claude Code harness, max thinking effort. Same table: Claude Opus 5.5 66.4, GPT-6 Astra 58.2',
+      'terminal-bench-science-0.1':
+        'Vendor table, Claude Code harness. Same table: Claude Fable 5.1 40.0',
+      'agents-last-exam':
+        'Vendor table, Kimi Code harness on the official v1.1 dataset; runs that bypass the task requirements score zero. Same table: Claude Opus 5.5 42.6',
+      'officeqa-pro-v2':
+        'Vendor table, Claude Code harness; the whole PDF corpus is given as rendered images',
+      'gdpval-aa':
+        'Vendor table; the score is cited from Artificial Analysis. Same table: Claude Opus 5.5 1866.0',
+      'hle-tools': 'Vendor table, full evaluation set with tools. Same table: Claude Opus 5.5 67.7',
+      'chartography-tools': 'Vendor table, averaged over five runs. Same table: GPT-6 Astra 91.0',
+      'swe-marathon':
+        'Vendor table, Claude Code harness; the rival columns come from the official SWE-Marathon leaderboard',
+      'benchcad': 'Vendor table, with tools, Claude Code harness. Same table: Claude Opus 5.5 96.2, GPT-6 Astra 95.9',
+      'frontier-finance': 'Vendor table, official finance agent v2 harness. Same table: Claude Fable 5.1 60.8',
+      'osworld-2.1':
+        'Vendor table, Kimi Agent harness on the official OSWorld v2 repo. Same table: Claude Fable 5.1 80.7',
+      'gdp-pdf':
+        'Vendor table; the PDF is processed in a sandbox with IPython and graded per rubric criterion. The GLM and DeepSeek columns are cited from Artificial Analysis',
+      'zerobench-main-tools':
+        'Vendor table, pass@5, averaged over five runs. Same table: Claude Opus 5.5 61.0',
+    },
+  },
+  {
+    // The Highspeed twin is a price row, not a score row: Moonshot publishes
+    // no separate benchmark run for it — "the same intelligence, 2-3× the
+    // speed" — so its score row would be a copy of K3.1 Pro's numbers.
+    label: 'Kimi K3.1 Pro Highspeed',
+    priceId: 'kimi-k3.1-pro-highspeed',
+    introduced: '2026-10-24',
+    sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+    priceIdentity: { displayName: 'Kimi K3.1 Pro Highspeed' },
   },
   {
     label: 'MiniMax M3.1 Flash',
@@ -487,10 +551,48 @@ export const LEDGER: RecordEntry[] = [
     prices: { input: 150, output: 600, context: 200000 },
   },
   {
-    label: 'Fable 5.1',
+    // The label follows the score row's display name now that this record
+    // has one; the price row keeps its own "Fable 5.1" name.
+    label: 'Claude Fable 5.1',
     priceId: 'claude-fable-5.1',
+    scoreId: 'claude-fable-5.1',
     sourceUrl: 'https://claude.com/pricing#api',
     priceIdentity: { displayName: 'Fable 5.1' },
+    identity: { displayName: 'Claude Fable 5.1', version: 'fable-5.1' },
+    scores: {
+      'terminal-bench-4.0': 57.9,
+      'terminal-bench-science-0.1': 40,
+      'officeqa-pro-v2': 54.5,
+      'gdpval-aa': 1754,
+      'hle-tools': 65.6,
+      'chartography-tools': 88.4,
+      'swe-marathon': 45.6,
+      'benchcad': 92.6,
+      'frontier-finance': 60.8,
+      'osworld-2.1': 80.7,
+      'gdp-pdf': 27.6,
+      'zerobench-main-tools': 59,
+    },
+    notes: {
+      'terminal-bench-4.0':
+        "Moonshot's launch table; the value is the maximum reported in the vendor blog or the official Terminal-Bench 4.0 leaderboard",
+      'terminal-bench-science-0.1':
+        "Moonshot's launch table; the value comes from the official Terminal-Bench Science leaderboard",
+      'officeqa-pro-v2': "Moonshot's launch table, Claude Code harness",
+      'gdpval-aa': "Moonshot's launch table; the score is cited from Artificial Analysis",
+      'hle-tools': "Moonshot's launch table, full evaluation set with tools",
+      'chartography-tools': "Moonshot's launch table, averaged over five runs",
+      'swe-marathon':
+        "Moonshot's launch table; the value comes from the official SWE-Marathon leaderboard",
+      'benchcad':
+        "Moonshot's launch table; the announcement takes this value from the Claude Opus 5.5 system card",
+      'frontier-finance': "Moonshot's launch table, official finance agent v2 harness",
+      'osworld-2.1':
+        "Moonshot's launch table, evaluated in the official OSWorld v2 repo with the Kimi Agent harness",
+      'gdp-pdf':
+        "Moonshot's launch table; the PDF is processed in a sandbox with IPython and graded per rubric criterion",
+      'zerobench-main-tools': "Moonshot's launch table, pass@5, averaged over five runs",
+    },
   },
   {
     label: 'Sonnet 5',

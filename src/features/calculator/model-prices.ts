@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.8.0'
+export const REGISTRY_VERSION = '0.9.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -34,7 +34,7 @@ export const REGISTRY_VERSION = '0.8.0'
  */
 export const REGISTRY: ModelRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: '2026-10-23',
+  fetchedAt: '2026-10-24',
   sourceNote:
     'Prices sourced from each provider\'s official pricing page. Verify before relying on for billing.',
   openRouterMarkup: 1.05,
@@ -907,6 +907,81 @@ export const REGISTRY: ModelRegistry = {
       sourceUrl: 'https://platform.stepfun.ai/docs/en/guides/pricing/details',
       lastVerified: '2026-10-23',
       note: 'Preview release (2026-09-20); open weights followed on 2026-10-15. Cache-miss input includes writing to the cache; output tokens include the reasoning trace.',
+    },
+
+    // ───────────────────────── Moonshot Kimi ─────────────────────────
+    // Kimi publishes its price list in two places that agree: the Chinese
+    // platform (platform.moonshot.cn / platform.kimi.com) in yuan and the
+    // English platform (platform.kimi.ai) in dollars. The rows below are the
+    // vendor's own USD list, verified 2026-10-24 — not a converted number
+    // (¥13 / ¥68 / ¥1.30 per MTok on the Chinese page is the same row as
+    // $2.00 / $10.00 / $0.20 here).
+    //
+    // K3-series models all serve a 1,048,576-token context window, and the
+    // API bills cache writes separately by TTL (5 min / 1 h) — a cache hit is
+    // billed at the cache-read rate only, with no second write charge.
+    // The yuan figures ride along in the notes so the Chinese release page can
+    // quote the local list verbatim.
+    {
+      id: 'kimi-k3.1-pro',
+      provider: 'kimi',
+      channel: 'official',
+      displayName: 'Kimi K3.1 Pro',
+      family: 'kimi-k3',
+      status: 'active',
+      contextWindow: 1_048_576,
+      inputPricePer1M: 2.0,
+      outputPricePer1M: 10.0,
+      cachedInputPricePer1M: 0.2,
+      // Cache writes are billed per TTL: 5 min costs the input rate, 1 h
+      // costs twice the input rate.
+      cacheWrite: [
+        { window: '5min', pricePer1M: 2.0 },
+        { window: '1hr', pricePer1M: 4.0 },
+      ],
+      sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+      lastVerified: '2026-10-24',
+      introduced: '2026-10-24',
+      note: 'Released 2026-10-24; $2.00 / $10.00 / $0.20 (¥13 / ¥68 / ¥1.30) per 1M tokens. Cache writes are billed separately by TTL: $2.00 for 5 min, $4.00 for 1 h. The Highspeed twin costs 2× for 2-3× the output speed.',
+    },
+    {
+      id: 'kimi-k3.1-pro-highspeed',
+      provider: 'kimi',
+      channel: 'official',
+      displayName: 'Kimi K3.1 Pro Highspeed',
+      family: 'kimi-k3',
+      status: 'active',
+      contextWindow: 1_048_576,
+      inputPricePer1M: 4.0,
+      outputPricePer1M: 20.0,
+      cachedInputPricePer1M: 0.2,
+      cacheWrite: [
+        { window: '5min', pricePer1M: 4.0 },
+        { window: '1hr', pricePer1M: 8.0 },
+      ],
+      sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+      lastVerified: '2026-10-24',
+      introduced: '2026-10-24',
+      note: 'Released 2026-10-24; $4.00 / $20.00 / $0.20 (¥26 / ¥136 / ¥1.30) per 1M tokens. Same intelligence as Kimi K3.1 Pro at 2-3× the output speed, for 2× the price.',
+    },
+    {
+      id: 'kimi-k3',
+      provider: 'kimi',
+      channel: 'official',
+      displayName: 'Kimi K3',
+      family: 'kimi-k3',
+      status: 'active',
+      contextWindow: 1_048_576,
+      inputPricePer1M: 3.0,
+      outputPricePer1M: 15.0,
+      cachedInputPricePer1M: 0.3,
+      cacheWrite: [
+        { window: '5min', pricePer1M: 3.0 },
+        { window: '1hr', pricePer1M: 6.0 },
+      ],
+      sourceUrl: 'https://platform.kimi.ai/docs/pricing',
+      lastVerified: '2026-10-24',
+      note: 'Still sold alongside Kimi K3.1 Pro, and dearer: $3.00 / $15.00 / $0.30 (¥20 / ¥100 / ¥2.00) per 1M tokens. Cache writes are billed separately by TTL: $3.00 for 5 min, $6.00 for 1 h.',
     },
 
     // ───────────────────────── Grok ─────────────────────────

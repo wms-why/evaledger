@@ -50,6 +50,7 @@ const OFFICIAL_PROVIDERS: ReadonlySet<Provider> = new Set<Provider>([
   'minimax',
   'stepfun',
   'grok',
+  'kimi',
 ])
 
 /**

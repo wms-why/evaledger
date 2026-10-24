@@ -31,6 +31,11 @@
  * Each entry is a page that answers a search the site is built for. The
  * per-provider pricing landings are the long-tail entries — they carry the
  * product names people actually type.
+ *
+ * The list grows one launch at a time: when a collection pass adds a model
+ * the site knows enough about, the model page joins the list, and so do the
+ * pages that answer the questions the new model raises — is it worth
+ * switching to (the series pair), and what does it cost (the release post).
  */
 export const CORE_PATHS = [
   // The brand anchor: the landing page, and the calculator it sells.
@@ -55,6 +60,18 @@ export const CORE_PATHS = [
   '/models/claude-opus-5.5',
   '/models/gpt-5.6-sol',
   '/models/deepseek-v4.1-flash-1017',
+  // The two models the 2026-10-24 collection pass added: Moonshot's new
+  // flagship and Anthropic's other flagship line, both of them scored on
+  // more benchmarks than any model above them.
+  '/models/kimi-k3.1-pro',
+  '/models/claude-fable-5.1',
+  // The Kimi K3 line, and the question its newest version raises: K3.1 Pro
+  // is cheaper than the K3 it sits next to — is it the better buy?
+  '/series/kimi-k3',
+  '/series/kimi-k3/k3.1-pro-vs-k3',
+  // The launch analysis of the newest model: what it costs, and what the
+  // vendor's own numbers do and do not prove.
+  '/releases/kimi-k3-1',
 ] as const
 
 /**
@@ -67,7 +84,9 @@ export const CORE_PATHS = [
  * calculator, and the per-provider pricing landings. The Chinese mirror of
  * the long tail (benchmarks, series, release posts) stays out of the core
  * list; it remains reachable, linked and indexable, it just does not ask for
- * the site's index budget.
+ * the site's index budget. The Chinese twins of the newest model pages are
+ * no different: they are listed in English only, and their hreflang
+ * alternate carries the crawler across.
  */
 export const CORE_ZH_PATHS = [
   '/',

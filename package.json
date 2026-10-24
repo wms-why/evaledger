@@ -4,7 +4,7 @@
   "type": "module",
   "packageManager": "pnpm@10.33.1",
   "scripts": {
-    "dev": "vite dev --port 3000 --host",
+    "dev": "vite dev --port 3340 --host",
     "build": "vite build",
     "preview": "pnpm build && vite preview",
     "test": "vitest run",

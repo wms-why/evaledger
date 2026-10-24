@@ -98,8 +98,23 @@ export const SERIES: Series[] = [
     family: 'claude-fable',
     vendor: 'claude',
     members: [
-      { key: 'fable-5.1', version: '5.1', tier: 'flagship', priceId: 'claude-fable-5.1' },
+      { key: 'fable-5.1', version: '5.1', tier: 'flagship', priceId: 'claude-fable-5.1', scoreId: 'claude-fable-5.1' },
       { key: 'fable-5', version: '5', tier: 'flagship', priceId: 'claude-fable-5' },
+    ],
+  },
+  {
+    slug: 'kimi-k3',
+    name: 'Kimi K3',
+    family: 'kimi-k3',
+    vendor: 'kimi',
+    members: [
+      // K3.1 Pro and its Highspeed twin are the same weights at two speeds:
+      // the twin carries a price row, not a score row of its own.
+      { key: 'k3.1-pro', version: '3.1', tier: 'flagship', priceId: 'kimi-k3.1-pro', scoreId: 'kimi-k3.1-pro' },
+      { key: 'k3.1-pro-highspeed', version: '3.1', tier: 'fast', priceId: 'kimi-k3.1-pro-highspeed' },
+      // K3 is still sold and still priced — cheaper per token is not the same
+      // as better, so the line reads as two versions, not a replacement.
+      { key: 'k3', version: '3', tier: 'flagship', priceId: 'kimi-k3', scoreId: 'kimi-k3' },
     ],
   },
   {

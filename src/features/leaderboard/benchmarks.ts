@@ -8,7 +8,11 @@ import type { ScoreUnit } from './types'
  * meaningful search volume on its own. Most entries came from the owner's
  * reference table (2026-10-19); the MiniMax ones were added afterwards from
  * the vendor's own launch posts and model cards, which publish a wider set of
- * benchmarks than the reference table covers.
+ * benchmarks than the reference table covers. The Kimi wave (2026-10-24) did
+ * the same for Moonshot's K3.1 Pro launch table: eight ids for benchmarks
+ * the vendor published in that table and the reference table has no place
+ * for — Terminal-Bench Science 0.1, SWE-Marathon, OSWorld V2.1, BenchCAD,
+ * Frontier Finance, OfficeQA Pro v2, GDP.pdf and GDPVal-AA.
  */
 
 export type BenchmarkCategory =
@@ -45,6 +49,23 @@ export const BENCHMARKS: Benchmark[] = [
     unit: 'percent',
     description:
       'A composite over high-value knowledge work — finance, coding, legal and tax — published by Vals AI. One number for "how good is this model at the work enterprises actually pay for".',
+  },
+  {
+    id: 'gdpval-aa',
+    name: 'GDPVal-AA v2.1',
+    category: 'knowledge',
+    unit: 'absolute',
+    version: '2.1',
+    description:
+      'The Artificial Analysis variant of GDPval: how much economic value a model’s professional deliverables are worth, published as a raw value rather than a percentage. A higher number means more value delivered per task.',
+  },
+  {
+    id: 'gdp-pdf',
+    name: 'GDP.pdf',
+    category: 'knowledge',
+    unit: 'percent',
+    description:
+      'Document-understanding tasks graded against a per-document rubric, with the PDF supplied as page images plus extracted text.',
   },
   {
     id: 'gpqa-diamond',
@@ -108,12 +129,30 @@ export const BENCHMARKS: Benchmark[] = [
     description: 'End-to-end tasks completed in a real terminal environment (v4.0 task set).',
   },
   {
+    id: 'terminal-bench-science-0.1',
+    version: '0.1',
+    name: 'Terminal-Bench Science 0.1',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'Science-flavoured terminal tasks (v0.1 task set), scored on strict task-specific tests in a real shell.',
+  },
+  {
     id: 'swe-bench-pro',
     name: 'SWE-bench Pro',
     category: 'coding',
     unit: 'percent',
     description:
       'Long-horizon software-engineering tasks solved in a real repository, scored on held-out test suites.',
+  },
+  {
+    id: 'swe-marathon',
+    name: 'SWE-Marathon v1.1',
+    version: '1.1',
+    category: 'coding',
+    unit: 'percent',
+    description:
+      'Long multi-session engineering jobs on real repositories — the model has to keep working across a whole project, not one pull request.',
   },
   {
     id: 'frontierswe-v2',
@@ -191,6 +230,15 @@ export const BENCHMARKS: Benchmark[] = [
       'Computer-use tasks driven through a real desktop — scored as a partial score on the offline subset.',
   },
   {
+    id: 'osworld-2.1',
+    version: '2.1',
+    name: 'OSWorld V2.1',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'Computer-use tasks driven through a real desktop (v2.1 task set) — a different task set from OSWorld-2.0, so the two numbers are not interchangeable.',
+  },
+  {
     id: 'chartography',
     name: 'Chartography',
     category: 'vision',
@@ -244,6 +292,23 @@ export const BENCHMARKS: Benchmark[] = [
     description: 'Multi-step finance work that chains document, spreadsheet and market-data tools.',
   },
   {
+    id: 'officeqa-pro-v2',
+    name: 'OfficeQA Pro v2',
+    version: '2',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'Financial-document analysis over a full PDF corpus — retrieval, cross-document checking and multi-step numeric reasoning, graded per question.',
+  },
+  {
+    id: 'frontier-finance',
+    name: 'Frontier Finance',
+    category: 'agentic',
+    unit: 'percent',
+    description:
+      'The whole investment workflow — screening candidates through to profitability analysis — on an official market-data agent harness.',
+  },
+  {
     id: 'chartography-tools',
     name: 'Chartography (w/tools)',
     category: 'vision',
@@ -256,6 +321,14 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'vision',
     unit: 'percent',
     description: 'Visual perception benchmark, tool-assisted.',
+  },
+  {
+    id: 'benchcad',
+    name: 'BenchCAD',
+    category: 'vision',
+    unit: 'percent',
+    description:
+      'Rebuilding a 3D model from multi-view renderings by generating CAD code. We track the tool-assisted run of it.',
   },
   {
     id: 'zerobench-main-tools',

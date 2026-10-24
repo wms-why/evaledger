@@ -3,7 +3,7 @@ title: "DeepSeek V4.1-Flash 0910 发布：高峰 $0.30 / $1.20，缓存读只要
 description: "DeepSeek V4.1-Flash 0910（2026-09-10 的首发 checkpoint）高峰价每 1M token 输入 $0.30、输出 $1.20，非高峰减半（$0.15 / $0.60），缓存读 $0.006，19 项已核验跑分。API 现在服务的是更新的 1017 checkpoint，我们分开记录。"
 date: "2026-10-19"
 checkedAt: "2026-10-20"
-dataCheckedAt: "2026-10-20"
+dataCheckedAt: "2026-10-24"
 releasedAt: "2026-09-10"
 vendor: deepseek
 modelId: deepseek-flash-0910

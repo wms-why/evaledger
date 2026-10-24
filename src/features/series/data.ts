@@ -405,18 +405,16 @@ export function seriesVerdict(rows: SeriesRow[]): SeriesVerdict | undefined {
   const models = scoredRows.map((row) => findLeaderboardModel(row.scoreId as string))
 
   // Benchmarks every scored version of the line reports — the only ones a
-  // version-to-version average may be built on. A benchmark that is not a
-  // percentage for every one of them (a rating, an Elo) cannot be averaged
-  // with percentages, so it is not part of the comparable set either.
+  // version-to-version average may be built on. A benchmark one of them does
+  // not report is not part of the comparable set. A version that reports one
+  // of them in another unit (a rating, an Elo, an absolute value) cannot be
+  // averaged with percentages, so it gets no average at all and the line
+  // publishes no "strongest version" claim rather than averaging over a
+  // different denominator.
   const commonBenchmarkIds = models.length
     ? models
         .flatMap((model) => (model ? model.scores.map((score) => score.benchmark) : []))
-        .filter((id) =>
-          models.every((model) => {
-            const score = model?.scores.find((entry) => entry.benchmark === id)
-            return score?.unit === 'percent'
-          }),
-        )
+        .filter((id) => models.every((model) => model?.scores.some((entry) => entry.benchmark === id)))
     : []
 
   const commonAverage = (row: SeriesRow): number | undefined => {

@@ -206,9 +206,11 @@ export const BENCHMARK_SHORT: Record<string, string> = {
   'terminal-bench-2.1': 'TB 2.1',
   'terminal-bench-3.0': 'TB 3.0',
   'terminal-bench-4.0': 'TB 4.0',
+  'terminal-bench-science-0.1': 'TB Science',
   'deepswe-v1.1': 'DeepSWE',
   'frontierswe-v2': 'FrontierSWE',
   'swe-bench-pro': 'SWE-Pro',
+  'swe-marathon': 'SWE-Marathon',
   'programbench': 'ProgBench',
   'nl2repo-bench': 'NL2Repo',
   'cybergym': 'CyberGym',
@@ -229,9 +231,17 @@ export const BENCHMARK_SHORT: Record<string, string> = {
   'cwe-bench-v1': 'CWE',
 }
 
-/** Format a score according to its unit. */
+/**
+ * Format a score according to its unit.
+ *
+ * A `percent` score carries the `%` sign; a `rating` / `elo` score is a bare
+ * number; an `absolute` score (GDPVal-AA's economic value) is a bare number
+ * too — printing a percent sign on a value like 1846.0 would be a lie about
+ * what the number is.
+ */
 export function formatScore(score: number, unit: ScoreUnit): string {
   if (unit === 'rating') return String(Math.round(score))
   if (unit === 'elo') return String(Math.round(score))
+  if (unit === 'absolute') return String(score)
   return `${score}%`
 }

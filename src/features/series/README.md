@@ -124,13 +124,14 @@ interface SeriesMember {
 - **样例月成本**用 `1M input + 500K output`（与发布解读同一个口径）。
   触发了长上下文阶梯的模型，行内会标出实际应用的规则。
 
-## 5. 首期 10 条产品线
+## 5. 首期 11 条产品线
 
 | slug | 产品线 | 成员（新 → 旧） |
 | --- | --- | --- |
 | `claude-opus` | Claude Opus | 5.5 / 5 / 4.8 / 4.7 / 4.6 / 4.5 |
 | `claude-sonnet` | Claude Sonnet | 5 / 4.6 / 4.5 |
 | `claude-fable` | Claude Fable | 5.1 / 5 |
+| `kimi-k3` | Kimi K3 | 3.1 Pro / 3.1 Pro Highspeed / 3 |
 | `gpt-6` | GPT-6 | astra / sol / luna |
 | `gpt-5` | GPT-5 | 5.6 cyber / 5.6 sol / 5 / 5 mini / 5 nano |
 | `gemini-3` | Gemini 3 | 3.8 Flash / 3.1 Pro / 3.1 Flash-Lite |

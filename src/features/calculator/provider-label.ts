@@ -9,6 +9,7 @@ const PROVIDER_KEYS: Record<string, string> = {
   minimax: 'calculator.providerMinimax',
   stepfun: 'calculator.providerStepfun',
   grok: 'calculator.providerGrok',
+  kimi: 'calculator.providerKimi',
   openrouter: 'calculator.providerOpenRouter',
 }
 

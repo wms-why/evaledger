@@ -67,8 +67,10 @@ describe('freshness window', () => {
   })
 
   test('注册表里的行按快照算：核对当天的行是 fresh', () => {
-    const row = REGISTRY.models.find((m) => m.id === 'step-5-preview')!
-    const quality = priceQuality('gpt-6-astra', row)
+    // 快照当天核对过的那一行（2026-10-24 新加的 Kimi K3.1 Pro）年龄是 0 天。
+    const row = REGISTRY.models.find((m) => m.lastVerified === REGISTRY.fetchedAt)!
+    expect(row, 'no registry row was verified on the snapshot date').toBeDefined()
+    const quality = priceQuality(row.id, row)
     expect(quality.freshness).toBe('fresh')
     expect(quality.ageDays).toBe(0)
     expect(quality.lastVerified).toBe(REGISTRY.fetchedAt)
@@ -165,9 +167,18 @@ describe('changes：与同一条线的前一个版本比较', () => {
   })
 
   test('没有前代版本 → changes 为空', () => {
-    // Kimi K3 不属于任何系列（没有可比较的前一版本）。
+    // GLM 5.3 不属于任何系列（family 只有它一个成员），没有可比较的前一版。
+    const glm = findLeaderboardModel('glm-5.3')!
+    expect(seriesForScoreId('glm-5.3')).toBeUndefined()
+    expect(changesFor(glm)).toEqual([])
+    const glmRow = modelQuality().find((m) => m.modelId === 'glm-5.3')!
+    expect(glmRow.changes).toEqual([])
+
+    // Kimi K3 在 Kimi K3 这条线里，但它是最老的一版 —— 没有前一代可比。
     const kimi = findLeaderboardModel('kimi-k3')!
-    expect(seriesForScoreId('kimi-k3')).toBeUndefined()
+    const kimiSeries = seriesForScoreId('kimi-k3')!
+    const kimiIndex = kimiSeries.members.findIndex((m) => m.scoreId === 'kimi-k3')
+    expect(kimiSeries.members[kimiIndex + 1]).toBeUndefined()
     expect(changesFor(kimi)).toEqual([])
     const row = modelQuality().find((m) => m.modelId === 'kimi-k3')!
     expect(row.changes).toEqual([])

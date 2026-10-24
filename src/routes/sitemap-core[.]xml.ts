@@ -11,9 +11,12 @@ import { coreSitemapPaths } from '@/features/seo/sitemap-paths'
  * that answer the searches the site is built for: the English pages, plus
  * the six Chinese pages whose Chinese version carries the same intent.
  *
- * The long tail (benchmarks, series, release posts) is served by
- * `/sitemap-full.xml` and is deliberately **not** declared: a declared
- * sitemap is an invitation, and a new domain has no crawl budget to spare.
+ * The long tail — every benchmark, every series pair, every release post —
+ * is served by `/sitemap-full.xml` and is deliberately **not** declared: a
+ * declared sitemap is an invitation, and a new domain has no crawl budget to
+ * spare. What sits in this list is the hand-picked few: the pages that
+ * answer the searches the site is built for, including the newest launch's
+ * model page, its series line and its launch analysis.
  *
  * `/sitemap.xml` serves this very same list — it is the URL that used to be
  * declared, so a crawler that already knows it stops meeting the long tail.

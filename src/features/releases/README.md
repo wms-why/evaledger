@@ -69,9 +69,12 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 [SiteNav]
 [Header]  kicker「Model release · 厂商」/ H1 / 发布日 / 一句话 description
 [Fact sheet]  ← 实时数据，本系列的价值核心
+    · 跑分表：有 modelSlug 才有；没有就渲染诚实的空状态
+      · **两个高亮必须分开**：主角列用底色 + 徽章标出（说的是「这是谁」），
+        每行的最高分用加粗标出（说的是「这一行谁赢了」）。主角不是每行都赢，
+        输掉的那一行加粗落在对手身上；并列第一则谁都不加粗。
     · 价格表：主角行高亮 + compareModelIds 各行（状态徽章：active / legacy）
     · 「你的用量要多少钱」：1M input + 500K output 的月度估算（实时算）
-    · 跑分表：有 modelSlug 才有；没有就渲染诚实的空状态
     · context window / cached input 单价 / 各自 sourceUrl + lastVerified
     · pending 文章：以上全部换成一句「还没正式上线」的说明
 [Video]     ← 有 videoSrc 才渲染（controls + poster + 图注）
@@ -106,7 +109,7 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 | `deepseek-v4-1-flash` | DeepSeek | DeepSeek V4.1-Flash 0910 | `deepseek-flash-0910` | `deepseek-v4.1-flash` | `2026-09-10` |
 | `deepseek-v4-1-flash-1017` | DeepSeek | DeepSeek V4.1-Flash 1017 | `deepseek-flash` | `deepseek-v4.1-flash-1017` | `2026-10-17` |
 | `minimax-m3-1-flash` | MiniMax | MiniMax M3.1 Flash | `minimax-m3.1-flash` | `minimax-m3.1-flash` | `2026-10-19` |
-| `kimi-k3-1` | Moonshot | Kimi K3.1（**未发布**，`pending: true`） | `kimi-k3.1` | — | — |
+| `kimi-k3-1` | Moonshot | Kimi K3.1 Pro | `kimi-k3.1-pro` | `kimi-k3.1-pro` | `2026-10-24` |
 
 `gpt-6-astra` 与 `claude-opus-5-5` **故意不给** `modelSlug`：
 榜单里没有这两个 SKU 的可溯源跑分，就不编。正文里要写明「还没有核验过的跑分」。
@@ -141,10 +144,11 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 不要热链厂商 CDN 的地址——那些链接会轮换。
 
 **发布当天的清单（按顺序做，缺一项护栏就会红）：**
+以 Kimi K3.1 Pro（2026-10-24）为例：
 
-1. REGISTRY 加价格行（`kimi-k3-1`）→ `status: 'active'`，`lastVerified` = 当天，
-   `REGISTRY.fetchedAt` = 当天；前代 SKU 按「换 checkpoint」规则处置。
-2. LEADERBOARD 加分数行（`kimi-k3.1`）+ `priceId` 指回第 1 步；
+1. REGISTRY 加价格行（`kimi-k3.1-pro`）→ `status: 'active'`，`lastVerified` = 当天，
+   `REGISTRY.fetchedAt` = 当天；同门的其它行按「换 checkpoint」规则处置。
+2. LEADERBOARD 加分数行（`kimi-k3.1-pro`）+ `priceId` 指回第 1 步；
    只登厂商表格或第三方榜单里真实存在的项，缺项就空着。
 3. `src/features/records/ledger.ts` 加记录（新版本 = 新记录，`supersedes` 指向前代）；
    `pnpm records:pins` 拿模板。
@@ -291,12 +295,44 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 - source：MiniMax M3.1 Flash 官方发布 `https://www.minimax.cn/blog/minimax-m31f`，
   title「MiniMax M3.1 Flash 官方发布」
 
+#### `kimi-k3-1`（Moonshot · Kimi K3.1 Pro）
+- 主角：`kimi-k3.1-pro` $2.00 / $10.00，cached $0.20，cacheWrite 5min $2.00 / 1hr $4.00，
+  ctx 1,048,576，source `https://platform.kimi.ai/docs/pricing`，lastVerified 2026-10-24
+- releasedAt 2026-10-24（英文站源 `https://kimi.com/blog/kimi-k3-1-pro`，中文站源为同一篇的
+  微信公告 `https://mp.weixin.qq.com/s/Q6Z-skAUH_na9g37VWbHew`）
+- 对比行：
+  - `kimi-k3` $3.00 / $15.00 / $0.30（active）→ **主角便宜三分之一**（两个计价维度都是）
+  - `kimi-k3.1-pro-highspeed` $4.00 / $20.00 / $0.20（active）→ 高速版，智能相同、价格 2×
+  - `gpt-6-astra` $10 / $50、`claude-opus-5.5` $4 / $20、`deepseek-flash` $0.30 / $1.20、
+    `minimax-m3.1-flash` $0.15 / $0.60
+- 缓存折扣：$0.20 = 输入价的 10%（省 90%）；**缓存写入另计**（5 分钟 $2.00、1 小时 $4.00），
+  和 Anthropic 同一形状，不是 DeepSeek 那种「写入并进未命中价」
+- 上下文：1,048,576 —— K3 系列统一，不是 K2 的 262,144
+- 跑分（`kimi-k3.1-pro`，**13 项**，全部出自月之暗面自己的发布公告）：
+  terminal-bench-4.0 65.7、terminal-bench-science-0.1 38.1、agents-last-exam 43.2、
+  officeqa-pro-v2 64.4、gdpval-aa 1846.0（unit: absolute）、hle-tools 79.8、
+  chartography-tools 90.2、swe-marathon 51.7、benchcad 92.7、frontier-finance 58.6、
+  osworld-2.1 79.6、gdp-pdf 34.6、zerobench-main-tools 63.0
+  —— 每一条 note 都带着 harness（Claude Code / Kimi Code / Kimi Agent harness / 官方 finance agent v2
+  harness / 五轮取平均）与「这张表里对手的分数」的归属
+- 跑分对比行：`kimi-k3`、`gpt-6-astra`、`claude-opus-5.5`、`claude-fable-5.1`、
+  `deepseek-v4.1-flash-1017`、`glm-5.3`
+- **不收的项**：月之暗面内部的 Kimi Code Bench 3.0 没有公开榜单，只有一家厂商的数字 →
+  不进基准表，正文也不引用它的数字
+- 结论方向：比同门 K3 便宜三分之一、比 Opus 5.5 便宜一半；Terminal-Bench 4.0 只落后 Opus 5.5
+  一个点，但缺 GPQA Diamond / HLE（无工具）/ MathArena Apex / DeepSWE / AutomationBench，
+  所以进不了排名榜 —— 只能标「未测」
+- source：Kimi 官方发布公告 `https://kimi.com/blog/kimi-k3-1-pro`，
+  title「Kimi — Introducing Kimi K3.1 Pro」
+
 ## 6. 校验（必须有测试）
 
 `src/features/releases/__tests__/`：
 
 - `select.node.test.ts` —— locale 过滤、published 过滤、倒序、slug 提取。
 - `format.node.test.ts` —— 价格格式化（`$0.30` 而不是 `$0.300`）。
+- `score-table.node.test.ts` —— 跑分表的两个高亮互不串味：主角列恒定高亮，
+  每行的加粗只落在唯一的最高分上（并列不加粗）。
 - `integrity.node.test.ts` —— 「三者一体」的机器检查，见下。
 
 ### 6.1 `integrity.node.test.ts` 检查什么

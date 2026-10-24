@@ -503,6 +503,9 @@ export const en = {
       'We have not verified a benchmark set for this model yet — so we do not publish one. Numbers we cannot trace do not belong on this site.',
     scoreNote:
       'Transcribed from the sources named on each leaderboard entry. Coverage differs per model; a missing cell means the source did not report that benchmark.',
+    scoreLegend:
+      'The tinted column is the model this post is about. A bold figure is the highest score recorded on that benchmark among the models in this table — a tie is left unmarked.',
+    subjectBadge: 'this model',
     ctaTitle: 'Run the numbers yourself',
     ctaNote: 'The tables above are the same data the calculator and the comparison tool use.',
     ctaCompare: 'Compare it head to head',
@@ -934,6 +937,7 @@ export const en = {
     providerMinimax: 'MiniMax',
     providerStepfun: 'StepFun',
     providerGrok: 'Grok',
+    providerKimi: 'Moonshot',
     providerOpenRouter: 'OpenRouter',
     openrouterCurrentMarkup: 'Current average markup: ×{multiplier} ({pct}%)',
     claudeProCardTitle: 'Claude Pro · $20/mo',

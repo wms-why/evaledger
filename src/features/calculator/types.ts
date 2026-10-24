@@ -16,6 +16,7 @@ export type Provider =
   | 'minimax'
   | 'stepfun'
   | 'grok'
+  | 'kimi'
   | 'openrouter'
 
 export type ModelStatus = 'active' | 'delisted' | 'retired'

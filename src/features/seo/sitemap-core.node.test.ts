@@ -8,7 +8,7 @@ import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { COMPARE_PAIR_ENTRIES } from '@/features/leaderboard/leaderboard'
 import { SERIES } from '@/features/series/series'
 import { allSeriesPairs } from '@/features/series/select'
-import { publicRoutePaths } from './__tests__/route-files'
+import { publicRoutePaths, releasePostPaths } from './__tests__/route-files'
 
 /** The origin the guard tests build URLs against. */
 const origin = 'https://app.example.com'
@@ -34,6 +34,7 @@ function livePaths(): Set<string> {
   for (const pair of COMPARE_PAIR_ENTRIES) paths.add(`/compare/${pair.slug}`)
   for (const series of SERIES) paths.add(`/series/${series.slug}`)
   for (const pair of allSeriesPairs()) paths.add(`/series/${pair.seriesSlug}/${pair.pairSlug}`)
+  for (const post of releasePostPaths()) paths.add(post)
   return paths
 }
 

@@ -68,6 +68,13 @@ export const DISPLAY_NAME_TO_ID: Record<string, string> = {
   'MiniMax-M3.1-Flash': 'minimax-m3.1-flash',
   'MiniMax-M3': 'minimax-m3',
 
+  // ───────────────────────── Moonshot Kimi ─────────────────────────
+  // The Kimi pricing page lists the API ids themselves, so the scraped name
+  // and the REGISTRY id are the same string.
+  'kimi-k3.1-pro': 'kimi-k3.1-pro',
+  'kimi-k3.1-pro-highspeed': 'kimi-k3.1-pro-highspeed',
+  'kimi-k3': 'kimi-k3',
+
   // ───────────────────────── Grok ─────────────────────────
   'Grok 4.7': 'grok-4.7',
   'Grok 4': 'grok-4',
