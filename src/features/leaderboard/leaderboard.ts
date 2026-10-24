@@ -140,10 +140,34 @@ export interface ComparePairEntry extends ComparePair {
   slug: string
 }
 
+/**
+ * Homepage "Popular comparisons" order. Hand-picked so the front page leads
+ * with the newly released frontier pairs instead of the first 12 entries of
+ * COMPARE_PAIRS. `/compare` and `/series` keep their own ordering (they read
+ * COMPARE_PAIR_ENTRIES directly); this array only drives the homepage list and
+ * is filtered against COMPARE_PAIR_ENTRIES so a removed pair degrades to the
+ * derived order rather than rendering a broken link.
+ */
+export const POPULAR_COMPARE_SLUGS = [
+  pairSlug('claude-opus-5.5', 'gpt-6-astra'),
+  pairSlug('claude-opus-5.5', 'claude-opus-5'),
+  pairSlug('gemini-4-argon', 'gemini-3.1-pro'),
+  pairSlug('deepseek-v4.1-flash-1017', 'deepseek-v4.1-flash'),
+] as const
+
 export const COMPARE_PAIR_ENTRIES: ComparePairEntry[] = COMPARE_PAIRS.map((p) => ({
   ...p,
   slug: pairSlug(p.a, p.b),
 }))
+
+/** Homepage order, falling back to the first 12 derived pairs. */
+export const POPULAR_COMPARE_ENTRIES: ComparePairEntry[] = (() => {
+  const ranked = POPULAR_COMPARE_SLUGS.map(
+    (slug) => COMPARE_PAIR_ENTRIES.find((p) => p.slug === slug),
+  )
+  const rest = COMPARE_PAIR_ENTRIES.filter((p) => !POPULAR_COMPARE_SLUGS.includes(p.slug))
+  return [...ranked.filter((p): p is ComparePairEntry => Boolean(p)), ...rest]
+})()
 
 export function findComparePair(slug: string): ComparePairEntry | undefined {
   const direct = COMPARE_PAIR_ENTRIES.find((p) => p.slug === slug)

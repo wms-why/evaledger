@@ -55,7 +55,7 @@ export const zh: Dict = {
       compareTitle: '多模型对比',
       compareBody:
         '最多选五个模型并排对比：基准分差、每百万 Token 混合价格、上下文窗口，以及按你的用量估算的月成本。拖拽即可调整列顺序。',
-      compareCta: '打开对比',
+      compareCta: '对比大模型 benchmark 与价格 →',
       browse: '浏览',
     },
     compare: {
@@ -936,7 +936,7 @@ export const zh: Dict = {
     claudeMaxDescription: '持续高用量场景下,Max 大约覆盖到 API 等价 $200/月。',
     claudeSampleReference: '参考样本:通过 API 1M 输入 + 50万输出 token 每月 ${cost}({rate})。',
     claudeSampleNoUsage: '未使用',
-    claudeSampleRate: '按当前 Sonnet 4.5 单价',
+    claudeSampleRate: '按当前 Sonnet 5 单价',
     relatedKicker: '更多计算器',
     relatedTitle: '为你的场景挑一个',
     relatedOpen: '打开',
@@ -993,7 +993,7 @@ export const zh: Dict = {
     claudeSubscriptionTitle: 'Claude.ai 订阅 vs API',
     claudeSubscriptionBody: 'Claude Pro($20/月)和 Claude Max($200/月)在用量上限内通常比 API 划算。过了上限,API——或者 OpenRouter 这类第三方聚合——才是更优选择。',
     claudeBreakEvenTitle: 'API 盈亏平衡',
-    claudeBreakEvenBody: 'Claude Sonnet 4.5 单价 $3/$15 每 1M token。Pro 大约覆盖到每月 {input}M 输入 + {output}M 输出 token;Max 大约覆盖 {inputMax}M 输入 + {outputMax}M 输出 token。超过这些阈值,纯成本上 API 开始更划算。',
+    claudeBreakEvenBody: 'Claude Sonnet 5 单价 $2/$10 每 1M token。Pro 大约覆盖到每月 {input}M 输入 + {output}M 输出 token;Max 大约覆盖 {inputMax}M 输入 + {outputMax}M 输出 token。超过这些阈值,纯成本上 API 开始更划算。',
 
     // Money-saving tips
     tipsTitle: '怎么把账单压下去',
@@ -1105,11 +1105,11 @@ export const zh: Dict = {
       'DeepSeek V4.1-Flash 单价 $0.30 输入 / $1.20 输出每 1M token——比 GPT-5 输出便宜约 8 倍。',
       'V4-Pro $1.32 输入 / $3.96 输出——综合能力对标 Claude Sonnet 4.5,输出便宜约 2.3 倍。',
       '非高峰(周一至周五 UTC 01:00–04:00 与 06:00–10:00 之外 + 周末与全部中国法定假日)按高峰 50% 计费——批量任务排进去。',
-      'V4.1-Flash 缓存命中 $0.003/M,比标准 $0.30/M 便宜 99%——系统提示词、工具 schema 能缓存就缓存。',
+      'V4.1-Flash 缓存命中:高峰 $0.006/M(比标准 $0.30/M 便宜 98%),非高峰 $0.003/M(便宜 99%)——系统提示词、工具 schema 能缓存就缓存。',
     ],
     deepseekTips: [
       '路由 / 分类用 V4.1-Flash——输出 $1.20/M 对 V4-Pro 的 $3.96/M,便宜约 3.3 倍。',
-      '缓存重复前缀——V4.1-Flash cache hit $0.003/M,比 $0.30/M 标准输入便宜 99%。重复提示词的最大单一省费项。',
+      '缓存重复前缀——V4.1-Flash 缓存命中 $0.006/M 高峰、$0.003/M 非高峰,均比 $0.30/M 标准输入便宜(高峰 98%、非高峰 99%)。重复提示词的最大单一省费项。',
       '非紧急任务排进非高峰(周一至周五 UTC 01:00–04:00 与 06:00–10:00 之外),推理便宜约 50%。',
       '显式设 max_tokens——输出是贵的,封顶防止回复失控。',
       '直连 DeepSeek 官方 API 比 OpenRouter 便宜几个百分点;OpenRouter 赢在跨厂商 fallback + 单一发票。',

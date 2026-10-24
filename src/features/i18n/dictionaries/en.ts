@@ -54,7 +54,7 @@ export const en = {
       compareTitle: 'Compare multiple models',
       compareBody:
         'Shortlist up to five models and compare them side by side: benchmark deltas, blended price per million tokens, context window, and a monthly cost estimate for your usage. Drag them to reorder the columns.',
-      compareCta: 'Open the comparison',
+      compareCta: 'Compare LLM benchmarks & prices →',
       browse: 'Browse',
     },
     compare: {
@@ -985,7 +985,7 @@ export const en = {
     claudeMaxDescription: 'For sustained heavy usage, Max covers you up to roughly the API equivalent of $200/mo.',
     claudeSampleReference: 'Sample reference: 1M input + 500K output tokens via the API costs ${cost} / month ({rate}).',
     claudeSampleNoUsage: 'no usage',
-    claudeSampleRate: 'at current Sonnet 4.5 rates',
+    claudeSampleRate: 'at current Sonnet 5 rates',
     relatedKicker: 'More calculators',
     relatedTitle: 'Pick the right page for your use case',
     relatedOpen: 'Open',
@@ -1042,7 +1042,7 @@ export const en = {
     claudeSubscriptionTitle: 'Claude.ai subscription vs API',
     claudeSubscriptionBody: 'Claude Pro ($20/mo) and Claude Max ($200/mo) include generous usage caps that are usually cheaper than the API up to a break-even point. Beyond that point, the API — or a third-party router like OpenRouter — is the right choice.',
     claudeBreakEvenTitle: 'API break-even',
-    claudeBreakEvenBody: 'For Claude Sonnet 4.5 at $3/$15 per 1M tokens, the Pro plan covers you up to roughly {input}M input + {output}M output tokens per month. The Max plan covers roughly {inputMax}M input + {outputMax}M output tokens. Past those thresholds, the API starts winning on pure cost.',
+    claudeBreakEvenBody: 'For Claude Sonnet 5 at $2/$10 per 1M tokens, the Pro plan covers you up to roughly {input}M input + {output}M output tokens per month. The Max plan covers roughly {inputMax}M input + {outputMax}M output tokens. Past those thresholds, the API starts winning on pure cost.',
 
     // Money-saving tips
     tipsTitle: 'How to bring the bill down',
@@ -1151,11 +1151,11 @@ export const en = {
       'DeepSeek V4.1-Flash is $0.30 input / $1.20 output per 1M tokens — roughly 8× cheaper than GPT-5 on output.',
       'V4-Pro is $1.32 / $3.96 per 1M — comparable to Claude Sonnet 4.5 on benchmarks, ~2.3× cheaper on output.',
       'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is 50% of peak — schedule batch jobs accordingly.',
-      'Cache hits drop V4.1-Flash input from $0.30/M to $0.003/M — 99% off. Cache aggressively when the system prompt or tool schema repeats.',
+      'Cache hits drop V4.1-Flash input from $0.30/M to $0.006/M at peak (98% off) and $0.003/M off-peak (99% off). Cache aggressively when the system prompt or tool schema repeats.',
     ],
     deepseekTips: [
       'Use V4.1-Flash for routing / classification — output is $1.20/M vs $3.96/M on V4-Pro, ~3.3× cheaper.',
-      'Cache repeat prefixes — V4.1-Flash cache hit is $0.003/M, a 99% drop from $0.30/M. The single biggest cost saver for repeat-prompt workloads.',
+      'Cache repeat prefixes — V4.1-Flash cache hit is $0.006/M at peak (98% off) and $0.003/M off-peak (99% off) vs $0.30/M. The single biggest cost saver for repeat-prompt workloads.',
       'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC) for ~50% cheaper inference.',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
       'Going direct to DeepSeek\'s API beats OpenRouter by a few percent. OpenRouter wins on automatic fallback + a single invoice.',

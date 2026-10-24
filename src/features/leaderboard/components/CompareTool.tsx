@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
 import { BENCHMARKS } from '../benchmarks'
 import { availableScoreIds, MIN_COMPARE_MODELS } from '../compare-selection'
-import { COMPARE_PAIR_ENTRIES } from '../leaderboard'
+import { POPULAR_COMPARE_ENTRIES } from '../leaderboard'
 import { findLeaderboardModel } from '../models'
 import type { LeaderboardModel } from '../types'
 import { CompareResult } from './CompareResult'
@@ -12,7 +12,7 @@ import { CostQuickCalc } from './CostQuickCalc'
 
 export function PopularComparisons({ exclude }: { exclude?: string }) {
   const { t } = useTranslation()
-  const pairs = COMPARE_PAIR_ENTRIES.filter((p) => p.slug !== exclude).slice(0, 12)
+  const pairs = POPULAR_COMPARE_ENTRIES.filter((p) => p.slug !== exclude).slice(0, 12)
   return (
     <section>
       <h3 className="text-[15px] font-semibold text-foreground">{t('leaderboard.compare.popularTitle')}</h3>

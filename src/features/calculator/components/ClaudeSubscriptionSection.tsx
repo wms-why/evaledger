@@ -1,36 +1,29 @@
 import { useTranslation } from '@/features/i18n/provider'
-import { findModel } from '@/features/calculator/model-prices'
 import { calculateCost } from '@/features/calculator/cost'
+import {
+  CLAUDE_BREAK_EVEN_MODEL_ID,
+  claudeBreakEven,
+  formatBreakEvenM,
+} from '@/features/calculator/claude-break-even'
 
 /**
  * Page-specific block for /claude-token-cost-calculator.
  *
  * Computes the breakeven point at which the Anthropic API becomes cheaper
- * than the Claude Pro / Max subscriptions. Numbers are computed live from the
- * model registry, not hardcoded — so when lastVerified gets bumped, this block
- * stays in sync.
+ * than the Claude Pro / Max subscriptions. Numbers come from the shared
+ * `claudeBreakEven()` helper — the same one the FAQ answers use — so the card
+ * here and the FAQ below can never quote different break-evens.
  */
 export function ClaudeSubscriptionSection() {
   const { t } = useTranslation()
-  const sonnet = findModel('claude-sonnet-4.5')
-  if (!sonnet) return null
+  const be = claudeBreakEven()
+  if (!be) return null
 
-  // Pro plan ($20/mo) break-even: solve $20 = (input × $3/1M) + (output × $15/1M)
-  // We fix output at 0.5× input (typical Sonnet workload) and solve for input.
-  const proMonthly = 20
-  const maxMonthly = 200
-  const inputRate = sonnet.inputPricePer1M
-  const outputRate = sonnet.outputPricePer1M
-
-  const proInputM = proMonthly / (inputRate + 0.5 * outputRate)
-  const proOutputM = proInputM * 0.5
-  const maxInputM = maxMonthly / (inputRate + 0.5 * outputRate)
-  const maxOutputM = maxInputM * 0.5
-
-  // Sample cost at the break-even for the table
+  // Sample cost at the break-even for the table. The volumes are fixed; the
+  // rates are the same ones the break-even solves with.
   const sampleInputTokens = 1_000_000 // 1M
   const sampleOutputTokens = 500_000 // 500k
-  const api = calculateCost('claude-sonnet-4.5', sampleInputTokens, sampleOutputTokens)
+  const api = calculateCost(CLAUDE_BREAK_EVEN_MODEL_ID, sampleInputTokens, sampleOutputTokens)
 
   return (
     <section className="border-t border-border py-12">
@@ -52,8 +45,8 @@ export function ClaudeSubscriptionSection() {
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
               {t('calculator.claudeBreakEven', {
-                input: formatM(proInputM),
-                output: formatM(proOutputM),
+                input: formatBreakEvenM(be.proInputM),
+                output: formatBreakEvenM(be.proOutputM),
               })}
             </p>
             <p className="mt-3 text-[14px] leading-relaxed text-fg-2">
@@ -67,8 +60,8 @@ export function ClaudeSubscriptionSection() {
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
               {t('calculator.claudeBreakEven', {
-                input: formatM(maxInputM),
-                output: formatM(maxOutputM),
+                input: formatBreakEvenM(be.maxInputM),
+                output: formatBreakEvenM(be.maxOutputM),
               })}
             </p>
             <p className="mt-3 text-[14px] leading-relaxed text-fg-2">
@@ -88,10 +81,4 @@ export function ClaudeSubscriptionSection() {
       </div>
     </section>
   )
-}
-
-function formatM(n: number): string {
-  if (n >= 100) return n.toFixed(0)
-  if (n >= 10) return n.toFixed(1)
-  return n.toFixed(2)
 }
