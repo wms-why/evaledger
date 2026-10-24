@@ -127,7 +127,8 @@ function Home() {
                     className="rounded-[12px] border border-border bg-card p-4 transition-colors hover:border-primary/40"
                   >
                     <p className="text-[12px] text-fg-3">
-                      {releaseVendorLabel(t, entry.vendor)} · {fmtDate(entry.date)}
+                      {releaseVendorLabel(t, entry.vendor)} · {t('releases.releasedOn')}{' '}
+                      {fmtDate(entry.releasedAt)}
                     </p>
                     <p className="mt-1.5 text-[14px] font-medium leading-snug">{entry.title}</p>
                     {price && (

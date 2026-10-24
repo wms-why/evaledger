@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { buildRobots, buildSitemap, localeHead } from '@/features/seo/seo'
+import { brandedTitle, buildRobots, buildSitemap, localeHead } from '@/features/seo/seo'
 import { PUBLIC_PATHS } from '@/features/seo/sitemap-paths'
 import { localizePath } from '@/features/i18n/locale'
 
@@ -74,7 +74,7 @@ test('localeHead: canonical + hreflang alternates + og', () => {
   expect(head.links.some((l) => l.rel === 'alternate' && l.hrefLang === 'en' && l.href === `${origin}/`)).toBe(true)
   expect(head.links.some((l) => l.rel === 'alternate' && l.hrefLang === 'zh' && l.href === `${origin}/zh`)).toBe(true)
   expect(head.links.some((l) => l.hrefLang === 'x-default')).toBe(true)
-  expect(head.meta.some((m) => m.title === 'T')).toBe(true)
+  expect(head.meta.some((m) => m.title === 'T — EvalLedger')).toBe(true)
   expect(head.meta.some((m) => m.property === 'og:url' && m.content === `${origin}/zh`)).toBe(true)
 })
 
@@ -91,4 +91,30 @@ test('localeHead: a noindex page drops its alternates and says noindex', () => {
   // A noindex page must not advertise a sibling as its translation.
   expect(head.links.some((l) => l.rel === 'alternate')).toBe(false)
   expect(head.links.find((l) => l.rel === 'canonical')?.href).toBe(`${origin}/benchmarks/thin`)
+})
+
+test('brandedTitle: one brand suffix, never two', () => {
+  expect(brandedTitle('Compare LLMs', 'EvalLedger')).toBe('Compare LLMs — EvalLedger')
+  // A template that already names the brand is left alone (the sponsor page
+  // title is "Sponsor EvalLedger", the home title ends in "| EvalLedger").
+  expect(brandedTitle('Sponsor EvalLedger', 'EvalLedger')).toBe('Sponsor EvalLedger')
+  expect(brandedTitle('LLM Leaderboard | EvalLedger', 'EvalLedger')).toBe(
+    'LLM Leaderboard | EvalLedger',
+  )
+  // Case-insensitive: a lower-cased brand still counts.
+  expect(brandedTitle('About evalledger', 'EvalLedger')).toBe('About evalledger')
+  // Whitespace is normalised, empty input stays empty.
+  expect(brandedTitle('  HLE  ', 'EvalLedger')).toBe('HLE — EvalLedger')
+  expect(brandedTitle('', 'EvalLedger')).toBe('')
+})
+
+test('localeHead: every page title carries exactly one brand', () => {
+  for (const locale of ['en', 'zh'] as const) {
+    for (const title of ['Token Cost Calculator', 'Sponsor EvalLedger', 'Model Releases']) {
+      const head = localeHead({ origin, locale, path: '/', title, description: 'D' })
+      const rendered = head.meta.find((m) => typeof m.title === 'string')?.title ?? ''
+      expect(rendered.match(/EvalLedger/g)?.length ?? 0, `${locale}: ${rendered}`).toBe(1)
+      expect(rendered.endsWith('EvalLedger')).toBe(true)
+    }
+  }
 })

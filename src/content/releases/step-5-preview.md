@@ -1,6 +1,6 @@
 ---
 title: "Step 5 Preview: StepFun's first flagship, at $1 / $2.70"
-description: "StepFun's Step 5 Preview costs $1 per 1M input tokens, $0.10 per 1M cached, and $2.70 per 1M output with the reasoning trace billed as output, over a 1M-token window. On StepFun's own table it trades rows with Kimi K3 and GLM 5.3 and trails GPT-6 Astra and Claude Opus on the hardest agentic coding rows — the pitch is cost, not the top line."
+description: "StepFun's Step 5 Preview costs $1 / $2.70 per 1M with $0.10 cached input, and bills the reasoning trace as output, over a 1M-token window."
 date: "2026-10-23"
 checkedAt: "2026-10-23"
 dataCheckedAt: "2026-10-23"

@@ -160,6 +160,12 @@ export function isIndexablePath(path: string): boolean {
 
   if (clean === '/leaderboard-history') return isIndexableLeaderboardHistory()
 
+  // The waitlist page still speaks to a pre-launch audience ("we'll let you
+  // know the moment we launch"). Until its copy is repurposed or it is linked
+  // from the product, it stays reachable but out of the index — and out of
+  // the sitemap, so the two never disagree.
+  if (clean === '/waitlist') return false
+
   return true
 }
 

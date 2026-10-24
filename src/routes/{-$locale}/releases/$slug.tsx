@@ -52,12 +52,20 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
     const locale = ((params as { locale?: string }).locale ?? 'en') as Locale
     const dict = dictionaries[locale]
     const entry = loaderData?.entry
+    // The full article headline (often a price claim) is the H1; the <title>
+    // is the subject the reader searches plus the page's job. The subject is
+    // the headline before its colon ("Gemini 4 Argon: $2 / $10 …"), which is
+    // the model (or project) name in every post.
+    const subject = entry ? entry.title.split(/[:：]/)[0].trim() : ''
     const title = entry
-      ? `${entry.title} — ${dict.releases.title}`
+      ? translate(dict, 'releases.metaTitle', {
+          model: subject.length >= 3 ? subject : dict.releases.title,
+        })
       : dict.releases.title
     const description = entry?.description ?? dict.releases.subtitle
     const path = `/releases/${params.slug}`
     const model = entry ? findPriceModel(entry.modelId) : undefined
+    const articleUrl = `${origin}${locale === 'zh' ? `/zh${path}` : path}`
 
     const scripts = entry
       ? [
@@ -73,7 +81,13 @@ export const Route = createFileRoute('/{-$locale}/releases/$slug')({
             // changed every time somebody re-checked a rate.
             inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
             isBasedOn: entry.sourceUrl,
-            url: `${origin}${locale === 'zh' ? `/zh${path}` : path}`,
+            url: articleUrl,
+            // A representative image is a required BlogPosting property for
+            // article rich results. The site has one brand image (the same
+            // one `og:image` has always advertised); no per-post artwork is
+            // invented.
+            image: `${origin}/logo512.png`,
+            mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
             publisher: { '@type': 'Organization', name: 'EvalLedger', url: origin },
             about: model
               ? { '@type': 'Thing', name: model.displayName, description: `LLM pricing analysis` }

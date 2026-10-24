@@ -12,6 +12,11 @@ import * as Sentry from '@sentry/cloudflare'
 import entry from '@tanstack/react-start/server-entry'
 import { withSecurityHeaders } from '@/lib/security-headers'
 import { assertEnvOnce } from '@/lib/env-validate'
+import {
+  canonicalHostRedirect,
+  isLocalOrigin,
+  permanentPathRedirect,
+} from '@/features/seo/canonical-redirect'
 import { createDb } from '@/db/client'
 import { runCleanup } from '@/features/maintenance/cleanup'
 
@@ -22,6 +27,16 @@ const fetchHandler = (
 const handler = {
   async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext): Promise<Response> {
     await assertEnvOnce()
+    // Canonicalise the address before the router can answer a duplicate form
+    // with a temporary redirect: non-canonical host/protocol, `/en` prefix,
+    // historical path aliases, and trailing slashes. See
+    // `features/seo/canonical-redirect.ts`.
+    if (!isLocalOrigin(env.BETTER_AUTH_URL)) {
+      const hostRedirect = canonicalHostRedirect(request, env.BETTER_AUTH_URL)
+      if (hostRedirect) return withSecurityHeaders(hostRedirect)
+    }
+    const pathRedirect = permanentPathRedirect(request)
+    if (pathRedirect) return withSecurityHeaders(pathRedirect)
     const response = await fetchHandler(request, env, ctx)
     return withSecurityHeaders(response)
   },

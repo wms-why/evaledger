@@ -1,13 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
 import { Badge } from '@/components/ui/badge'
-import { BENCHMARKS } from '../benchmarks'
+import { BENCHMARKS, benchmarkVersionSuffix } from '../benchmarks'
 import { COMPARE_PAIR_ENTRIES, formatScore, scoreOf } from '../leaderboard'
 import { findLeaderboardModel } from '../models'
 import { scoreTrack, TRACKS, TRACK_IDS } from '../scoring'
 import { alternativeLinks, modelVerdict } from '@/features/landing/data'
 import type { LeaderboardModel } from '../types'
 import { VENDOR_LABEL_KEY } from '../vendors'
+import { formatMoney } from '@/features/calculator/format'
 import { PriceCell } from './PriceCell'
 import { ScoreProvenance } from './ScoreProvenance'
 
@@ -53,15 +54,16 @@ export function ModelProfile({ model }: { model: LeaderboardModel }) {
                 <tbody>
                   {scored.map((bm) => {
                     const s = scoreOf(model, bm.id)!
+                    const versionSuffix = benchmarkVersionSuffix(bm)
                     return (
                       <tr key={bm.id} className="border-border even:bg-bg-alt/40 [&:not(:first-child)]:border-t">
                         <td className="px-4 py-2.5">
                           <Link to="/{-$locale}/benchmarks/$slug" params={{ slug: bm.id }} className="text-fg-2 hover:text-primary">
                             {bm.name}
                           </Link>
-                          {bm.version && (
+                          {versionSuffix && (
                             <span className="ml-2 text-[11px] text-fg-3">
-                              {t('leaderboard.track.version')} {bm.version}
+                              {t('leaderboard.track.version')} {versionSuffix}
                             </span>
                           )}
                         </td>
@@ -162,7 +164,7 @@ function WorthItSection({ model }: { model: LeaderboardModel }) {
       // the value is the number. One key cannot be both, and reusing the
       // label printed the label twice instead of the price.
       valueKey: 'landing.model.factsPriceValue',
-      params: { blended: `$${verdict.blended}` },
+      params: { blended: formatMoney(verdict.blended) },
     })
   }
   if (verdict.priceRank != null) {
@@ -191,7 +193,7 @@ function WorthItSection({ model }: { model: LeaderboardModel }) {
 
   const summaryParams: Record<string, string | number> = {
     model: model.displayName,
-    blended: verdict.blended != null ? `$${verdict.blended}` : '—',
+    blended: verdict.blended != null ? formatMoney(verdict.blended) : '—',
     input: verdict.input != null ? `$${verdict.input}` : '—',
     output: verdict.output != null ? `$${verdict.output}` : '—',
     tier: verdict.tier ?? '—',

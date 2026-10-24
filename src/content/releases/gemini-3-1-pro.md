@@ -1,6 +1,6 @@
 ---
 title: "Gemini 3.1 Pro Preview: $2 / $12 up to 200K, $4 / $18 above it"
-description: "Google's Gemini 3.1 Pro Preview costs $2 per 1M input and $12 per 1M output up to 200,000 tokens, $4 / $18 above that, inside a 1,000,000-token window. Five verified benchmark scores and a long-context tier the older page missed."
+description: "Gemini 3.1 Pro Preview costs $2 / $12 per 1M up to 200K tokens, $4 / $18 above, in a 1M-token window. Five verified benchmark scores and the long-context math."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-21"

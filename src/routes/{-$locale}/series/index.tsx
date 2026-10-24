@@ -1,8 +1,8 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
@@ -32,6 +32,12 @@ export const Route = createFileRoute('/{-$locale}/series/')({
       path: '/series',
       title: dict.series.indexTitle,
       description: dict.series.indexMetaDescription,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.series'), path: '/series' },
+        ]),
+      ],
     })
     return { meta, links }
   },

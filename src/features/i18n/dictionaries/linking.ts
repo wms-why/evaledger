@@ -108,6 +108,9 @@ const en = {
     releases: 'Model releases',
     series: 'Model version series',
     history: 'Score history',
+    methodology: 'Methodology',
+    changelog: 'Changelog',
+    dataQuality: 'Data quality',
   },
 }
 
@@ -160,6 +163,9 @@ const zh: typeof en = {
     releases: '新模型发布',
     series: '模型版本演进',
     history: '分数历史',
+    methodology: '评分方法',
+    changelog: '更新日志',
+    dataQuality: '数据质量',
   },
 }
 

@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { useTranslation } from '@/features/i18n/provider'
 import { Badge } from '@/components/ui/badge'
-import { BENCHMARKS } from '../benchmarks'
+import { BENCHMARKS, benchmarkVersionSuffix } from '../benchmarks'
 import { bestCategoryForTrack, bestCategoryLabel } from '../board-links'
 import { findPrice } from '../leaderboard'
 import { LEADERBOARD } from '../models'
@@ -235,6 +235,7 @@ function FormulaPanel({ track }: { track: ScoreTrack }) {
           <tbody>
             {track.core.map((core) => {
               const benchmark = BENCHMARKS.find((b) => b.id === core.id)
+              const versionSuffix = benchmark ? benchmarkVersionSuffix(benchmark) : null
               const best = fieldBestDetail(core.id)
               return (
                 <tr key={core.id} className="border-b border-border/60 last:border-0">
@@ -246,9 +247,9 @@ function FormulaPanel({ track }: { track: ScoreTrack }) {
                     >
                       {benchmark?.name ?? core.id}
                     </Link>
-                    {benchmark?.version && (
+                    {versionSuffix && (
                       <span className="ml-2 text-[11px] text-fg-3">
-                        {t('leaderboard.track.version')} {benchmark.version}
+                        {t('leaderboard.track.version')} {versionSuffix}
                       </span>
                     )}
                   </td>

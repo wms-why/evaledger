@@ -1,6 +1,6 @@
 ---
 title: "Gemini 4 Argon：$2 / $10 每 1M 到 11 月 30 日，之后 $4 / $20"
-description: "Google 的 Gemini 4 Argon 在 2026-11-30 之前每 1M token 输入 $2、输出 $10，之后 $4 / $20——正好等于今天 Claude Opus 5.5 的价格。1,048,576 token 的统一窗口，没有长上下文加价档；Google 官方十九行评测表里，我们核验了其中十项。"
+description: "Google 的 Gemini 4 Argon 在 2026-11-30 前每 1M token 输入 $2、输出 $10，之后 $4 / $20，等于 Claude Opus 5.5 今天价。1,048,576 token 统一窗口，十项跑分已核验。"
 date: "2026-10-20"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-21"

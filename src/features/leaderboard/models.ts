@@ -748,6 +748,10 @@ const grok47: LeaderboardModel = {
   version: '4.7',
   displayName: 'Grok 4.7',
   priceId: 'grok-4.7',
+  // xAI's pricing table dates the model to 2026-09-21 (the release page
+  // already states it); the row omitted the date, so the model page had no
+  // "Released" line while the release article claimed one.
+  releaseDate: '2026-09-21',
   updatedAt: COLLECTED_AT,
   scores: [
     sc('terminal-bench-4.0', 38.0, { source: BENCHLM }),

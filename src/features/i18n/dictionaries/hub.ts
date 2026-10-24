@@ -70,7 +70,7 @@ const en = {
     kicker: 'Best models',
     title: 'Best LLMs — Every “Best Model for X” Ranking',
     metaDescription:
-      'Every best-model ranking we publish in one place: best LLMs for coding, for AI agents, for reasoning, the cheapest LLM APIs per million tokens, long-context models, prompt-caching discounts, plus Chinese and open-weight models.',
+      'Every best-model ranking in one place: best LLMs for coding, agents and reasoning, the cheapest APIs, long-context models, prompt caching and open weights.',
     intro:
       'Each page answers one question — “which model is best for this?” — and ranks the models on the benchmarks that actually measure that job, next to what they cost.',
     count: '{count} rankings',

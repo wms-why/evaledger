@@ -6,6 +6,7 @@ import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { BenchmarkDetail } from '@/features/leaderboard/components/BenchmarkDetail'
 import { getBenchmark } from '@/features/leaderboard/leaderboard'
+import { benchmarkDescription } from '@/features/leaderboard/benchmarks'
 
 export const Route = createFileRoute('/{-$locale}/benchmarks/$slug/')({
   loader: async ({ params }) => {
@@ -24,7 +25,9 @@ export const Route = createFileRoute('/{-$locale}/benchmarks/$slug/')({
       locale,
       path: `/benchmarks/${params.slug}`,
       title: `${name} — ${dict.leaderboard.benchmark.metaTitleSuffix}`,
-      description: loaderData?.benchmark.description ?? dict.marketing.brandMetaDescription,
+      description: loaderData?.benchmark
+        ? benchmarkDescription(loaderData.benchmark, locale)
+        : dict.marketing.brandMetaDescription,
       // A benchmark nobody has scored yet stays reachable, but it must not
       // compete for the index budget. The decision comes from the slug only,
       // so the zh twin of a thin page is thin too.

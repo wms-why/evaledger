@@ -1,6 +1,6 @@
 ---
 title: "GPT-6 astra: $10 / $50 per 1M, and the 100× spread inside the GPT-6 family"
-description: "GPT-6 astra costs $10 per 1M input and $50 per 1M output — 5× GPT-6 sol, 100× GPT-6 luna, and still cheaper than GPT-5.6 cyber. Four verified scores, a 1,050,000-token window, and long-context pricing above 272K input."
+description: "GPT-6 astra costs $10 / $50 per 1M — 5× GPT-6 sol, 100× GPT-6 luna. Four verified scores, a 1,050,000-token window and the family's 100× price spread."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-21"

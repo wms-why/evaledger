@@ -1,6 +1,6 @@
 ---
 title: "DeepInfer: DeepSeek open-sourced the engine behind V4.1-Flash"
-description: "DeepSeek published DeepInfer on 2026-10-20 under Apache-2.0: one model, two accelerator families, no service layer, and the same $0.30 / $1.20 price. A deployment walkthrough, a framework comparison, and the boundary that decides whether it is useful to you."
+description: "DeepSeek open-sourced DeepInfer on 2026-10-20 under Apache-2.0: the engine behind V4.1-Flash, with a deployment walkthrough and framework comparison."
 date: "2026-10-23"
 checkedAt: "2026-10-23"
 dataCheckedAt: "2026-10-24"

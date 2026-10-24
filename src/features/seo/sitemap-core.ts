@@ -57,35 +57,76 @@ export const CORE_PATHS = [
   '/compare/deepseek-v4.1-flash-1017-vs-gpt-6-astra',
   '/compare/claude-opus-5-vs-gpt-5.6-sol',
   '/compare/gpt-5.6-sol-vs-kimi-k3',
+  // The two frontier head-to-heads the 2026-10-24 pass opened: Gemini 4
+  // Argon against the two models it displaces, and Kimi K3.1 Pro against
+  // the Claude Opus 5.5 it was launched to be measured against. The slugs
+  // are the canonical alphabetical form `pairSlug()` produces.
+  '/compare/gemini-4-argon-vs-gpt-6-astra',
+  '/compare/claude-opus-5.5-vs-gemini-4-argon',
+  '/compare/claude-opus-5.5-vs-kimi-k3.1-pro',
   // The two benchmark pages that clear the floor and carry a known name.
   '/benchmarks/hle',
   '/benchmarks/gpqa-diamond',
-  // The model pages of the three models the site knows best.
+  // The model pages of the models the site knows best — the frontier row
+  // first, then the three models the calculator and the boards are built on.
   '/models/claude-opus-5.5',
-  '/models/gpt-5.6-sol',
-  '/models/deepseek-v4.1-flash-1017',
-  // The two models the 2026-10-24 collection pass added: Moonshot's new
-  // flagship and Anthropic's other flagship line, both of them scored on
-  // more benchmarks than any model above them.
+  '/models/gpt-6-astra',
   '/models/kimi-k3.1-pro',
   '/models/claude-fable-5.1',
-  // The Kimi K3 line, and the question its newest version raises: K3.1 Pro
-  // is cheaper than the K3 it sits next to — is it the better buy?
+  '/models/gemini-4-argon',
+  '/models/gemini-3.1-pro',
+  '/models/grok-4.7',
+  '/models/minimax-m3.1-flash',
+  '/models/step-5-preview',
+  '/models/deepseek-v4.1-flash-1017',
+  '/models/gpt-5.6-sol',
+  // The product lines the newest launches raise questions about: each line
+  // gets its index page, and the version pair that answers "is the new one
+  // worth switching to?" — but only the pairs whose BOTH sides carry a score
+  // (the guard test enforces the floor, so a thin pair cannot be listed).
   '/series/kimi-k3',
   '/series/kimi-k3/k3.1-pro-vs-k3',
-  // The launch analysis of the newest model: what it costs, and what the
-  // vendor's own numbers do and do not prove.
+  '/series/gemini-3',
+  '/series/claude-opus',
+  '/series/claude-opus/opus-5.5-vs-opus-5',
+  '/series/claude-fable',
+  '/series/gpt-6',
+  '/series/gpt-5',
+  '/series/deepseek-v4',
+  '/series/deepseek-v4/v4.1-flash-1017-vs-v4-pro',
+  '/series/minimax-m3',
+  '/series/minimax-m3/m3.1-flash-vs-m3',
+  '/series/grok-4',
+  // The launch analyses of the 2026-10-24 collection pass, one per shipped
+  // model: what each one costs, and what the vendor's own numbers do and do
+  // not prove. These are the pages that answer "is <model> worth switching
+  // to?" for the models people are actually searching for.
   '/releases/kimi-k3-1',
-  // The three pages that answer the searches the site's clusters are built
-  // around, and that had no entry until now:
+  '/releases/gemini-4-argon',
+  '/releases/gemini-3-1-pro',
+  '/releases/grok-4-7',
+  '/releases/minimax-m3-1-flash',
+  '/releases/step-5-preview',
+  '/releases/deepseek-v4-1-flash-1017',
+  '/releases/claude-opus-5-5',
+  // The pages that answer the searches the site's clusters are built around:
   //   - "LLM benchmark methodology"   → the scoring rules every board uses.
   //   - "best LLM for coding"          → the use-case ranking itself.
   //   - "best cheap model for coding"  → the same models, ordered by price.
+  //   - "best LLM for agents"         → the agent board's own long-tail page.
+  //   - "cheapest LLMs"               → the price ranking every model enters.
+  //   - "1M context window models"    → the long-context ranking.
+  //   - "prompt caching"               → the cache-discount ranking.
   // They are stable hub pages rather than one launch's long tail, so they
   // earn a place in the bid on their own account.
   '/methodology',
   '/best/for-coding',
   '/best/cheapest-coding',
+  '/best/for-agents',
+  '/best/for-reasoning',
+  '/best/cheapest-llms',
+  '/best/1m-context-window',
+  '/best/prompt-caching',
 ] as const
 
 /**

@@ -1,4 +1,10 @@
-import { locales, defaultLocale, localizePath, type Locale } from '@/features/i18n/locale'
+import {
+  dictionaries,
+  locales,
+  defaultLocale,
+  localizePath,
+  type Locale,
+} from '@/features/i18n/locale'
 
 // Open Graph 要求 language_TERRITORY 形态（en_US），裸语言码会被严格解析器忽略。
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', zh: 'zh_CN' }
@@ -132,6 +138,24 @@ export function breadcrumbLd(
   })
 }
 
+/**
+ * The one place a page title gets the brand.
+ *
+ * Before this, the suffix was typed into some route templates and omitted
+ * from others: 208 of 262 sitemap pages shipped a title without "EvalLedger",
+ * and the split inside a single page family was arbitrary (four vendor pages
+ * had the brand, four did not). Now every `localeHead()` call appends it, and
+ * a template that already names the brand is left alone rather than
+ * doubled.
+ */
+export function brandedTitle(title: string, appName: string): string {
+  const clean = title.trim()
+  const brand = appName.trim()
+  if (!clean || !brand) return clean
+  if (clean.toLowerCase().includes(brand.toLowerCase())) return clean
+  return `${clean} — ${brand}`
+}
+
 export function localeHead(input: {
   origin: string
   locale: Locale
@@ -164,13 +188,14 @@ export function localeHead(input: {
     origin,
     locale,
     path,
-    title,
+    title: rawTitle,
     description,
     scripts,
     ogType,
     articlePublishedTime,
     indexable = true,
   } = input
+  const title = brandedTitle(rawTitle, dictionaries[locale].common.appName)
   const canonical = `${origin}${localizePath(locale, path)}`
   const links: HeadLink[] = [{ rel: 'canonical', href: canonical }]
   if (indexable) {
@@ -192,11 +217,16 @@ export function localeHead(input: {
     { property: 'og:url', content: canonical },
     { property: 'og:locale', content: OG_LOCALE[locale] },
     { property: 'og:image', content: `${origin}/logo512.png` },
+    // The site name is a property of the brand, not of the page — read it
+    // from the dictionary the rest of the chrome reads it from.
+    { property: 'og:site_name', content: dictionaries[locale].common.appName },
     ...(ogType ? [{ property: 'og:type', content: ogType } as HeadMeta] : []),
     ...(articlePublishedTime
       ? [{ property: 'article:published_time', content: articlePublishedTime } as HeadMeta]
       : []),
     { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: title },
+    { name: 'twitter:description', content: description },
     // JSON-LD rides along in `meta` — a `scripts[]` array is not rendered.
     ...(scripts ?? []),
   ]

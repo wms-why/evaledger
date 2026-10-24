@@ -10,8 +10,8 @@ export const zh: Dict = {
   home: {
     title: 'EvalLedger — 免费 LLM Token 成本计算器',
     calculatorTitle: 'Token 成本计算器 — 一站比对所有 LLM',
-    openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
-    claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
+    openrouterTitle: 'OpenRouter 价格计算器 — 加价后的 token 成本',
+    claudeTitle: 'Claude Token 成本计算器 — 每 token 成本',
     deepseekTitle: 'DeepSeek API 价格 — V4 与 V3 每 token 单价',
     chatgptTitle: 'ChatGPT API 价格 — GPT-5/5.6/6 每 token 单价',
     greeting: '你好，{name}！',
@@ -499,6 +499,8 @@ export const zh: Dict = {
   releases: {
     nav: '新模型发布',
     title: '新模型发布',
+    metaTitle: '{model}：发布分析',
+    metaDescription: '每一次模型发布都写成成本与换型分析：实时价格、已核验跑分，以及新模型值不值得换。',
     subtitle:
       '每一次大模型发布，都重写成一篇成本与换型决策分析。页面上的价格和跑分都是从厂商官方页面实时读取的，不是抄进文章里的。',
     kicker: '模型发布',
@@ -560,7 +562,7 @@ export const zh: Dict = {
     indexMetaDescription:
       '同一条产品线的所有版本并排对比——Claude Opus、GPT-6、Gemini 3 等：每 Token 价格、上下文窗口、基准跑分，以及你的用量一个月要花多少。',
     pageTitle: '{series} 各版本对比',
-    pageMetaTitle: '{series} 各版本对比——价格、上下文与跑分',
+    pageMetaTitle: '{series} 各版本对比：价格与跑分',
     pageMetaDescription:
       '{series} 的每个版本放在同一张表里：输入、输出与缓存价格，上下文窗口，基准跑分，以及你每个月的用量成本。',
     ladderTitle: '{series} 的全部版本，一张表看完',
@@ -1002,7 +1004,7 @@ export const zh: Dict = {
     tldrTitle: '要点速览',
     tldrItems: [
       '输出 token 通常比输入贵 4–8 倍——压缩回复长度是最划算的省钱方式。',
-      'Anthropic prompt cache 让重复输入便宜约 90%;OpenAI GPT-5 缓存输入也便宜约 90%。',
+      'Anthropic prompt cache 让重复输入便宜约 90%;OpenAI 在 GPT-6 系列上的缓存输入也便宜约 90%。',
       'DeepSeek 非高峰时段比高峰便宜约 50%——批量任务排进去。',
       'Gemini 2.5 Pro 在上下文超过 200K 后输入价翻倍——大上下文调用成本大约翻一番。',
     ],
@@ -1029,7 +1031,7 @@ export const zh: Dict = {
     // Money-saving tips
     tipsTitle: '怎么把账单压下去',
     tips: [
-      '路由 / 分类用小模型——Haiku 4.5 / GPT-5 nano 比旗舰便宜 5–10 倍。',
+      '路由 / 分类用小模型——Claude Haiku 4.5 比 Claude Fable 5.1 便宜约 10 倍,GPT-6 luna 的输出价比 GPT-6 astra 便宜约 100 倍。',
       '缓存重复前缀(系统提示词、工具 schema)——Anthropic 缓存读便宜约 90%。',
       '显式设 max_tokens——输出是贵的,封顶防止回复失控。',
       '非紧急任务排进 DeepSeek 非高峰时段,推理便宜约 50%。',
@@ -1134,7 +1136,7 @@ export const zh: Dict = {
     // DeepSeek 专属 TLDR + Tips(独立数组,不和跨厂商页混)
     deepseekTldrItems: [
       'DeepSeek V4.1-Flash 单价 $0.30 输入 / $1.20 输出每 1M token——比 GPT-5 输出便宜约 8 倍。',
-      'V4-Pro $1.32 输入 / $3.96 输出——综合能力对标 Claude Sonnet 4.5,输出便宜约 2.3 倍。',
+      'V4-Pro $1.32 输入 / $3.96 输出——综合能力对标 Claude Sonnet 4.5,输出比它便宜约 3.8 倍。',
       '非高峰(周一至周五 UTC 01:00–04:00 与 06:00–10:00 之外 + 周末与全部中国法定假日)按高峰 50% 计费——批量任务排进去。',
       'V4.1-Flash 缓存命中:高峰 $0.006/M(比标准 $0.30/M 便宜 98%),非高峰 $0.003/M(便宜 99%)——系统提示词、工具 schema 能缓存就缓存。',
     ],
@@ -1148,13 +1150,13 @@ export const zh: Dict = {
 
     // ChatGPT 专属 TLDR + Tips(独立数组,不和跨厂商页混)
     chatgptTldrItems: [
-      'GPT-5 缓存输入降至 $0.125/M——比标准价 $1.25/M 打 1 折。',
+      'GPT-6 astra 缓存输入降至 $1/M——比标准价 $10/M 便宜 90%。',
       'Batch API 5 折 + 24 小时 SLA——适合评测、批量摘要、数据集生成。',
-      'GPT-6 astra 最贵,每 1M token 输入 $10 / 输出 $50。',
-      'GPT-6 luna 最便宜,每 1M token 输入 $0.10 / 输出 $0.50。',
+      'GPT-6 astra 是旗舰档,每 1M token 输入 $10 / 输出 $50。',
+      'GPT-6 luna 是 GPT-6 系列里最便宜的一档,每 1M token 输入 $0.10 / 输出 $0.50。',
     ],
     chatgptTips: [
-      '路由 / 分类用 GPT-5 nano 或 GPT-6 luna——输出比旗舰便宜 8–20 倍。',
+      '路由 / 分类用 GPT-6 luna——它的输出价比 GPT-6 astra 便宜 100 倍。',
       '启用缓存输入——OpenAI 自动缓存重复前缀,比标准输入价便宜约 90%。',
       '非紧急任务走 Batch API,5 折(24 小时 SLA,队列不限速)。',
       '显式设 max_tokens——输出是贵的,封顶防止回复失控。',

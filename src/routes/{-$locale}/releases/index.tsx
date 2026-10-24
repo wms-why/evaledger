@@ -1,12 +1,12 @@
 import { Link, createFileRoute, getRouteApi } from "@tanstack/react-router";
-import { localeHead } from "@/features/seo/seo";
+import { localeHead, breadcrumbLd } from "@/features/seo/seo";
 import { getOrigin } from "@/features/seo/seo.fns";
 import { getOptionalUser } from "@/features/auth/middleware";
 import { SiteNav } from "@/components/marketing/site-nav";
 import { Footer } from "@/components/marketing/footer";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/features/i18n/provider";
-import { dictionaries, type Locale } from "@/features/i18n/locale";
+import { dictionaries, translate, type Locale } from "@/features/i18n/locale";
 import { getReleases } from "@/features/releases/releases.fns";
 import { sortByReleasedAt } from "@/features/releases/select";
 import { releasePriceRows, releaseScoreTable } from "@/features/releases/data";
@@ -35,7 +35,13 @@ export const Route = createFileRoute("/{-$locale}/releases/")({
       locale,
       path: "/releases",
       title: dict.releases.title,
-      description: dict.releases.subtitle,
+      description: dict.releases.metaDescription,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: "/" },
+          { name: translate(dict, "linking.breadcrumb.releases"), path: "/releases" },
+        ]),
+      ],
     });
     return { meta, links };
   },

@@ -1,6 +1,6 @@
 ---
 title: "Kimi K3.1 Pro：比 K3 还便宜，Terminal-Bench 4.0 逼近 Opus 5.5"
-description: "月之暗面在 2026-10-24 发布 Kimi K3.1 Pro：3 万亿参数、100 万 token 上下文，输入 ¥13、输出 ¥68、缓存命中 ¥1.3（每百万 token），比同门 K3 还便宜；Terminal-Bench 4.0 拿到 65.7，离 Claude Opus 5.5 的 66.4 只差一个点。十三项跑分全部出自厂商自己那张表，该怎么读、该不该换，一次说清。"
+description: "月之暗面 2026-10-24 发布 Kimi K3.1 Pro：3 万亿参数、100 万 token 上下文，输入 ¥13、输出 ¥68、缓存命中 ¥1.3（每百万 token），比同门 K3 便宜；Terminal-Bench 4.0 拿到 65.7，离 Opus 5.5 的 66.4 只差一个点。"
 date: "2026-10-24"
 checkedAt: "2026-10-24"
 dataCheckedAt: "2026-10-24"

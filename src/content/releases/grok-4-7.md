@@ -1,6 +1,6 @@
 ---
 title: "Grok 4.7: $2 / $6, a 500,000-token window, and the thinnest score card we publish"
-description: "Grok 4.7 costs $2 per 1M input and $6 per 1M output, reads cached input at $0.50, and doubles all three rates once a prompt reaches 200K tokens. The window is 500,000 tokens; the score card is two benchmarks."
+description: "Grok 4.7 costs $2 / $6 per 1M, reads cached input at $0.50, and doubles all rates above 200K tokens; the 500,000-token context window is the new part."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-21"

@@ -1,6 +1,6 @@
 ---
 title: "Kimi K3.1 Pro: $2 / $10, a 1M window, and Terminal-Bench within a point of Opus 5.5"
-description: "Moonshot shipped Kimi K3.1 Pro on 2026-10-24: a 3-trillion-class model with a 1,048,576-token window, $2 per 1M input tokens and $10 per 1M output tokens — cheaper than the K3 it sits next to — and 65.7 on Terminal-Bench 4.0 against Claude Opus 5.5's 66.4. Thirteen scores, one vendor table, and what it means for your bill."
+description: "Kimi K3.1 Pro shipped 2026-10-24: a 3-trillion-class model with a 1,048,576-token window at $2 / $10 per 1M, cheaper than K3. Thirteen vendor scores."
 date: "2026-10-24"
 checkedAt: "2026-10-24"
 dataCheckedAt: "2026-10-24"

@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
-import type { Benchmark } from '../benchmarks'
+import { benchmarkDescription, type Benchmark } from '../benchmarks'
 import { formatScore, leaderboardRows, scoreOf } from '../leaderboard'
 import {
   BOARD_LABEL_KEY,
@@ -10,7 +10,7 @@ import {
 } from '../board-links'
 
 export function BenchmarkDetail({ benchmark }: { benchmark: Benchmark }) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const ranked = leaderboardRows()
     .map((r) => ({ row: r, score: scoreOf(r.model, benchmark.id) }))
     .filter((x) => x.score)
@@ -28,7 +28,7 @@ export function BenchmarkDetail({ benchmark }: { benchmark: Benchmark }) {
           {t('leaderboard.benchmark.kicker')}
         </p>
         <h1 className="mt-3 text-[32px] font-semibold tracking-[-0.02em] md:text-[40px]">{benchmark.name}</h1>
-        <p className="mt-3 max-w-[680px] text-[16px] text-fg-2">{benchmark.description}</p>
+        <p className="mt-3 max-w-[680px] text-[16px] text-fg-2">{benchmarkDescription(benchmark, locale)}</p>
         <Link
           to="/{-$locale}/benchmarks/$slug/history"
           params={{ slug: benchmark.id }}

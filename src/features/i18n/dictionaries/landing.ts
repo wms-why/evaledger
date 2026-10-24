@@ -62,11 +62,11 @@ export const landing = {
         subtitle:
           'Google Gemini rates per 1M tokens — Gemini 4 Argon, Gemini 3.1 Pro, Gemini 3.8 Flash and the Flash-Lite tier — with the long-context band, the cache rate and the service tiers, priced against every other model.',
         metaDescription:
-          'Gemini API pricing for Gemini 4 Argon, Gemini 3.1 Pro, Gemini 3.8 Flash and Flash-Lite — input, output and cached-input rates per 1M tokens, long-context pricing and context windows. Updated {date}.',
+          'Gemini API pricing for Gemini 4 Argon, 3.1 Pro, 3.8 Flash and Flash-Lite — input, output and cached rates per 1M, plus long-context pricing. Updated {date}.',
         tldrItems: [
           'Gemini 4 Argon is Google’s flagship reasoning model, and it is priced on an introductory rate with a published end date — the table below shows the rate actually in force.',
           'Gemini 3.1 Pro steps up above the long-context threshold, and the band is applied to a single request, never to your monthly total.',
-          'Flash-Lite is the cheapest Gemini tier in the registry, and every Gemini row publishes a cached-input rate.',
+          'Flash-Lite is the low-cost Gemini tier, and every Gemini row publishes a cached-input rate.',
           'Google publishes Batch and Flex alongside the standard rate, and Priority above it.',
           'Gemini 4 Argon has no long-context band — its price does not step up inside the window.',
         ],
@@ -85,7 +85,7 @@ export const landing = {
           'Gemini 3.1 Pro is {input} per 1M input and {output} per 1M output up to {threshold} tokens. Above that threshold the same request is billed at {longInput} per 1M input and {longOutput} per 1M output.',
         faq3Q: 'How much do Gemini Flash-Lite tokens cost?',
         faq3A:
-          'Gemini 3.1 Flash-Lite is {input} per 1M input tokens and {output} per 1M output tokens, with cached input at {cached} per 1M — the cheapest Gemini tier in the registry, on a {context} context window.',
+          'Gemini 3.1 Flash-Lite is {input} per 1M input tokens and {output} per 1M output tokens, with cached input at {cached} per 1M — the low-cost Gemini tier, on a {context} context window.',
         faq4Q: 'How much does Gemini prompt caching save?',
         faq4A:
           'A Gemini 4 Argon cache hit is {cached} per 1M tokens against {input} per 1M uncached — a {discount} discount. Gemini 4 Argon supports implicit caching only; explicit cached-content APIs are not supported for it.',
@@ -99,7 +99,7 @@ export const landing = {
         subtitle:
           'xAI Grok rates per 1M tokens — Grok 4.7 with its long-context band and cached-input rate, plus the retired Grok 4 row — priced against every other model.',
         metaDescription:
-          'Grok API pricing for Grok 4.7 — input, output and cached-input rates per 1M tokens, the long-context band above the threshold, and the context window. Updated {date}.',
+          'Grok API pricing for Grok 4.7 — input, output and cached rates per 1M tokens, with the long-context band and context window. Updated {date}.',
         tldrItems: [
           'Grok 4.7 is the current xAI flagship in the registry, priced on a short-context rate with a long-context band on top.',
           'The long-context band applies to the whole request, so one oversized prompt is billed at the higher rate.',
@@ -136,7 +136,7 @@ export const landing = {
         subtitle:
           'MiniMax M3.1 Flash and M3 rates per 1M tokens — a flat rate, the priority lane, the long-context doubling and the cache rate — priced against every other model.',
         metaDescription:
-          'MiniMax API pricing for M3.1 Flash and M3 — input, output and cached-input rates per 1M tokens, the priority service tier and the long-context doubling. Updated {date}.',
+          'MiniMax API pricing for M3.1 Flash and M3 — input, output and cached rates per 1M, the priority tier and long-context pricing. Updated {date}.',
         tldrItems: [
           'MiniMax M3.1 Flash is the cheapest active model in the registry, on a single flat rate with no long-context tier.',
           'M3 is still sold, and its standard rate is below most of the frontier on output.',
@@ -173,7 +173,7 @@ export const landing = {
         subtitle:
           'Moonshot Kimi rates per 1M tokens — K3.1 Pro, the Highspeed twin and the still-sold K3, with the million-token window and the separately billed cache writes.',
         metaDescription:
-          'Kimi API pricing for K3.1 Pro, K3.1 Pro Highspeed and K3 — input, output and cached-input rates per 1M tokens, the million-token context window and cache-write billing. Updated {date}.',
+          'Kimi API pricing for K3.1 Pro, K3.1 Pro Highspeed and K3 — input, output and cached rates per 1M, the 1M-token window and cache writes. Updated {date}.',
         tldrItems: [
           'Kimi K3.1 Pro serves a million-token context window, priced with separate input, output and cached-input rates.',
           'Cache writes are billed separately from cache reads, by TTL — a five-minute write costs less than an hour-long one.',
@@ -207,9 +207,9 @@ export const landing = {
     },
 
     model: {
-      metaTitle: '{model} API Pricing, Benchmarks & Context Window ({year})',
+      metaTitle: '{model} Pricing & Benchmarks',
       metaDescription:
-        '{model} API pricing per 1M tokens — {input} input, {output} output, {cached} cached input — plus its {context} context window and benchmark scores. Rates as of {date}.',
+        '{model} API pricing — {input} in / {output} out / {cached} cached per 1M, plus its {context} context window and benchmark scores.',
       worthItTitle: 'Is {model} worth the cost?',
       worthItIntro:
         'Computed from the registry price and the board composite, not written by hand: the numbers below are the model’s own rate and its own score.',
@@ -332,7 +332,7 @@ export const landing = {
         tldrItems: [
           'Gemini 4 Argon 是 Google 的旗舰推理模型,目前执行的是有明确结束日期的入门价——下面的表格给出的是今天真正生效的价格。',
           'Gemini 3.1 Pro 超过长上下文阈值后价格上台阶,而且这个分段只作用于单次请求,不会累加到你的月度总量。',
-          'Flash-Lite 是注册表里最便宜的 Gemini 档位,而且 Gemini 每一行都公布了缓存输入价。',
+          'Flash-Lite 是 Gemini 的入门档位,而且 Gemini 每一行都公布了缓存输入价。',
           'Google 在标准价之外还公布 Batch 与 Flex 两档,以及更高价的 Priority。',
           'Gemini 4 Argon 没有长上下文档位,窗口内价格不会再往上跳。',
         ],
@@ -351,7 +351,7 @@ export const landing = {
           '在 {threshold} token 以内,Gemini 3.1 Pro 输入 {input} /1M、输出 {output} /1M;超过该阈值后,同一个请求按输入 {longInput} /1M、输出 {longOutput} /1M 计费。',
         faq3Q: 'Gemini Flash-Lite 的 token 多少钱?',
         faq3A:
-          'Gemini 3.1 Flash-Lite 输入 {input} /1M,输出 {output} /1M,缓存输入 {cached} /1M——注册表里最便宜的 Gemini 档位,上下文窗口 {context}。',
+          'Gemini 3.1 Flash-Lite 输入 {input} /1M,输出 {output} /1M,缓存输入 {cached} /1M——Gemini 的入门档位,上下文窗口 {context}。',
         faq4Q: 'Gemini 的提示词缓存能省多少?',
         faq4A:
           'Gemini 4 Argon 的缓存命中价是 {cached} /1M,未命中是 {input} /1M,相当于 {discount} 的折扣。Gemini 4 Argon 只支持隐式缓存,不支持显式的 cachedContent 缓存接口。',
@@ -470,9 +470,9 @@ export const landing = {
     },
 
     model: {
-      metaTitle: '{model} API 价格、跑分与上下文窗口({year})',
+      metaTitle: '{model} API 价格与跑分',
       metaDescription:
-        '{model} 的每 1M token API 价格——输入 {input}、输出 {output}、缓存输入 {cached},加上 {context} 的上下文窗口与基准跑分。价格截至 {date}。',
+        '{model} 的每 1M token API 价格——输入 {input}、输出 {output}、缓存输入 {cached},加上 {context} 的上下文窗口与基准跑分。',
       worthItTitle: '这个模型值不值?',
       worthItIntro:
         '结论由注册表价格与榜单综合分算出来,不是手写的:下面的数字就是它自己的价格和它自己的分数。',

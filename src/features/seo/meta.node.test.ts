@@ -129,6 +129,14 @@ describe('indexability', () => {
     }
   })
 
+  it('keeps the stale waitlist page out of the index and the sitemap', () => {
+    // Its copy is pre-launch ("we'll let you know the moment we launch") on a
+    // live site, and it had zero inbound internal links. Reachable, not
+    // advertised.
+    expect(isIndexablePath('/waitlist')).toBe(false)
+    expect(isIndexablePath('/zh/waitlist')).toBe(false)
+  })
+
   it('keeps every core path indexable', () => {
     for (const path of CORE_PATHS) {
       expect(isIndexablePath(path), `${path} is in the core sitemap but is thin`).toBe(true)

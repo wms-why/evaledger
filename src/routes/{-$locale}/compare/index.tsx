@@ -1,8 +1,8 @@
 import { createFileRoute, getRouteApi, useNavigate } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { useTranslation } from '@/features/i18n/provider'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
@@ -45,6 +45,12 @@ export const Route = createFileRoute('/{-$locale}/compare/')({
       path: '/compare',
       title: dict.leaderboard.compare.title,
       description: dict.leaderboard.compare.metaDescription,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.compare'), path: '/compare' },
+        ]),
+      ],
     })
     return { meta, links }
   },

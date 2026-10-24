@@ -1,6 +1,6 @@
 ---
 title: "DeepSeek V4.1-Flash 0910: $0.30 / $1.20 at peak, and a cache read at 2% of input"
-description: "DeepSeek V4.1-Flash 0910 — the 2026-09-10 launch checkpoint — costs $0.30 per 1M input and $1.20 per 1M output at peak, $0.15 / $0.60 off-peak, and reads cached input at $0.006, with 19 verified benchmark scores. The API now serves the newer 1017 checkpoint, tracked separately."
+description: "DeepSeek V4.1-Flash 0910 (2026-09-10) costs $0.30 / $1.20 per 1M at peak, $0.15 / $0.60 off-peak, with $0.006 cache reads and 19 verified scores."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-24"

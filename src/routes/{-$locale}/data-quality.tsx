@@ -11,7 +11,7 @@ import { dataQualitySummary, modelQuality, scoreSources } from '@/features/data-
 import { useTranslation } from '@/features/i18n/provider'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { LEADERBOARD } from '@/features/leaderboard/models'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 
 const rootRoute = getRouteApi('__root__')
@@ -42,6 +42,12 @@ export const Route = createFileRoute('/{-$locale}/data-quality')({
       path: '/data-quality',
       title: `${title} — ${dict.common.appName}`,
       description,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.dataQuality'), path: '/data-quality' },
+        ]),
+      ],
     })
     return { meta, links }
   },

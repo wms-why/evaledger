@@ -4,6 +4,7 @@ import { jsonLd, localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
+import { pairTitle } from '@/features/leaderboard/pair-title'
 import { useTranslation } from '@/features/i18n/provider'
 import { SeriesCostCalc } from '@/features/series/components/SeriesCostCalc'
 import { SeriesLadder } from '@/features/series/components/SeriesLadder'
@@ -43,7 +44,9 @@ export const Route = createFileRoute('/{-$locale}/series/$slug/$pair')({
     const dict = dictionaries[locale]
     const a = loaderData?.a
     const b = loaderData?.b
-    const title = a && b ? dict.series.pairTitle.replace('{a}', a.displayName).replace('{b}', b.displayName) : dict.series.pageMetaTitle
+    const title = a && b
+      ? pairTitle(a.displayName, b.displayName, locale === 'zh' ? '对比' : 'vs')
+      : dict.series.pageMetaTitle
     const description =
       a && b
         ? dict.series.pairMetaDescription

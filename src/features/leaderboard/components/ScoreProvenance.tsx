@@ -1,7 +1,7 @@
 import { useTranslation } from '@/features/i18n/provider'
 import { Link } from '@tanstack/react-router'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { BENCHMARKS } from '../benchmarks'
+import { BENCHMARKS, benchmarkVersionSuffix } from '../benchmarks'
 import { sourceInfo } from '../sources'
 import type { BenchmarkScore } from '../types'
 
@@ -24,6 +24,7 @@ export function ScoreProvenance({
 }) {
   const { t } = useTranslation()
   const benchmark = BENCHMARKS.find((b) => b.id === score.benchmark)
+  const versionSuffix = benchmark ? benchmarkVersionSuffix(benchmark) : null
   const source = sourceInfo(score.sourceUrl)
 
   return (
@@ -40,9 +41,9 @@ export function ScoreProvenance({
         <div>
           <p className="font-medium text-foreground">
             {benchmark?.name ?? score.benchmark}
-            {benchmark?.version && (
+            {versionSuffix && (
               <span className="ml-1.5 text-fg-3">
-                {t('leaderboard.track.version')} {benchmark.version}
+                {t('leaderboard.track.version')} {versionSuffix}
               </span>
             )}
           </p>

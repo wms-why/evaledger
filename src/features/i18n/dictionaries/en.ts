@@ -9,10 +9,10 @@ export const en = {
   home: {
     title: 'EvalLedger — Free LLM Token Cost Calculator',
     calculatorTitle: 'Token Cost Calculator — Compare Every LLM',
-    openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
-    claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
+    openrouterTitle: 'OpenRouter Pricing Calculator with Markup',
+    claudeTitle: 'Claude Token Cost Calculator — Cost per Token',
     deepseekTitle: 'DeepSeek API Pricing — V4 & V3 Per-Token Rates',
-    chatgptTitle: 'ChatGPT API Pricing — GPT-5/5.6/6 Cost per Token',
+    chatgptTitle: 'ChatGPT API Pricing — GPT-6 & 5.6 Rates',
     greeting: 'Hello, {name}!',
   },
   leaderboard: {
@@ -46,7 +46,7 @@ export const en = {
     home: {
       // The title carries the brand and the three things the page actually
       // answers: the benchmark scores, the ranking, and the API price.
-      title: 'LLM Leaderboard: Benchmarks, Rankings & API Prices | EvalLedger',
+      title: 'LLM Leaderboard: Benchmarks & API Prices | EvalLedger',
       metaDescription:
         'Compare {n} LLMs on GPQA, HLE, DeepSWE and more — benchmark scores next to per-token API price. One table, one source of truth, updated by hand.',
       h1: 'LLM Leaderboard: Compare AI Models by Benchmark and Price',
@@ -250,7 +250,7 @@ export const en = {
         intro:
           'The models that clear every benchmark on our coding board, ordered by blended price per million tokens. A model we never measured on all of them is not listed.',
         metaDescription:
-          'Cheapest LLM API for coding — the models that clear every coding benchmark (DeepSWE, ProgramBench, NL2Repo, Terminal-Bench), ordered by price per million tokens.',
+          'Cheapest LLM API for coding — the models that clear every coding benchmark (DeepSWE, ProgramBench, NL2Repo, Terminal-Bench), ordered by price.',
       },
     },
     tokenCalculator: {
@@ -299,7 +299,7 @@ export const en = {
       nav: 'Capability boards',
       title: '{track} leaderboard',
       metaDescription:
-        'Models ranked on {track}, with the formula, the weights and the source of every score shown. Only models that were actually measured on every benchmark of the board are ranked.',
+        'Models ranked on {track}, with the formula, the weights and the source of every score. Only models measured on every core benchmark are ranked.',
       intro:
         'A model is ranked here only if it published a score for every benchmark this board scores on. Models that were not measured on all of them are listed below, marked as untested — never averaged over the benchmarks they happen to have.',
       formulaTitle: 'How this board is scored',
@@ -427,7 +427,7 @@ export const en = {
   dataQuality: {
     title: 'Data quality',
     metaDescription:
-      'The price and the score of every model we track: how fresh each one is, where it was read from, and what changed since the previous version. Report anything that looks wrong.',
+      'The price and score of every model we track: how fresh each one is, where it was read from, and what changed. Report anything that looks wrong.',
     intro:
       'Anyone can show the same numbers. What separates a source you can check from one you cannot is whether it keeps showing its work. This is our work: when each price was last verified, when each score was measured, which harness produced it, and what moved since the last version. This page covers the models on our leaderboards — one row per model, with its price, its scores and the pages they were read from.',
     summary: {
@@ -531,6 +531,11 @@ export const en = {
   releases: {
     nav: 'Model Releases',
     title: 'Model Releases',
+    // One post = one launch. The title is the subject plus the page's job;
+    // the full article headline stays the H1.
+    metaTitle: '{model}: launch analysis',
+    metaDescription:
+      'Every model launch as a cost-and-switch analysis: live prices, verified scores, and whether the new model is worth switching to.',
     subtitle:
       'Every major model launch, rewritten as a cost-and-switch analysis. The prices and scores on each page are pulled live from the provider pages, not copied into the article.',
     kicker: 'Model release',
@@ -594,9 +599,9 @@ export const en = {
     indexIntro:
       'Every version of one vendor line, newest first: what the latest one changed, whether the older ones are still worth running, and what each one costs.',
     indexMetaDescription:
-      'Compare every version of a model line side by side — Claude Opus, GPT-6, Gemini 3 and more: prices per token, context window, benchmark scores, and what a month of your usage costs.',
+      'Every version of a model line side by side — Claude Opus, GPT-6, Gemini 3 and more: token prices, context window, benchmark scores and monthly cost.',
     pageTitle: '{series} versions compared',
-    pageMetaTitle: '{series} versions compared — prices, context window and scores',
+    pageMetaTitle: '{series} versions compared',
     pageMetaDescription:
       'Every {series} version in one table: input, output and cached prices, context window, benchmark scores, and what a month of your usage costs on each one.',
     ladderTitle: 'Every {series} version in one table',
@@ -672,7 +677,7 @@ export const en = {
     whichLite: 'Cheapest tier: {model}',
     pairTitle: '{a} vs {b}',
     pairMetaDescription:
-      '{a} vs {b}: prices per token, context window, benchmark scores, and what changed between the two versions.',
+      '{a} vs {b}: prices, context window, benchmark scores, and what changed between versions.',
     siblingsTitle: 'Other versions in {series}',
     sourcesTitle: 'Sources',
     sourceVerified: 'Verified {date}',
@@ -877,11 +882,11 @@ export const en = {
     ctaBody: 'Paste your prompt, set your usage, see the cost across every model — in seconds. No signup.',
     ctaButton: 'Open the calculator',
     brandMetaDescription:
-      'EvalLedger is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI, accurate estimates for the rest. No signup.',
+      'EvalLedger is a free token cost calculator for OpenAI, Claude, Gemini, DeepSeek, MiniMax and Grok. Real tokenizer for OpenAI, accurate estimates for the rest.',
     calculatorMetaDescription:
-      'Free calculator comparing token prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Paste your prompt, see cost across every model. Updated {date}.',
+      'Compare token prices for OpenAI, Claude, Gemini, DeepSeek, MiniMax and Grok. Paste your prompt and see the cost across every model. Updated {date}.',
     deepseekMetaDescription:
-      'DeepSeek API pricing — {model} at {input} input / {output} output per 1M, plus off-peak hours, prompt cache, and comparison to GPT-6 / Claude / Gemini. Updated {date}.',
+      'DeepSeek API pricing — {model}: {input} in / {output} out per 1M, off-peak rates, prompt cache, and a GPT-6 / Claude comparison. Updated {date}.',
     homeMetaDescription:
       'See what your LLM tokens actually cost across OpenAI, Claude, Gemini, DeepSeek, MiniMax, and Grok. Real tokenizer for OpenAI models, accurate estimates for the rest. Updated {date}.',
     openrouterMetaDescription:
@@ -922,7 +927,7 @@ export const en = {
     kicker: 'support the project',
     title: 'Sponsor EvalLedger', titleHl: 'EvalLedger',
     metaDescription:
-      'Sponsor EvalLedger, the free LLM token cost calculator. One-time or monthly — every contribution funds fresh price checks, new calculators and the servers that keep the tool free.',
+      'Sponsor EvalLedger, the free LLM token cost calculator. One-time or monthly — every contribution funds fresh price checks and keeps the tool free.',
     subtitle: 'EvalLedger helps engineers see what their LLM tokens actually cost, across every major model. Sponsorships fund fresh price updates, new calculators, and the infra that keeps the tool free — and put your avatar on the sponsor wall.',
     monthly: 'Monthly', once: 'One-time', perMo: '/mo',
     popular: 'Recommended',
@@ -1059,7 +1064,7 @@ export const en = {
     tldrTitle: 'Quick takeaways',
     tldrItems: [
       'Output tokens usually cost 4–8× more than input — keeping replies short is the highest-leverage cost saver.',
-      'Anthropic prompt caching drops repeat-input cost by ~90%; OpenAI cached input drops it by ~90% on GPT-5.',
+      'Anthropic prompt caching drops repeat-input cost by ~90%; OpenAI cached input drops it by ~90% on the GPT-6 line.',
       'DeepSeek off-peak hours are ~50% cheaper than peak — schedule batch jobs accordingly.',
       'Gemini 2.5 Pro doubles its input price above 200K context — large-context calls cost roughly twice as much.',
     ],
@@ -1086,7 +1091,7 @@ export const en = {
     // Money-saving tips
     tipsTitle: 'How to bring the bill down',
     tips: [
-      'Use a smaller model for routing / classification — Haiku 4.5 / GPT-5 nano cost roughly 5–10× less than the flagship.',
+      'Use a smaller model for routing / classification — Claude Haiku 4.5 costs about 10× less than Claude Fable 5.1, and GPT-6 luna about 100× less than GPT-6 astra on output.',
       'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached input drops the rate by ~90%.',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
       'Batch non-urgent jobs into DeepSeek off-peak hours for ~50% cheaper inference.',
@@ -1188,7 +1193,7 @@ export const en = {
     // DeepSeek-specific numbers without diluting the cross-provider page).
     deepseekTldrItems: [
       'DeepSeek V4.1-Flash is $0.30 input / $1.20 output per 1M tokens — roughly 8× cheaper than GPT-5 on output.',
-      'V4-Pro is $1.32 / $3.96 per 1M — comparable to Claude Sonnet 4.5 on benchmarks, ~2.3× cheaper on output.',
+      'V4-Pro is $1.32 / $3.96 per 1M — comparable to Claude Sonnet 4.5 on benchmarks, ~3.8× cheaper than it on output.',
       'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is 50% of peak — schedule batch jobs accordingly.',
       'Cache hits drop V4.1-Flash input from $0.30/M to $0.006/M at peak (98% off) and $0.003/M off-peak (99% off). Cache aggressively when the system prompt or tool schema repeats.',
     ],
@@ -1203,13 +1208,13 @@ export const en = {
     // ChatGPT-specific TLDR + Tips (separate arrays so the page can quote
     // ChatGPT-specific numbers without diluting the cross-provider page).
     chatgptTldrItems: [
-      'GPT-5 cached input drops to $0.125/M — a 90% discount vs the $1.25/M standard rate.',
+      'GPT-6 astra cached input drops to $1/M — a 90% discount vs the $10/M standard rate.',
       'The Batch API runs at 50% off with a 24-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
-      'GPT-6 astra is the most expensive active model at $10 input / $50 output per 1M tokens.',
-      'GPT-6 luna is the cheapest active model at $0.10 input / $0.50 output per 1M tokens.',
+      'GPT-6 astra is the flagship at $10 input / $50 output per 1M tokens.',
+      'GPT-6 luna is the cheapest GPT-6 tier at $0.10 input / $0.50 output per 1M tokens.',
     ],
     chatgptTips: [
-      'Use GPT-5 nano or GPT-6 luna for routing / classification — output is roughly 8–20× cheaper than the flagship.',
+      'Use GPT-6 luna for routing / classification — its output rate is 100× below GPT-6 astra\'s.',
       'Enable cached input — OpenAI auto-caches prefix repeats for ~90% off the standard input rate.',
       'Route non-urgent jobs through the Batch API for 50% off (24-hour SLA, no queue rate-limits).',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',

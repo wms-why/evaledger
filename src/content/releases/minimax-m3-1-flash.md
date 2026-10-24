@@ -1,6 +1,6 @@
 ---
 title: "MiniMax M3.1 Flash: $0.15 / $0.60, released 2026-10-19"
-description: "MiniMax M3.1 Flash costs $0.15 per 1M input and $0.60 per 1M output — exactly half of MiniMax M3, with a flat rate and a 1,000,000-token total window. Three comparable scores, all vendor-measured."
+description: "MiniMax M3.1 Flash costs $0.15 / $0.60 per 1M, half of MiniMax M3, with a flat rate and a 1,000,000-token window. Three vendor-reported scores."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-20"

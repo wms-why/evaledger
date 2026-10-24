@@ -9,6 +9,7 @@ import {
 import { REGISTRY } from '@/features/calculator/model-prices'
 import { CORE_PATHS, CORE_ZH_PATHS } from '@/features/seo/sitemap-core'
 import { isIndexablePath } from '@/features/seo/indexability'
+import { BENCHMARKS } from '@/features/leaderboard/benchmarks'
 import { LEADERBOARD } from '@/features/leaderboard/models'
 import { BEST_CATEGORIES } from '@/features/leaderboard/leaderboard'
 import type { Page } from '@playwright/test'
@@ -30,7 +31,13 @@ const SAMPLE_PAGES = [
   // The two directory hubs — they carry a breadcrumb of their own, and a
   // breadcrumb that ends at the wrong page is invisible in a diff.
   '/benchmarks',
+  '/benchmarks/hle',
   '/best',
+  '/best/for-coding',
+  '/methodology',
+  // A capability board: its BreadcrumbList was documented in round 1 but
+  // missing from the head, so the sampled set now holds it.
+  '/leaderboard/coding',
   '/releases',
   '/zh/releases',
   RELEASE_SLUGS[0] ? `/releases/${RELEASE_SLUGS[0]}` : '/releases',
@@ -39,6 +46,14 @@ const SAMPLE_PAGES = [
   // A series *line*, not the index — the index is already sampled above.
   SERIES_ROUTES.find((route) => route.path !== '/series')?.path ?? '/series',
   '/token-cost-calculator',
+  '/claude-token-cost-calculator',
+  '/chatgpt-api-pricing',
+  '/deepseek-api-pricing',
+  '/gemini-api-pricing',
+  '/grok-api-pricing',
+  '/minimax-api-pricing',
+  '/kimi-api-pricing',
+  '/openrouter-pricing-calculator',
 ]
 
 /**
@@ -115,12 +130,13 @@ test.describe('the machine-readable endpoints', () => {
         `${origin}/zh${path === '/' ? '' : path}`,
       )
     }
-    // The core list is short — that is the whole point of the split. It grew
-    // by exactly the four new per-provider pricing landings (Gemini, Grok,
-    // MiniMax, Kimi): a pricing page carries the vendor name people actually
-    // type, so it is the one long-tail family that earns a place here. The
-    // node-side caps live in `sitemap-core.node.test.ts` (28 en / 12 zh).
-    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(39)
+    // The core list is short relative to the full inventory — that is the
+    // whole point of the split. The count is exercised against the registry
+    // above (every CORE_PATHS / CORE_ZH_PATHS entry must be present); this
+    // ceiling catches a duplicate or an accidental full-list paste. The
+    // editorial cap itself lives in `sitemap-core.node.test.ts`.
+    const coreCeiling = CORE_PATHS.length + CORE_ZH_PATHS.length
+    expect(parsed.locs.length, 'the core sitemap must stay short').toBeLessThanOrEqual(coreCeiling)
   })
 
   test('/sitemap-core.xml is the same list as /sitemap.xml', async ({ page }) => {
@@ -233,6 +249,11 @@ test.describe('the head of every page', () => {
 
       await expect(page.locator('link[hreflang="en"]')).toHaveCount(1)
       await expect(page.locator('link[hreflang="zh"]')).toHaveCount(1)
+
+      // The brand/social head a crawler and a link preview both read.
+      await expect(page.locator('meta[property="og:site_name"]')).toHaveCount(1)
+      await expect(page.locator('meta[name="twitter:title"]')).toHaveCount(1)
+      await expect(page.locator('meta[name="twitter:description"]')).toHaveCount(1)
 
       expect(pageErrors).toEqual([])
       expect(ownErrors(consoleErrors)).toEqual([])
@@ -350,6 +371,119 @@ test.describe('the head of every page', () => {
           `${path} has a breadcrumb that ends somewhere else`,
         ).toBe(new URL(canonical).pathname)
       }
+    }
+  })
+
+  /**
+   * The one line a search result shows. Three properties must hold on every
+   * page: the brand appears exactly once (the templates used to add it
+   * inconsistently — four vendor pages had it, four did not), the title fits
+   * the 60-character budget, and the description fits 160.
+   */
+  test('every sampled title and description fit the SERP budget', async ({ page }) => {
+    for (const path of SAMPLE_PAGES) {
+      await visit(page, path)
+      const title = (await read(() => page.title())).trim()
+      const brandCount = title.match(/EvalLedger/g)?.length ?? 0
+      expect(brandCount, `${path} title brand count: ${title}`).toBe(1)
+      expect(title.endsWith('EvalLedger'), `${path} title must end with the brand: ${title}`).toBe(
+        true,
+      )
+      expect(title.length, `${path} title is ${title.length} chars: ${title}`).toBeLessThanOrEqual(
+        60,
+      )
+
+      const description = await read(() =>
+        page.locator('meta[name="description"]').getAttribute('content'),
+      )
+      expect(description, `${path} has no meta description`).toBeTruthy()
+      expect(
+        description!.length,
+        `${path} description is ${description!.length} chars`,
+      ).toBeLessThanOrEqual(160)
+    }
+  })
+
+  test('no sampled page prints a benchmark name twice with its version', async ({ page }) => {
+    // Every versioned benchmark's display name already carries its version
+    // ("DeepSWE v1.1", "Terminal-Bench 4.0"). A page that appends the
+    // `version` field unconditionally reads "DeepSWE v1.1 1.1" — exactly the
+    // regression this audit fixed on `/methodology` and the board tables.
+    const versioned = BENCHMARKS.filter(
+      (benchmark) => benchmark.version && benchmark.name.includes(benchmark.version),
+    )
+    expect(versioned.length, 'expected versioned benchmarks in the registry').toBeGreaterThan(0)
+
+    for (const path of [
+      ...SAMPLE_PAGES,
+      '/methodology',
+      '/zh/methodology',
+      '/leaderboard/coding',
+      '/models/claude-opus-5.5',
+    ]) {
+      await visit(page, path)
+      const text = (await read(() => page.locator('body').innerText())) ?? ''
+      for (const benchmark of versioned) {
+        expect(
+          text,
+          `${path} prints "${benchmark.name} ${benchmark.version}"`,
+        ).not.toContain(`${benchmark.name} ${benchmark.version}`)
+      }
+    }
+  })
+})
+
+test.describe('legacy URLs', () => {
+  test('/token-calculator answers with a 301 and keeps the ?model deep link', async ({ page }) => {
+    // The calculator's historical address is a permanent alias. A 307 tells
+    // a crawler the move is temporary, so the old URL keeps competing.
+    const response = await page.request.get('/token-calculator?model=gpt-6-astra', {
+      maxRedirects: 0,
+    })
+    expect(response.status()).toBe(301)
+    const location = new URL(response.headers()['location']!, response.url())
+    expect(location.pathname).toBe('/token-cost-calculator')
+    expect(location.searchParams.get('model')).toBe('gpt-6-astra')
+  })
+
+  test('/en and /en/* answer with a 301 to the unprefixed canonical URL', async ({ page }) => {
+    for (const [path, expected] of [
+      ['/en', '/'],
+      // The edge collapses the slashed alias in the same hop — no 308 → 301 chain.
+      ['/en/', '/'],
+      ['/en/token-cost-calculator', '/token-cost-calculator'],
+      ['/en/token-calculator?model=gpt-6-astra', '/token-cost-calculator?model=gpt-6-astra'],
+      ['/en/compare?x=1', '/compare?x=1'],
+    ] as const) {
+      const response = await page.request.get(path, { maxRedirects: 0 })
+      expect(response.status(), `${path} should be a permanent redirect`).toBe(301)
+      const location = new URL(response.headers()['location']!, response.url())
+      expect(location.pathname + location.search).toBe(expected)
+    }
+  })
+
+  test('a trailing slash answers with a permanent 308 to the canonical path', async ({ page }) => {
+    // A slashed alias is a path change, so the edge answers it with a 301 in
+    // one hop rather than a 308 that still needs the alias redirect.
+    const alias = await page.request.get('/token-calculator/?model=gpt-6-astra', {
+      maxRedirects: 0,
+    })
+    expect(alias.status(), 'a slashed alias should be a 301').toBe(301)
+    expect(new URL(alias.headers()['location']!, alias.url()).pathname).toBe(
+      '/token-cost-calculator',
+    )
+
+    // Same page, two addresses: the slashed form must not answer 307 and
+    // leave the duplicate address in contention.
+    for (const [path, expected] of [
+      ['/models/claude-opus-5.5/', '/models/claude-opus-5.5'],
+      ['/zh/', '/zh'],
+      ['/sitemap.xml/', '/sitemap.xml'],
+    ] as const) {
+      const response = await page.request.get(path, { maxRedirects: 0 })
+      expect(response.status(), `${path} should be a permanent redirect`).toBe(308)
+      const location = new URL(response.headers()['location']!, response.url())
+      expect(location.pathname + location.search).toBe(expected)
     }
   })
 })

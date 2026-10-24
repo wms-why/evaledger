@@ -1,6 +1,6 @@
 ---
 title: "DeepSeek V4.1-Flash 1017: the same $0.30 / $1.20 price, a much better checkpoint"
-description: "DeepSeek V4.1-Flash 1017 (2026-10-17) keeps the $0.30 / $1.20 peak price and the $0.006 cache read, and publishes 11 new benchmark scores. Here is what changed, what it costs, and whether you should switch."
+description: "DeepSeek V4.1-Flash 1017 (2026-10-17) keeps the $0.30 / $1.20 peak price and $0.006 cache read, adding 11 benchmark scores. Here is what changed."
 date: "2026-10-20"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-24"

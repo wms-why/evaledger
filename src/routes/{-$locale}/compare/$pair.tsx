@@ -1,5 +1,6 @@
 import { createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
 import { localeHead, breadcrumbLd } from '@/features/seo/seo'
+import { pairTitle } from '@/features/leaderboard/pair-title'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
@@ -38,7 +39,10 @@ export const Route = createFileRoute('/{-$locale}/compare/$pair')({
     const dict = dictionaries[locale]
     const a = loaderData?.a
     const b = loaderData?.b
-    const title = a && b ? `${a.displayName} vs ${b.displayName} — ${dict.leaderboard.compare.title}` : dict.leaderboard.compare.title
+    // The pair's own names are the search intent; the brand is appended once
+    // by `localeHead`. Two checkpoints of one line share their prefix, so the
+    // helper shortens the second name to keep the title inside 60 characters.
+    const title = a && b ? pairTitle(a.displayName, b.displayName, 'vs') : dict.leaderboard.compare.title
     const description =
       a && b
         ? dict.leaderboard.compare.pairMetaDescription

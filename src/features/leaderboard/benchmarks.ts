@@ -1,3 +1,5 @@
+import type { Locale } from '@/features/i18n/locale'
+import { BENCHMARK_DESCRIPTIONS_ZH } from './benchmark-descriptions.zh'
 import type { ScoreUnit } from './types'
 
 /**
@@ -48,7 +50,7 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'knowledge',
     unit: 'percent',
     description:
-      'A composite over high-value knowledge work — finance, coding, legal and tax — published by Vals AI. One number for "how good is this model at the work enterprises actually pay for".',
+      'A composite over high-value knowledge work — finance, coding, legal and tax — published by Vals AI. One number for the work enterprises pay for.',
   },
   {
     id: 'gdpval-aa',
@@ -57,7 +59,7 @@ export const BENCHMARKS: Benchmark[] = [
     unit: 'absolute',
     version: '2.1',
     description:
-      'The Artificial Analysis variant of GDPval: how much economic value a model’s professional deliverables are worth, published as a raw value rather than a percentage. A higher number means more value delivered per task.',
+      'The Artificial Analysis GDPval variant: a model’s professional deliverables valued as a raw number, not a percentage. Higher means more value per task.',
   },
   {
     id: 'gdp-pdf',
@@ -95,7 +97,7 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'agentic',
     unit: 'percent',
     description:
-      'Apex Bench v1.1 — the evaluation column DeepSeek publishes in its own V4.1-Flash announcements. Distinct from MathArena Apex: same name, different table, never interchangeable.',
+      'Apex Bench v1.1 — the evaluation column DeepSeek publishes in its V4.1-Flash announcements. Distinct from MathArena Apex: same name, different table.',
   },
   {
     id: 'matharena-apex',
@@ -244,7 +246,7 @@ export const BENCHMARKS: Benchmark[] = [
     category: 'vision',
     unit: 'percent',
     description:
-      'Chart and figure understanding without tools. The tool-assisted run of the same family is a separate entry ("chartography-tools") and the two numbers are not interchangeable.',
+      'Chart and figure understanding without tools. The tool-assisted run is a separate entry (chartography-tools); the numbers are not interchangeable.',
   },
   {
     id: 'graphwalks',
@@ -341,4 +343,42 @@ export const BENCHMARKS: Benchmark[] = [
 
 export function findBenchmark(id: string): Benchmark | undefined {
   return BENCHMARKS.find((b) => b.id === id)
+}
+
+/**
+ * The version to print *next to* a benchmark's name, or `null` when the name
+ * already carries it.
+ *
+ * Every versioned benchmark's display name says its own version — "DeepSWE
+ * v1.1", "Terminal-Bench 4.0", "GDPVal-AA v2.1" — because that is how a
+ * reader names the test. The `version` field stays in the registry: it is
+ * metadata (it keeps two editions of one benchmark apart in a join, a sort
+ * and a test), not a second thing to say. A page that printed both
+ * unconditionally read "DeepSWE v1.1 1.1"; this helper is the one place
+ * that decides, so no component can make the name stutter again.
+ */
+export function benchmarkVersionSuffix(
+  benchmark: Pick<Benchmark, 'name' | 'version'>,
+): string | null {
+  if (!benchmark.version) return null
+  const escaped = benchmark.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const inName = new RegExp(`(^|[^0-9.])${escaped}([^0-9.]|$)`)
+  return inName.test(benchmark.name) ? null : benchmark.version
+}
+
+/**
+ * A benchmark's one-line description in the reader's language.
+ *
+ * The English sentence is the registry's own (`Benchmark.description`); the
+ * Chinese one is a hand-written counterpart in
+ * `benchmark-descriptions.zh.ts`. A Chinese page printing the English
+ * sentence duplicated its hreflang twin and told a Chinese reader nothing —
+ * which is what the second-round audit found on 17 indexable zh pages.
+ */
+export function benchmarkDescription(
+  benchmark: Pick<Benchmark, 'id' | 'description'>,
+  locale: Locale,
+): string {
+  if (locale === 'zh') return BENCHMARK_DESCRIPTIONS_ZH[benchmark.id] ?? benchmark.description
+  return benchmark.description
 }

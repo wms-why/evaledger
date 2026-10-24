@@ -33,16 +33,16 @@ export const calc = {
     tokenTitle: 'Token Cost Calculator — Compare Every LLM API Price',
     tokenSubtitle:
       'Compare prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, Grok and Kimi. Real tokenizer for OpenAI, accurate estimates for the rest.',
-    openrouterTitle: 'OpenRouter Pricing Calculator — What Your Tokens Actually Cost After Markup',
+    openrouterTitle: 'OpenRouter Pricing Calculator with Markup',
     openrouterSubtitle:
       'Every model priced twice — the provider’s direct API price, and what OpenRouter charges after its markup — with the difference in dollars.',
-    claudeTitle: 'Claude Token Cost Calculator — Cost per Token & Monthly Estimates',
+    claudeTitle: 'Claude Token Cost Calculator — Cost per Token',
     claudeSubtitle:
       'Cost per token and monthly estimates for Claude Opus 5.5, Sonnet 5 and Haiku 4.5 — with the Anthropic API.',
     deepseekTitle: 'DeepSeek API Pricing — V4-Pro & V4.1-Flash Per-Token Rates',
     deepseekSubtitle:
       'V4-Pro and V4.1-Flash per-token rates, peak and off-peak hours, and prompt-cache savings — compared to Claude, GPT and Gemini.',
-    chatgptTitle: 'ChatGPT API Pricing — GPT-6 & GPT-5.6 Cost per Token',
+    chatgptTitle: 'ChatGPT API Pricing — GPT-6 & 5.6 Rates',
     chatgptSubtitle:
       'GPT-6 and GPT-5.6 per-token rates, Batch API 50% off, and prompt-cache savings — compared to Claude, Gemini and DeepSeek.',
 
@@ -58,7 +58,7 @@ export const calc = {
 
     // ───── Shared money-saving tips (token / Claude / OpenRouter pages) ─────
     tips1:
-      'Use a smaller model for routing / classification — Claude Haiku 4.5 and GPT-6 luna cost roughly 10× less than the flagship.',
+      'Use a smaller model for routing / classification — Claude Haiku 4.5 costs about 10× less than Claude Fable 5.1, and GPT-6 luna about 100× less than GPT-6 astra on output.',
     tips2:
       'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached input drops the rate by ~90%.',
     tips3:
@@ -278,10 +278,10 @@ export const calc = {
     tokenTitle: 'Token 成本计算器 — 一站比对所有 LLM API 价格',
     tokenSubtitle:
       '横向比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok、Kimi 的价格。OpenAI 系列用真实 tokenizer，其余模型用高精度的近似估算。',
-    openrouterTitle: 'OpenRouter 价格计算器 — 看清你的 token 在加价后实际多少钱',
+    openrouterTitle: 'OpenRouter 价格计算器 — 加价后的 token 成本',
     openrouterSubtitle:
       '每个模型同时给出两个价：厂商官方 API 的原始价格，以及 OpenRouter 加价后的实际价格——并把差额算给你看。',
-    claudeTitle: 'Claude Token 成本计算器 — 每 token 成本与月度估算',
+    claudeTitle: 'Claude Token 成本计算器 — 每 token 成本',
     claudeSubtitle:
       'Claude Opus 5.5、Sonnet 5、Haiku 4.5 的每 token 成本与月度账单估算——直接对接 Anthropic 官方 API 价格。',
     deepseekTitle: 'DeepSeek API 定价 — V4-Pro 与 V4.1-Flash 每百万 token 单价',
@@ -298,7 +298,7 @@ export const calc = {
     tldr4: 'Gemini 2.5 Pro 的上下文超过 200K 后输入价翻倍——长上下文调用差不多要多付一倍。',
 
     // ───── 通用省钱建议（token / Claude / OpenRouter 页共用） ─────
-    tips1: '路由、分类这类活用小模型——Claude Haiku 4.5 和 GPT-6 luna 比旗舰便宜约 10 倍。',
+    tips1: '路由、分类这类活用小模型——Claude Haiku 4.5 比 Claude Fable 5.1 便宜约 10 倍,GPT-6 luna 的输出价比 GPT-6 astra 便宜约 100 倍。',
     tips2: '缓存重复前缀（系统提示词、工具 schema）——Anthropic 的缓存输入价能降约 90%。',
     tips3: '显式设置 max_tokens——输出是贵的那一侧，限制它可以防止回复失控。',
     tips4: '非紧急任务排进 DeepSeek 的非峰值时段，推理成本直接砍半。',

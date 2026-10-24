@@ -33,6 +33,11 @@ export const Route = createFileRoute('/{-$locale}/waitlist')({
       path: '/waitlist',
       title: `${dict.waitlist.title} — ${dict.common.appName}`,
       description: dict.waitlist.metaDescription,
+      // The copy still says "we'll let you know the moment we launch" on a
+      // site that has launched. An indexable page that contradicts itself is
+      // worse than an unindexed one, and the sitemap must not advertise it
+      // either; a product decision (repurpose or link it) can flip this.
+      indexable: false,
     })
     return { meta, links }
   },

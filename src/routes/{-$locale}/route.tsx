@@ -9,7 +9,12 @@ export const Route = createFileRoute('/{-$locale}')({
     if (loc === undefined) return                  // en (no prefix) — ok
     if (loc === defaultLocale) {                    // '/en/...' → strip to canonical no-prefix
       // href (not pathname) so query/hash survive — /en/sponsor?status=success 带参回跳
-      throw redirect({ href: stripDefaultLocalePrefix(location.href) })
+      // 301, not TanStack's default 307: the English prefix is a permanent
+      // alias of the unprefixed URL (`/en` → `/`), exactly like
+      // `/token-calculator` → `/token-cost-calculator`. A temporary redirect
+      // tells a crawler to keep the alias and re-check it forever, which is
+      // the duplicate-address problem the canonical prefix exists to solve.
+      throw redirect({ href: stripDefaultLocalePrefix(location.href), statusCode: 301 })
     }
     if (!isLocale(loc)) throw notFound()            // unknown segment
   },

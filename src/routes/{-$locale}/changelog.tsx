@@ -1,7 +1,7 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { Suspense } from 'react'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
 import { SiteNav } from '@/components/marketing/site-nav'
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { useTranslation } from '@/features/i18n/provider'
 import { selectChangelog, type ChangelogRaw, type ChangelogMeta } from '@/features/changelog/select'
 import browserCollections from 'collections/browser'
-import { dictionaries } from '@/features/i18n/locale'
+import { dictionaries, translate } from '@/features/i18n/locale'
 import type { Locale } from '@/features/i18n/locale'
 import { fmtDate } from '@/lib/format-date'
 
@@ -52,6 +52,12 @@ export const Route = createFileRoute('/{-$locale}/changelog')({
       path: '/changelog',
       title: `${dict.changelog.title} — EvalLedger`,
       description: dict.changelog.metaDescription,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: translate(dict, 'linking.breadcrumb.changelog'), path: '/changelog' },
+        ]),
+      ],
     })
     return { meta, links }
   },

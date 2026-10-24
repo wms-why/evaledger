@@ -87,6 +87,10 @@ export function Footer({ theme }: { theme: 'light' | 'dark' }) {
         <FooterCol title={t('marketing.footerLegal')}>
           <Link className="foot-link" to="/{-$locale}/terms">{t('marketing.footerTerms')}</Link>
           <Link className="foot-link" to="/{-$locale}/privacy">{t('marketing.footerPrivacy')}</Link>
+          {/* The sponsor page is linked from nowhere else: without this it is
+              a sitemap-only orphan, and the dictionary already carries the
+              label (`sponsor.footerSponsor`) that was written for this slot. */}
+          <Link className="foot-link" to="/{-$locale}/sponsor">{t('sponsor.footerSponsor')}</Link>
           <a className="foot-link" href="mailto:hello@evaledger.com">{t('marketing.footerContact')}</a>
         </FooterCol>
       </div>

@@ -59,16 +59,25 @@ test('the core list stays short — that is the point of the split', () => {
   // meets first. If this number grows, the list has stopped being a
   // curation and has become a dump.
   //
-  // The list grew by exactly the four new per-provider pricing landings
-  // (Gemini, Grok, MiniMax, Kimi): a pricing page carries the vendor name
-  // people actually type, so it is the one long-tail family that earns a
-  // place in the core bid for the index.
-  // The cap grew from 26 to 28 with the three cluster pages the list was
-  // missing: `/methodology` ("LLM benchmark methodology"), `/best/for-coding`
-  // ("best LLM for coding") and `/best/cheapest-coding` ("best cheap model
-  // for coding"). They are hub pages, not one launch's long tail, so they
-  // are not the kind of entry this cap was written to keep out.
-  expect(CORE_PATHS.length).toBeLessThanOrEqual(28)
+  // The cap grew twice. First by the four per-provider pricing landings
+  // (Gemini, Grok, MiniMax, Kimi) and the three cluster hub pages
+  // (`/methodology`, `/best/for-coding`, `/best/cheapest-coding`): a
+  // pricing page carries the vendor name people actually type, and a hub
+  // page answers a search the site's cluster is built around, so both
+  // earn a place in the bid on their own account rather than being one
+  // launch's long tail.
+  //
+  // Then by the 2026-10-24 collection pass: the model pages of the whole
+  // frontier row, the frontier compare pairs the pass opened, the
+  // product-line index and scored version pairs behind those launches,
+  // the launch analyses themselves, and the four remaining hub pages.
+  // These are the pages people search for by model name — a core list
+  // that omits the models the site was launched to rank is not a
+  // curation, it is a stale list.
+  //
+  // The list is still far shorter than the full sitemap, which is the
+  // point: it is the bid, not the inventory.
+  expect(CORE_PATHS.length).toBeLessThanOrEqual(70)
   expect(CORE_ZH_PATHS.length).toBeLessThanOrEqual(12)
 })
 

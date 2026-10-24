@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from '@/features/i18n/provider'
-import { BENCHMARKS } from '../benchmarks'
+import { BENCHMARKS, benchmarkVersionSuffix } from '../benchmarks'
 import { bestCategoryForTrack, bestCategoryLabel } from '../board-links'
 import { fieldBestDetail, TRACKS, TRACK_IDS } from '../scoring'
 
@@ -102,6 +102,7 @@ export function Methodology() {
                     <tbody>
                       {track.core.map((core) => {
                         const benchmark = BENCHMARKS.find((b) => b.id === core.id)
+                        const versionSuffix = benchmark ? benchmarkVersionSuffix(benchmark) : null
                         const best = fieldBestDetail(core.id)
                         return (
                           <tr key={core.id} className="border-b border-border/60 last:border-0">
@@ -113,10 +114,8 @@ export function Methodology() {
                               >
                                 {benchmark?.name ?? core.id}
                               </Link>
-                              {benchmark?.version && (
-                                <span className="ml-2 text-[11px] text-fg-3">
-                                  {benchmark.version}
-                                </span>
+                              {versionSuffix && (
+                                <span className="ml-2 text-[11px] text-fg-3">{versionSuffix}</span>
                               )}
                             </td>
                             <td className="px-4 py-2 text-right tabular-nums text-fg-2">

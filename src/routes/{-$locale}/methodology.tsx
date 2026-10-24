@@ -1,8 +1,8 @@
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
-import { dictionaries, type Locale } from '@/features/i18n/locale'
+import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
 import { SiteNav } from '@/components/marketing/site-nav'
 import { Footer } from '@/components/marketing/footer'
 import { Methodology } from '@/features/leaderboard/components/Methodology'
@@ -30,6 +30,15 @@ export const Route = createFileRoute('/{-$locale}/methodology')({
       path: '/methodology',
       title: `${dict.leaderboard.methodology.title} — ${dict.common.appName}`,
       description: dict.leaderboard.methodology.metaDescription,
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          {
+            name: translate(dict, 'linking.breadcrumb.methodology'),
+            path: '/methodology',
+          },
+        ]),
+      ],
     })
     return { meta, links }
   },

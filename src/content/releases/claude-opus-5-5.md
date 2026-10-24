@@ -1,6 +1,6 @@
 ---
 title: "Claude Opus 5.5: Anthropic's flagship at $4 / $20, 20% below Opus 5"
-description: "Claude Opus 5.5 costs $4 per 1M input and $20 per 1M output — 20% below the retired Claude Opus 5 — and reads cached input at 5% of the input rate. Four vendor-reported scores, a 1M-token context window, and a September 22 launch."
+description: "Claude Opus 5.5 costs $4 / $20 per 1M, 20% below the retired Opus 5, with $0.20 cached input. Four verified scores, a 1M-token window, launched 2026-09-22."
 date: "2026-10-19"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-20"

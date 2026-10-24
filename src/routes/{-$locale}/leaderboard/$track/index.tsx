@@ -1,5 +1,5 @@
 import { createFileRoute, getRouteApi, notFound } from '@tanstack/react-router'
-import { localeHead } from '@/features/seo/seo'
+import { localeHead, breadcrumbLd } from '@/features/seo/seo'
 import { isIndexableTrack } from '@/features/seo/indexability'
 import { getOrigin } from '@/features/seo/seo.fns'
 import { getOptionalUser } from '@/features/auth/middleware'
@@ -41,6 +41,12 @@ export const Route = createFileRoute('/{-$locale}/leaderboard/$track/')({
       // A board nobody qualifies for yet stays reachable, but it must not
       // compete for the index budget.
       indexable: isIndexableTrack(params.track),
+      scripts: [
+        breadcrumbLd(origin, locale, [
+          { name: dict.common.appName, path: '/' },
+          { name: label, path: `/leaderboard/${params.track}` },
+        ]),
+      ],
     })
     return { meta, links }
   },

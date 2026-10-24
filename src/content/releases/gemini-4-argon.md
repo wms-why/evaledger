@@ -1,6 +1,6 @@
 ---
 title: "Gemini 4 Argon: $2 / $10 per 1M until November 30, then $4 / $20"
-description: "Google's Gemini 4 Argon costs $2 per 1M input and $10 per 1M output until 2026-11-30, then $4 / $20 — exactly what Claude Opus 5.5 costs today. A 1,048,576-token window with no long-context step, and ten verified scores out of Google's own nineteen-row evaluation table."
+description: "Gemini 4 Argon costs $2 / $10 per 1M until 2026-11-30, then $4 / $20 — exactly Claude Opus 5.5's price. A 1,048,576-token window and ten verified scores."
 date: "2026-10-20"
 checkedAt: "2026-10-20"
 dataCheckedAt: "2026-10-21"
