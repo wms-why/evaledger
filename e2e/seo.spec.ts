@@ -462,6 +462,41 @@ test.describe('legacy URLs', () => {
     }
   })
 
+  test('the calculator alias is a redirect, not a second indexed copy of the page', async ({
+    page,
+  }) => {
+    // The alias must be invisible to a crawler in three separate ways, and a
+    // regression in any one of them is silent: the redirect (tested above),
+    // the sitemap (a sitemap is a list of addresses to index, a redirect is
+    // not one), and the <link rel="canonical"> the *canonical* page emits —
+    // it must name the address the redirect lands on, never the alias.
+    for (const [alias, canonical] of [
+      ['/token-calculator', '/token-cost-calculator'],
+      ['/zh/token-calculator', '/zh/token-cost-calculator'],
+    ] as const) {
+      const response = await page.request.get(alias, { maxRedirects: 0 })
+      expect(response.status(), `${alias} should be a 301`).toBe(301)
+      const target = new URL(response.headers()['location']!, response.url())
+      expect(target.pathname).toBe(canonical)
+
+      // The target is reachable in one hop and canonicalizes to itself.
+      const landed = await visit(page, canonical)
+      expect(landed?.status()).toBe(200)
+      const href =
+        (await read(() => page.locator('link[rel="canonical"]').getAttribute('href'))) ?? ''
+      expect(new URL(href).pathname, `${canonical} must canonicalize to itself`).toBe(canonical)
+
+      for (const sitemap of ['/sitemap.xml', '/sitemap-core.xml', '/sitemap-full.xml']) {
+        const xml = await (await page.request.get(sitemap)).text()
+        const paths = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) =>
+          new URL(match[1]).pathname,
+        )
+        expect(paths, `${sitemap} must not list the alias ${alias}`).not.toContain(alias)
+        expect(paths, `${sitemap} must list the canonical ${canonical}`).toContain(canonical)
+      }
+    }
+  })
+
   test('a trailing slash answers with a permanent 308 to the canonical path', async ({ page }) => {
     // A slashed alias is a path change, so the edge answers it with a 301 in
     // one hop rather than a 308 that still needs the alias redirect.

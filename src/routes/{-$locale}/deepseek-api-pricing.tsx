@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { DeepSeekSection } from '@/features/calculator/components/DeepSeekSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { deepseekFaq, modelRateSummary } from '@/features/calculator/copy'
+import { deepseekFaq, modelRateSummary, deepseekTldr, deepseekTips } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -97,9 +97,9 @@ function DeepSeekPricingPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
         <Calculator initialModelId="deepseek-flash" />
       </div>
-      <PricingTLDR itemsKey="calculator.deepseekTldrItems" />
+      <PricingTLDR items={deepseekTldr(t)} />
       <DeepSeekSection />
-      <Tips itemsKey="calculator.deepseekTips" />
+      <Tips items={deepseekTips(t)} />
       <FAQ
         id="faq"
         kickerKey="calculator.kicker"

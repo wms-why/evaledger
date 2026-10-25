@@ -361,9 +361,32 @@ export function benchmarkVersionSuffix(
   benchmark: Pick<Benchmark, 'name' | 'version'>,
 ): string | null {
   if (!benchmark.version) return null
-  const escaped = benchmark.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const inName = new RegExp(`(^|[^0-9.])${escaped}([^0-9.]|$)`)
-  return inName.test(benchmark.name) ? null : benchmark.version
+  const wants = versionTokens(benchmark.version)
+  if (wants.length === 0) return benchmark.version
+  const carried = versionTokens(benchmark.name)
+  // Whole-token equality, never substring, never a dynamic regex. "v2" is a
+  // token of "Foo v2.1" only as part of "2.1"; the name must carry "2"
+  // *itself* for the version to count as already said.
+  return wants.every((token) => carried.includes(token)) ? null : benchmark.version
+}
+
+/**
+ * Every version token inside a string, in order.
+ *
+ * A token is a maximal run of digits and dots, with the trailing dot of a
+ * sentence and the stray dots of a punctuation mark dropped: `"v1.1."`
+ * yields `["1.1"]`, `"V2.1"` yields `["2.1"]`, `"OSWorld-2.0"` yields
+ * `["2.0"]`. Two token lists are compared as strings, so the check that a
+ * name already says its version is a plain `includes`, not a regex test —
+ * a `new RegExp(dynamicVersion)` "does this substring occur anywhere"
+ * check is what let "DeepSWE v1.1." print "DeepSWE v1.1. 1.1", because the
+ * `[^0-9.]` boundary after the version refused to accept a trailing dot.
+ */
+function versionTokens(text: string): string[] {
+  return text
+    .match(/\d+(?:\.\d+)*/g)
+    ?.map((token) => token.replace(/\.+$/, ''))
+    .filter((token) => token.length > 0) ?? []
 }
 
 /**

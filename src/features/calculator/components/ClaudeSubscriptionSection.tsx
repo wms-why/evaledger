@@ -5,6 +5,7 @@ import {
   claudeBreakEven,
   formatBreakEvenM,
 } from '@/features/calculator/claude-break-even'
+import { ANTHROPIC_SUBSCRIPTIONS } from '@/features/calculator/vendor-claims'
 
 /**
  * Page-specific block for /claude-token-cost-calculator.
@@ -41,7 +42,9 @@ export function ClaudeSubscriptionSection() {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <div className="rounded-[14px] border border-border bg-card p-6">
             <h3 className="text-[18px] font-semibold tracking-[-0.3px]">
-              {t('calculator.claudeProCardTitle')}
+              {t('calculator.claudeProCardTitle', {
+                proMonthly: ANTHROPIC_SUBSCRIPTIONS.proMonthlyUsd,
+              })}
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
               {t('calculator.claudeBreakEven', {
@@ -56,7 +59,9 @@ export function ClaudeSubscriptionSection() {
 
           <div className="rounded-[14px] border border-border bg-card p-6">
             <h3 className="text-[18px] font-semibold tracking-[-0.3px]">
-              {t('calculator.claudeMaxCardTitle')}
+              {t('calculator.claudeMaxCardTitle', {
+                maxMonthly: ANTHROPIC_SUBSCRIPTIONS.maxMonthlyUsd,
+              })}
             </h3>
             <p className="mt-2 text-[13px] text-fg-3">
               {t('calculator.claudeBreakEven', {
@@ -65,7 +70,9 @@ export function ClaudeSubscriptionSection() {
               })}
             </p>
             <p className="mt-3 text-[14px] leading-relaxed text-fg-2">
-              {t('calculator.claudeMaxDescription')}
+              {t('calculator.claudeMaxDescription', {
+                maxMonthly: ANTHROPIC_SUBSCRIPTIONS.maxMonthlyUsd,
+              })}
             </p>
           </div>
         </div>

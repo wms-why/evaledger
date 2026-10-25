@@ -1,5 +1,6 @@
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
+import { deepseekCacheBody } from '@/features/calculator/copy'
 
 /**
  * Page-specific block for /deepseek-api-pricing. Explains the off-peak
@@ -33,7 +34,7 @@ export function DeepSeekSection() {
               {t('calculator.deepseekCacheTitle')}
             </h3>
             <p className="mt-2.5 text-[14px] leading-relaxed text-fg-2">
-              {t('calculator.deepseekCacheBody')}
+              {deepseekCacheBody(t)}
             </p>
             {flash && pro && (
               <ul className="mt-4 space-y-1.5 text-[12px] tabular-nums text-fg-2">

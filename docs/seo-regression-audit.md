@@ -1,3 +1,11 @@
+# EvalLedger — SEO 回归审计
+
+> **本文件含两轮记录。** 下面是第二轮（2026-10-24）的完整审计；**第三轮**
+> （2026-10-25，针对第二轮部署后仍存在的回归：基准版本号重复、Token Calculator
+> 过时 FAQ、4 条价格口径、URL 规范守卫）在文末「第三轮：生产回归修复」一节。
+
+---
+
 # EvalLedger — SEO 第二轮回归审计
 
 **日期：** 2026-10-24 · **基线：** `main` @ `6dd36ab`（线上生产 `https://evaledger.com/` 确认与该提交一致）·
@@ -480,3 +488,211 @@ curl -s https://evaledger.com/zh/benchmarks/gpqa-diamond | grep -o '<meta name="
 38 条 zh benchmark 描述、两处日期缺口、zh changelog 链接、全站社交元数据；**没有**为了“看起来更好”而改公开 URL、删页面、编数据或编造任何
 排名/流量指标。剩余项只剩**发布动作、基础设施迁移决策、需要真实数据源（lastmod）或文案评审（title 品牌/长度）
 的 P3**（以及已写入 AGENTS.md 的 title ≤60 / description ≤160 硬规则），逐条列在 §5。
+
+---
+
+# 第三轮：生产回归修复（2026-10-25）
+
+**范围：** 只修第二轮遗留在生产上的 4 类回归，**不重复**第二轮的改造，不新增/删除/重命名任何公开 URL。
+**基线：** `main` @ `1394a58`（即第二轮修复已合并、已部署的版本）。
+**方法：** 直接执行注册表（esbuild 打包运行）+ 生产 `evaledger.com` 真实抓取 + 本地 dev server 逐页比对 + 新增/扩展回归测试。
+**未部署：** 本轮全部改动在工作区，**没有**执行 `pnpm deploy:prod`，也没有改 DNS。
+
+## 0. 结论摘要
+
+| 维度 | 结果 |
+| --- | --- |
+| 修复项 | **4 类 / 16 个文件**：基准版本号重复的根因、Token Calculator FAQ 旧模型、4 条价格口径、URL 规范守卫 |
+| 新增测试 | 2 个新文件（`alias-canonical.node.test.ts` 5 例、`faq-freshness.node.test.ts` 17 例）+ 1 个大幅扩展（`benchmark-version.node.test.ts` 6 → 25 例）+ e2e 新增 1 例 |
+| 全量验证 | `pnpm test` **722 passed / 83 files**；`pnpm lint` 0 error；`pnpm typecheck` 0 error；`pnpm build` 通过；`e2e/seo.spec.ts` **70 passed** |
+| 数据来源 | 所有 FAQ 数字由 `REGISTRY` 经 `priceDetail()` 现算；4 条口径的结论逐条复算，**无编造来源** |
+| 未验证 | 部署后行为、Search Console 索引状态、`vendor-claims.ts` 三个外部 URL 的当前内容 —— 见 §5 |
+
+---
+
+## 1. 任务 1：评分方法页面的重复版本号
+
+### 1.1 现象与根因
+
+**现象（线上，修复前）：** `/zh/methodology` 与 `/methodology` 渲染出 `DeepSWE v1.1 1.1`、`Terminal-Bench 4.0 4.0`。
+
+第二轮已经引入了唯一判定函数 `benchmarkVersionSuffix()`（`src/features/leaderboard/benchmarks.ts`），4 个渲染点也都改用了它（`Methodology.tsx` / `TrackBoard.tsx` / `ModelProfile.tsx` / `ScoreProvenance.tsx`），但**判定本身不可靠**：
+
+```ts
+// 修复前
+const escaped = benchmark.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const inName = new RegExp(`(^|[^0-9.])${escaped}([^0-9.]|$)`)
+return inName.test(benchmark.name) ? null : benchmark.version
+```
+
+它把版本号当成**正则子串**去匹配，而右边界 `([^0-9.]|$)` **不接受句点**。因此只要名字里的版本后面跟了一个 `.`（`"DeepSWE v1.1."`、句子标点、表格里的句末），匹配就失败，helper 便"认定名字没说版本"并返回 `"1.1"`，页面于是再补一次 —— 这正是 `DeepSWE v1.1 1.1` 的来源。**根因不是某个页面的显示字符串，而是"用动态正则做版本包含判定"这个方法本身。**
+
+> 诚实记录：本轮用当前注册表数据（13 个带 `version` 的基准）跑修复前的 helper，全部返回 `null`，**本地未复现出重复**；重复只在名字带尾随标点等边界条件出现。因此本次修复按"消除该类判定方式"处理，而不是按"某一行字符串"处理 —— 这与任务要求"不要硬编码替换显示字符串"一致。
+
+### 1.2 修复
+
+`benchmarkVersionSuffix()` 重写为**整 token 相等**比较，彻底移除动态 `RegExp`：
+
+```ts
+// 修复后（节选）
+const wants = versionTokens(benchmark.version)
+const carried = versionTokens(benchmark.name)
+return wants.every((token) => carried.includes(token)) ? null : benchmark.version
+
+function versionTokens(text: string): string[] {
+  return text.match(/\d+(?:\.\d+)*/g)?.map((t) => t.replace(/\.+$/, '')).filter(Boolean) ?? []
+}
+```
+
+- 边界语义更严格：「`Foo v2.1`」+`version: '2'` → `'2'`（name 声明的是 2.1，不是 2）；「`Foo v2`」+`version: '2'` → `null`。
+- 4 个渲染点**不改**，继续只走这一个 helper；全仓 `\.version` 复查确认**不存在第五个基准版本插值点**（`ModelProfile.tsx:34`、`ModelSelect.tsx`、`changelog.tsx`、`SeriesLadder.tsx` 中的 `.version` 都是**模型/条目**版本，语义不同，不会与基准名重复）。
+- 修复后 13 个带版本基准的渲染标签，每行版本号恰好出现一次：`GDPVal-AA v2.1`、`Apex Bench v1.1`、`Terminal-Bench 2.1 / 3.0 / 4.0`、`Terminal-Bench Science 0.1`、`SWE-Marathon v1.1`、`FrontierSWE v2`、`DeepSWE v1.1`、`OSWorld-2.0`、`OSWorld V2.1`、`CWE-bench v1`、`OfficeQA Pro v2`。
+
+### 1.3 测试（防止再次出现）
+
+`src/features/leaderboard/__tests__/benchmark-version.node.test.ts`（6 → **25 例**）：
+
+- **不依赖 helper 实现**的独立断言：自行从每个基准 `name` 提取版本 token，若含与 `version` 完全相等的 token，则 helper 必须返回 `null`（覆盖注册表全量）；
+- 13 个真实基准名的**显式参数化**用例，外加"参数化列表必须等于注册表全量"的守卫（注册表改名会红，而不是悄悄缩小循环）；
+- 渲染标签级断言 `renderedLabel()`：拼出 `name + suffix` 后断言版本作为整 token **恰好出现 1 次**；
+- 反向断言（防过度吞版本）；
+- 扫描整个 `components/` 目录的第五渲染点守卫。
+
+**真假红验证：** 把 helper 临时还原成旧实现，新测试**确实变红**（`expected '1.1' to be null`）；还原后全绿。
+
+---
+
+## 2. 任务 2：Token Calculator 的过时 FAQ
+
+### 2.1 修复前的问题
+
+规范页 `/zh/token-cost-calculator`（en：`/token-cost-calculator`）的 FAQ 仍在卖 **GPT-5 nano**（注册表中已 `delisted`）、**Claude Opus 4.5**、**Gemini 2.5 Flash**、**Claude Sonnet 4.5**，而页面上方的计算器早已换成 GPT-6 / Opus 5.5 / Sonnet 5。价格也是**手打进句子**的，注册表一调价就沉默地过期。
+
+### 2.2 修复方式（结构性，而非改文案）
+
+> **字典只存句子，数字一律现算。**
+
+- 新增 `src/features/calculator/faq-examples.ts`：所有 FAQ 数字由 `REGISTRY` 经 `priceDetail(model, registrySnapshotDate())` 计算 —— **与计算器收费是同一个函数**，因此"页面显示的价"和"计算器算的价"不可能不一致。
+- 新增 `src/features/calculator/vendor-claims.ts`：登记**不属于注册表**的厂商事实（OpenAI Batch 5 折 / 24h SLA、Anthropic Pro $20 / Max $200、OpenAI Plus $20、OpenAI 缓存 1,024 token 阈值），每条**带 `sourceUrl`**。
+- `copy.ts` 负责把参数注入字典模板；字典（`calc.ts` / `en.ts` / `zh.ts`）里**不再出现任何注册表派生数字**。
+- `types.ts` 为 `REGISTRY.openRouterMarkup` 补上出处注释：它是**本站建模假设**（1.05×），不是 OpenRouter 公布的平均加价。
+
+**当前 FAQ 示例（全部来自注册表，快照 `2026-10-24`）：**
+
+| 模型 | id | 输入 / 输出（每 1M） |
+| --- | --- | --- |
+| GPT-6 luna | `gpt-6-luna` | $0.10 / $0.50 |
+| Claude Haiku 4.5 | `claude-haiku-4.5` | $1 / $5 |
+| Claude Opus 5.5 | `claude-opus-5.5` | $4 / $20 |
+| DeepSeek V4.1-Flash 1017 | `deepseek-flash` | $0.30 / $1.20 |
+
+**历史示例的标注**：GPT-5 nano 只以"历史行"出现，且三要素齐全 —— 名字 + 下架时间 + 注册表保留的最后核对价：
+
+> "the GPT-5 tier is retired — GPT-5 nano, delisted in 2026-09, keeps its last verified rates at $0.05 / $0.40 in the registry as a historical row."
+
+en / zh 结构一致（`zh` 受 `type Dict = typeof en` 约束）。
+
+### 2.3 本轮额外发现并修复的 P0（e2e 抓到）
+
+改成占位符后，**4 个 vendor 页面把 `{placeholder}` 原样渲染到了页面上**（`/claude-token-cost-calculator`、`/chatgpt-api-pricing`、`/deepseek-api-pricing`、`/openrouter-pricing-calculator`，共 8 个 URL 含 zh）。原因是这些页面通过 `itemsKey` / 裸 key 读取字典，**没有走注入参数的 helper**；其中 `/chatgpt-api-pricing` 还读了一个**只存在于旧 `calculator.*` 命名空间**的键，直接把键名 `calc.chatgptCacheBody` 打在了页面上。
+
+修复：4 个路由改走 `sharedTldr(t)` / `sharedTips(t)` / `deepseekTldr(t)` / `deepseekTips(t)` / `chatgptTldr(t)` / `chatgptTips(t)`；3 个 section 组件改走 `openrouterMarkupBody(t)` / `deepseekCacheBody(t)` / `chatgptCacheBody(t)`；补齐缺失的 `calc.chatgptCacheTitle` / `calc.chatgptCacheBody`（en + zh）。
+
+新增**单元级**守卫（不必等浏览器）：`faq-freshness.node.test.ts` 的最后两组用例扫描组件源码，断言（a）没有任何 `t('calc.x')` 无参读取一个仍含 `{placeholder}` 的键，（b）没有读取只存在于另一命名空间的键。已验证该守卫对回归**确实变红**。
+
+---
+
+## 3. 任务 3：价格说明的证据与口径
+
+四条逐一复算（25 个 `status: active` 且 `channel: official` 的模型）：
+
+| # | 原表述 | 复算结果 | 处理 |
+| --- | --- | --- | --- |
+| 1 | "output 通常比 input 贵 **4–8 倍**" | 实际 **2.70×（step-5-preview）～ 8.33×（gemini-2.5-flash）**，中位 **5.00×**，**25 个里有 4 个落在 4–8 之外** | 删除"4–8"这一"规律"表述，改为**可复算区间** `{ratioMin}×–{ratioMax}×`（25 个在售模型）+ 中位 `{ratioMedian}×`，并明写"倍数只跟模型有关，跟厂商无关" |
+| 2 | "OpenRouter **平均加价约 5%**" | 原代码只有常量 `openRouterMarkup = 1.05`，**没有任何出处** | 改称"本站用于估算的系数 1.05×（5%）"；`types.ts` 补出处注释；**删除全部"平均/average"**措辞。**未找到**OpenRouter 官方公布该数字的来源，因此不声称 |
+| 3 | Pro/Max 盈亏平衡 "**1M + 0.5M**（Pro）/ **5M + 2.5M**（Max）" | 按 `claudeBreakEven()`（Sonnet 5，$2/$10，output = 0.5×input）：Pro $20 → **2.857M in + 1.429M out**；Max $200 → **28.571M + 14.286M**。原数字只花 $7 / $35，**根本不在平衡点** | 改用计算模块的 `{proIn}/{proOut}/{maxIn}/{maxOut}`，并补适用条件："按 1:2 输入:输出混合、不含缓存折扣（算上缓存平衡点更高）"。`claudeFaq5A` 的 6M+3M / 60M+30M 同样对不上，一并改掉 |
+| 4 | "Anthropic ~90%、OpenAI ~90%、DeepSeek ~90%" 一句盖三家 | 按厂商：Anthropic **90–98%**、OpenAI **90%**（5 行一致）、Google **90–95%**、DeepSeek **97–98%**（另有 Grok 75%、MiniMax 80–90%、Kimi 90–95%、StepFun 90%） | 删掉"一句 90%"，改为**按厂商分别陈述**，且每家都由注册表 `cached/input` 现算 |
+
+**顺带修正的同类问题**（都在 calculator 范围内）：TLDR 里"Gemini 2.5 Pro 超 200K 翻倍"改为注册表事实（长上下文分档 2×，阈值 200K(Gemini)/272K(GPT-6)，由 `longContext` 派生）；DeepSeek 缓存价把 **peak** 的 $0.006 误说成 $0.003（那是 off-peak），已按注册表订正；"比 Opus 4.5 便宜 17×/21×"改为对 Opus 5.5 的 13.3×/16.7×。
+
+**固化测试**：`faq-freshness.node.test.ts`（17 例）含字面量扫描 —— 剥掉 `{placeholder}` 后，字典里不允许出现 `$x` / `N%` / `N×` 形式的注册表派生数字（白名单仅订阅价、年份、UTC 时刻等非注册表事实），并正向断言 12 个关键句子必须含指定占位符（防有人把数字抄回字典）。
+
+---
+
+## 4. 任务 4：保留已修复的 URL 规范
+
+`/zh/token-calculator` → `/zh/token-cost-calculator` 的 301 在**本轮改动后仍成立**，四个维度逐一验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| 别名 301（en / zh / 带 `?model=` / 带尾斜杠） | ✅ 全部**单跳 301**，query 保留；`/en/token-calculator` 也是一次 301 直达 |
+| 站内链接指向 canonical | ✅ 抓取本地 sitemap 全部页面，**0 条**内链指向 `/token-calculator` |
+| sitemap 不收录旧路由 | ✅ `/sitemap.xml`（70）、`/sitemap-core.xml`（70）、`/sitemap-full.xml`（260）均**不含**别名；canonical 地址 4 条（en/zh + 两类）在内 |
+| canonical == 实际最终 URL | ✅ 260/260 页面 `canonical` 与自身一致，`0` 个反例 |
+| 无重定向循环 | ✅ 逐个跟随，所有 canonical URL 0 跳自稳定 |
+
+**新增守卫**：
+- `src/features/seo/alias-canonical.node.test.ts`（5 例，新文件）：别名注册表 ↔ 301 一跳、**重定向图无环**（对全部 sitemap 路径 en+zh 跟随到底）、别名不进 sitemap / 不可索引 / 不在 core 列表、`/en` 前缀剥离后仍归一到同一 canonical。
+- `e2e/seo.spec.ts` 新增 1 例：别名是重定向 **且** 三个 sitemap 都不收录它、目标页 canonical 指向自身。
+
+---
+
+## 5. 验证与测试结果（本机真实输出）
+
+| 命令 | 结果 |
+| --- | --- |
+| `pnpm test` | ✅ **722 passed / 83 files** |
+| `pnpm lint` | ✅ **0 errors**，1 warning（`src/features/sponsor/amounts.ts:13` 的既有无用 eslint-disable，非本轮引入） |
+| `pnpm typecheck` | ✅ 0 errors |
+| `pnpm build` | ✅ built in 1.61s |
+| `npx playwright test e2e/seo.spec.ts` | ✅ **70 passed**（在 canonical 端口 :3000 运行） |
+| 本地逐页渲染复核 | ✅ `/methodology` 等 10 个页面重复版本号 **0**；10 个 calculator 页面 `{placeholder}` 泄漏 **0**、裸字典键 **0** |
+
+**关于 e2e 的一个环境坑（记录给后来者）：** 本轮在 :3340 上跑 e2e 时出现 4 个"失败"，实际是站点按 `BETTER_AUTH_URL` 生成绝对 URL（`http://localhost:3000`），与测试端口的 origin 不符 —— 属环境配置差异，**不是代码回归**；换回 :3000 后 70/70 全过。另外 wrangler 会往 `~/Library/Preferences/.wrangler/registry` 写文件，在受限沙箱下会 `EPERM` 崩溃，需用 `E2E_HOME`（config 已内置该开关）把 `HOME` 指到工作区内。
+
+**新增/扩展测试清单：**
+
+| 文件 | 用例 | 守护内容 |
+| --- | --- | --- |
+| `src/features/leaderboard/__tests__/benchmark-version.node.test.ts` | 6 → 25 | 版本 token 判定；注册表全量；渲染标签恰含一次版本；第五渲染点 |
+| `src/features/calculator/__tests__/faq-freshness.node.test.ts` | 17（新） | FAQ 只引用在售模型；历史示例三要素；字典无裸数字；无未插值模板 / 无跨命名空间键 |
+| `src/features/seo/alias-canonical.node.test.ts` | 5（新） | 别名 301、无环、不进 sitemap、canonical 自洽 |
+| `e2e/seo.spec.ts` | +1 | 别名是重定向且不进任何 sitemap |
+
+---
+
+## 6. 仍未验证 / 需人工确认（不虚构）
+
+| # | 项 | 说明 |
+| --- | --- | --- |
+| U1 | **生产部署** | 本轮**未部署**。线上仍是 `1394a58` 行为。部署后建议按 §5 命令复验渲染与状态码 |
+| U2 | **生产是否真的存在重复版本号** | 本轮抓取生产 `/zh/methodology` 等 10 页，**未发现**重复；但在本地也无法用当前注册表复现。若部署后仍出现，需要提供生产 HTML 片段定位第二个来源 |
+| U3 | `vendor-claims.ts` 的三个 `sourceUrl` | `platform.openai.com/docs/guides/batch`、`.../prompt-caching`、`claude.com/pricing` —— 本轮**未联网核实其当前内容**，仅登记为出处。这些是产品事实（非本站价格），仍建议人工点一遍 |
+| U4 | OpenRouter 真实加价率 | **无可靠来源**。因此删除了"平均 5%"的一切表述，只保留"本站假设 1.05×"。若日后拿到官方口径，应同时改常量注释与该句 |
+| U5 | 盈亏平衡的混合比例 | 代码是 `output = 0.5 × input`（即 2:1），任务描述写的是 50/50。**按"以计算模块为准"** 采用 2:1，并在文案写明条件；若产品口径要 50/50，改 `BREAK_EVEN_OUTPUT_RATIO` 一处即可，文案会自动跟随 |
+| U6 | 25 个模型的口径 | `status: 'active' && channel: 'official'`。若要把 OpenRouter 克隆列也计入，`2.7×–8.3×` 等数字会变（需重跑测试） |
+| U7 | 旧 `calculator.*` FAQ 命名空间 | 已按同一套占位符重建、与 `calc.*` 事实一致，但**目前无路由渲染**。是否删除这 40+ 个 key 属产品决策 —— 删除需同步调整 `dictionary-integrity` 的"两命名空间键集一致"约束 |
+| U8 | 全量 Playwright | 仓库规定未经用户明确要求不跑全量，本轮只跑了 `e2e/seo.spec.ts` |
+| U9 | Search Console / 排名 / 流量 / CWV | 无权限、无工具，全文不包含任何此类数字 |
+
+---
+
+## 7. 修复文件清单（工作区，未提交/未部署）
+
+| 文件 | 改动 |
+| --- | --- |
+| `src/features/leaderboard/benchmarks.ts` | `benchmarkVersionSuffix()` 改整 token 比较，移除动态正则 |
+| `src/features/leaderboard/__tests__/benchmark-version.node.test.ts` | 扩到 25 例 |
+| `src/features/calculator/faq-examples.ts`（新） | 所有 FAQ 数字的唯一来源（REGISTRY → `priceDetail`） |
+| `src/features/calculator/vendor-claims.ts`（新） | 非注册表厂商事实 + `sourceUrl` |
+| `src/features/calculator/copy.ts` | 注入参数；新增 `chatgptCacheTitle/chatgptCacheBody` 等 helper |
+| `src/features/calculator/types.ts` | `openRouterMarkup` 出处注释（本站假设） |
+| `src/features/calculator/__tests__/faq-freshness.node.test.ts`（新） | 17 例：模型在售性、历史标注、字典无裸数字、无未插值模板 |
+| `src/features/i18n/dictionaries/{calc,en,zh}.ts` | FAQ/TLDR/tips 全改占位符；订正 4 条口径；补 chatgpt cache 键 |
+| `src/features/calculator/components/{ChatGPT,DeepSeek,OpenRouter}Section.tsx` | 改走注入参数的 helper（修 `{placeholder}` / 裸键泄漏） |
+| `src/features/calculator/components/ClaudeSubscriptionSection.tsx` | 订阅价改插值 |
+| `src/routes/{-$locale}/{claude-token-cost-calculator,openrouter-pricing-calculator,deepseek-api-pricing,chatgpt-api-pricing}.tsx` | TLDR/Tips 改走注入 helper |
+| `src/features/seo/alias-canonical.node.test.ts`（新） | 别名/canonical/sitemap/无环 守卫 |
+| `e2e/seo.spec.ts` | 新增别名不进 sitemap + canonical 自洽用例 |
+
+**未改动：** 任何公开 URL、路由 slug、页面集合、价格/评分已发布数据、`wrangler.jsonc`、DNS。

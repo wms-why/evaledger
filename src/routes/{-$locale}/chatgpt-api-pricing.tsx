@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ChatGPTSection } from '@/features/calculator/components/ChatGPTSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { chatgptFaq, modelRateSummary } from '@/features/calculator/copy'
+import { chatgptFaq, modelRateSummary, chatgptTldr, chatgptTips } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -99,9 +99,9 @@ function ChatGPTCalculatorPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
         <Calculator initialModelId="gpt-6-astra" />
       </div>
-      <PricingTLDR itemsKey="calculator.chatgptTldrItems" />
+      <PricingTLDR items={chatgptTldr(t)} />
       <ChatGPTSection />
-      <Tips itemsKey="calculator.chatgptTips" />
+      <Tips items={chatgptTips(t)} />
       <FAQ
         id="faq"
         kickerKey="calculator.kicker"

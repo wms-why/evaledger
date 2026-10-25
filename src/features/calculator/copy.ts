@@ -1,7 +1,12 @@
 import { REGISTRY, findModel } from './model-prices'
 import { priceDetail, registrySnapshotDate } from './pricing-detail'
 import { applyOpenRouterMarkup } from './cost'
-import { claudeBreakEven, formatBreakEvenM } from './claude-break-even'
+import {
+  CLAUDE_MAX_MONTHLY_USD,
+  CLAUDE_PRO_MONTHLY_USD,
+  claudeBreakEven,
+  formatBreakEvenM,
+} from './claude-break-even'
 import {
   formatCents,
   formatMoney,
@@ -10,6 +15,14 @@ import {
   formatTimes,
   formatTokenAmount,
 } from './format'
+import {
+  cacheDiscountPhrase,
+  deepseekOffPeakDiscount,
+  outputRatioRange,
+  sharedCopyParams,
+  tokenFaqParams,
+} from './faq-examples'
+import { OPENAI_BATCH, OPENAI_PLUS_MONTHLY_USD } from './vendor-claims'
 
 /**
  * The copy of the calculator landing pages, with every number resolved from
@@ -126,28 +139,108 @@ export function openRouterMarkupFactor(): string {
   return REGISTRY.openRouterMarkup.toFixed(2)
 }
 
+// ───── The legacy `calculator.faq*` namespace ──────────────────────────────
+
+/**
+ * The parameter bag for the v1 `calculator.faq1A…faq7A` copy.
+ *
+ * Those keys are no longer rendered anywhere (`FAQ` only falls back to them
+ * when a page passes no `faqs`, and every calculator route passes one), but
+ * they are still published strings in the dictionary and they still make the
+ * same claims as the live `calc.*` FAQ. Leaving them with hand-typed prices
+ * would leave a second, silently-wrong copy of the price table in the repo —
+ * so they interpolate from the same registry functions instead.
+ *
+ * `dictionary-integrity` keeps the two namespaces structurally identical; this
+ * keeps them *factually* identical.
+ */
+export function legacyFaq(t: Translate): FaqEntry[] {
+  const examples = tokenFaqParams()
+  const ratio = outputRatioRange()
+  const be = claudeBreakEven()
+  const sol = rates('gpt-6-sol')
+  const astra = rates('gpt-6-astra')
+  const sonnet = rates('claude-sonnet-5')
+  const now = registrySnapshotDate()
+  const orAstra = applyOpenRouterMarkup('gpt-6-astra', undefined, now)
+  const orSonnet = applyOpenRouterMarkup('claude-sonnet-5', undefined, now)
+
+  const p: Record<string, string | number> = {
+    ...examples,
+    ratioMin: ratio.minText,
+    ratioMax: ratio.maxText,
+    ratioMedian: ratio.medianText,
+    ratioCount: ratio.count,
+    multiplier: openRouterMarkupFactor(),
+    markupPct: openRouterMarkupPercent(),
+    anthropicCache: cacheDiscountPhrase('anthropic') ?? '—',
+    openaiCache: cacheDiscountPhrase('openai') ?? '—',
+    googleCache: cacheDiscountPhrase('google') ?? '—',
+    deepseekCache: cacheDiscountPhrase('deepseek') ?? '—',
+    proMonthly: CLAUDE_PRO_MONTHLY_USD,
+    maxMonthly: CLAUDE_MAX_MONTHLY_USD,
+    proIn: be ? formatBreakEvenM(be.proInputM) : '0',
+    proOut: be ? formatBreakEvenM(be.proOutputM) : '0',
+    maxIn: be ? formatBreakEvenM(be.maxInputM) : '0',
+    maxOut: be ? formatBreakEvenM(be.maxOutputM) : '0',
+    astraIn: formatMoney(astra?.input ?? 0),
+    astraOut: formatMoney(astra?.output ?? 0),
+    orAstraIn: formatMoney(orAstra?.inputPricePer1M ?? 0),
+    orAstraOut: formatMoney(orAstra?.outputPricePer1M ?? 0),
+    sonnetIn: formatMoney(sonnet?.input ?? 0),
+    sonnetOut: formatMoney(sonnet?.output ?? 0),
+    orSonnetIn: formatMoney(orSonnet?.inputPricePer1M ?? 0),
+    orSonnetOut: formatMoney(orSonnet?.outputPricePer1M ?? 0),
+    solOut: formatMoney(sol?.output ?? 0),
+  }
+
+  return [
+    { q: t('calculator.faq1Q'), a: t('calculator.faq1A', p) },
+    { q: t('calculator.faq2Q'), a: t('calculator.faq2A', p) },
+    { q: t('calculator.faq3Q'), a: t('calculator.faq3A') },
+    { q: t('calculator.faq4Q'), a: t('calculator.faq4A') },
+    { q: t('calculator.faq5Q'), a: t('calculator.faq5A', p) },
+    { q: t('calculator.faq6Q'), a: t('calculator.faq6A', p) },
+    { q: t('calculator.faq7Q'), a: t('calculator.faq7A', p) },
+    { q: t('calculator.faq8Q'), a: t('calculator.faq8A', { date: REGISTRY.fetchedAt }) },
+  ]
+}
+
 // ───── Token Cost Calculator (the all-providers page) ─────────────────────
 
 export function tokenFaq(t: Translate): FaqEntry[] {
   const luna = rates('gpt-6-luna')
   const haiku = rates('claude-haiku-4.5')
-  const opus = rates('claude-opus-5.5')
   const flash = rates('deepseek-flash')
   const be = claudeBreakEven()
   const flashCachePct = flash ? cacheSaving(flash.input, flash.cached) : 0
+  // The worked examples ("1M tokens costs X on …") are derived from the
+  // registry by `faq-examples.ts`, not typed into the dictionary — a model
+  // that leaves the registry leaves the FAQ with it.
+  const examples = tokenFaqParams()
+  const ratio = outputRatioRange()
 
-  const p = {
+  const p: Record<string, string | number> = {
+    ...examples,
     lunaIn: formatMoney(luna?.input ?? 0),
     lunaOut: formatMoney(luna?.output ?? 0),
     haikuIn: formatMoney(haiku?.input ?? 0),
     haikuOut: formatMoney(haiku?.output ?? 0),
-    opusIn: formatMoney(opus?.input ?? 0),
-    opusOut: formatMoney(opus?.output ?? 0),
     flashIn: formatMoney(flash?.input ?? 0),
     flashOut: formatMoney(flash?.output ?? 0),
     flashCachePct: formatPct(flashCachePct),
     markupPct: openRouterMarkupPercent(),
     multiplier: openRouterMarkupFactor(),
+    // The output/input spread, computed over every active model we price.
+    ratioMin: ratio.minText,
+    ratioMax: ratio.maxText,
+    ratioMedian: ratio.medianText,
+    ratioCount: ratio.count,
+    // Per-vendor cached-input discounts (the registry's own numbers).
+    anthropicCache: cacheDiscountPhrase('anthropic') ?? '—',
+    openaiCache: cacheDiscountPhrase('openai') ?? '—',
+    googleCache: cacheDiscountPhrase('google') ?? '—',
+    deepseekCache: cacheDiscountPhrase('deepseek') ?? '—',
     proIn: be ? formatBreakEvenM(be.proInputM) : '0',
     proOut: be ? formatBreakEvenM(be.proOutputM) : '0',
     maxIn: be ? formatBreakEvenM(be.maxInputM) : '0',
@@ -156,24 +249,54 @@ export function tokenFaq(t: Translate): FaqEntry[] {
 
   return [
     { q: t('calc.tokenFaq1Q'), a: t('calc.tokenFaq1A', p) },
-    { q: t('calc.tokenFaq2Q'), a: t('calc.tokenFaq2A') },
+    { q: t('calc.tokenFaq2Q'), a: t('calc.tokenFaq2A', p) },
     { q: t('calc.tokenFaq3Q'), a: t('calc.tokenFaq3A') },
     { q: t('calc.tokenFaq4Q'), a: t('calc.tokenFaq4A') },
     { q: t('calc.tokenFaq5Q'), a: t('calc.tokenFaq5A', p) },
     { q: t('calc.tokenFaq6Q'), a: t('calc.tokenFaq6A', p) },
     { q: t('calc.tokenFaq7Q'), a: t('calc.tokenFaq7A', p) },
-    { q: t('calc.tokenFaq8Q'), a: t('calc.tokenFaq8A', { date: REGISTRY.fetchedAt }) },
+    {
+      q: t('calc.tokenFaq8Q'),
+      a: t('calc.tokenFaq8A', { date: REGISTRY.fetchedAt, asOf: examples.asOf }),
+    },
   ]
 }
 
-/** The shared "quick takeaways" strip. */
+/**
+ * The shared "quick takeaways" strip.
+ *
+ * Every figure in these four lines (the output/input spread, the off-peak
+ * split, the long-context threshold, the cached-read range) is resolved from
+ * the registry by `sharedCopyParams()` — the dictionary holds the sentences,
+ * not the numbers.
+ */
+/** The two ratio figures the shared tip quotes, straight from the registry. */
+function tipsRatios(): { haikuVsFable: string; lunaVsAstra: string } {
+  const haiku = rates('claude-haiku-4.5')
+  const fable = rates('claude-fable-5.1')
+  const luna = rates('gpt-6-luna')
+  const astra = rates('gpt-6-astra')
+  return {
+    haikuVsFable: formatTimes(timesCheaper(fable?.output ?? 0, haiku?.output ?? 0)),
+    lunaVsAstra: formatTimes(timesCheaper(astra?.output ?? 0, luna?.output ?? 0)),
+  }
+}
+
 export function sharedTldr(t: Translate): string[] {
-  return [t('calc.tldr1'), t('calc.tldr2'), t('calc.tldr3'), t('calc.tldr4')]
+  const p = sharedCopyParams()
+  return [t('calc.tldr1', p), t('calc.tldr2', p), t('calc.tldr3', p), t('calc.tldr4', p)]
 }
 
 /** The shared "how to bring the bill down" list. */
 export function sharedTips(t: Translate): string[] {
-  return [t('calc.tips1'), t('calc.tips2'), t('calc.tips3'), t('calc.tips4'), t('calc.tips5')]
+  const p = { ...sharedCopyParams(), ...tipsRatios() }
+  return [
+    t('calc.tips1', p),
+    t('calc.tips2', p),
+    t('calc.tips3', p),
+    t('calc.tips4', p),
+    t('calc.tips5', p),
+  ]
 }
 
 // ───── Claude ──────────────────────────────────────────────────────────────
@@ -276,6 +399,8 @@ export function deepseekFaq(t: Translate): FaqEntry[] {
     proVsSonnet: formatTimes(timesCheaper(sonnet?.output ?? 0, pro?.output ?? 0)),
     proVsOpus: formatTimes(timesCheaper(opus?.output ?? 0, pro?.output ?? 0)),
     markupPct: openRouterMarkupPercent(),
+    // The off-peak split, read from the registry's peak/off-peak rows.
+    offPeakPct: formatPct(deepseekOffPeakDiscount()),
   }
 
   return [
@@ -307,6 +432,7 @@ export function deepseekTldr(t: Translate): string[] {
     proIn: formatMoney(pro?.input ?? 0),
     proOut: formatMoney(pro?.output ?? 0),
     proVsSonnet: formatTimes(timesCheaper(sonnet?.output ?? 0, pro?.output ?? 0)),
+    offPeakPct: formatPct(deepseekOffPeakDiscount()),
   }
   return [
     t('calc.deepseekTldr1', p),
@@ -328,6 +454,7 @@ export function deepseekTips(t: Translate): string[] {
     proOut: formatMoney(pro?.output ?? 0),
     flashVsPro: formatTimes(timesCheaper(pro?.output ?? 0, flash?.output ?? 0)),
     markupPct: openRouterMarkupPercent(),
+    offPeakPct: formatPct(deepseekOffPeakDiscount()),
   }
   return [
     t('calc.deepseekTips1', p),
@@ -407,6 +534,8 @@ export function chatgptTldr(t: Translate): string[] {
     solCachePct: formatPct(cacheSaving(sol?.input ?? 0, sol?.cached)),
     lunaIn: formatMoney(luna?.input ?? 0),
     lunaOut: formatMoney(luna?.output ?? 0),
+    batchPct: OPENAI_BATCH.discountPct,
+    batchSlaHours: OPENAI_BATCH.slaHours,
   }
   return [
     t('calc.chatgptTldr1', p),
@@ -424,6 +553,10 @@ export function chatgptTips(t: Translate): string[] {
     solOut: formatMoney(sol?.output ?? 0),
     lunaOut: formatMoney(luna?.output ?? 0),
     lunaVsSol: formatTimes(timesCheaper(sol?.output ?? 0, luna?.output ?? 0)),
+    openaiCache: cacheDiscountPhrase('openai') ?? '—',
+    batchPct: OPENAI_BATCH.discountPct,
+    batchSlaHours: OPENAI_BATCH.slaHours,
+    plusMonthly: OPENAI_PLUS_MONTHLY_USD,
   }
   return [
     t('calc.chatgptTips1', p),
@@ -432,6 +565,18 @@ export function chatgptTips(t: Translate): string[] {
     t('calc.chatgptTips4', p),
     t('calc.chatgptTips5', p),
   ]
+}
+
+/** The ChatGPT cache block's heading — the discount is computed, not typed. */
+export function chatgptCacheTitle(t: Translate): string {
+  return t('calc.chatgptCacheTitle', { openaiCache: cacheDiscountPhrase('openai') ?? '—' })
+}
+
+/** The ChatGPT cache block's body — the OpenAI discount is computed, not typed. */
+export function chatgptCacheBody(t: Translate): string {
+  return t('calc.chatgptCacheBody', {
+    openaiCache: cacheDiscountPhrase('openai') ?? '—',
+  })
 }
 
 // ───── OpenRouter ──────────────────────────────────────────────────────────

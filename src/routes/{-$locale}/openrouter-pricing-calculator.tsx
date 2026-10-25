@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { OpenRouterSection } from '@/features/calculator/components/OpenRouterSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { openrouterFaq } from '@/features/calculator/copy'
+import { openrouterFaq, sharedTldr, sharedTips } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -86,9 +86,9 @@ function OpenRouterCalculatorPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
         <Calculator />
       </div>
-      <PricingTLDR />
+      <PricingTLDR items={sharedTldr(t)} />
       <OpenRouterSection />
-      <Tips />
+      <Tips items={sharedTips(t)} />
       <FAQ
         id="faq"
         kickerKey="calculator.kicker"

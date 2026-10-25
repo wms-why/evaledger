@@ -4,6 +4,7 @@ import { REGISTRY } from '@/features/calculator/model-prices'
 import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing-detail'
 import { applyOpenRouterMarkup } from '@/features/calculator/cost'
 import { leaderboardIdForPriceId } from '@/features/leaderboard/models'
+import { openrouterMarkupBody } from '@/features/calculator/copy'
 
 /**
  * Page-specific block for /openrouter-pricing-calculator.
@@ -51,7 +52,7 @@ export function OpenRouterSection() {
               {t('calculator.openrouterMarkupTitle')}
             </h3>
             <p className="mt-2.5 text-[14px] leading-relaxed text-fg-2">
-              {t('calculator.openrouterMarkupBody')}
+              {openrouterMarkupBody(t)}
             </p>
             <p className="mt-4 inline-flex items-center gap-2 rounded-md bg-bg-alt px-3 py-1.5 text-[12px] tabular-nums text-fg-2">
               {t('calculator.openrouterCurrentMarkup', {

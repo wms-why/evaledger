@@ -1,6 +1,7 @@
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
 import { priceDetail } from '@/features/calculator/pricing-detail'
+import { chatgptCacheBody, chatgptCacheTitle } from '@/features/calculator/copy'
 
 /**
  * Page-specific block for /chatgpt-api-pricing. Explains the Batch API
@@ -32,10 +33,10 @@ export function ChatGPTSection() {
           </div>
           <div className="rounded-[14px] border border-border bg-card p-6">
             <h3 className="text-[18px] font-semibold tracking-[-0.3px]">
-              {t('calculator.chatgptCacheTitle')}
+              {chatgptCacheTitle(t)}
             </h3>
             <p className="mt-2.5 text-[14px] leading-relaxed text-fg-2">
-              {t('calculator.chatgptCacheBody')}
+              {chatgptCacheBody(t)}
             </p>
             {cachedModels.length > 0 && (
               <ul className="mt-4 space-y-1.5 text-[12px] tabular-nums text-fg-2">

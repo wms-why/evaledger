@@ -245,7 +245,15 @@ export interface ModelRegistry {
   fetchedAt: string
   /** Source attribution shown to humans. */
   sourceNote: string
-  /** Average markup factor applied by OpenRouter over the official price of each model. */
+  /**
+   * The markup factor this SITE applies to every model's official price to
+   * estimate what OpenRouter would charge (`1.05` = +5%).
+   *
+   * It is a modelling assumption of this calculator, not a figure OpenRouter
+   * publishes: the router's real per-model markup varies, so the copy must
+   * describe it as "our multiplier" and never as an average OpenRouter has
+   * announced. Never hard-code `1.05` in copy — read it from here.
+   */
   openRouterMarkup: number
   models: ModelPrice[]
 }

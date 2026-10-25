@@ -1021,12 +1021,16 @@ export const en = {
     providerGrok: 'Grok',
     providerKimi: 'Moonshot',
     providerOpenRouter: 'OpenRouter',
-    openrouterCurrentMarkup: 'Current average markup: ×{multiplier} ({pct}%)',
-    claudeProCardTitle: 'Claude Pro · $20/mo',
-    claudeMaxCardTitle: 'Claude Max · $200/mo',
+    openrouterCurrentMarkup: 'Estimated multiplier used here: ×{multiplier} ({pct}%) — our assumption, not an OpenRouter figure',
+    // The subscription prices here are NOT registry prices — they are
+    // Anthropic's consumer-plan prices, held in `vendor-claims.ts` and
+    // interpolated as `{proMonthly}` / `{maxMonthly}` so the card, the
+    // description and the break-even line can never disagree.
+    claudeProCardTitle: 'Claude Pro · ${proMonthly}/mo',
+    claudeMaxCardTitle: 'Claude Max · ${maxMonthly}/mo',
     claudeBreakEven: 'Break-even: ~{input}M input + {output}M output per month',
     claudeProDescription: 'Below this combined usage the Pro plan is cheaper; above it the API starts winning.',
-    claudeMaxDescription: 'For sustained heavy usage, Max covers you up to roughly the API equivalent of $200/mo.',
+    claudeMaxDescription: 'For sustained heavy usage, Max covers you up to roughly the API equivalent of ${maxMonthly}/mo.',
     claudeSampleReference: 'Sample reference: 1M input + 500K output tokens via the API costs ${cost} / month ({rate}).',
     claudeSampleNoUsage: 'no usage',
     claudeSampleRate: 'at current Sonnet 5 rates',
@@ -1063,10 +1067,10 @@ export const en = {
     // TLDR (featured-snippet bait)
     tldrTitle: 'Quick takeaways',
     tldrItems: [
-      'Output tokens usually cost 4–8× more than input — keeping replies short is the highest-leverage cost saver.',
-      'Anthropic prompt caching drops repeat-input cost by ~90%; OpenAI cached input drops it by ~90% on the GPT-6 line.',
-      'DeepSeek off-peak hours are ~50% cheaper than peak — schedule batch jobs accordingly.',
-      'Gemini 2.5 Pro doubles its input price above 200K context — large-context calls cost roughly twice as much.',
+      'Output tokens usually cost {ratioMin}× to {ratioMax}× more than input — keeping replies short is the highest-leverage cost saver.',
+      'Prompt caching drops repeat-input cost by {cacheMinPct}–{cacheMaxPct}% depending on provider and model — see each model card for its own cached rate.',
+      'DeepSeek off-peak hours bill at {offPeakPct}% less than peak — schedule batch jobs accordingly.',
+      'Long-context surcharges are real: a model with a long-context band bills {bandInputMultiplier}× input above the band threshold (from {bandThresholdK}K tokens) — check the model card before sending a huge context.',
     ],
 
     // Swap-model table
@@ -1078,7 +1082,7 @@ export const en = {
 
     // OpenRouter-specific
     openrouterMarkupTitle: 'OpenRouter markup, explained',
-    openrouterMarkupBody: 'OpenRouter charges a small markup on top of each provider\'s official API price. The current average is around 5%, but the exact markup varies per model and per credit package. For most single-model workloads the overhead is small; it gets painful when you pay per request with many small models, or when you don\'t need OpenRouter\'s fallback / multi-model routing at all.',
+    openrouterMarkupBody: 'The OpenRouter column applies this calculator\'s own markup factor ({multiplier}×, i.e. {markupPct}%) on top of each provider\'s official API price. It is our modelling assumption, not an average published by OpenRouter — the real markup varies per model and per credit package. For most single-model workloads the estimated overhead is small; it grows when you pay per request across many small models, or when you don\'t need OpenRouter\'s fallback / multi-model routing at all.',
     openrouterBreakEvenTitle: 'When going direct is cheaper',
     openrouterBreakEvenBody: 'If your workload is single-model, high-volume, and latency-sensitive, going direct to the provider\'s API almost always wins: lower latency, no aggregator in the request path, and you can negotiate volume pricing the aggregator can\'t match. OpenRouter wins when you need (a) automatic fallback across providers, (b) one bill for many models, or (c) access to models that aren\'t available on your home region.',
 
@@ -1086,139 +1090,145 @@ export const en = {
     claudeSubscriptionTitle: 'Claude.ai subscription vs API',
     claudeSubscriptionBody: 'Claude Pro ($20/mo) and Claude Max ($200/mo) include generous usage caps that are usually cheaper than the API up to a break-even point. Beyond that point, the API — or a third-party router like OpenRouter — is the right choice.',
     claudeBreakEvenTitle: 'API break-even',
-    claudeBreakEvenBody: 'For Claude Sonnet 5 at $2/$10 per 1M tokens, the Pro plan covers you up to roughly {input}M input + {output}M output tokens per month. The Max plan covers roughly {inputMax}M input + {outputMax}M output tokens. Past those thresholds, the API starts winning on pure cost.',
+    claudeBreakEvenBody: 'For Claude Sonnet 5 at its registry rates, the Pro plan covers you up to roughly {input}M input + {output}M output tokens per month. The Max plan covers roughly {inputMax}M input + {outputMax}M output tokens. Both assume a 1:2 input:output mix and ignore prompt-cache savings. Past those thresholds, the API starts winning on pure cost.',
 
     // Money-saving tips
     tipsTitle: 'How to bring the bill down',
     tips: [
       'Use a smaller model for routing / classification — Claude Haiku 4.5 costs about 10× less than Claude Fable 5.1, and GPT-6 luna about 100× less than GPT-6 astra on output.',
-      'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached input drops the rate by ~90%.',
+      'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached reads run {anthropicCache} below the standard input rate, depending on the model.',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
-      'Batch non-urgent jobs into DeepSeek off-peak hours for ~50% cheaper inference.',
-      'Trim long context — Gemini 2.5 Pro doubles its input rate above 200K; chunk documents that don\'t need the rest.',
+      'Batch non-urgent jobs into DeepSeek off-peak hours, which bill at {offPeakPct}% less than peak for both input and output.',
+      'Trim long context — a long-context band bills {bandInputMultiplier}× the input rate above its threshold (from {bandThresholdK}K tokens); chunk documents that don\'t need the rest.',
     ],
 
     // FAQ — 8 questions, flat Q/A pairs (mirrors the convention used by the
     // home route\'s JSON-LD builder). Order matters for matching search intent.
     faq1Q: 'How much does 1 million tokens cost?',
-    faq1A: 'It depends entirely on the model. GPT-5 nano is around $0.05 input / $0.40 output per 1M tokens; Claude Opus 4.5 is $5 / $25; Gemini 2.5 Flash is $0.30 / $2.50. Use the calculator above to compare every major model at your exact usage.',
+    faq1A: 'It depends entirely on the model. As of {asOf}, 1M tokens costs {active1Rates} on {active1Name}, {active2Rates} on {active2Name}, {active3Rates} on {active3Name}, and {active4Rates} on {active4Name} (input / output, per 1M tokens). For comparison, the GPT-5 tier is retired — {retiredName}, delisted in {retiredIn}, keeps its last verified rates at {retiredRates} in the registry as a historical row. Use the calculator above to compare every model we price at your exact usage.',
     faq2Q: 'Why is output more expensive than input?',
-    faq2A: 'Every LLM provider charges more per output token than per input token — typically 4× to 8× more. Output tokens are billed higher because generation is the compute-heavy step (autoregressive decoding), while input is a single forward pass.',
+    faq2A: 'Output costs more than input on every model in our registry. Across the {ratioCount} active models we price the multiple spans {ratioMin}× to {ratioMax}×, and most of them sit near {ratioMedian}× — the multiple is a property of the model, not of the vendor. Output tokens are billed higher because generation is the compute-heavy step (autoregressive decoding), while input is a single forward pass.',
     faq3Q: 'How do I count tokens?',
     faq3A: 'For OpenAI models, the calculator uses the real tokenizer (o200k_base for GPT-5, cl100k_base for older families). For Anthropic, Google, DeepSeek, MiniMax, and Grok, it uses a CJK-aware character approximation — accurate to within ~10% for English, ~5% for Chinese.',
     faq4Q: 'How accurate is this calculator?',
     faq4A: 'Token counts are exact for OpenAI-family models and approximate for everyone else. Prices are sourced from each provider\'s official pricing page and re-verified regularly, but providers change prices without notice — always check the source link on each model card before relying on a number for billing.',
     faq5Q: 'What is prompt caching?',
-    faq5A: 'Prompt caching lets you reuse a previously-seen prefix (system prompt, tool definitions, large document) across requests at a fraction of the normal input cost. Anthropic charges ~90% less for cached reads; OpenAI charges ~90% less on GPT-5; DeepSeek charges ~90% less for cache hits. The biggest single cost saver for repeat-prompt workloads.',
+    faq5A: 'Prompt caching lets you reuse a previously-seen prefix (system prompt, tool definitions, large document) across requests at a fraction of the normal input cost. The discount is per model, not per vendor: across the active models we price, Anthropic cached reads run {anthropicCache} off the standard input rate, OpenAI {openaiCache}, Google {googleCache}, DeepSeek {deepseekCache}. Check the model card for the exact cached rate. The biggest single cost saver for repeat-prompt workloads.',
     faq6Q: 'Does OpenRouter add a markup?',
-    faq6A: 'Yes — OpenRouter charges a small markup (typically around 5%) on top of each provider\'s official API price. For most single-model workloads the overhead is negligible; OpenRouter wins when you need automatic fallback across providers or a single bill for many models.',
+    faq6A: 'Yes. The calculator estimates OpenRouter\'s price with its own multiplier of {multiplier}× ({markupPct}%) on top of each provider\'s official API price — that is our modelling assumption, applied to every OpenRouter figure on this page, not an average published by OpenRouter. The real per-model markup varies; check the model card on openrouter.ai before relying on a number for billing.',
     faq7Q: 'Is the Claude subscription cheaper than the API?',
-    faq7A: 'Up to a point, yes. Claude Pro ($20/mo) and Max ($200/mo) include generous usage caps. Beyond roughly 1M input + 0.5M output tokens per month (Pro) or roughly 5M input + 2.5M output tokens per month (Max), the API starts winning on pure cost. Use the calculator above to find your break-even point.',
+    faq7A: 'Up to a point, yes. Claude Pro (${proMonthly}/mo) and Max (${maxMonthly}/mo) include generous usage caps. Beyond roughly {proIn}M input + {proOut}M output tokens per month (Pro) or roughly {maxIn}M input + {maxOut}M output tokens per month (Max), the API starts winning on pure cost. Those figures assume a 1:2 input:output mix at current Claude Sonnet 5 rates and ignore prompt-cache savings, which would push the break-even higher. Use the calculator above to find your own.',
     faq8Q: 'How often are prices updated?',
     faq8A: 'Prices are re-verified against each provider\'s official pricing page regularly. The "Updated YYYY-MM-DD" stamp at the top of the page reflects the last verification. A machine-readable version is available at /api/prices.json — same data, designed for AI agents and programmatic access.',
 
     // OpenRouter-specific FAQ (8 entries)
     openrouterFaq1Q: 'What does OpenRouter actually charge?',
-    openrouterFaq1A: 'OpenRouter charges the provider\'s official API price plus a small markup (typically 5%) for the routing, billing, and fallback service. The exact markup varies per model — check the model\'s card on OpenRouter for the current number.',
+    openrouterFaq1A: 'This calculator estimates OpenRouter\'s price as the provider\'s official API price multiplied by its own markup factor of {multiplier}× ({markupPct}%). That factor is a modelling assumption of this site, applied to every OpenRouter price here — not an average published by OpenRouter, whose real per-model markup varies. Check the model card on openrouter.ai for the current number.',
     openrouterFaq2Q: 'Is OpenRouter more expensive than going direct?',
     openrouterFaq2A: 'For most single-model, high-volume workloads, going direct to the official provider is slightly cheaper because you skip the markup. OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
     openrouterFaq3Q: 'How much does 1 million tokens cost on OpenRouter?',
-    openrouterFaq3A: 'It depends on which model you route to. For GPT-5 it\'s about $1.31 input / $10.50 output per 1M tokens (after the 5% markup on the official $1.25 / $10). For Claude Sonnet 4.5: $3.15 / $15.75. Use the calculator above to compare every model on OpenRouter against its official price.',
+    openrouterFaq3A: 'It depends on which model you route to. On GPT-6 astra the official price is {astraIn} input / {astraOut} output per 1M tokens, and the calculator estimates OpenRouter at {orAstraIn} / {orAstraOut} (the {multiplier}× multiplier). On Claude Sonnet 5 it is {sonnetIn} / {sonnetOut} official and {orSonnetIn} / {orSonnetOut} via the estimate. Use the table above to price every active model both ways.',
     openrouterFaq4Q: 'Does OpenRouter charge per request?',
     openrouterFaq4A: 'No per-request fee — just the per-token markup on top of the underlying model price. The total is the same shape as a direct API call; the only difference is the small multiplier.',
     openrouterFaq5Q: 'Can I use my own provider API key with OpenRouter?',
     openrouterFaq5A: 'Yes — OpenRouter lets you bring your own keys (BYOK) for some providers. When you do, you pay the provider\'s official rate with no OpenRouter markup. When you don\'t, OpenRouter bills you for both the tokens and the markup.',
     openrouterFaq6Q: 'How accurate is this calculator?',
-    openrouterFaq6A: 'The base model prices come from each provider\'s official pricing page; the OpenRouter column multiplies those by the current average markup factor (about 5%). Re-check the model\'s source link before relying on a number for billing.',
+    openrouterFaq6A: 'The base model prices come from each provider\'s official pricing page; the OpenRouter column multiplies those by this site\'s own markup factor ({multiplier}×, i.e. {markupPct}%). That factor is an assumption of ours, not an OpenRouter figure. Re-check the model\'s source link before relying on a number for billing.',
     openrouterFaq7Q: 'Which models are available on OpenRouter?',
-    openrouterFaq7A: 'OpenRouter aggregates most major models — GPT-5 family, Claude Opus / Sonnet / Haiku 4.5, Gemini 2.5 Pro / Flash, DeepSeek V3 / R1, and many open-source models. Check the live catalog at openrouter.ai/models for the current count (it changes weekly).',
+    openrouterFaq7A: 'OpenRouter aggregates most major models — the GPT-6 family, Claude Opus 5.5 / Sonnet 5 / Haiku 4.5, the Gemini 3.x line and Gemini 4 Argon, DeepSeek V4-Pro and V4.1-Flash, Grok 4.7, Kimi K3.1 Pro and MiniMax M3.1 Flash, plus many open-source models. We do not track OpenRouter\'s catalogue count — check the live list at openrouter.ai/models (it changes weekly).',
     openrouterFaq8Q: 'How often are these OpenRouter prices updated?',
     openrouterFaq8A: 'Whenever the underlying provider changes its price, the OpenRouter markup-adjusted column above updates on the same cadence. The "Updated YYYY-MM-DD" stamp and /api/prices.json both reflect the latest verification.',
 
     // Claude-specific FAQ (8 entries)
-    claudeFaq1Q: 'How much does Claude Sonnet 4.5 cost per million tokens?',
-    claudeFaq1A: 'Claude Sonnet 4.5 is $3 per 1M input tokens and $15 per 1M output tokens via the Anthropic API. With prompt caching, cached reads drop to $0.30 per 1M (90% off). The 5-minute cache write is $3.75 per 1M; the 1-hour cache write is $6 per 1M.',
+    claudeFaq1Q: 'How much does Claude Sonnet 5 cost per million tokens?',
+    claudeFaq1A: 'Claude Sonnet 5 is {sonnetIn} per 1M input tokens and {sonnetOut} per 1M output tokens via the Anthropic API. With prompt caching, cached reads drop to {sonnetCached} per 1M ({sonnetCachePct}% off). A 5-minute cache write is {sonnetCw} per 1M.',
     claudeFaq2Q: 'How much do 10,000 tokens cost in Claude?',
-    claudeFaq2A: '10,000 input tokens on Claude Sonnet 4.5 cost $0.03 (3 cents). 10,000 output tokens cost $0.15 (15 cents). For Opus 4.5 the same is $0.05 input and $0.25 output; for Haiku 4.5 it\'s $0.01 input and $0.05 output.',
+    claudeFaq2A: '10,000 input tokens on Claude Sonnet 5 cost {sonnet10kIn} ({sonnet10kInCents} cents). 10,000 output tokens cost {sonnet10kOut} ({sonnet10kOutCents} cents). On Opus 5.5 the same is {opus10kIn} input and {opus10kOut} output; on Haiku 4.5 it\'s {haiku10kIn} input and {haiku10kOut} output.',
     claudeFaq3Q: 'How many tokens does $5 get you in Claude?',
-    claudeFaq3A: '$5 buys you roughly 1.67M input tokens on Claude Sonnet 4.5 (or 333K output tokens). On Haiku 4.5 the same $5 buys 5M input / 1M output tokens. On Opus 4.5 it\'s 1M input / 200K output tokens.',
+    claudeFaq3A: '$5 buys you roughly {sonnet5In} input tokens on Claude Sonnet 5 (or {sonnet5Out} output tokens). On Haiku 4.5 the same $5 buys {haiku5In} input / {haiku5Out} output tokens. On Opus 5.5 it\'s {opus5In} input / {opus5Out} output tokens.',
     claudeFaq4Q: 'How much is 200,000 tokens in Claude?',
-    claudeFaq4A: '200,000 input tokens on Claude Sonnet 4.5 cost $0.60; on Opus 4.5 it\'s $1.00; on Haiku 4.5 it\'s $0.20. The same 200K output tokens cost $3.00 on Sonnet 4.5, $5.00 on Opus 4.5, and $1.00 on Haiku 4.5.',
+    claudeFaq4A: '200,000 input tokens on Claude Sonnet 5 cost {sonnet200kIn}; on Opus 5.5 it\'s {opus200kIn}; on Haiku 4.5 it\'s {haiku200kIn}. The same 200K output tokens cost {sonnet200kOut} on Sonnet 5, {opus200kOut} on Opus 5.5, and {haiku200kOut} on Haiku 4.5.',
     claudeFaq5Q: 'Is Claude Pro or Max cheaper than the API?',
-    claudeFaq5A: 'Up to a point, yes. Claude Pro ($20/mo) is cheaper than the API below roughly 6M input + 3M output tokens per month (Sonnet rates). Max ($200/mo) covers up to roughly 60M input + 30M output. Beyond those thresholds, the API wins on pure cost.',
+    claudeFaq5A: 'Up to a point, yes. Claude Pro (${proMonthly}/mo) is cheaper than the API below roughly {proIn}M input + {proOut}M output tokens per month (a 1:2 input:output mix at Claude Sonnet 5 rates, ignoring prompt-cache savings). Max (${maxMonthly}/mo) covers up to roughly {maxIn}M input + {maxOut}M output. Beyond those thresholds, the API wins on pure cost.',
     claudeFaq6Q: 'How does Claude prompt caching work?',
-    claudeFaq6A: 'Anthropic caches prompt prefixes for 5 minutes or 1 hour. Reads from the cache cost 90% less than fresh input ($0.30 per 1M on Sonnet 4.5). Writes cost a small premium — $3.75 per 1M for the 5-min window, $6 per 1M for the 1-hour window. Caching is the single biggest cost saver for repeat-system-prompt workloads.',
+    claudeFaq6A: 'Anthropic caches prompt prefixes for 5 minutes or 1 hour. Reads from the cache cost {sonnetCachePct}% less than fresh input ({sonnetCached} per 1M on Sonnet 5, whose 5-minute cache write is {sonnetCw} per 1M). Across the Anthropic models we price, the cached-read discount runs {anthropicCache} depending on the model. Caching is the single biggest cost saver for repeat-system-prompt workloads.',
     claudeFaq7Q: 'Which Claude model is cheapest?',
-    claudeFaq7A: 'Claude Haiku 4.5 is the cheapest at $1 / $5 per 1M tokens. For most classification and short-answer workloads it matches Sonnet 4.5 on quality at a third of the price. Sonnet 4.5 ($3 / $15) is the mid-tier; Opus 4.5 ($5 / $25) is the flagship.',
+    claudeFaq7A: 'Claude Haiku 4.5 is the cheapest Anthropic model we price, at {haikuIn} / {haikuOut} per 1M tokens. Sonnet 5 ({sonnetIn} / {sonnetOut}) is the mid-tier and the sweet spot for most production work. Opus 5.5 ({opusIn} / {opusOut}) is the flagship, and Fable 5.1 ({fableIn} / {fableOut}) sits at the top of the line.',
     claudeFaq8Q: 'How accurate is this calculator?',
     claudeFaq8A: 'Token counts are approximated (the Claude tokenizer is not yet bundled with this tool — counts use a CJK-aware character heuristic, accurate to within ~10% for English, ~5% for Chinese). Prices are sourced from claude.com/pricing and re-verified regularly. Always check the source link on each card before relying on a number for billing.',
 
     // DeepSeek-specific FAQ (8 entries)
     deepseekFaq1Q: 'How much does the DeepSeek API cost?',
-    deepseekFaq1A: 'DeepSeek V4-Pro is $1.32 per 1M input tokens / $3.96 per 1M output tokens. DeepSeek V4.1-Flash is $0.30 / $1.20. New accounts get a small free credit to start; top-up minimums start at $5. Numbers above are re-verified against platform.deepseek.com/api-docs/pricing.',
+    deepseekFaq1A: 'At peak, DeepSeek V4-Pro is {proIn} per 1M input tokens / {proOut} per 1M output tokens. DeepSeek V4.1-Flash is {flashIn} / {flashOut}. New accounts get a small free credit to start. Numbers above are re-verified against api-docs.deepseek.com/quick_start/pricing.',
     deepseekFaq2Q: 'When is DeepSeek off-peak?',
     deepseekFaq2A: 'Off-peak runs Monday through Friday outside the peak windows (UTC 01:00–04:00 and 06:00–10:00) and all day on weekends and Chinese public holidays. During off-peak, both input and output are billed at 50% of the peak rate. The schedule is published at platform.deepseek.com.',
-    deepseekFaq3Q: 'Is DeepSeek cheaper than GPT-5?',
-    deepseekFaq3A: 'Yes — at peak, DeepSeek V4.1-Flash output is $1.20 per 1M tokens versus GPT-5 output at roughly $10 per 1M (~8× cheaper on output). V4-Pro output at $3.96 is roughly 2.5× cheaper than GPT-5 output. For high-volume workloads the difference dominates every other cost lever.',
+    deepseekFaq3Q: 'Is DeepSeek cheaper than GPT-6?',
+    deepseekFaq3A: 'Yes — at peak, DeepSeek V4.1-Flash output is {flashOut} per 1M tokens versus GPT-6 sol output at {solOut} ({flashVsSol}× cheaper on output). V4-Pro output at {proOut} is {proVsSol}× cheaper than GPT-6 sol. For high-volume workloads the difference dominates every other cost lever.',
     deepseekFaq4Q: 'What is DeepSeek V4.1-Flash?',
-    deepseekFaq4A: 'V4.1-Flash is the fast non-reasoning model in the V4 family: 1M context window, $0.30 / $1.20 per 1M, with a $0.003 cache-hit price on input. It is the cheapest model in the active registry — input is roughly 17× cheaper than Claude Opus 4.5 and output is roughly 21× cheaper.',
+    deepseekFaq4A: 'V4.1-Flash is the fast non-reasoning model in the V4 family: 1M context window, {flashIn} / {flashOut} per 1M at peak, with a {flashCachedPeak} cache-hit price on input ({flashCachedOff} off-peak). It is among the cheapest models we price — its input is {flashVsOpusIn}× cheaper than Claude Opus 5.5 and its output {flashVsOpusOut}× cheaper.',
     deepseekFaq5Q: 'What is DeepSeek V4-Pro?',
-    deepseekFaq5A: 'V4-Pro is the flagship reasoning model: 1M context window, $1.32 / $3.96 per 1M, with a $0.022 cache-hit price. It benchmarks in the same tier as Claude Sonnet 4.5 on most reasoning evals while costing roughly 2.3× less. Use it when you need Sonnet-class reasoning at sub-Haiku price.',
+    deepseekFaq5A: 'V4-Pro is the flagship reasoning model: 1M context window, {proIn} / {proOut} per 1M at peak, with a {proCachedPeak} cache-hit price ({proCachedOff} off-peak). Its output is {proVsSonnet}× cheaper than Claude Sonnet 5 and {proVsOpus}× cheaper than Opus 5.5. Use it when you want the DeepSeek line\'s strongest reasoning at roughly Sonnet-input money.',
     deepseekFaq6Q: 'Does DeepSeek have prompt caching?',
-    deepseekFaq6A: 'Yes. V4.1-Flash cache hits are $0.003 per 1M input tokens — a 99% drop from $0.30/M standard. V4-Pro cache hits are $0.022 per 1M, a 98% drop from $1.32/M. For repeat-prefix workloads (system prompts, tool schemas, large document context) caching is the single biggest cost lever.',
+    deepseekFaq6A: 'Yes. At peak, V4.1-Flash cache hits are {flashCachedPeak} per 1M input tokens — a {flashCachePct}% drop from {flashIn}/M standard ({flashCachedOff}/M out of peak). V4-Pro cache hits are {proCachedPeak} per 1M at peak, a {proCachePct}% drop from {proIn}/M ({proCachedOff}/M off-peak). For repeat-prefix workloads (system prompts, tool schemas, large document context) caching is the single biggest cost lever.',
     deepseekFaq7Q: 'Is the DeepSeek API the same as OpenRouter?',
-    deepseekFaq7A: 'No — going direct to platform.deepseek.com bills at the official rate; OpenRouter adds a small markup (typically ~5%) for routing, billing, and automatic fallback. For single-model high-volume workloads direct is cheaper; OpenRouter wins when you need fallback across providers or a single invoice for many models.',
+    deepseekFaq7A: 'No — going direct to platform.deepseek.com bills at the official rate; this calculator estimates OpenRouter with its own {multiplier}× ({markupPct}%) markup factor, an assumption of ours rather than an OpenRouter-published average. For single-model high-volume workloads direct is cheaper; OpenRouter wins when you need fallback across providers or a single invoice for many models.',
     deepseekFaq8Q: 'How do I get a DeepSeek API key?',
     deepseekFaq8A: 'Sign up at platform.deepseek.com, complete the minimum top-up (currently $5), and generate a key from the API Keys page in the console. The calculator above always shows the current per-million rates, and /api/prices.json exposes the same numbers in a machine-readable form for AI agents.',
 
     // ChatGPT-specific FAQ (8 entries)
     chatgptFaq1Q: 'How much does the ChatGPT API cost per million tokens?',
-    chatgptFaq1A: 'GPT-6 astra is $10 input / $50 output per 1M; GPT-6 sol is $2 / $10; GPT-6 luna is $0.10 / $0.50. Older GPT-5 (now delisted) was $1.25 / $10 with cached input at $0.125/M. Use the calculator above to compare every active model at your exact usage.',
+    chatgptFaq1A: 'GPT-6 astra is {astraIn} input / {astraOut} output per 1M; GPT-6 sol is {solIn} / {solOut}; GPT-6 luna is {lunaIn} / {lunaOut}. Cached input is {solCached}/M on GPT-6 sol and {astraCached}/M on GPT-6 astra. The GPT-5 family is retired — the GPT-6 line replaced it. Use the calculator above to compare every active model at your exact usage.',
     chatgptFaq2Q: 'How many tokens does $5 get you in ChatGPT?',
-    chatgptFaq2A: '$5 buys you roughly 500K input tokens on GPT-6 astra (or 100K output). On GPT-6 sol the same $5 buys 2.5M input / 500K output. On GPT-6 luna it\'s 50M input / 10M output. On GPT-5 nano the same $5 buys 100M input / 12.5M output.',
+    chatgptFaq2A: '$5 buys you roughly {astra5In} input tokens on GPT-6 astra (or {astra5Out} output). On GPT-6 sol the same $5 buys {sol5In} input / {sol5Out} output. On GPT-6 luna it\'s {luna5In} input / {luna5Out} output.',
     chatgptFaq3Q: 'How much is 200,000 tokens in ChatGPT?',
-    chatgptFaq3A: '200,000 input tokens on GPT-6 astra cost $2.00; on GPT-6 sol $0.40; on GPT-6 luna $0.02. The same 200K output tokens cost $10.00 on astra, $2.00 on sol, $0.10 on luna. GPT-5 nano: 200K input is $0.01, 200K output is $0.08.',
-    chatgptFaq4Q: 'Should I use GPT-5 mini or GPT-5 nano?',
-    chatgptFaq4A: 'GPT-5 mini ($0.25 input / $2.00 output per 1M) is for short-answer workloads where quality matters. GPT-5 nano ($0.05 / $0.40) is for high-volume routing and classification — output is 5× cheaper than mini. Most production stacks use nano for routing and reserve mini for the harder prompts.',
+    chatgptFaq3A: '200,000 input tokens on GPT-6 astra cost {astra200kIn}; on GPT-6 sol {sol200kIn}; on GPT-6 luna {luna200kIn}. The same 200K output tokens cost {astra200kOut} on astra, {sol200kOut} on sol, {luna200kOut} on luna.',
+    chatgptFaq4Q: 'Should I use GPT-6 sol or GPT-6 luna?',
+    chatgptFaq4A: 'GPT-6 sol ({solIn} input / {solOut} output per 1M) is the balanced default for production work where answer quality matters. GPT-6 luna ({lunaIn} / {lunaOut}) is for high-volume routing and classification — its output is {lunaVsSol}× cheaper than sol\'s. Most production stacks use luna for routing and reserve sol for the harder prompts.',
     chatgptFaq5Q: 'How does ChatGPT prompt caching work?',
-    chatgptFaq5A: 'OpenAI automatically caches prompt prefixes of 1,024 tokens or more for 5–10 minutes (longer on GPT-5/6). Cached reads bill at roughly 10% of the standard input rate — $0.125/M on GPT-5 vs $1.25/M standard, $1/M on GPT-6 astra vs $10/M. The single biggest cost saver for repeat-prefix workloads.',
+    chatgptFaq5A: 'OpenAI automatically caches prompt prefixes of 1,024 tokens or more for 5–10 minutes (longer on GPT-5/6). Cached reads bill at the cached rate — {astraCached}/M on GPT-6 astra against {astraIn}/M standard, {solCached}/M on GPT-6 sol against {solIn}/M. The single biggest cost saver for repeat-prefix workloads.',
     chatgptFaq6Q: 'Who should use the OpenAI Batch API?',
     chatgptFaq6A: 'The Batch API is for non-urgent jobs that can wait up to 24 hours — evals, bulk summarization, dataset generation, embedding backfills. Both input and output bill at 50% of standard rates; you submit a JSONL file of requests and poll for completion. Latency-sensitive workloads should use the real-time API.',
     chatgptFaq7Q: 'Is OpenRouter cheaper than going direct to OpenAI?',
-    chatgptFaq7A: 'For most single-model, high-volume workloads, going direct to platform.openai.com is slightly cheaper — you skip the OpenRouter markup (~5%). OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
+    chatgptFaq7A: 'For most single-model, high-volume workloads, going direct to platform.openai.com is slightly cheaper — you skip the markup, which this calculator models as {multiplier}× ({markupPct}%). That multiplier is our assumption, not an OpenAI or OpenRouter figure. OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
     chatgptFaq8Q: 'How accurate is this calculator?',
     chatgptFaq8A: 'Token counts are exact for ChatGPT models (the calculator uses OpenAI\'s o200k_base tokenizer for GPT-5/6, cl100k_base for older families). Prices are sourced from platform.openai.com/docs/pricing and re-verified regularly. Always check the source link on each card before relying on a number for billing.',
 
     // DeepSeek-specific TLDR + Tips (separate arrays so the page can quote
     // DeepSeek-specific numbers without diluting the cross-provider page).
+    // Kept for API compatibility only: the DeepSeek page renders the
+    // interpolated `calc.deepseekTldr1…4` / `calc.deepseekTips1…5` copy, which
+    // resolves every figure from the registry. These mirror their number-free
+    // sentences so no second copy of a price can drift here.
     deepseekTldrItems: [
-      'DeepSeek V4.1-Flash is $0.30 input / $1.20 output per 1M tokens — roughly 8× cheaper than GPT-5 on output.',
-      'V4-Pro is $1.32 / $3.96 per 1M — comparable to Claude Sonnet 4.5 on benchmarks, ~3.8× cheaper than it on output.',
-      'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is 50% of peak — schedule batch jobs accordingly.',
-      'Cache hits drop V4.1-Flash input from $0.30/M to $0.006/M at peak (98% off) and $0.003/M off-peak (99% off). Cache aggressively when the system prompt or tool schema repeats.',
+      'DeepSeek V4.1-Flash is the cheapest V4 model per output token at peak.',
+      'V4-Pro is the V4 line\'s flagship reasoning tier.',
+      'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is cheaper than peak — schedule batch jobs accordingly.',
+      'Cache hits cut V4.1-Flash input sharply at peak and off-peak. Cache aggressively when the system prompt or tool schema repeats.',
     ],
     deepseekTips: [
-      'Use V4.1-Flash for routing / classification — output is $1.20/M vs $3.96/M on V4-Pro, ~3.3× cheaper.',
-      'Cache repeat prefixes — V4.1-Flash cache hit is $0.006/M at peak (98% off) and $0.003/M off-peak (99% off) vs $0.30/M. The single biggest cost saver for repeat-prompt workloads.',
-      'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC) for ~50% cheaper inference.',
+      'Use V4.1-Flash for routing / classification — its output rate is far below V4-Pro\'s.',
+      'Cache repeat prefixes — V4.1-Flash cache hits are a fraction of its standard input rate. The single biggest cost saver for repeat-prompt workloads.',
+      'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC) — both input and output bill below the peak rate.',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
-      'Going direct to DeepSeek\'s API beats OpenRouter by a few percent. OpenRouter wins on automatic fallback + a single invoice.',
+      'Going direct to DeepSeek\'s API avoids the aggregator markup. OpenRouter wins on automatic fallback + a single invoice.',
     ],
 
     // ChatGPT-specific TLDR + Tips (separate arrays so the page can quote
     // ChatGPT-specific numbers without diluting the cross-provider page).
+    // Same rule as the DeepSeek arrays above: the rendered copy is
+    // `calc.chatgptTldr1…4` / `calc.chatgptTips1…5` (interpolated).
     chatgptTldrItems: [
-      'GPT-6 astra cached input drops to $1/M — a 90% discount vs the $10/M standard rate.',
-      'The Batch API runs at 50% off with a 24-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
-      'GPT-6 astra is the flagship at $10 input / $50 output per 1M tokens.',
-      'GPT-6 luna is the cheapest GPT-6 tier at $0.10 input / $0.50 output per 1M tokens.',
+      'GPT-6 astra cached input is a small fraction of its standard rate.',
+      'The Batch API runs at half price with a 24-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
+      'GPT-6 astra is the flagship tier of the GPT-6 line.',
+      'GPT-6 luna is the cheapest tier of the GPT-6 line.',
     ],
     chatgptTips: [
-      'Use GPT-6 luna for routing / classification — its output rate is 100× below GPT-6 astra\'s.',
-      'Enable cached input — OpenAI auto-caches prefix repeats for ~90% off the standard input rate.',
-      'Route non-urgent jobs through the Batch API for 50% off (24-hour SLA, no queue rate-limits).',
+      'Use GPT-6 luna for routing / classification — its output rate is far below GPT-6 astra\'s.',
+      'Enable cached input — OpenAI auto-caches prefix repeats at a fraction of the standard input rate.',
+      'Route non-urgent jobs through the Batch API for half price (24-hour SLA, no queue rate-limits).',
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
-      'ChatGPT Plus ($20/mo) does NOT replace API access — high-volume workloads still need the API.',
+      'ChatGPT Plus (${plusMonthly}/mo) does NOT replace API access — high-volume workloads still need the API.',
     ],
 
     // DeepSeekSection copy
@@ -1228,7 +1238,7 @@ export const en = {
     deepseekOffPeakBadge: 'Off-peak = 50% of peak · Mon–Fri · weekends & Chinese holidays all-day off-peak',
     deepseekCacheTitle: 'Prompt-cache pricing',
     deepseekCacheBody:
-      'DeepSeek cache hits are aggressive — V4.1-Flash drops cached input by 98% from the standard rate, V4-Pro by 97%. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
+      'DeepSeek cache hits are aggressive — V4.1-Flash drops cached input by {flashCachePct}% from the standard rate, V4-Pro by {proCachePct}%. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
 
     // ChatGPTSection copy
     chatgptBatchTitle: 'Batch API · 50% off',
@@ -1237,7 +1247,7 @@ export const en = {
     chatgptBatchBadge: '50% off · 24-hour SLA · no queue rate-limits',
     chatgptCacheTitle: 'Prompt caching · ~90% off',
     chatgptCacheBody:
-      'OpenAI automatically caches prompt prefixes (≥1,024 tokens) for 5–10 minutes (longer on GPT-5/6). Cached reads bill at roughly 10% of the standard input rate. For repeat-prefix workloads (system prompts, tool schemas, large documents) caching is the single biggest cost lever — most production stacks see a 50–80% input reduction once caching is on.',
+      'OpenAI automatically caches prompt prefixes (≥1,024 tokens) for 5–10 minutes (longer on GPT-5/6). Cached reads bill {openaiCache} below the standard input rate on every OpenAI row we price. For repeat-prefix workloads (system prompts, tool schemas, large documents) caching is the single biggest cost lever, and the more of a request is a stable prefix, the larger the share of input it discounts.',
 
     // Data freshness + API link
     freshness: 'Prices verified {date}. Source: official provider pricing pages.',

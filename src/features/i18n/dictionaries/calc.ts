@@ -48,44 +48,44 @@ export const calc = {
 
     // ───── Shared quick takeaways (token / Claude / OpenRouter pages) ─────
     tldr1:
-      'Output tokens usually cost 4–8× more than input — keeping replies short is the highest-leverage cost saver.',
+      'Output tokens usually cost {ratioMin}× to {ratioMax}× more than input — keeping replies short is the highest-leverage cost saver.',
     tldr2:
-      'Anthropic prompt caching drops repeat-input cost by ~90%; OpenAI cached input drops it by ~90% on the GPT-6 line.',
+      'Prompt caching drops repeat-input cost by {cacheMinPct}–{cacheMaxPct}% depending on provider and model — Anthropic {anthropicCache} off, OpenAI {openaiCache} off, Google {googleCache} off, DeepSeek {deepseekCache} off the standard input rate.',
     tldr3:
-      'DeepSeek off-peak hours are ~50% cheaper than peak — schedule batch jobs accordingly.',
+      'DeepSeek off-peak hours bill at {offPeakPct}% less than peak — schedule batch jobs accordingly.',
     tldr4:
-      'Gemini 2.5 Pro doubles its input price above 200K context — large-context calls cost roughly twice as much.',
+      'Long-context surcharges are real: a model with a long-context band bills {bandInputMultiplier}× input above the band threshold (from {bandThresholdK}K tokens) — check the model card before sending a huge context.',
 
     // ───── Shared money-saving tips (token / Claude / OpenRouter pages) ─────
     tips1:
-      'Use a smaller model for routing / classification — Claude Haiku 4.5 costs about 10× less than Claude Fable 5.1, and GPT-6 luna about 100× less than GPT-6 astra on output.',
+      'Use a smaller model for routing / classification — Claude Haiku 4.5 costs {haikuVsFable}× less than Claude Fable 5.1, and GPT-6 luna {lunaVsAstra}× less than GPT-6 astra on output.',
     tips2:
-      'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached input drops the rate by ~90%.',
+      'Cache repeat prefixes (system prompts, tool schemas) — Anthropic cached reads run {anthropicCache} below the standard input rate, depending on the model.',
     tips3:
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
     tips4:
-      'Batch non-urgent jobs into DeepSeek off-peak hours for ~50% cheaper inference.',
+      'Batch non-urgent jobs into DeepSeek off-peak hours, which bill at {offPeakPct}% less than peak for both input and output.',
     tips5:
-      'Trim long context — Gemini 2.5 Pro doubles its input rate above 200K; chunk documents that don’t need the rest.',
+      'Trim long context — a long-context band bills {bandInputMultiplier}× input rate above its threshold (from {bandThresholdK}K tokens); chunk documents that don’t need the rest.',
 
     // ───── Claude page ─────
     claudeSampleRate: 'at current {model} rates',
 
     // ───── DeepSeek page ─────
     deepseekTldr1:
-      'DeepSeek V4.1-Flash is {flashIn} input / {flashOut} output per 1M tokens at peak — about {flashVsSol}× cheaper than GPT-6 sol on output.',
+      'DeepSeek V4.1-Flash is {flashIn} input / {flashOut} output per 1M tokens at peak — {flashVsSol}× cheaper than GPT-6 sol on output.',
     deepseekTldr2:
-      'V4-Pro is {proIn} / {proOut} per 1M — comparable to Claude Sonnet 5 on reasoning work, about {proVsSonnet}× cheaper on output.',
+      'V4-Pro is {proIn} / {proOut} per 1M — comparable to Claude Sonnet 5 on reasoning work, {proVsSonnet}× cheaper on output.',
     deepseekTldr3:
-      'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) is 50% of peak — schedule batch jobs accordingly.',
+      'Off-peak (Mon–Fri outside 01:00–04:00 & 06:00–10:00 UTC, plus all weekends & Chinese holidays) bills at {offPeakPct}% less than peak — schedule batch jobs accordingly.',
     deepseekTldr4:
       'Cache hits drop V4.1-Flash input from {flashIn}/M to {flashCachedPeak}/M at peak ({flashCachedOff}/M off-peak) — {flashCachePct}% off.',
     deepseekTips1:
-      'Use V4.1-Flash for routing / classification — output is {flashOut}/M vs {proOut}/M on V4-Pro, about {flashVsPro}× cheaper.',
+      'Use V4.1-Flash for routing / classification — output is {flashOut}/M vs {proOut}/M on V4-Pro, {flashVsPro}× cheaper.',
     deepseekTips2:
       'Cache repeat prefixes — V4.1-Flash cache hit is {flashCachedPeak}/M at peak, a {flashCachePct}% drop from {flashIn}/M. The single biggest cost saver for repeat-prompt workloads.',
     deepseekTips3:
-      'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC) for ~50% cheaper inference.',
+      'Batch non-urgent jobs into off-peak hours (Mon–Fri outside 01:00–04:00 and 06:00–10:00 UTC), where both input and output bill at {offPeakPct}% less than peak.',
     deepseekTips4:
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
     deepseekTips5:
@@ -97,7 +97,7 @@ export const calc = {
     chatgptTldr1:
       'GPT-6 sol cached input drops to {solCached}/M — a {solCachePct}% discount vs the {solIn}/M standard rate.',
     chatgptTldr2:
-      'The Batch API runs at 50% off with a 24-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
+      'The Batch API runs at {batchPct}% off with a {batchSlaHours}-hour SLA — ideal for evals, bulk summarization, and dataset generation.',
     chatgptTldr3:
       'GPT-6 astra is the priciest of the GPT-6 line at {astraIn} input / {astraOut} output per 1M tokens.',
     chatgptTldr4:
@@ -105,17 +105,24 @@ export const calc = {
     chatgptTips1:
       'Use GPT-6 luna for routing / classification — its output is {lunaOut}/M against {solOut}/M on GPT-6 sol, about {lunaVsSol}× cheaper.',
     chatgptTips2:
-      'Enable cached input — OpenAI auto-caches prefix repeats for ~90% off the standard input rate.',
+      'Enable cached input — OpenAI auto-caches prefix repeats, billing cached reads {openaiCache} below the standard input rate.',
     chatgptTips3:
-      'Route non-urgent jobs through the Batch API for 50% off (24-hour SLA, no queue rate-limits).',
+      'Route non-urgent jobs through the Batch API for {batchPct}% off ({batchSlaHours}-hour SLA, no queue rate-limits).',
     chatgptTips4:
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
     chatgptTips5:
-      'ChatGPT Plus ($20/mo) does NOT replace API access — high-volume workloads still need the API.',
+      'ChatGPT Plus (${plusMonthly}/mo) does NOT replace API access — high-volume workloads still need the API.',
+    // `ChatGPTSection`'s cache card. Both keys live in the `calc` namespace
+    // because the body is interpolated at render (the OpenAI discount comes
+    // from the registry); a page reading the un-interpolated v1
+    // `calculator.chatgptCacheBody` printed the key itself, not the sentence.
+    chatgptCacheTitle: 'Prompt caching · {openaiCache}',
+    chatgptCacheBody:
+      'OpenAI automatically caches prompt prefixes (≥1,024 tokens) for 5–10 minutes (longer on GPT-5/6). Cached reads bill {openaiCache} below the standard input rate on every OpenAI row we price. For repeat-prefix workloads (system prompts, tool schemas, large documents) caching is the single biggest cost lever, and the more of a request is a stable prefix, the larger the share of input it discounts.',
 
     // ───── OpenRouter page ─────
     openrouterMarkupBody:
-      'OpenRouter charges a small markup on top of each provider’s official API price. The current average is {markupPct}%, but the exact markup varies per model and per credit package. For most single-model workloads the overhead is small; it gets painful when you pay per request with many small models, or when you don’t need OpenRouter’s fallback / multi-model routing at all.',
+      'The OpenRouter column applies this calculator’s own markup factor ({multiplier}×, i.e. {markupPct}%) on top of each provider’s official API price. It is our modelling assumption, not a figure OpenRouter publishes — the real markup varies per model and per credit package. For most single-model workloads the estimated overhead is small; it grows when you pay per request across many small models, or when you don’t need OpenRouter’s fallback / multi-model routing at all.',
     openrouterCompareTitle: 'Direct vs OpenRouter — every model priced both ways',
     openrouterCompareSubtitle:
       'The same token, priced by the provider and by OpenRouter. The gap between the two columns is the markup: {markupPct}% on every line below.',
@@ -143,12 +150,17 @@ export const calc = {
     relatedLinkKimi: 'View Kimi API pricing →',
 
     // ───── Token Cost Calculator FAQ ─────
+    // Every figure below is a `{placeholder}` filled from the price registry
+    // by `src/features/calculator/copy.ts` + `faq-examples.ts`. Nothing here
+    // may name a model that is not in the registry, and a retired model may
+    // only appear as the marked historical example (`retiredName` /
+    // `retiredRates` / `retiredIn`).
     tokenFaq1Q: 'How much does 1 million tokens cost?',
     tokenFaq1A:
-      'It depends entirely on the model. GPT-6 luna is {lunaIn} input / {lunaOut} output per 1M tokens; Claude Haiku 4.5 is {haikuIn} / {haikuOut}; Claude Opus 5.5 is {opusIn} / {opusOut}; DeepSeek V4.1-Flash is {flashIn} / {flashOut}. Use the calculator above to compare every major model at your exact usage.',
+      'It depends entirely on the model. As of {asOf}, 1M tokens costs {active1Rates} on {active1Name}, {active2Rates} on {active2Name}, {active3Rates} on {active3Name}, and {active4Rates} on {active4Name} (input / output, per 1M tokens). For comparison, {retiredName} is retired: it was delisted in {retiredIn}, and the registry keeps its last verified rates at {retiredRates}. Use the calculator above to compare every model in the registry at your exact usage.',
     tokenFaq2Q: 'Why is output more expensive than input?',
     tokenFaq2A:
-      'Every LLM provider charges more per output token than per input token — typically 4× to 8× more. Output tokens are billed higher because generation is the compute-heavy step (autoregressive decoding), while input is a single forward pass.',
+      'Output costs more than input on every model in our registry. Across the {ratioCount} active models we price the multiple spans {ratioMin}× to {ratioMax}×, and most of them sit near {ratioMedian}× — the multiple is a property of the model, not of the vendor. Output tokens are billed higher because generation is the compute-heavy step (autoregressive decoding), while input is a single forward pass.',
     tokenFaq3Q: 'How do I count tokens?',
     tokenFaq3A:
       'For OpenAI models, the calculator uses the real tokenizer (o200k_base for the GPT-5 and GPT-6 families, cl100k_base for older families). For Anthropic, Google, DeepSeek, MiniMax, Grok and Kimi, it uses a CJK-aware character approximation — accurate to within ~10% for English, ~5% for Chinese.',
@@ -157,16 +169,16 @@ export const calc = {
       'Token counts are exact for OpenAI-family models and approximate for everyone else. Prices are sourced from each provider’s official pricing page and re-verified regularly, but providers change prices without notice — always check the source link on each model card before relying on a number for billing.',
     tokenFaq5Q: 'What is prompt caching?',
     tokenFaq5A:
-      'Prompt caching lets you reuse a previously-seen prefix (system prompt, tool definitions, large document) across requests at a fraction of the normal input cost. Anthropic charges ~90% less for cached reads; OpenAI charges ~90% less on the GPT-6 line; DeepSeek charges {flashCachePct}% less for peak cache hits. The biggest single cost saver for repeat-prompt workloads.',
+      'Prompt caching lets you reuse a previously-seen prefix (system prompt, tool definitions, large document) across requests at a fraction of the normal input cost. The discount is per model, not per vendor: across the active models we price, Anthropic cached reads run {anthropicCache} off the standard input rate, OpenAI {openaiCache}, Google {googleCache}, DeepSeek {deepseekCache}. The biggest single cost saver for repeat-prompt workloads.',
     tokenFaq6Q: 'Does OpenRouter add a markup?',
     tokenFaq6A:
-      'Yes — OpenRouter charges a small markup (currently {markupPct}% on average, {multiplier}× every price) on top of each provider’s official API price. For most single-model workloads the overhead is negligible; OpenRouter wins when you need automatic fallback across providers or a single bill for many models.',
+      'Yes. The calculator estimates OpenRouter’s price with a multiplier of {multiplier}× ({markupPct}%) on top of each provider’s official API price — that is our own modelling assumption, applied to every OpenRouter price on this page, not an average published by OpenRouter. The real per-model markup varies; check the model’s card on openrouter.ai before relying on a number for billing.',
     tokenFaq7Q: 'Is the Claude subscription cheaper than the API?',
     tokenFaq7A:
-      'Up to a point, yes. Claude Pro ($20/mo) and Max ($200/mo) include generous usage caps. Beyond roughly {proIn}M input + {proOut}M output tokens per month (Pro) or roughly {maxIn}M input + {maxOut}M output tokens per month (Max), the API starts winning on pure cost. Use the calculator above to find your break-even point.',
+      'Up to a point, yes. Claude Pro ($20/mo) and Max ($200/mo) include generous usage caps. Beyond roughly {proIn}M input + {proOut}M output tokens per month (Pro) or roughly {maxIn}M input + {maxOut}M output tokens per month (Max), the API starts winning on pure cost. Those figures assume a 1:2 input:output mix at current Claude Sonnet 5 rates and ignore prompt-cache savings, which would push the break-even higher. Use the calculator above to find your own.',
     tokenFaq8Q: 'How often are prices updated?',
     tokenFaq8A:
-      'Prices are re-verified against each provider’s official pricing page regularly. The "Updated {date}" stamp at the top of the page reflects the last verification. A machine-readable version is available at /api/prices.json — same data, designed for AI agents and programmatic access.',
+      'Prices are re-verified against each provider’s official pricing page regularly. The "Updated {date}" stamp at the top of the page reflects the last verification, and the examples in this FAQ were read from that same registry snapshot. A machine-readable version is available at /api/prices.json — same data, designed for AI agents and programmatic access.',
 
     // ───── Claude FAQ ─────
     claudeFaq1Q: 'How much does Claude Sonnet 5 cost per million tokens?',
@@ -197,10 +209,10 @@ export const calc = {
     // ───── DeepSeek FAQ ─────
     deepseekFaq1Q: 'How much does the DeepSeek API cost?',
     deepseekFaq1A:
-      'At peak, DeepSeek V4-Pro is {proIn} per 1M input tokens / {proOut} per 1M output tokens. DeepSeek V4.1-Flash is {flashIn} / {flashOut}. Off-peak, both are billed at half the peak rate. New accounts get a small free credit to start; top-up minimums start at $5. Numbers above are re-verified against api-docs.deepseek.com/quick_start/pricing.',
+      'At peak, DeepSeek V4-Pro is {proIn} per 1M input tokens / {proOut} per 1M output tokens. DeepSeek V4.1-Flash is {flashIn} / {flashOut}. Off-peak, both bill at {offPeakPct}% less than the peak rate. New accounts get a small free credit to start. Numbers above are re-verified against api-docs.deepseek.com/quick_start/pricing.',
     deepseekFaq2Q: 'When is DeepSeek off-peak?',
     deepseekFaq2A:
-      'Off-peak runs Monday through Friday outside the peak windows (UTC 01:00–04:00 and 06:00–10:00) and all day on weekends and Chinese public holidays. During off-peak, input and output are billed at 50% of the peak rate — V4.1-Flash drops to {flashOffIn} / {flashOffOut} per 1M and V4-Pro to {proOffIn} / {proOffOut}. The schedule is published at api-docs.deepseek.com.',
+      'Off-peak runs Monday through Friday outside the peak windows (UTC 01:00–04:00 and 06:00–10:00) and all day on weekends and Chinese public holidays. During off-peak, input and output bill at {offPeakPct}% less than the peak rate — V4.1-Flash drops to {flashOffIn} / {flashOffOut} per 1M and V4-Pro to {proOffIn} / {proOffOut}. The schedule is published at api-docs.deepseek.com.',
     deepseekFaq3Q: 'Is DeepSeek cheaper than GPT-6?',
     deepseekFaq3A:
       'Yes — at peak, DeepSeek V4.1-Flash output is {flashOut} per 1M tokens versus GPT-6 sol at {solOut} (about {flashVsSol}× cheaper on output). V4-Pro output at {proOut} is about {proVsSol}× cheaper than GPT-6 sol. For high-volume workloads the difference dominates every other cost lever.',
@@ -235,7 +247,7 @@ export const calc = {
       'GPT-6 sol ({solIn} input / {solOut} output per 1M) is the balanced default for production work where answer quality matters. GPT-6 luna ({lunaIn} / {lunaOut}) is for high-volume routing and classification — its output is about {lunaVsSol}× cheaper. Most production stacks use luna for routing and reserve sol for the harder prompts.',
     chatgptFaq5Q: 'How does ChatGPT prompt caching work?',
     chatgptFaq5A:
-      'OpenAI automatically caches prompt prefixes of 1,024 tokens or more for 5–10 minutes. Cached reads bill at roughly 10% of the standard input rate — {solCached}/M on GPT-6 sol vs {solIn}/M standard, {astraCached}/M on GPT-6 astra vs {astraIn}/M. The single biggest cost saver for repeat-prefix workloads.',
+      'OpenAI automatically caches prompt prefixes of 1,024 tokens or more for 5–10 minutes. Cached reads bill at the cached rate — {solCached}/M on GPT-6 sol against a {solIn}/M standard rate ({solCachePct}% off), {astraCached}/M on GPT-6 astra against {astraIn}/M. The single biggest cost saver for repeat-prefix workloads.',
     chatgptFaq6Q: 'Who should use the OpenAI Batch API?',
     chatgptFaq6A:
       'The Batch API is for non-urgent jobs that can wait up to 24 hours — evals, bulk summarization, dataset generation, embedding backfills. Both input and output bill at 50% of standard rates; you submit a JSONL file of requests and poll for completion. Latency-sensitive workloads should use the real-time API.',
@@ -292,35 +304,35 @@ export const calc = {
       'GPT-6 与 GPT-5.6 的每 token 单价、Batch API 五折，以及提示缓存能省多少——并与 Claude、Gemini、DeepSeek 对比。',
 
     // ───── 通用速览（token / Claude / OpenRouter 页共用） ─────
-    tldr1: '输出 token 通常比输入贵 4–8 倍——把回复压短，是成本优化里收益最高的一招。',
-    tldr2: 'Anthropic 提示缓存能让重复输入的成本下降约 90%；OpenAI 在 GPT-6 系列上也有约 90% 的缓存折扣。',
-    tldr3: 'DeepSeek 的非峰值时段比峰值便宜约 50%——把批处理任务排进去。',
-    tldr4: 'Gemini 2.5 Pro 的上下文超过 200K 后输入价翻倍——长上下文调用差不多要多付一倍。',
+    tldr1: '输出 token 通常比输入贵 {ratioMin}～{ratioMax} 倍——把回复压短，是成本优化里收益最高的一招。',
+    tldr2: '提示缓存能把重复输入的成本降低 {cacheMinPct}%～{cacheMaxPct}%，具体取决于厂商和模型——按标准输入价算，Anthropic 便宜 {anthropicCache}、OpenAI 便宜 {openaiCache}、Google 便宜 {googleCache}、DeepSeek 便宜 {deepseekCache}。',
+    tldr3: 'DeepSeek 的非峰值时段比峰值便宜 {offPeakPct}%——把批处理任务排进去。',
+    tldr4: '长上下文加价是真实存在的：带长上下文分档的模型，超过阈值（低至 {bandThresholdK}K token）后输入价翻 {bandInputMultiplier} 倍——送超大上下文前先看一眼模型卡片。',
 
     // ───── 通用省钱建议（token / Claude / OpenRouter 页共用） ─────
-    tips1: '路由、分类这类活用小模型——Claude Haiku 4.5 比 Claude Fable 5.1 便宜约 10 倍,GPT-6 luna 的输出价比 GPT-6 astra 便宜约 100 倍。',
-    tips2: '缓存重复前缀（系统提示词、工具 schema）——Anthropic 的缓存输入价能降约 90%。',
+    tips1: '路由、分类这类活用小模型——Claude Haiku 4.5 的输出价只有 Claude Fable 5.1 的 1/{haikuVsFable}，GPT-6 luna 只有 GPT-6 astra 的 1/{lunaVsAstra}。',
+    tips2: '缓存重复前缀（系统提示词、工具 schema）——Anthropic 的缓存读取价比标准输入价低 {anthropicCache}，具体看型号。',
     tips3: '显式设置 max_tokens——输出是贵的那一侧，限制它可以防止回复失控。',
-    tips4: '非紧急任务排进 DeepSeek 的非峰值时段，推理成本直接砍半。',
-    tips5: '裁剪上下文——Gemini 2.5 Pro 超过 200K 输入价翻倍，用不到的段落就别喂进去。',
+    tips4: '非紧急任务排进 DeepSeek 的非峰值时段，输入和输出都比峰值便宜 {offPeakPct}%。',
+    tips5: '裁剪上下文——带长上下文分档的模型超过阈值（低至 {bandThresholdK}K token）后输入价翻 {bandInputMultiplier} 倍，用不到的段落就别喂进去。',
 
     // ───── Claude 页 ─────
     claudeSampleRate: '按当前 {model} 的价格计算',
 
     // ───── DeepSeek 页 ─────
     deepseekTldr1:
-      'DeepSeek V4.1-Flash 峰值时段每 1M token 输入 {flashIn}、输出 {flashOut}——输出比 GPT-6 sol 便宜约 {flashVsSol} 倍。',
+      'DeepSeek V4.1-Flash 峰值时段每 1M token 输入 {flashIn}、输出 {flashOut}——输出比 GPT-6 sol 便宜 {flashVsSol} 倍。',
     deepseekTldr2:
-      'V4-Pro 每 1M token 输入 {proIn}、输出 {proOut}——推理能力对标 Claude Sonnet 5，输出还便宜约 {proVsSonnet} 倍。',
+      'V4-Pro 每 1M token 输入 {proIn}、输出 {proOut}——推理能力对标 Claude Sonnet 5，输出还便宜 {proVsSonnet} 倍。',
     deepseekTldr3:
-      '非峰值时段（工作日 01:00–04:00 与 06:00–10:00 UTC 之外，以及周末与中国法定假日全天）按峰值的 50% 计费——批处理尽量排进去。',
+      '非峰值时段（工作日 01:00–04:00 与 06:00–10:00 UTC 之外，以及周末与中国法定假日全天）比峰值便宜 {offPeakPct}%——批处理尽量排进去。',
     deepseekTldr4:
       '命中缓存后，V4.1-Flash 输入从 {flashIn}/M 降到 {flashCachedPeak}/M（非峰值 {flashCachedOff}/M）——便宜 {flashCachePct}%。',
     deepseekTips1:
       '路由、分类用 V4.1-Flash——输出只要 {flashOut}/M，V4-Pro 是 {proOut}/M，便宜约 {flashVsPro} 倍。',
     deepseekTips2:
       '把重复前缀缓存起来——V4.1-Flash 峰值时段命中缓存只要 {flashCachedPeak}/M，比 {flashIn}/M 便宜 {flashCachePct}%，这是重复提示词场景最大的省钱杠杆。',
-    deepseekTips3: '非紧急任务排进非峰值时段（工作日 01:00–04:00 与 06:00–10:00 UTC 之外），推理成本便宜约 50%。',
+    deepseekTips3: '非紧急任务排进非峰值时段（工作日 01:00–04:00 与 06:00–10:00 UTC 之外），输入和输出都比峰值便宜 {offPeakPct}%。',
     deepseekTips4: '显式设置 max_tokens——输出是贵的那一侧，限制它可以防止回复失控。',
     deepseekTips5: '直连 DeepSeek 官方 API 比走 OpenRouter 便宜 {markupPct}%；要的是自动故障切换和一张账单，才值得付这层加价。',
     deepseekCacheBody:
@@ -328,19 +340,22 @@ export const calc = {
 
     // ───── ChatGPT 页 ─────
     chatgptTldr1: 'GPT-6 sol 的缓存输入只要 {solCached}/M——比 {solIn}/M 的标准价便宜 {solCachePct}%。',
-    chatgptTldr2: 'Batch API 五折、24 小时 SLA——跑评测、批量摘要、造数据集最合适。',
+    chatgptTldr2: 'Batch API 打 {batchPct}% 折、{batchSlaHours} 小时 SLA——跑评测、批量摘要、造数据集最合适。',
     chatgptTldr3: 'GPT-6 astra 是 GPT-6 系列里最贵的，每 1M token 输入 {astraIn}、输出 {astraOut}。',
     chatgptTldr4: 'GPT-6 luna 是 GPT-6 系列里最便宜的，每 1M token 输入 {lunaIn}、输出 {lunaOut}。',
     chatgptTips1:
       '路由、分类用 GPT-6 luna——输出只要 {lunaOut}/M，GPT-6 sol 是 {solOut}/M，便宜约 {lunaVsSol} 倍。',
-    chatgptTips2: '打开缓存输入——OpenAI 会自动缓存重复前缀，比标准输入价便宜约 90%。',
-    chatgptTips3: '非紧急任务走 Batch API，五折且 24 小时 SLA、队列没有速率限制。',
+    chatgptTips2: '打开缓存输入——OpenAI 会自动缓存重复前缀，缓存读取比标准输入价便宜 {openaiCache}。',
+    chatgptTips3: '非紧急任务走 Batch API，打 {batchPct}% 折且 {batchSlaHours} 小时 SLA、队列没有速率限制。',
     chatgptTips4: '显式设置 max_tokens——输出是贵的那一侧，限制它可以防止回复失控。',
-    chatgptTips5: 'ChatGPT Plus（20 美元/月）并不等于 API 权限——高并发场景还是得用 API。',
+    chatgptTips5: 'ChatGPT Plus（{plusMonthly} 美元/月）并不等于 API 权限——高并发场景还是得用 API。',
+    chatgptCacheTitle: '提示缓存 · 便宜 {openaiCache}',
+    chatgptCacheBody:
+      'OpenAI 会自动缓存提示词前缀（≥1,024 token），保留 5～10 分钟（GPT-5 / GPT-6 更久）。在我们在售的每一个 OpenAI 模型上，缓存读取都比标准输入价便宜 {openaiCache}。对重复前缀的工作负载（系统提示词、工具 schema、长文档）来说，缓存是最大的单点省钱手段；一次请求里稳定前缀占比越高，被折扣掉的输入比例就越大。',
 
     // ───── OpenRouter 页 ─────
     openrouterMarkupBody:
-      'OpenRouter 会在各厂商官方 API 价格之上再加一层加价。当前平均加价约 {markupPct}%，但每个模型、每种充值档位的实际加价并不一样。对单一模型的工作负载来说这点开销不算大；真正肉疼的是你要为大量小模型逐次请求付费，或者你根本用不上 OpenRouter 的故障切换与多模型路由。',
+      'OpenRouter 一列是在各厂商官方 API 价上乘本站自己的加价系数（{multiplier}×，即 {markupPct}%）。这是本站的建模假设，不是 OpenRouter 公布的数字——真实加价随模型和充值套餐而变。对单一模型的工作负载来说，这样估出来的差额不大；要按请求计费、跨大量小模型，或者你根本用不上 OpenRouter 的故障切换与多模型路由时，这项差额才会变得明显。',
     openrouterCompareTitle: '直连官方 vs OpenRouter——每个模型两种价格并排看',
     openrouterCompareSubtitle:
       '同样一份 token，厂商官方一个价，OpenRouter 另一个价。两列之间的差额就是加价：下面每一行都是 {markupPct}%。',
@@ -368,12 +383,15 @@ export const calc = {
     relatedLinkKimi: '查看 Kimi API 定价 →',
 
     // ───── Token 成本计算器 FAQ ─────
+    // 本节所有数字都是占位符，由 `copy.ts` + `faq-examples.ts` 从价格注册表
+    // 现算现填；不得出现注册表之外的模型名，已下架模型只能以历史示例
+    // （retiredName / retiredRates / retiredIn）的形式出现并明确标注。
     tokenFaq1Q: '100 万 token 要多少钱？',
     tokenFaq1A:
-      '完全取决于模型。GPT-6 luna 每 1M token 输入 {lunaIn}、输出 {lunaOut}；Claude Haiku 4.5 是 {haikuIn} / {haikuOut}；Claude Opus 5.5 是 {opusIn} / {opusOut}；DeepSeek V4.1-Flash 是 {flashIn} / {flashOut}。用上面的计算器按你的真实用量横向对比。',
+      '完全取决于模型。按 {asOf} 的价格注册表，100 万 token 在 {active1Name} 上要 {active1Rates}，{active2Name} 是 {active2Rates}，{active3Name} 是 {active3Rates}，{active4Name} 是 {active4Rates}（均为每 1M token 的输入 / 输出价）。作为对照，{retiredName} 已停售：它于 {retiredIn} 下架，注册表保留了最后一次核对的价格 {retiredRates}。用上面的计算器按你的真实用量横向对比注册表里的全部模型。',
     tokenFaq2Q: '为什么输出 token 比输入贵？',
     tokenFaq2A:
-      '所有厂商的输出 token 单价都高于输入，通常是 4～8 倍。原因是生成才是算力大头（自回归解码逐 token 往外吐），而输入只是一次前向计算。',
+      '注册表里的每个模型，输出 token 单价都高于输入。我们在售的 {ratioCount} 个模型里，这个倍数落在 {ratioMin}～{ratioMax} 倍之间，多数模型在 {ratioMedian} 倍附近——倍数只跟模型有关，跟厂商无关。原因是生成才是算力大头（自回归解码逐 token 往外吐），而输入只是一次前向计算。',
     tokenFaq3Q: 'token 到底怎么算？',
     tokenFaq3A:
       'OpenAI 系列用的是真实 tokenizer（GPT-5 与 GPT-6 家族用 o200k_base，更老的系列用 cl100k_base）。Anthropic、Google、DeepSeek、MiniMax、Grok、Kimi 用的是兼顾中英文的字符近似估算——英文误差约 10% 以内，中文约 5% 以内。',
@@ -382,16 +400,16 @@ export const calc = {
       'OpenAI 家族的 token 数是精确值，其余模型是估算值。价格全部来自各家官方定价页并定期复核，但厂商可能不打招呼就调价——要拿去结算，请先点开每张卡片上的来源链接核对。',
     tokenFaq5Q: '什么是提示缓存（prompt caching）？',
     tokenFaq5A:
-      '提示缓存让你把之前出现过的前缀（系统提示词、工具定义、长文档）重复利用，成本只要正常输入的一小部分。Anthropic 缓存读取便宜约 90%；OpenAI 在 GPT-6 系列上便宜约 90%；DeepSeek 峰值时段命中缓存便宜 {flashCachePct}%。重复提示词的工作负载，这是最大的单点省钱手段。',
+      '提示缓存让你把之前出现过的前缀（系统提示词、工具定义、长文档）重复利用，成本只要正常输入的一小部分。折扣是按模型算的，不是按厂商一刀切：在我们定价的在售模型里，Anthropic 的缓存读取比标准输入价便宜 {anthropicCache}，OpenAI 便宜 {openaiCache}，Google 便宜 {googleCache}，DeepSeek 便宜 {deepseekCache}。重复提示词的工作负载，这是最大的单点省钱手段。',
     tokenFaq6Q: 'OpenRouter 会加价吗？',
     tokenFaq6A:
-      '会——OpenRouter 在各家官方 API 价格之上加一层小加价（当前平均 {markupPct}%，也就是 {multiplier}×）。对单一模型的工作负载这点开销可以忽略；需要跨厂商自动故障切换、或者想把很多模型合并成一张账单时，OpenRouter 才划算。',
+      '会。本站计算器估算 OpenRouter 价格的方式，是在各家官方 API 价格上乘一个 {multiplier}×（即 {markupPct}%）的系数——这是本站自己建模用的假设值，页面上每一个 OpenRouter 报价都套用了它，并不是 OpenRouter 官方公布的“平均加价”。每个模型的实际加价并不一样，要拿去结算，请以 openrouter.ai 上该模型的实时报价为准。',
     tokenFaq7Q: 'Claude 订阅比 API 更便宜吗？',
     tokenFaq7A:
-      '在一定范围内是的。Claude Pro（20 美元/月）和 Max（200 美元/月）都有相当慷慨的额度。超过大约 {proIn}M 输入 + {proOut}M 输出 token 每月（Pro）、或 {maxIn}M 输入 + {maxOut}M 输出每月（Max）之后，纯成本上就是 API 更便宜。用上面的计算器找到你的盈亏平衡点。',
+      '在一定范围内是的。Claude Pro（20 美元/月）和 Max（200 美元/月）都有相当慷慨的额度。超过大约 {proIn}M 输入 + {proOut}M 输出 token 每月（Pro）、或 {maxIn}M 输入 + {maxOut}M 输出每月（Max）之后，纯成本上就是 API 更便宜。这两个数字按 Claude Sonnet 5 现行价格、输入:输出 = 2:1 的混合用量算出，且不含缓存折扣——算上缓存，盈亏平衡点会更高。用上面的计算器换算你自己的比例。',
     tokenFaq8Q: '价格多久更新一次？',
     tokenFaq8A:
-      '价格会定期回到各家官方定价页复核。页面顶部的“更新于 {date}”就是最后一次复核的日期。同一份数据也有机器可读的版本：/api/prices.json，方便 AI agent 和程序化调用。',
+      '价格会定期回到各家官方定价页复核。页面顶部的“更新于 {date}”就是最后一次复核的日期，本节示例与页面用的是同一份注册表快照。同一份数据也有机器可读的版本：/api/prices.json，方便 AI agent 和程序化调用。',
 
     // ───── Claude FAQ ─────
     claudeFaq1Q: 'Claude Sonnet 5 每百万 token 多少钱？',
@@ -425,7 +443,7 @@ export const calc = {
       '峰值时段，DeepSeek V4-Pro 每 1M token 输入 {proIn}、输出 {proOut}；DeepSeek V4.1-Flash 是 {flashIn} / {flashOut}。非峰值时段两者都按峰值的一半计费。新账号一般会送一点试用额度，最低充值门槛是 5 美元。以上数字都复核自 api-docs.deepseek.com/quick_start/pricing。',
     deepseekFaq2Q: 'DeepSeek 什么时候是非峰值时段？',
     deepseekFaq2A:
-      '工作日避开峰值窗口（UTC 01:00–04:00 与 06:00–10:00）算非峰值，周末和中国法定假日全天都是非峰值。非峰值时段输入和输出都按峰值的 50% 计费——V4.1-Flash 降到每 1M {flashOffIn} / {flashOffOut}，V4-Pro 降到 {proOffIn} / {proOffOut}。时段表公布在 api-docs.deepseek.com。',
+      '工作日避开峰值窗口（UTC 01:00–04:00 与 06:00–10:00）算非峰值，周末和中国法定假日全天都是非峰值。非峰值时段输入和输出都比峰值便宜 {offPeakPct}%——V4.1-Flash 降到每 1M {flashOffIn} / {flashOffOut}，V4-Pro 降到 {proOffIn} / {proOffOut}。时段表公布在 api-docs.deepseek.com。',
     deepseekFaq3Q: 'DeepSeek 比 GPT-6 便宜吗？',
     deepseekFaq3A:
       '便宜。峰值时段 DeepSeek V4.1-Flash 输出只要 {flashOut} / 1M token，而 GPT-6 sol 是 {solOut}（输出便宜约 {flashVsSol} 倍）；V4-Pro 输出 {proOut}，也比 GPT-6 sol 便宜约 {proVsSol} 倍。高并发场景下，这个差距会盖过其他所有成本因素。',
@@ -460,7 +478,7 @@ export const calc = {
       'GPT-6 sol（输入 {solIn} / 输出 {solOut} 每 1M）是质量优先的生产默认选择。GPT-6 luna（{lunaIn} / {lunaOut}）适合高并发的路由和分类——输出便宜约 {lunaVsSol} 倍。常见做法是 luna 负责路由，难的 prompt 留给 sol。',
     chatgptFaq5Q: 'ChatGPT 的提示缓存是怎么工作的？',
     chatgptFaq5A:
-      'OpenAI 会自动缓存 1,024 token 以上的提示词前缀，保存 5–10 分钟。命中缓存的读取大约按标准输入价的 10% 计费——GPT-6 sol 是 {solCached}/M 对 {solIn}/M 标准价，GPT-6 astra 是 {astraCached}/M 对 {astraIn}/M。重复前缀的工作负载，这是最大的单点省钱手段。',
+      'OpenAI 会自动缓存 1,024 token 以上的提示词前缀，保存 5–10 分钟。命中缓存的读取按缓存价计费——GPT-6 sol 是 {solCached}/M，标准价 {solIn}/M（便宜 {solCachePct}%）；GPT-6 astra 是 {astraCached}/M，标准价 {astraIn}/M。重复前缀的工作负载，这是最大的单点省钱手段。',
     chatgptFaq6Q: '谁该用 OpenAI 的 Batch API？',
     chatgptFaq6A:
       'Batch API 适合可以等 24 小时的非紧急任务——跑评测、批量摘要、造数据集、批量补 embedding。输入和输出都按标准价的 50% 计费；你提交一个 JSONL 请求文件，再轮询结果。对延迟敏感的业务，还是走实时 API。',

@@ -12,7 +12,7 @@ import { PricingTLDR } from '@/features/calculator/components/PricingTLDR'
 import { ClaudeSubscriptionSection } from '@/features/calculator/components/ClaudeSubscriptionSection'
 import { Tips } from '@/features/calculator/components/Tips'
 import { RelatedCalculators } from '@/features/calculator/components/RelatedCalculators'
-import { claudeFaq, modelRateSummary } from '@/features/calculator/copy'
+import { claudeFaq, modelRateSummary, sharedTldr, sharedTips } from '@/features/calculator/copy'
 import { stripModelMarkers } from '@/features/calculator/model-links'
 import { useTranslation } from '@/features/i18n/provider'
 import { REGISTRY } from '@/features/calculator/model-prices'
@@ -99,9 +99,9 @@ function ClaudeCalculatorPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 md:px-7">
         <Calculator initialModelId="claude-opus-5.5" />
       </div>
-      <PricingTLDR />
+      <PricingTLDR items={sharedTldr(t)} />
       <ClaudeSubscriptionSection />
-      <Tips />
+      <Tips items={sharedTips(t)} />
       <FAQ
         id="faq"
         kickerKey="calculator.kicker"
