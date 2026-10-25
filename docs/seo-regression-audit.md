@@ -696,3 +696,83 @@ en / zh 结构一致（`zh` 受 `type Dict = typeof en` 约束）。
 | `e2e/seo.spec.ts` | 新增别名不进 sitemap + canonical 自洽用例 |
 
 **未改动：** 任何公开 URL、路由 slug、页面集合、价格/评分已发布数据、`wrangler.jsonc`、DNS。
+
+---
+
+# 第四轮：OpenRouter 计费口径更正（2026-10-25）
+
+**触发：** 一次外部复查提出"OpenRouter 平均加价约 5%"应链接官方说明、并区分平台费与模型原始价格。
+**方法：** 直接核对 OpenRouter 官方定价页与 FAQ 原文。
+**范围：** 仅文案与数据出处，**未改计算逻辑、未改公开 URL、未部署**。
+
+## 0. 结论：原表述不仅是"缺来源"，机制本身就是错的
+
+OpenRouter 官方 `openrouter.ai/pricing` 原文：
+
+> "Inference is billed at the provider's list price on every plan. OpenRouter's fee is charged when you buy credits, **5.5% on Standard and 8% on Business, never on individual requests**."
+
+官方 FAQ 亦写明 "there is no markup on inference pricing"。
+
+也就是说：
+
+| 我们之前的说法 | 官方事实 |
+| --- | --- |
+| OpenRouter 在 token 单价上**加价 5%** | 推理**按厂商标价直通，不加价** |
+| "当前平均加价 5%" | 没有"平均加价"这回事；费用发生在**购买额度**时 |
+| 费率 5% | 官方现行为 **Standard 5.5% / Business 8%** |
+
+`REGISTRY.openRouterMarkup = 1.05` 把费用摊到了每 token 单价上，是一种**近似**，不是 OpenRouter 的计费方式。
+
+## 1. 修复方式（按用户选择的"只修文案，标注为估算"）
+
+- 新增 `OPENROUTER_FEES`（`src/features/calculator/vendor-claims.ts`）：记录官方机制与两个费率，**带 `sourceUrl` / `faqUrl`**，并显式记 `inferenceMarkedUp: false`。
+- `{orStandardFeePct}` / `{orBusinessFeePct}` 作为插值参数，由 `vendor-claims.ts` 提供；字典仍不硬编码数字。
+- 改写全部相关文案（en + zh，共约 20 处）：
+  - 明确 **token 单价不加价**，费用在**买额度**时收取，**不按请求收**；
+  - 1.05× 一列改称"本站把充值费摊到单价上的**估算**"，明确"不是 OpenRouter 的报价"；
+  - 删除全部"平均加价 / average markup"措辞；
+  - 修正"直连更便宜是因为省了加价"这类因果（两边 token 单价其实相同）。
+
+## 2. 过程中由测试抓到的两处真实缺陷
+
+1. **`collectStrings()` 不递归对象** —— 守卫测试扫字典时只看字符串和数组，而 `calc` 是嵌套对象，导致"字典不得出现被禁表述"的断言**永远为真**（假通过）。已修复为递归，并验证注入违规文案后测试**确实变红**。
+2. **新占位符漏接线** —— 引入 `{orStandardFeePct}` 后，`/chatgpt-api-pricing`、`/deepseek-api-pricing`、`openrouterCompareNote` 三处把占位符原样渲染到页面。`dictionary-integrity.node.test.ts` 与 e2e `renders no template residue` 各自抓到一部分，已全部接线并复验 4 个页面 0 泄漏。
+
+## 3. 新增测试
+
+`faq-freshness.node.test.ts` 新增 "states OpenRouter's real fee mechanism, from OpenRouter's own pricing page"：
+
+- 断言 `OPENROUTER_FEES.inferenceMarkedUp === false`；
+- 断言 token FAQ（en/zh）必须出现"credits/额度/充值"与两个官方费率；
+- 断言 `calc` 字典里**不得再出现**"OpenRouter adds/charges a markup""加价后的实际价格"等旧框架。
+
+## 4. 验证
+
+| 命令 | 结果 |
+| --- | --- |
+| `pnpm test` | ✅ **723 passed / 83 files** |
+| `pnpm typecheck` | ✅ 0 errors |
+| `pnpm lint` | ✅ 0 errors（1 个既有 warning，非本轮） |
+| `pnpm build` | ✅ 通过 |
+| `e2e/seo.spec.ts` | ✅ **70 passed** |
+| 渲染复核 | ✅ 4 个相关页面 0 占位符泄漏，费用数字正确显示 |
+
+## 5. 仍未做 / 需人工确认
+
+| # | 项 | 说明 |
+| --- | --- | --- |
+| U1 | **未改计算逻辑** | 按用户决定，`1.05×` 仍作用于 token 单价，仅文案标注为估算。若要严格对齐官方机制，需重构表格 + `prices.json` + 测试（12 个文件） |
+| U2 | **未部署** | 本轮改动在工作区，未执行 `pnpm deploy:prod`、未改 DNS |
+| U3 | 费率会变 | 5.5% / 8% 取自 2026-10-25 的官方页面；OpenRouter 调整后需同步 `OPENROUTER_FEES` |
+| U4 | 报告中其他 3 项 | 方法论重复版本号、FAQ 旧模型、旧 URL 跳转在生产上**均已验证为正常**；报告所用 curl 指向 `evalledger.com`（双 L）——那是**停放的待售域名，不是本站** |
+
+## 6. 修复文件清单（本轮）
+
+| 文件 | 改动 |
+| --- | --- |
+| `src/features/calculator/vendor-claims.ts` | 新增 `OPENROUTER_FEES` + `openRouterCreditFees()`，带官方出处 |
+| `src/features/calculator/faq-examples.ts` | `sharedCopyParams()` 注入费用参数 |
+| `src/features/calculator/copy.ts` | 各 FAQ 参数块注入费用；`openrouterMarkupBody` 增加费用参数 |
+| `src/features/calculator/components/OpenRouterSection.tsx` | `openrouterCompareNote` 补齐参数 |
+| `src/features/i18n/dictionaries/calc.ts` | 约 20 处 OpenRouter 文案改写（en + zh） |
+| `src/features/calculator/__tests__/faq-freshness.node.test.ts` | 新增官方机制断言；修复 `collectStrings` 递归 |

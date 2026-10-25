@@ -35,7 +35,7 @@ export const calc = {
       'Compare prices across OpenAI, Claude, Gemini, DeepSeek, MiniMax, Grok and Kimi. Real tokenizer for OpenAI, accurate estimates for the rest.',
     openrouterTitle: 'OpenRouter Pricing Calculator with Markup',
     openrouterSubtitle:
-      'Every model priced twice — the provider’s direct API price, and what OpenRouter charges after its markup — with the difference in dollars.',
+      'Every model priced twice — the provider’s direct API price, and this site’s estimate of what OpenRouter would total once its credit-purchase fee is spread over token price — with the difference in dollars.',
     claudeTitle: 'Claude Token Cost Calculator — Cost per Token',
     claudeSubtitle:
       'Cost per token and monthly estimates for Claude Opus 5.5, Sonnet 5 and Haiku 4.5 — with the Anthropic API.',
@@ -89,7 +89,7 @@ export const calc = {
     deepseekTips4:
       'Set max_tokens explicitly — output is the expensive side; capping it prevents runaway replies.',
     deepseekTips5:
-      'Going direct to DeepSeek’s API beats OpenRouter by {markupPct}%. OpenRouter wins on automatic fallback + a single invoice.',
+      'This site estimates OpenRouter at {markupPct}% above DeepSeek’s own rate — an approximation of its credit fee, not a per-request markup. OpenRouter wins on automatic fallback + a single invoice.',
     deepseekCacheBody:
       'DeepSeek cache hits are aggressive — V4.1-Flash drops cached input by {flashCachePct}% from the standard rate, V4-Pro by {proCachePct}%. For any workload with a repeated prefix (system prompt, tool definitions, document context) caching the prefix is the single highest-leverage cost saving.',
 
@@ -121,17 +121,22 @@ export const calc = {
       'OpenAI automatically caches prompt prefixes (≥1,024 tokens) for 5–10 minutes (longer on GPT-5/6). Cached reads bill {openaiCache} below the standard input rate on every OpenAI row we price. For repeat-prefix workloads (system prompts, tool schemas, large documents) caching is the single biggest cost lever, and the more of a request is a stable prefix, the larger the share of input it discounts.',
 
     // ───── OpenRouter page ─────
+    // What OpenRouter actually charges, per its own pricing page: inference
+    // bills at the provider's list price on every plan, and the platform fee
+    // (5.5% Standard / 8% Business) is taken when you BUY CREDITS — never on
+    // the per-token rate. The 1.05× column is therefore an estimate of that
+    // credit fee spread over token price, not an OpenRouter quote.
     openrouterMarkupBody:
-      'The OpenRouter column applies this calculator’s own markup factor ({multiplier}×, i.e. {markupPct}%) on top of each provider’s official API price. It is our modelling assumption, not a figure OpenRouter publishes — the real markup varies per model and per credit package. For most single-model workloads the estimated overhead is small; it grows when you pay per request across many small models, or when you don’t need OpenRouter’s fallback / multi-model routing at all.',
+      'OpenRouter bills inference at the provider’s list price on every plan — it does not mark up the per-token rate. Its platform fee ({orStandardFeePct}% on Standard, {orBusinessFeePct}% on Business) is charged when you purchase credits, not on individual requests. The OpenRouter column here models that fee as a {multiplier}× multiplier on token price, which is our own approximation, not an OpenRouter quote: it spreads a credit-purchase fee across token rates, so the real total depends on how much you top up and how much of the plan you use. Use it as a rough sense of scale; check openrouter.ai for the live per-model rate.',
     openrouterCompareTitle: 'Direct vs OpenRouter — every model priced both ways',
     openrouterCompareSubtitle:
-      'The same token, priced by the provider and by OpenRouter. The gap between the two columns is the markup: {markupPct}% on every line below.',
+      'The same token, priced by the provider and by this site’s estimate of OpenRouter. The gap is our {markupPct}% multiplier, not a markup OpenRouter applies to requests.',
     openrouterCompareColModel: 'Model',
     openrouterCompareColDirect: 'Direct API',
     openrouterCompareColRouter: 'Via OpenRouter',
     openrouterCompareColDiff: 'Markup',
     openrouterCompareNote:
-      'Prices are USD per 1M tokens, resolved from the same registry the calculator charges from. The OpenRouter column applies the current {multiplier}× average markup ({markupPct}%).',
+      'Prices are USD per 1M tokens, resolved from the same registry the calculator charges from. The OpenRouter column applies this site’s {multiplier}× estimate ({markupPct}%) of OpenRouter’s credit-purchase fee — an approximation, not an OpenRouter-published rate. OpenRouter bills inference at list price and charges {orStandardFeePct}% (Standard) or {orBusinessFeePct}% (Business) when you buy credits.',
     openrouterCompareEmpty: 'No active models to compare.',
 
     // ───── Results grid group headings ─────
@@ -172,7 +177,7 @@ export const calc = {
       'Prompt caching lets you reuse a previously-seen prefix (system prompt, tool definitions, large document) across requests at a fraction of the normal input cost. The discount is per model, not per vendor: across the active models we price, Anthropic cached reads run {anthropicCache} off the standard input rate, OpenAI {openaiCache}, Google {googleCache}, DeepSeek {deepseekCache}. The biggest single cost saver for repeat-prompt workloads.',
     tokenFaq6Q: 'Does OpenRouter add a markup?',
     tokenFaq6A:
-      'Yes. The calculator estimates OpenRouter’s price with a multiplier of {multiplier}× ({markupPct}%) on top of each provider’s official API price — that is our own modelling assumption, applied to every OpenRouter price on this page, not an average published by OpenRouter. The real per-model markup varies; check the model’s card on openrouter.ai before relying on a number for billing.',
+      'Not on the tokens. OpenRouter bills inference at the provider’s list price on every plan and charges its platform fee when you buy credits — {orStandardFeePct}% on Standard, {orBusinessFeePct}% on Business — never per request. The OpenRouter figures here are this site’s own estimate: a {multiplier}× ({markupPct}%) multiplier that spreads that credit fee over token price. It is an approximation of the total, not an OpenRouter quote; check openrouter.ai for the live rate before relying on a number for billing.',
     tokenFaq7Q: 'Is the Claude subscription cheaper than the API?',
     tokenFaq7A:
       'Up to a point, yes. Claude Pro ($20/mo) and Max ($200/mo) include generous usage caps. Beyond roughly {proIn}M input + {proOut}M output tokens per month (Pro) or roughly {maxIn}M input + {maxOut}M output tokens per month (Max), the API starts winning on pure cost. Those figures assume a 1:2 input:output mix at current Claude Sonnet 5 rates and ignore prompt-cache savings, which would push the break-even higher. Use the calculator above to find your own.',
@@ -227,7 +232,7 @@ export const calc = {
       'Yes. V4.1-Flash cache hits are {flashCachedPeak} per 1M input tokens at peak — a {flashCachePct}% drop from {flashIn}/M standard ({flashCachedOff}/M off-peak). V4-Pro cache hits are {proCachedPeak} per 1M, a {proCachePct}% drop from {proIn}/M ({proCachedOff}/M off-peak). For repeat-prefix workloads (system prompts, tool schemas, large document context) caching is the single biggest cost lever.',
     deepseekFaq7Q: 'Is the DeepSeek API the same as OpenRouter?',
     deepseekFaq7A:
-      'No — going direct to api-docs.deepseek.com bills at the official rate; OpenRouter adds a markup ({markupPct}%) for routing, billing, and automatic fallback. For single-model high-volume workloads direct is cheaper; OpenRouter wins when you need fallback across providers or a single invoice for many models.',
+      'Not on the tokens. Going direct to api-docs.deepseek.com bills at the official rate, and OpenRouter bills inference at that same list price on every plan — its platform fee ({orStandardFeePct}% Standard / {orBusinessFeePct}% Business) is charged when you buy credits. This site estimates the OpenRouter total at {markupPct}% above list price to approximate that fee. OpenRouter wins when you need fallback across providers or a single invoice for many models.',
     deepseekFaq8Q: 'How do I get a DeepSeek API key?',
     deepseekFaq8A:
       'Sign up at platform.deepseek.com, complete the minimum top-up (currently $5), and generate a key from the API Keys page in the console. The calculator above always shows the current per-million rates, and /api/prices.json exposes the same numbers in a machine-readable form for AI agents.',
@@ -253,7 +258,7 @@ export const calc = {
       'The Batch API is for non-urgent jobs that can wait up to 24 hours — evals, bulk summarization, dataset generation, embedding backfills. Both input and output bill at 50% of standard rates; you submit a JSONL file of requests and poll for completion. Latency-sensitive workloads should use the real-time API.',
     chatgptFaq7Q: 'Is OpenRouter cheaper than going direct to OpenAI?',
     chatgptFaq7A:
-      'For most single-model, high-volume workloads, going direct to platform.openai.com is slightly cheaper — you skip the OpenRouter markup ({markupPct}%). OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
+      'Going direct to platform.openai.com bills at list price and avoids the credit-purchase fee OpenRouter adds ({orStandardFeePct}% Standard / {orBusinessFeePct}% Business) — inference itself is the same list price either way. This site shows the OpenRouter total at roughly {markupPct}% above list price to approximate that fee. OpenRouter wins when you need automatic fallback, a single bill for many models, or access to models not available in your home region.',
     chatgptFaq8Q: 'How accurate is this calculator?',
     chatgptFaq8A:
       'Token counts are exact for ChatGPT models (the calculator uses OpenAI’s o200k_base tokenizer for the GPT-5 and GPT-6 families, cl100k_base for older families). Prices are sourced from platform.openai.com/docs/pricing and re-verified regularly. Always check the source link on each card before relying on a number for billing.',
@@ -261,28 +266,28 @@ export const calc = {
     // ───── OpenRouter FAQ ─────
     openrouterFaq1Q: 'What does OpenRouter actually charge?',
     openrouterFaq1A:
-      'OpenRouter charges the provider’s official API price plus a markup ({markupPct}% on average right now — {multiplier}× on every price in the table above) for the routing, billing, and fallback service. The exact markup varies per model — check the model’s card on OpenRouter for the current number.',
+      'OpenRouter bills inference at the provider’s official list price — it does not mark up the token rate. It charges a platform fee when you purchase credits: {orStandardFeePct}% on Standard and {orBusinessFeePct}% on Business. The OpenRouter column above is this site’s estimate ({multiplier}×, i.e. {markupPct}%), which spreads that credit fee across token price; treat it as a rough total, not a quote.',
     openrouterFaq2Q: 'Is OpenRouter more expensive than going direct?',
     openrouterFaq2A:
-      'For most single-model, high-volume workloads, going direct to the official provider is slightly cheaper because you skip the markup. OpenRouter wins when you need automatic fallback across providers, a single bill for many models, or access to models not available in your home region.',
+      'The inference rate is identical either way — OpenRouter passes the provider’s list price through. What you pay for going direct is nothing extra; what you pay OpenRouter is its credit-purchase fee ({orStandardFeePct}% Standard / {orBusinessFeePct}% Business). Below that fee’s share of your spend, direct is cheaper; OpenRouter earns it back with automatic fallback, one bill for many models, and access to models unavailable in your region.',
     openrouterFaq3Q: 'How much does 1 million tokens cost on OpenRouter?',
     openrouterFaq3A:
       'It depends on which model you route to. On GPT-6 astra the official price is {astraIn} / {astraOut} per 1M tokens and OpenRouter bills {orAstraIn} / {orAstraOut}. On Claude Sonnet 5 it is {sonnetIn} / {sonnetOut} direct and {orSonnetIn} / {orSonnetOut} via OpenRouter. The table above prices every model both ways.',
     openrouterFaq4Q: 'Does OpenRouter charge per request?',
     openrouterFaq4A:
-      'No per-request fee — just the per-token markup on top of the underlying model price. The total is the same shape as a direct API call; the only difference is the small multiplier.',
+      'No per-request fee. OpenRouter charges for tokens at the provider’s list price and takes its platform fee ({orStandardFeePct}% Standard / {orBusinessFeePct}% Business) when you purchase credits, so the per-request shape is the same as a direct API call.',
     openrouterFaq5Q: 'Can I use my own provider API key with OpenRouter?',
     openrouterFaq5A:
-      'Yes — OpenRouter lets you bring your own keys (BYOK) for some providers. When you do, you pay the provider’s official rate with no OpenRouter markup. When you don’t, OpenRouter bills you for both the tokens and the markup.',
+      'Yes — OpenRouter supports BYOK. The provider bills you for inference directly, and OpenRouter’s fee applies only above a plan-dependent allowance (for example $25,000 of list-price inference per month on pay-as-you-go, then 5% of list price). Below the allowance there is no OpenRouter fee on your tokens.',
     openrouterFaq6Q: 'How accurate is this calculator?',
     openrouterFaq6A:
-      'The base model prices come from each provider’s official pricing page; the OpenRouter column multiplies those by the current average markup factor ({multiplier}×, about {markupPct}%). Re-check the model’s source link before relying on a number for billing.',
+      'The base model prices come from each provider’s official pricing page. The OpenRouter column multiplies those by this site’s estimate ({multiplier}×, about {markupPct}%), which approximates OpenRouter’s credit-purchase fee ({orStandardFeePct}% Standard / {orBusinessFeePct}% Business) rather than a per-token markup. Re-check the model’s source link before relying on a number for billing.',
     openrouterFaq7Q: 'Which models are available on OpenRouter?',
     openrouterFaq7A:
       'OpenRouter aggregates most major models — the GPT-6 family, Claude Opus 5.5 / Sonnet 5 / Haiku 4.5, Gemini 4 Argon and the Gemini 3.x line, DeepSeek V4-Pro and V4.1-Flash, Grok 4.7, Kimi K3.1 Pro, MiniMax M3.1 Flash and many open-source models. Check the live catalog at openrouter.ai/models for the current count (it changes weekly).',
     openrouterFaq8Q: 'How often are these OpenRouter prices updated?',
     openrouterFaq8A:
-      'Whenever the underlying provider changes its price, the OpenRouter markup-adjusted column above updates on the same cadence. The "Updated {date}" stamp and /api/prices.json both reflect the latest verification.',
+      'Whenever the underlying provider changes its price, the estimated OpenRouter column above updates on the same cadence, because it is derived from the same registry. The "Updated {date}" stamp and /api/prices.json both reflect the latest verification.',
   },
 
   zh: {
@@ -290,9 +295,9 @@ export const calc = {
     tokenTitle: 'Token 成本计算器 — 一站比对所有 LLM API 价格',
     tokenSubtitle:
       '横向比对 OpenAI、Claude、Gemini、DeepSeek、MiniMax、Grok、Kimi 的价格。OpenAI 系列用真实 tokenizer，其余模型用高精度的近似估算。',
-    openrouterTitle: 'OpenRouter 价格计算器 — 加价后的 token 成本',
+    openrouterTitle: 'OpenRouter 价格计算器 — 含充值费的 token 成本',
     openrouterSubtitle:
-      '每个模型同时给出两个价：厂商官方 API 的原始价格，以及 OpenRouter 加价后的实际价格——并把差额算给你看。',
+      '每个模型同时给出两个价：厂商官方 API 的原始价格，以及本站对 OpenRouter 总额的估算价——并把差额算给你看。',
     claudeTitle: 'Claude Token 成本计算器 — 每 token 成本',
     claudeSubtitle:
       'Claude Opus 5.5、Sonnet 5、Haiku 4.5 的每 token 成本与月度账单估算——直接对接 Anthropic 官方 API 价格。',
@@ -334,7 +339,7 @@ export const calc = {
       '把重复前缀缓存起来——V4.1-Flash 峰值时段命中缓存只要 {flashCachedPeak}/M，比 {flashIn}/M 便宜 {flashCachePct}%，这是重复提示词场景最大的省钱杠杆。',
     deepseekTips3: '非紧急任务排进非峰值时段（工作日 01:00–04:00 与 06:00–10:00 UTC 之外），输入和输出都比峰值便宜 {offPeakPct}%。',
     deepseekTips4: '显式设置 max_tokens——输出是贵的那一侧，限制它可以防止回复失控。',
-    deepseekTips5: '直连 DeepSeek 官方 API 比走 OpenRouter 便宜 {markupPct}%；要的是自动故障切换和一张账单，才值得付这层加价。',
+    deepseekTips5: '本站把 OpenRouter 估成比 DeepSeek 官方价高 {markupPct}%——这是对充值费的近似，不是按请求收的加价。要自动故障切换和一张账单，才值得付这笔费用。',
     deepseekCacheBody:
       'DeepSeek 的缓存命中价相当激进——V4.1-Flash 的缓存输入比标准价低 {flashCachePct}%，V4-Pro 低 {proCachePct}%。只要工作负载里有重复前缀（系统提示词、工具定义、文档上下文），把前缀缓存下来就是收益最高的省钱动作。',
 
@@ -354,17 +359,21 @@ export const calc = {
       'OpenAI 会自动缓存提示词前缀（≥1,024 token），保留 5～10 分钟（GPT-5 / GPT-6 更久）。在我们在售的每一个 OpenAI 模型上，缓存读取都比标准输入价便宜 {openaiCache}。对重复前缀的工作负载（系统提示词、工具 schema、长文档）来说，缓存是最大的单点省钱手段；一次请求里稳定前缀占比越高，被折扣掉的输入比例就越大。',
 
     // ───── OpenRouter 页 ─────
+    // OpenRouter 官方定价页的机制：推理按厂商标价计费，不按 token 加价；
+    // 平台费（Standard {orStandardFeePct}%、Business {orBusinessFeePct}%）在
+    // 购买额度时收取。因此 1.05× 那一列只是把充值费摊到 token 单价上的估算，
+    // 不是 OpenRouter 的报价。
     openrouterMarkupBody:
-      'OpenRouter 一列是在各厂商官方 API 价上乘本站自己的加价系数（{multiplier}×，即 {markupPct}%）。这是本站的建模假设，不是 OpenRouter 公布的数字——真实加价随模型和充值套餐而变。对单一模型的工作负载来说，这样估出来的差额不大；要按请求计费、跨大量小模型，或者你根本用不上 OpenRouter 的故障切换与多模型路由时，这项差额才会变得明显。',
+      'OpenRouter 的推理按厂商标价计费，所有套餐都不对 token 单价加价。它的平台费（Standard {orStandardFeePct}%、Business {orBusinessFeePct}%）是在购买额度时收取的，不针对单次请求。本页的 OpenRouter 一列把这项费用建模成 token 单价上的 {multiplier}× 系数，这是本站的近似估算，不是 OpenRouter 的报价：充值费被摊到了单价上，实际总额取决于你充多少、用多少。请把它当作量级参考，实时单价以 openrouter.ai 为准。',
     openrouterCompareTitle: '直连官方 vs OpenRouter——每个模型两种价格并排看',
     openrouterCompareSubtitle:
-      '同样一份 token，厂商官方一个价，OpenRouter 另一个价。两列之间的差额就是加价：下面每一行都是 {markupPct}%。',
+      '同样一份 token，一边是厂商官方价，一边是本站对 OpenRouter 的估算价。两者的差额来自本站的 {markupPct}% 系数，不是 OpenRouter 对请求加的价。',
     openrouterCompareColModel: '模型',
     openrouterCompareColDirect: '官方 API 直连价',
     openrouterCompareColRouter: 'OpenRouter 转售价',
     openrouterCompareColDiff: '加价',
     openrouterCompareNote:
-      '价格单位为美元 / 每百万 token，与计算器使用的是同一份价格表。OpenRouter 一列按当前 {multiplier}× 平均加价（{markupPct}%）换算。',
+      '价格单位为美元 / 每百万 token，与计算器使用的是同一份价格表。OpenRouter 一列套的是本站的 {multiplier}×（{markupPct}%）估算系数——用来近似 OpenRouter 买额度时收的费用，不是它公布的价格。OpenRouter 推理按标价计费，买额度时另收 {orStandardFeePct}%（Standard）或 {orBusinessFeePct}%（Business）。',
     openrouterCompareEmpty: '暂时没有可对比的在售模型。',
 
     // ───── 结果区分组标题 ─────
@@ -403,7 +412,7 @@ export const calc = {
       '提示缓存让你把之前出现过的前缀（系统提示词、工具定义、长文档）重复利用，成本只要正常输入的一小部分。折扣是按模型算的，不是按厂商一刀切：在我们定价的在售模型里，Anthropic 的缓存读取比标准输入价便宜 {anthropicCache}，OpenAI 便宜 {openaiCache}，Google 便宜 {googleCache}，DeepSeek 便宜 {deepseekCache}。重复提示词的工作负载，这是最大的单点省钱手段。',
     tokenFaq6Q: 'OpenRouter 会加价吗？',
     tokenFaq6A:
-      '会。本站计算器估算 OpenRouter 价格的方式，是在各家官方 API 价格上乘一个 {multiplier}×（即 {markupPct}%）的系数——这是本站自己建模用的假设值，页面上每一个 OpenRouter 报价都套用了它，并不是 OpenRouter 官方公布的“平均加价”。每个模型的实际加价并不一样，要拿去结算，请以 openrouter.ai 上该模型的实时报价为准。',
+      'token 本身不加。OpenRouter 的推理按厂商标价计费，所有套餐都一样；它收的是平台费，在你购买额度时扣——Standard {orStandardFeePct}%、Business {orBusinessFeePct}%，不按单次请求收。本页的 OpenRouter 数字是本站自己的估算：用 {multiplier}×（即 {markupPct}%）的系数把那笔充值费摊到 token 单价上。这是对总额的近似，不是 OpenRouter 的报价；要拿去结算，请以 openrouter.ai 上的实时价格为准。',
     tokenFaq7Q: 'Claude 订阅比 API 更便宜吗？',
     tokenFaq7A:
       '在一定范围内是的。Claude Pro（20 美元/月）和 Max（200 美元/月）都有相当慷慨的额度。超过大约 {proIn}M 输入 + {proOut}M 输出 token 每月（Pro）、或 {maxIn}M 输入 + {maxOut}M 输出每月（Max）之后，纯成本上就是 API 更便宜。这两个数字按 Claude Sonnet 5 现行价格、输入:输出 = 2:1 的混合用量算出，且不含缓存折扣——算上缓存，盈亏平衡点会更高。用上面的计算器换算你自己的比例。',
@@ -458,7 +467,7 @@ export const calc = {
       '支持。V4.1-Flash 峰值时段缓存命中价是每 1M {flashCachedPeak}——比 {flashIn}/M 的标准价便宜 {flashCachePct}%（非峰值 {flashCachedOff}/M）。V4-Pro 缓存命中价每 1M {proCachedPeak}，比 {proIn}/M 便宜 {proCachePct}%（非峰值 {proCachedOff}/M）。系统提示词、工具 schema、长文档这类重复前缀，缓存是最大的成本杠杆。',
     deepseekFaq7Q: 'DeepSeek 官方 API 和 OpenRouter 是一回事吗？',
     deepseekFaq7A:
-      '不是。直连 api-docs.deepseek.com 按官方价计费；OpenRouter 会额外加 {markupPct}% 的加价，换来路由、统一账单和自动故障切换。单一模型、高并发的场景直连更便宜；需要跨厂商兜底或只想要一张发票时，OpenRouter 才划算。',
+      'token 单价不加。直连 api-docs.deepseek.com 按官方价计费，OpenRouter 的推理同样按这个标价计费——它的平台费（Standard {orStandardFeePct}% / Business {orBusinessFeePct}%）在购买额度时收取。本站把 OpenRouter 的总额估成标价 + {markupPct}%，用来近似这笔费用。需要跨厂商兜底或只想要一张发票时，OpenRouter 才划算。',
     deepseekFaq8Q: '怎么申请 DeepSeek API key？',
     deepseekFaq8A:
       '在 platform.deepseek.com 注册，完成最低充值（目前 5 美元），然后在控制台的 API Keys 页面生成密钥。上面的计算器始终显示当前每百万 token 单价，/api/prices.json 则把同一份数据以机器可读的形式提供给 AI agent。',
@@ -484,7 +493,7 @@ export const calc = {
       'Batch API 适合可以等 24 小时的非紧急任务——跑评测、批量摘要、造数据集、批量补 embedding。输入和输出都按标准价的 50% 计费；你提交一个 JSONL 请求文件，再轮询结果。对延迟敏感的业务，还是走实时 API。',
     chatgptFaq7Q: '走 OpenRouter 比直连 OpenAI 便宜吗？',
     chatgptFaq7A:
-      '对单一模型、高并发的场景，直连 platform.openai.com 略便宜——省掉 OpenRouter 的 {markupPct}% 加价。需要跨厂商自动故障切换、很多模型合并成一张账单、或者要访问你所在区域没有的模型时，OpenRouter 才划算。',
+      '两边 token 单价一样，都按官方标价计费。直连 platform.openai.com 不用付 OpenRouter 的充值费（Standard {orStandardFeePct}% / Business {orBusinessFeePct}%）；本站把 OpenRouter 总额估成标价 + {markupPct}% 来近似这笔费用。需要跨厂商自动故障切换、多模型合并成一张账单、或要访问你所在区域没有的模型时，OpenRouter 才划算。',
     chatgptFaq8Q: '这个计算器准不准？',
     chatgptFaq8A:
       'ChatGPT 系列的 token 数是精确值（GPT-5 与 GPT-6 家族用 OpenAI 的 o200k_base tokenizer，更老的系列用 cl100k_base）。价格来自 platform.openai.com/docs/pricing 并定期复核。要拿去结算，请先核对每张卡片上的来源链接。',
@@ -492,27 +501,27 @@ export const calc = {
     // ───── OpenRouter FAQ ─────
     openrouterFaq1Q: 'OpenRouter 到底收多少钱？',
     openrouterFaq1A:
-      'OpenRouter 按各厂商官方 API 价格再加一层加价（当前平均 {markupPct}%，也就是上面表格里每一行的 {multiplier}×），换来路由、统一账单和故障切换。每个模型的实际加价并不完全一样，以 OpenRouter 上该模型的实时报价为准。',
+      'OpenRouter 的推理按厂商官方标价计费，并不对 token 加价。它收的是平台费，在购买额度时扣：Standard {orStandardFeePct}%、Business {orBusinessFeePct}%。上面表格里的 OpenRouter 一列是本站的估算（{multiplier}×，即 {markupPct}%），把这笔充值费摊进了单价，请当作粗略总额，而不是报价。',
     openrouterFaq2Q: '走 OpenRouter 比直连更贵吗？',
     openrouterFaq2A:
-      '对单一模型、高并发的场景，直连官方 API 略便宜，因为省掉了加价。需要跨厂商自动故障切换、很多模型合并成一张账单、或者要访问你所在区域没有的模型时，OpenRouter 才划算。',
+      '两边 token 单价一样，都按厂商标价计费。直连官方 API 不用付 OpenRouter 的充值费（Standard {orStandardFeePct}% / Business {orBusinessFeePct}%）；这个差额达不到时，直连更划算。需要跨厂商自动故障切换、很多模型合并成一张账单、或者要访问你所在区域没有的模型时，OpenRouter 才划算。',
     openrouterFaq3Q: '1 百万 token 在 OpenRouter 上多少钱？',
     openrouterFaq3A:
       '取决于你路由到哪个模型。GPT-6 astra 官方价是每 1M {astraIn} / {astraOut}，OpenRouter 收 {orAstraIn} / {orAstraOut}。Claude Sonnet 5 官方是 {sonnetIn} / {sonnetOut}，走 OpenRouter 是 {orSonnetIn} / {orSonnetOut}。上面的表格把每个模型的两种价格都列了出来。',
     openrouterFaq4Q: 'OpenRouter 按请求收费吗？',
     openrouterFaq4A:
-      '没有按请求收费——只是在底层模型价格上乘一个加价系数。整体账单的形状和直连 API 完全一样，唯一的差别就是那个系数。',
+      '没有按请求收费。OpenRouter 的 token 费用就是厂商标价，平台费（Standard {orStandardFeePct}% / Business {orBusinessFeePct}%）在你购买额度时收取，所以单次请求的账单形状和直连 API 是一样的。',
     openrouterFaq5Q: '可以用自己的厂商 API key 接 OpenRouter 吗？',
     openrouterFaq5A:
-      '可以——部分厂商支持自带 key（BYOK）。这样你按官方价付费，没有 OpenRouter 加价；不带 key 时，OpenRouter 会把 token 费用和加价一起收。',
+      '可以——OpenRouter 支持自带 key（BYOK）。这时由厂商直接向你收推理费用，OpenRouter 只在超过套餐额度后才收费（例如按量付费每月 2.5 万美元标价推理额度内免费，超出后按标价的 5% 收取）。额度内对 token 不额外收费。',
     openrouterFaq6Q: '这个计算器准不准？',
     openrouterFaq6A:
-      '基础价格来自各厂商官方定价页；OpenRouter 那一列乘的是当前平均加价系数（{multiplier}×，约 {markupPct}%）。要拿去结算，请先核对模型的来源链接。',
+      '基础价格来自各厂商官方定价页。OpenRouter 那一列乘的是本站的估算系数（{multiplier}×，约 {markupPct}%），用来近似它的充值费（Standard {orStandardFeePct}% / Business {orBusinessFeePct}%），不是按 token 收的加价。要拿去结算，请先核对模型的来源链接。',
     openrouterFaq7Q: 'OpenRouter 上有哪些模型？',
     openrouterFaq7A:
       'OpenRouter 聚合了大部分主流模型——GPT-6 系列、Claude Opus 5.5 / Sonnet 5 / Haiku 4.5、Gemini 4 Argon 与 Gemini 3.x 系列、DeepSeek V4-Pro 与 V4.1-Flash、Grok 4.7、Kimi K3.1 Pro、MiniMax M3.1 Flash，以及大量开源模型。具体数量每周都在变，以 openrouter.ai/models 的实时目录为准。',
     openrouterFaq8Q: 'OpenRouter 的价格多久更新一次？',
     openrouterFaq8A:
-      '只要底层厂商调了价，上面的 OpenRouter 加价列就会同步更新。页面顶部的“更新于 {date}”和 /api/prices.json 都对应最新一次复核。',
+      '只要底层厂商调了价，上面那一列 OpenRouter 估算价就会同步变化，因为它由同一份价格表推导。页面顶部的“更新于 {date}”和 /api/prices.json 都对应最新一次复核。',
   },
 } as const

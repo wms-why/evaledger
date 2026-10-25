@@ -5,6 +5,7 @@ import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing
 import { applyOpenRouterMarkup } from '@/features/calculator/cost'
 import { leaderboardIdForPriceId } from '@/features/leaderboard/models'
 import { openrouterMarkupBody } from '@/features/calculator/copy'
+import { openRouterCreditFees } from '@/features/calculator/vendor-claims'
 
 /**
  * Page-specific block for /openrouter-pricing-calculator.
@@ -146,6 +147,11 @@ export function OpenRouterSection() {
           {t('calc.openrouterCompareNote', {
             multiplier: REGISTRY.openRouterMarkup.toFixed(2),
             markupPct,
+            // OpenRouter's own published fees (vendor-claims.ts) — these are
+            // NOT the site's estimate; the note quotes both so a reader can
+            // tell the approximation from the documented charge.
+            orStandardFeePct: openRouterCreditFees().standard,
+            orBusinessFeePct: openRouterCreditFees().business,
           })}
         </p>
       </div>

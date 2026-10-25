@@ -22,7 +22,7 @@ import {
   sharedCopyParams,
   tokenFaqParams,
 } from './faq-examples'
-import { OPENAI_BATCH, OPENAI_PLUS_MONTHLY_USD } from './vendor-claims'
+import { OPENAI_BATCH, OPENAI_PLUS_MONTHLY_USD, openRouterCreditFees } from './vendor-claims'
 
 /**
  * The copy of the calculator landing pages, with every number resolved from
@@ -222,6 +222,10 @@ export function tokenFaq(t: Translate): FaqEntry[] {
 
   const p: Record<string, string | number> = {
     ...examples,
+    // OpenRouter's own fee schedule (vendor-claims.ts) — distinct from
+    // `markupPct`, which is this site's estimate of the same fee.
+    orStandardFeePct: openRouterCreditFees().standard,
+    orBusinessFeePct: openRouterCreditFees().business,
     lunaIn: formatMoney(luna?.input ?? 0),
     lunaOut: formatMoney(luna?.output ?? 0),
     haikuIn: formatMoney(haiku?.input ?? 0),
@@ -376,7 +380,10 @@ export function deepseekFaq(t: Translate): FaqEntry[] {
   const sonnet = rates('claude-sonnet-5')
   const opus = rates('claude-opus-5.5')
 
+  const dsFees = openRouterCreditFees()
   const p = {
+    orStandardFeePct: dsFees.standard,
+    orBusinessFeePct: dsFees.business,
     flashIn: formatMoney(flash?.input ?? 0),
     flashOut: formatMoney(flash?.output ?? 0),
     flashCachedPeak: formatMoney(flash?.cached ?? 0),
@@ -482,7 +489,10 @@ export function chatgptFaq(t: Translate): FaqEntry[] {
   const sol = rates('gpt-6-sol')
   const luna = rates('gpt-6-luna')
 
+  const cgFees = openRouterCreditFees()
   const p = {
+    orStandardFeePct: cgFees.standard,
+    orBusinessFeePct: cgFees.business,
     astraIn: formatMoney(astra?.input ?? 0),
     astraOut: formatMoney(astra?.output ?? 0),
     astraCached: formatMoney(astra?.cached ?? 0),
@@ -632,9 +642,12 @@ export function openrouterFaq(t: Translate): FaqEntry[] {
   const orAstra = applyOpenRouterMarkup('gpt-6-astra', undefined, now)
   const orSonnet = applyOpenRouterMarkup('claude-sonnet-5', undefined, now)
 
+  const fees = openRouterCreditFees()
   const p = {
     markupPct: openRouterMarkupPercent(),
     multiplier: openRouterMarkupFactor(),
+    orStandardFeePct: fees.standard,
+    orBusinessFeePct: fees.business,
     astraIn: formatMoney(astra?.input ?? 0),
     astraOut: formatMoney(astra?.output ?? 0),
     orAstraIn: formatMoney(orAstra?.inputPricePer1M ?? 0),
@@ -647,21 +660,32 @@ export function openrouterFaq(t: Translate): FaqEntry[] {
 
   return [
     { q: t('calc.openrouterFaq1Q'), a: t('calc.openrouterFaq1A', p) },
-    { q: t('calc.openrouterFaq2Q'), a: t('calc.openrouterFaq2A') },
+    { q: t('calc.openrouterFaq2Q'), a: t('calc.openrouterFaq2A', p) },
     { q: t('calc.openrouterFaq3Q'), a: t('calc.openrouterFaq3A', p) },
-    { q: t('calc.openrouterFaq4Q'), a: t('calc.openrouterFaq4A') },
-    { q: t('calc.openrouterFaq5Q'), a: t('calc.openrouterFaq5A') },
+    { q: t('calc.openrouterFaq4Q'), a: t('calc.openrouterFaq4A', p) },
+    { q: t('calc.openrouterFaq5Q'), a: t('calc.openrouterFaq5A', p) },
     { q: t('calc.openrouterFaq6Q'), a: t('calc.openrouterFaq6A', p) },
     { q: t('calc.openrouterFaq7Q'), a: t('calc.openrouterFaq7A') },
     { q: t('calc.openrouterFaq8Q'), a: t('calc.openrouterFaq8A', { date: REGISTRY.fetchedAt }) },
   ]
 }
 
-/** The OpenRouter markup block's body — the percentage is the registry's. */
+/**
+ * The OpenRouter markup block's body.
+ *
+ * Two different numbers appear in this sentence and they must not be
+ * confused: `{multiplier}`/`{markupPct}` is THIS SITE's approximation of
+ * OpenRouter's credit-purchase fee spread over token price, while
+ * `{orStandardFeePct}`/`{orBusinessFeePct}` are OpenRouter's actual published
+ * fees (on credits, not on inference) from `vendor-claims.ts`.
+ */
 export function openrouterMarkupBody(t: Translate): string {
+  const fees = openRouterCreditFees()
   return t('calc.openrouterMarkupBody', {
     markupPct: openRouterMarkupPercent(),
     multiplier: openRouterMarkupFactor(),
+    orStandardFeePct: fees.standard,
+    orBusinessFeePct: fees.business,
   })
 }
 

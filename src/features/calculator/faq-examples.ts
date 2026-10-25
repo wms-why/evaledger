@@ -1,6 +1,7 @@
 import { REGISTRY, findModel } from './model-prices'
 import { priceDetail, registrySnapshotDate } from './pricing-detail'
 import { formatMoney, formatPct } from './format'
+import { openRouterCreditFees } from './vendor-claims'
 
 /**
  * The worked examples the calculator FAQs quote, derived from the registry.
@@ -394,5 +395,11 @@ export function sharedCopyParams(): Record<string, string | number> {
     openaiCache: cacheDiscountPhrase('openai') ?? '—',
     googleCache: cacheDiscountPhrase('google') ?? '—',
     deepseekCache: cacheDiscountPhrase('deepseek') ?? '—',
+    // OpenRouter's own fee schedule, from `vendor-claims.ts` (not the
+    // registry): the platform fee is charged on credit purchases, never on
+    // inference. The copy needs these to explain what the 1.05× column is
+    // and is not.
+    orStandardFeePct: openRouterCreditFees().standard,
+    orBusinessFeePct: openRouterCreditFees().business,
   }
 }

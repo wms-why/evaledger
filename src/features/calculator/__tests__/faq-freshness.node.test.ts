@@ -6,6 +6,7 @@ import { priceDetail, registrySnapshotDate } from '@/features/calculator/pricing
 import { formatMoney, formatPct } from '@/features/calculator/format'
 import { tokenFaq, claudeFaq, chatgptFaq, openrouterFaq } from '@/features/calculator/copy'
 import { dictionaries, translate, type Locale } from '@/features/i18n/locale'
+import { OPENROUTER_FEES, openRouterCreditFees } from '@/features/calculator/vendor-claims'
 import {
   HISTORICAL_EXAMPLE_IDS,
   TOKEN_FAQ_EXAMPLE_IDS,
@@ -229,16 +230,13 @@ describe('the FAQ’s cross-provider claims are recomputable', () => {
     expect(formatPct(anthropic.max)).toBe(String(Math.round(Math.max(...savings) * 100)))
   })
 
-  it('never calls the OpenRouter multiplier an average OpenRouter publishes', () => {
-    // The 1.05× factor is OUR assumption (REGISTRY.openRouterMarkup). The
-    // copy may quote it; it may not attribute it to OpenRouter as a fact.
+  it('describes the OpenRouter multiplier as our estimate, not an OpenRouter rate', () => {
+    // The 1.05× factor is OUR estimate (REGISTRY.openRouterMarkup). The copy
+    // may quote it; it may not present it as what OpenRouter charges.
     for (const locale of ['en', 'zh'] as Locale[]) {
       const text = tokenFaqText(locale)
-      // Naming what it is NOT is fine ("not an average published by
-      // OpenRouter"); ATTRIBUTING an average to OpenRouter is not.
       expect(text).not.toMatch(/average markup[^.]*OpenRouter charges|OpenRouter[^.]*average markup of/u)
-      expect(text).not.toMatch(/OpenRouter[^。]*平均加价[^。]*。\s*[^。]*[。]?$|平均加价(?!”)/u)
-      expect(text).toMatch(/assumption|假设/u)
+      expect(text).toMatch(/estimate|approximat|假设|估算|近似/u)
       expect(text).toContain(REGISTRY.openRouterMarkup.toFixed(2))
     }
     // The token FAQ must interpolate the factor, never type it: the
@@ -250,6 +248,40 @@ describe('the FAQ’s cross-provider claims are recomputable', () => {
     const zhTemplate = t(dictionaries.zh, 'calc.tokenFaq6A', {})
     expect(zhTemplate).toContain('{multiplier}')
     expect(zhTemplate).not.toMatch(/1\.05/)
+  })
+
+  it("states OpenRouter's real fee mechanism, from OpenRouter's own pricing page", () => {
+    // openrouter.ai/pricing: "Inference is billed at the provider's list
+    // price on every plan. OpenRouter's fee is charged when you buy credits,
+    // 5.5% on Standard and 8% on Business, never on individual requests."
+    //
+    // The 1.05× column is a spread-the-credit-fee approximation, so the copy
+    // must (a) deny that inference is marked up, (b) name the credit purchase
+    // as the point of charge, and (c) quote the two published fees.
+    const fees = openRouterCreditFees()
+    expect(fees.standard).toBe(String(OPENROUTER_FEES.standardPct))
+    expect(fees.business).toBe(String(OPENROUTER_FEES.businessPct))
+    // The claim we are correcting must never be asserted anywhere in the copy.
+    expect(OPENROUTER_FEES.inferenceMarkedUp).toBe(false)
+
+    for (const locale of ['en', 'zh'] as Locale[]) {
+      const text = tokenFaqText(locale)
+      expect(text, `${locale}: must say credits, not requests, are charged`).toMatch(
+        /credits|额度|充值/u,
+      )
+      expect(text, `${locale}: must quote both published fees`).toContain(fees.standard)
+      expect(text, `${locale}: must quote both published fees`).toContain(fees.business)
+    }
+
+    // No calculator string may resurrect the old "OpenRouter adds a markup to
+    // the token price" framing, in either language.
+    for (const locale of ['en', 'zh'] as Locale[]) {
+      const dict = dictionaries[locale] as unknown as Record<string, Record<string, unknown>>
+      const all = collectStrings(dict.calc ?? {}).join('\n')
+      expect(all, `${locale}: the copy must not claim OpenRouter marks up inference`).not.toMatch(
+        /OpenRouter (?:adds|charges) (?:a|an) (?:small )?markup|OpenRouter[^.]*markup on (?:top of )?(?:each|the) provider|OpenRouter 会?额外?加价|OpenRouter 加价后的实际价格/u,
+      )
+    }
   })
 })
 
@@ -394,6 +426,11 @@ const ALLOWED_LITERALS: { pattern: RegExp; why: string }[] = [
 function collectStrings(value: unknown, out: string[] = []): string[] {
   if (typeof value === 'string') out.push(value)
   else if (Array.isArray(value)) for (const item of value) collectStrings(item, out)
+  // A dictionary namespace is a nested object, not a flat array: without this
+  // branch the guard would silently scan nothing and pass no matter what the
+  // copy said.
+  else if (value && typeof value === 'object')
+    for (const item of Object.values(value)) collectStrings(item, out)
   return out
 }
 
