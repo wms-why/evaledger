@@ -22,6 +22,8 @@ import type { ModelPrice } from '@/features/calculator/types'
  */
 export const MODEL_NOTES_ZH: Record<string, string> = {
   // ───────────────────────── OpenAI ─────────────────────────
+  'gpt-6.1-terra':
+    '知识截止 2026 年 6 月,单次输出上限 128,000 token。缓存写入按保留时长计费:30 分钟 $1.25,12 小时 $2.50(长上下文调整前)。批处理与 Flex 为标准价的一半,Fast 模式为 2×,部分地区处理加价 10%。',
   'gpt-5.6-sol':
     '促销价 ($4 / $20 / $0.40) 至少可用到 2026-11-21;促销前价格是 $5 / $30。该日期之后需要重新核对。',
   'gpt-5': '已被 GPT-6 系列取代;保留用于长尾搜索。',

@@ -8,6 +8,11 @@ Markdown/MDX skeleton plus a JSON file of extracted facts into
 The script exists to remove one tedious step: *open the official announcement
 page → copy the body*. Everything else stays human.
 
+> Scraping a vendor link for the first time? Read `scripts/README.md` first
+> (Chinese) — the browser fingerprint rules, the diagnostic ladder for "the
+> page loads but the body is empty", the price cross-check and the hand-off
+> checklist live there.
+
 ## What it does NOT do
 
 | Never | Why |
@@ -67,13 +72,14 @@ npx playwright install chromium
 ```
 pnpm releases:fetch                      # all vendors → data/release-drafts/
 pnpm releases:fetch -- --list            # show the source list + caveats, exit
-pnpm releases:fetch -- --only deepseek   # single vendor (debug)
+pnpm releases:fetch -- --only deepseek   # every source of a vendor (debug)
+pnpm releases:fetch -- --slug gpt-6-1-terra # exactly one source (debug)
 pnpm releases:fetch -- --out /tmp/drafts # custom output directory
 pnpm releases:fetch -- --max-chars 8000  # cap the scraped body text
 pnpm releases:fetch -- --force           # overwrite existing drafts
 ```
 
-Exit codes: `0` = ran (failures are reported per vendor), `1` = every source
+Exit codes: `0` = ran (failures are reported per source), `1` = every source
 failed (offline / blocked), `2` = Chromium could not be launched.
 
 ## Workflow
@@ -228,14 +234,21 @@ One file per vendor under `scripts/releases/sources/`, same layout as
 `scripts/prices/sources/`. Each file holds the URL, the contract title, the
 selector candidates, and the caveats for that page.
 
-| Vendor | Source | Notes |
-|---|---|---|
-| `openai` | `https://platform.openai.com/docs/pricing` | Client-rendered pricing page, no publish date. |
-| `anthropic` | `https://claude.com/pricing#api` | Client-rendered tab panel, no publish date. |
-| `google` | `https://ai.google.dev/gemini-api/docs/pricing` | Client-rendered tab panels, no publish date. |
-| `grok` | `https://docs.x.ai/docs/models` | Pure SPA — needs hydration. |
-| `deepseek` | `https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg` | WeChat article — can be blocked. |
-| `minimax` | `https://www.minimax.cn/blog/minimax-m31f` | Client-rendered blog post. |
+**A vendor may have more than one source.** OpenAI publishes both a pricing
+page and an announcement page, and both are worth scraping — so the registry
+is keyed by **slug**, not by vendor. `RELEASE_SCRAPERS` is keyed by slug, the
+slug is unique across the registry, and the vendor id stays on the source
+(that's what the article frontmatter and the draft layout use).
+
+| Vendor | Slug | Source | Notes |
+|---|---|---|---|
+| `openai` | `gpt-6-astra` | `https://platform.openai.com/docs/pricing` | Client-rendered pricing page, no publish date. |
+| `openai` | `gpt-6-1-terra` | `https://openai.com/zh-Hans-CN/index/introducing-gpt-6-1-terra/` | The official announcement (zh-Hans-CN locale), not the pricing page. |
+| `anthropic` | `claude-opus-5-5` | `https://claude.com/pricing#api` | Client-rendered tab panel, no publish date. |
+| `google` | `gemini-3-1-pro` | `https://ai.google.dev/gemini-api/docs/pricing` | Client-rendered tab panels, no publish date. |
+| `grok` | `grok-4-7` | `https://docs.x.ai/docs/models` | Pure SPA — needs hydration. |
+| `deepseek` | `deepseek-v4-1-flash` | `https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg` | WeChat article — can be blocked. |
+| `minimax` | `minimax-m3-1-flash` | `https://www.minimax.cn/blog/minimax-m31f` | Client-rendered blog post. |
 
 `pnpm releases:fetch -- --list` prints the same table with the full caveat
 list.
@@ -243,12 +256,14 @@ list.
 ## Debugging a broken source
 
 When a source fails, the run continues and the failure is printed in the
-summary. The scraper also dumps a screenshot + the rendered HTML:
+summary. The scraper also dumps a screenshot + the rendered HTML — named
+after the **slug**, so two sources of the same vendor don't overwrite each
+other's dump:
 
 ```
 .tmp/
-  deepseek-fail.png
-  deepseek-fail.html
+  deepseek-v4-1-flash-fail.png
+  deepseek-v4-1-flash-fail.html
 ```
 
 Open the HTML locally, find the new structure, and update the selector lists
@@ -257,16 +272,31 @@ the first match wins, so a redesign usually only needs one new entry.
 
 ## Adding a new source
 
+The full procedure — including how to name the slug, how to land the result
+as a draft, and what to cross-check before a human publishes it — is in
+`scripts/README.md`. The short version:
+
 1. Add `scripts/releases/sources/<vendor>.ts` exporting a `ReleaseSource` and
-   a `scrape<Vendor>(browser)` function.
+   a `scrape<Vendor>(browser)` function. A file may export several sources
+   when one vendor has several pages.
 2. Register it in `scripts/releases/sources.ts` (both `RELEASE_SOURCES` and
-   `RELEASE_SCRAPERS`).
+   `RELEASE_SCRAPERS` — the latter is keyed by **slug**).
 3. Add the vendor id to `VendorId` in `scripts/releases/types.ts` (it must
-   match the `vendor` enum of the collection schema).
+   match the `vendor` enum of the collection schema). Only needed for a new
+   vendor; a second source of a known vendor reuses its id.
 4. Add the slug + sourceUrl to the contract (`src/features/releases/README.md`
    §5.1) — the test in `scripts/releases/__tests__/sources.node.test.ts`
    fails when a source URL is not in the contract.
 5. Bump `SCRIPT_VERSION` in `scripts/releases/version.ts`.
+
+**Slug naming:** follow the announcement URL — drop an `introducing-` prefix,
+turn dots into dashes, lowercase. `introducing-gpt-6-1-terra` → `gpt-6-1-terra`.
+
+**A new source usually means new facts to verify.** A price quoted in the
+announcement is a claim; check it against the vendor's pricing page
+(`pnpm prices:fetch -- --only <vendor>`) before it goes near a price row,
+and treat a benchmark score in the announcement as the vendor's own claim
+until it is traceable.
 
 ## Tests
 

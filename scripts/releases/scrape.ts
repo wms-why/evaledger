@@ -72,7 +72,7 @@ export async function runSource(browser: Browser, source: ReleaseSource): Promis
     }
     return { vendor: source.vendor, slug: source.slug, url: source.url, ok: true, facts }
   } catch (err) {
-    await dumpFailureArtifacts(page, source.vendor)
+    await dumpFailureArtifacts(page, source.slug)
     return {
       vendor: source.vendor,
       slug: source.slug,
@@ -111,18 +111,18 @@ export async function extractArticle(
 
   if (!raw.contentSelector) {
     throw new Error(
-      `[${source.vendor}] no content root matched — tried: ${source.selectors.content.join(' | ')} ` +
+      `[${source.slug}] no content root matched — tried: ${source.selectors.content.join(' | ')} ` +
         `(page showed ${raw.visibleTextLength} visible chars). ` +
         `The page may need JS rendering, may be blocking the bot, or the layout may have changed. ` +
-        `See .tmp/${source.vendor}-fail.html.`,
+        `See .tmp/${source.slug}-fail.html.`,
     )
   }
 
   if (raw.contentText.length < MIN_CONTENT_CHARS) {
     throw new Error(
-      `[${source.vendor}] content root "${raw.contentSelector}" only yielded ${raw.contentText.length} chars ` +
+      `[${source.slug}] content root "${raw.contentSelector}" only yielded ${raw.contentText.length} chars ` +
         `(need ${MIN_CONTENT_CHARS}) — the selectors have probably drifted. ` +
-        `See .tmp/${source.vendor}-fail.html.`,
+        `See .tmp/${source.slug}-fail.html.`,
     )
   }
 

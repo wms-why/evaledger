@@ -5,6 +5,10 @@ provider's official pricing page, extracts the visible rates, joins them with
 the hand-maintained display-name map, and writes the result to
 `data/last-fetch.json` plus a stdout summary.
 
+> Scraping a vendor link for the first time? Read `scripts/README.md` first
+> (Chinese) — the browser fingerprint rules and the diagnostic ladder for
+> "the page loads but the body is empty" live there.
+
 Optionally applies the scraped prices back to REGISTRY with `--apply`. The
 apply path is intentionally narrow:
 
@@ -150,6 +154,24 @@ screenshot + the rendered HTML to `.tmp/`:
 
 Open the HTML locally, identify the new table structure, and update the
 `extractRows(page)` helper in `scripts/prices/sources/<provider>.ts`.
+
+**Read the column by its header name, never by its index.** A pricing table
+reorders its columns without warning — OpenAI's now reads
+`Model / Input / Output / Cached input / 30m write / 12h write`, so a reader
+that assumes `Input / Cached / Cache writes / Output` silently reports the
+"30m write" price as the output price and the output price as the cached
+price. Those wrong numbers then land in a published price row. Resolve the
+column indexes from the header row instead
+(`scripts/prices/sources/openai.ts` → `resolveColumns`), and skip a table
+that has no price column at all rather than mislabel one of its cells.
+
+## When a model has several price bands
+
+A provider page may list the same model once per band (standard / batch /
+flex / priority / long-context). The rows are all scraped, and `--apply`
+keeps the **first** non-null value per `(modelId, field)` — so the standard
+band wins, deterministically. If the first band on the page is not the
+standard one, reorder the source instead of trusting the first row.
 
 ## Adding a new model
 

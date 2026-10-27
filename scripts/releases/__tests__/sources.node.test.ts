@@ -1,13 +1,19 @@
 import { readFile } from 'node:fs/promises'
 import { test, expect } from 'vitest'
-import { RELEASE_SOURCES, VENDOR_IDS, findSource } from '../sources.ts'
+import {
+  RELEASE_SCRAPERS,
+  RELEASE_SOURCES,
+  VENDOR_IDS,
+  findSource,
+  findSourceBySlug,
+} from '../sources.ts'
 
 /** The release contract — the source list must stay in sync with it. */
 const CONTRACT_URL = new URL('../../../src/features/releases/README.md', import.meta.url)
 
 test('the registry covers the six vendors of the first batch', () => {
   expect(VENDOR_IDS).toEqual(['openai', 'anthropic', 'google', 'grok', 'deepseek', 'minimax'])
-  expect(RELEASE_SOURCES).toHaveLength(6)
+  expect(RELEASE_SOURCES).toHaveLength(7)
 })
 
 test('every source has a unique slug and a complete selector set', () => {
@@ -41,4 +47,22 @@ test('every source url and title comes from the release contract', async () => {
 test('findSource resolves a vendor id', () => {
   expect(findSource('deepseek')?.slug).toBe('deepseek-v4-1-flash')
   expect(findSource('nope')).toBeUndefined()
+})
+
+test('findSourceBySlug resolves a source', () => {
+  expect(findSourceBySlug('gpt-6-1-terra')?.vendor).toBe('openai')
+  expect(findSourceBySlug('nope')).toBeUndefined()
+})
+
+test('a vendor may have several sources', () => {
+  const openai = RELEASE_SOURCES.filter((s) => s.vendor === 'openai')
+  expect(openai.map((s) => s.slug)).toEqual(['gpt-6-astra', 'gpt-6-1-terra'])
+})
+
+test('every source has a scraper, keyed by slug', () => {
+  for (const source of RELEASE_SOURCES) {
+    expect(typeof RELEASE_SCRAPERS[source.slug], `${source.slug} has no scraper`).toBe(
+      'function',
+    )
+  }
 })

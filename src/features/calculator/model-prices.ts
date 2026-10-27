@@ -9,7 +9,7 @@ import type { ModelRegistry } from './types'
  * Rule: the two move in lockstep — bump both in the same commit, or neither.
  * The script's `--apply` flag never touches this value; only humans do.
  */
-export const REGISTRY_VERSION = '0.9.0'
+export const REGISTRY_VERSION = '0.10.0'
 
 /**
  * Static registry of LLM pricing. Keep numbers conservative: this is a
@@ -34,7 +34,7 @@ export const REGISTRY_VERSION = '0.9.0'
  */
 export const REGISTRY: ModelRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: '2026-10-24',
+  fetchedAt: '2026-10-27',
   sourceNote:
     'Prices sourced from each provider\'s official pricing page. Verify before relying on for billing.',
   openRouterMarkup: 1.05,
@@ -44,8 +44,41 @@ export const REGISTRY: ModelRegistry = {
     // OpenAI's page has two context bands: "short context" / "long context".
     // The long-context column is 2× input and 1.5× output, applied above
     // 272K input tokens (see the AWS Bedrock model cards for the threshold).
-    // The 1.05M window belongs to the GPT-6 line and GPT-5.6 sol; cyber keeps
-    // the 400K window. Verified 2026-10-20 against platform.openai.com/docs/pricing.
+    // The 1.05M window belongs to the GPT-6 line (including GPT-6.1 Terra)
+    // and GPT-5.6 sol; cyber keeps the 400K window. Verified 2026-10-27
+    // against platform.openai.com/docs/pricing.
+    // The rows run newest generation first: GPT-6.1 Terra, then the GPT-6
+    // line (astra / sol / luna), then GPT-5.6, then GPT-5.
+    {
+      id: 'gpt-6.1-terra',
+      provider: 'openai',
+      channel: 'official',
+      displayName: 'GPT-6.1 Terra',
+      family: 'gpt-6',
+      status: 'active',
+      contextWindow: 1_050_000,
+      inputPricePer1M: 1.0,
+      outputPricePer1M: 5.0,
+      cachedInputPricePer1M: 0.05,
+      // The same cliff as the rest of the GPT-6 line: above 272K input
+      // tokens the WHOLE request is billed at 2× input and cache rates and
+      // 1.5× output. Published on the model page, verified 2026-10-27.
+      longContext: [{ threshold: 272_000, inputMultiplier: 2, outputMultiplier: 1.5 }],
+      // Batch and Flex are half the standard rate; Fast mode is twice it and
+      // regional processing adds 10%. Only the lanes the model page names
+      // are recorded.
+      tiers: [
+        { kind: 'batch', label: 'Batch', multiplier: 0.5, note: 'Runs at half the standard rate.' },
+        { kind: 'flex', label: 'Flex', multiplier: 0.5, note: 'Runs at half the standard rate.' },
+      ],
+      sourceUrl: 'https://platform.openai.com/docs/pricing',
+      lastVerified: '2026-10-27',
+      // The launch page prints only "2026"; the ship date comes from OpenAI's
+      // own developer changelog, whose 2026-10-26 entry says "Released
+      // GPT-6.1 Terra".
+      introduced: '2026-10-26',
+      note: 'Knowledge cutoff June 2026; 128,000 max output tokens. Cache writes cost $1.25 for 30-minute retention and $2.50 for 12-hour, before the long-context adjustment. Batch and Flex run at half the standard rate, Fast mode at 2×, and regional processing adds 10% where available.',
+    },
     {
       id: 'gpt-6-astra',
       provider: 'openai',

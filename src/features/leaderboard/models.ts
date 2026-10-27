@@ -42,11 +42,17 @@ import type { BenchmarkScore, LeaderboardModel, LeaderboardRegistry, ScoreUnit }
  *    Claude Fable 5.1 is the odd one out: it has no Anthropic table behind
  *    it, and its row is the rival column of that same Kimi announcement —
  *    each note says where the figure itself comes from.
+ *  - GPT-6.1 Terra comes from OpenAI's launch post (2026-10-27): the
+ *    Terminal-Bench 4.0 figure in the prose, and the point in OpenAI's own
+ *    cost-versus-score chart for Agents' Last Exam, which prints the effort
+ *    setting and the cost per task for every model in it. Both are
+ *    OpenAI's measurements in OpenAI's harness; the rival columns in that
+ *    chart are OpenAI's numbers for other vendors' models.
  *
  * Never drop a caveat the source printed. Missing benchmarks are simply
  * absent — no interpolation.
  */
-export const REGISTRY_VERSION = '0.8.0'
+export const REGISTRY_VERSION = '0.9.0'
 
 /** DeepSeek V4.1 Flash launch post (owner-supplied reference). */
 const SOURCE_URL = 'https://mp.weixin.qq.com/s/qg0NU3NNUbp1co2PdkAPAg'
@@ -102,6 +108,13 @@ const VENDOR_MEASURED = 'Vendor-measured (MiniMax internal infra, Claude Code sc
  * tables. Every Kimi K3.1 Pro score below is transcribed from it.
  */
 const KIMI_K31_POST = 'https://kimi.com/blog/kimi-k3-1-pro'
+/**
+ * OpenAI's launch post for GPT-6.1 Terra (2026-10-27). Two things are read
+ * out of it: the Terminal-Bench 4.0 figure in the prose, and the
+ * Agents' Last Exam chart, whose points carry the effort setting and the
+ * cost per task for every model in it.
+ */
+const OPENAI_GPT61_TERRA = 'https://openai.com/index/introducing-gpt-6-1-terra/'
 
 /** Timestamp of the original collection run — most scores were observed then. */
 const COLLECTED_AT = '2026-10-19T21:26:00+08:00'
@@ -113,6 +126,8 @@ const ARGON_OBSERVED_AT = '2026-10-20T21:20:00+08:00'
 const STEP_OBSERVED_AT = '2026-10-23T10:00:00+08:00'
 /** Timestamp of the 2026-10-24 pass that added Kimi K3.1 Pro. */
 const KIMI_OBSERVED_AT = '2026-10-24T09:40:00+08:00'
+/** Timestamp of the 2026-10-27 pass that added GPT-6.1 Terra. */
+const TERRA_OBSERVED_AT = '2026-10-27T16:10:00+08:00'
 /** DeepSeek V4.1 Flash pricing went live 2026-09-10; used as the ship date. */
 const DEEPSEEK_FLASH_RELEASE = '2026-09-10'
 /** The 1017 checkpoint shipped 2026-10-17 (vendor announcement date). */
@@ -198,6 +213,67 @@ const gpt6Astra: LeaderboardModel = {
       source: OPENAI_GPT6_ASTRA,
       observedAt: OBSERVED_AT,
       note: 'OpenAI-reported maximum; Anthropic reports the same 57.9 at high effort',
+    }),
+  ],
+}
+
+/**
+ * GPT-6.1 Terra — OpenAI's cost-intelligence workhorse, launched 2026-10-27.
+ *
+ * Both scores come from OpenAI's own launch material, and both carry the
+ * setting they were measured at:
+ *
+ *  - **Terminal-Bench 4.0** is the figure in the launch prose, at max
+ *    reasoning effort. OpenAI states it as more than double the published
+ *    score of GPT-5.6 Terra, and that rival figure rides along in the note
+ *    the way every vendor table's rival column does.
+ *  - **Agents' Last Exam** is a point in OpenAI's own cost-versus-score
+ *    chart, and the chart prints the effort setting and the cost per task
+ *    for every model in it — so the note lists the whole ladder (Low
+ *    55.9 → Max 60.0) and the rivals' max-effort points, because the
+ *    comparison OpenAI makes in the prose is a *cost* comparison.
+ *
+ * The caveats that travel with the numbers:
+ *  - **The chart is OpenAI's measurement, in OpenAI's harness.** The rival
+ *    columns are OpenAI's numbers for other vendors' models, not an
+ *    independent leaderboard's — the same rule the Gemini and Kimi rows
+ *    follow.
+ *  - **The chart is titled Agents' Last Exam v1**, while the other rows in
+ *    this column come from the v1.1 task set. Read the column with the
+ *    harness note, not as a like-for-like ranking.
+ */
+/**
+ * The two GPT-6.1 Terra score caveats, exported so the record ledger pins the
+ * very same strings instead of a hand-copied second draft. Two copies of one
+ * caveat is how a caveat gets lost.
+ */
+export const TERRA_TERMINAL_BENCH_NOTE =
+  'OpenAI launch post, max reasoning effort; the post compares it with GPT-5.6 Terra 21.5, the published figure it doubles.'
+export const TERRA_AGENTS_LAST_EXAM_NOTE =
+  'OpenAI launch chart, max reasoning effort, $1.01 per task; the chart is titled Agents\' Last Exam v1. Same chart at max effort: Claude Opus 5.5 63.2, GPT-6 Astra 59.3, GPT-6.1 Sol 58.6, GPT-6 Luna 50.9, GPT-5.6 Terra 50.7. Terra at lower effort: Low 55.9, Medium 57.6, High 57.2, Xhigh 58.5.'
+
+const gpt61Terra: LeaderboardModel = {
+  id: 'gpt-6.1-terra',
+  vendor: 'openai',
+  kind: 'gpt',
+  version: '6.1-terra',
+  displayName: 'GPT-6.1 Terra',
+  priceId: 'gpt-6.1-terra',
+  // The launch page prints only "2026"; OpenAI's developer changelog dates
+  // the entry that says "Released GPT-6.1 Terra" to 2026-10-26.
+  releaseDate: '2026-10-26',
+  introduced: '2026-10-26',
+  updatedAt: TERRA_OBSERVED_AT,
+  scores: [
+    sc('agents-last-exam', 60.0, {
+      source: OPENAI_GPT61_TERRA,
+      observedAt: TERRA_OBSERVED_AT,
+      note: TERRA_AGENTS_LAST_EXAM_NOTE,
+    }),
+    sc('terminal-bench-4.0', 50.3, {
+      source: OPENAI_GPT61_TERRA,
+      observedAt: TERRA_OBSERVED_AT,
+      note: TERRA_TERMINAL_BENCH_NOTE,
     }),
   ],
 }
@@ -853,13 +929,14 @@ const step5Preview: LeaderboardModel = {
 
 export const LEADERBOARD: LeaderboardRegistry = {
   registryVersion: REGISTRY_VERSION,
-  fetchedAt: KIMI_OBSERVED_AT,
+  fetchedAt: TERRA_OBSERVED_AT,
   sourceNote:
-    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours. Kimi K3.1 Pro was added on 2026-10-24 from Moonshot\'s own launch announcement: the scores are Kimi\'s, measured on Kimi\'s harnesses at max thinking effort, and the rival columns are Moonshot\'s measurements of other vendors\' models unless the footnote says otherwise (Terminal-Bench, Terminal-Bench Science and SWE-Marathon quote the public leaderboards, GDPVal-AA and GDP.pdf quote Artificial Analysis). Claude Fable 5.1 has no Anthropic table behind it — its row is the rival column of that same Kimi announcement, and every note says where the figure itself comes from.',
+    'DeepSeek / GLM / Kimi scores transcribed from the owner reference table (2026-10-19) sourced from the DeepSeek V4.1 Flash launch post. DeepSeek V4.1-Flash 1017 comes from its own announcement table (2026-10-17) and is kept as a separate row from the 0910 launch checkpoint — the two are different weights, so their scores are never merged; the 1017 table also restates the 0910 numbers in its second column, which is what makes the pair comparable. Gemini 3.1 Pro and Grok 4.7 read from public benchmark sites and the vendor model card; their coverage is partial and per-score sources differ. MiniMax M3.1 Flash scores are from the vendor launch post (2026-10-19) — its AutomationBench-AA rank is stated without a number and its OSWorld V2 result has no matching benchmark here, so that one is absent rather than interpolated. MiniMax M3 combines the vendor launch post (2026-06-01) with the M3 model card table, the only place MiniMax publishes NL2Repo, BrowseComp, MCP Atlas and BankerToolBench; those figures are vendor-measured on MiniMax infrastructure, not taken from a public leaderboard. No competitor rows were copied out of that table — its models are older revisions than the ones tracked here and its columns mix harnesses. The post also reports benchmarks with no id here (SWE-fficiency, KernelBench Hard, PostTrainBench) — those are absent, not interpolated. Claude Opus 5.5 and GPT-6 Astra were added on 2026-10-20 from their launch tables and Artificial Analysis; both rows are partial, and their scores come from vendor harnesses rather than the DeepSeek reference table, so read the per-score notes before comparing them column-to-column with the other rows. Gemini 4 Argon was added on 2026-10-20 from Google\'s own model card (October 2026) — a nineteen-row vendor comparison table, of which we track the ten rows that fit our benchmark registry. The rival numbers Google prints in that table ride along in the notes: they are Google\'s measurements of other vendors\' models, not ours. Kimi K3.1 Pro was added on 2026-10-24 from Moonshot\'s own launch announcement: the scores are Kimi\'s, measured on Kimi\'s harnesses at max thinking effort, and the rival columns are Moonshot\'s measurements of other vendors\' models unless the footnote says otherwise (Terminal-Bench, Terminal-Bench Science and SWE-Marathon quote the public leaderboards, GDPVal-AA and GDP.pdf quote Artificial Analysis). Claude Fable 5.1 has no Anthropic table behind it — its row is the rival column of that same Kimi announcement, and every note says where the figure itself comes from. GPT-6.1 Terra was added on 2026-10-27 from OpenAI\'s own launch post: the Terminal-Bench 4.0 figure in the prose and the point in OpenAI\'s cost-versus-score chart for Agents\' Last Exam, which prints the effort setting and the cost per task for every model in it. Both are OpenAI\'s measurements in OpenAI\'s harness, and the rival columns in that chart are OpenAI\'s numbers for other vendors\' models — the chart is also titled Agents\' Last Exam v1, while the other rows in that column come from the v1.1 task set, so read the column with the harness note rather than as a like-for-like ranking.',
   models: [
     claudeOpus55,
     claudeFable51,
     gpt6Astra,
+    gpt61Terra,
     claudeOpus5,
     gpt56Sol,
     gemini4Argon,

@@ -64,6 +64,8 @@ export const CORE_PATHS = [
   '/compare/gemini-4-argon-vs-gpt-6-astra',
   '/compare/claude-opus-5.5-vs-gemini-4-argon',
   '/compare/claude-opus-5.5-vs-kimi-k3.1-pro',
+  // The 2026-10-27 launch: Terra against the flagship it costs a tenth of.
+  '/compare/gpt-6-astra-vs-gpt-6.1-terra',
   // The two benchmark pages that clear the floor and carry a known name.
   '/benchmarks/hle',
   '/benchmarks/gpqa-diamond',
@@ -71,6 +73,7 @@ export const CORE_PATHS = [
   // first, then the three models the calculator and the boards are built on.
   '/models/claude-opus-5.5',
   '/models/gpt-6-astra',
+  '/models/gpt-6.1-terra',
   '/models/kimi-k3.1-pro',
   '/models/claude-fable-5.1',
   '/models/gemini-4-argon',
@@ -91,6 +94,7 @@ export const CORE_PATHS = [
   '/series/claude-opus/opus-5.5-vs-opus-5',
   '/series/claude-fable',
   '/series/gpt-6',
+  '/series/gpt-6/terra-vs-astra',
   '/series/gpt-5',
   '/series/deepseek-v4',
   '/series/deepseek-v4/v4.1-flash-1017-vs-v4-pro',
@@ -101,6 +105,7 @@ export const CORE_PATHS = [
   // model: what each one costs, and what the vendor's own numbers do and do
   // not prove. These are the pages that answer "is <model> worth switching
   // to?" for the models people are actually searching for.
+  '/releases/gpt-6-1-terra',
   '/releases/kimi-k3-1',
   '/releases/gemini-4-argon',
   '/releases/gemini-3-1-pro',

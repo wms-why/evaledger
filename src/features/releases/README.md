@@ -110,6 +110,7 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 | `deepseek-v4-1-flash-1017` | DeepSeek | DeepSeek V4.1-Flash 1017 | `deepseek-flash` | `deepseek-v4.1-flash-1017` | `2026-10-17` |
 | `minimax-m3-1-flash` | MiniMax | MiniMax M3.1 Flash | `minimax-m3.1-flash` | `minimax-m3.1-flash` | `2026-10-19` |
 | `kimi-k3-1` | Moonshot | Kimi K3.1 Pro | `kimi-k3.1-pro` | `kimi-k3.1-pro` | `2026-10-24` |
+| `gpt-6-1-terra` | OpenAI | GPT-6.1 Terra | `gpt-6.1-terra` | `gpt-6.1-terra` | `2026-10-26` |
 
 `gpt-6-astra` 与 `claude-opus-5-5` **故意不给** `modelSlug`：
 榜单里没有这两个 SKU 的可溯源跑分，就不编。正文里要写明「还没有核验过的跑分」。
@@ -118,6 +119,20 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
 （`deepseek-flash`）下滚动更新 checkpoint：0910 首发与 1017 当前版的权重不同、
 跑分不同、公告也不同，所以价格行、榜单行、发布文章各一份，两篇互链。
 **不要把两套分数并到一行，也不要让一篇文章引用另一套分数。**
+
+### 5.2 抓取中的篇目（草稿）
+
+> 这一节登记**还没发布**的篇目：抓取脚本已经认领了它的来源，但文章本身
+> 仍然只存在于 `data/release-drafts/` 里，等人来写。**发布之前，这里不写任何数字**
+> —— 没有核实过的价格、跑分、上下文长度、发布日期，一律不落笔。
+>
+> 目前没有在抓取中的篇目（`gpt-6-1-terra` 已于 2026-10-27 发布，见上面的表）。
+
+> 抓这一页有个坑，值得留着备忘：**不带 `Sec-CH-UA` 客户端提示的请求会被
+> openai.com 返回一个 500 错误壳**（HTTP 200，`<title>` 和 `og:` 都在，只有正文没了）。
+> 共享的浏览器（`scripts/shared/browser.ts`）现在会带上与 UA 一致的提示头，所以抓得到。
+> 以后看到「页面 200 但正文是个 500」，先怀疑这个，别急着改选择器。
+> 完整的排错阶梯见 `scripts/README.md` §3。
 
 ### 4.1 发布前观察文（`pending: true`）
 
@@ -324,6 +339,48 @@ slug = 文件名去掉 `.md` / `.zh.md`。中英共用同一个 slug。
   所以进不了排名榜 —— 只能标「未测」
 - source：Kimi 官方发布公告 `https://kimi.com/blog/kimi-k3-1-pro`，
   title「Kimi — Introducing Kimi K3.1 Pro」
+
+#### `gpt-6-1-terra`（OpenAI · GPT-6.1 Terra）
+
+- 主角：`gpt-6.1-terra` $1 / $5，cached $0.05，ctx 1,050,000（单次输出上限 128,000），
+  source `https://platform.openai.com/docs/pricing`，lastVerified 2026-10-27
+- 长上下文：> 272,000 输入 token 后，**整个请求**按输入 2 倍、输出 1.5 倍计费
+- 缓存写入：30 分钟 $1.25、12 小时 $2.50（长上下文调整前）—— OpenAI 的档位形状和
+  Anthropic 的 5min/1hr 不同，**不进 `cacheWrite` 字段**，写进 note
+- 其它通道：Batch / Flex = 标准价的一半（`tiers`），Fast 模式 = 2×，地区处理 +10%
+- **releasedAt 2026-10-26**：公告页本身只渲染「2026 年」，日期来自 OpenAI 开发者更新的
+  changelog（`https://developers.openai.com/changelog`）里那条写着「Released GPT-6.1
+  Terra」的记录 —— 公告给不出上线日时，厂商自己的 changelog 是第二手的一手来源
+- 对比行：
+  - `gpt-6-astra` $10 / $50（active）→ **主角便宜 10 倍**
+  - `gpt-6-sol` $2 / $10（active）→ **主角便宜一半**
+  - `gpt-6-luna` $0.10 / $0.50（active）→ 主角贵 10 倍
+  - `claude-opus-5.5` $4 / $20（active，ctx 1,000,000）→ **主角便宜 4 倍**
+  - `gpt-5.6-sol` $4 / $20（active，促销到 2026-11-21，之后 $5 / $30）→ 便宜 4 倍 / 5 倍
+- 缓存折扣：$0.05 = 输入价的 5%（省 95%），比 GPT-6 同门其它档的 90% 更深
+- 跑分（`gpt-6.1-terra`，**2 项**，全部出自 OpenAI 自己的发布材料）：
+  - `terminal-bench-4.0` 50.3（note：max 推理档；OpenAI 自己拿来对比的
+    GPT-5.6 Terra 是 21.5）
+  - `agents-last-exam` 60.0（note：OpenAI 那张「成本对分数」图的 max 档点，
+    图标题写的是 **Agents' Last Exam v1**，而这一列其他行来自 v1.1 任务集；
+    同图 max 档：Claude Opus 5.5 63.2、GPT-6 Astra 59.3、GPT-6.1 Sol 58.6、
+    GPT-6 Luna 50.9、GPT-5.6 Terra 50.7）
+  - **60.0 成为该基准的全站最高分**，于是 agent 榜这一列的归一化分母变高，
+    已有模型的综合分随之下调 —— 这是「新模型成为核心基准最高分」时唯一允许的变动，
+    必须在 changelog 里写明
+  - 公告里的 MMMU-Pro、OSWorld 2.1、Terminal-Bench Science 0.1 都只给了相对结论、
+    没有绝对分数，**不进表**；内部的错误率基准是私有基准，**正文也不引用它的数字**
+- 跑分对比行：`gpt-6-astra`、`claude-opus-5.5`、`gpt-5.6-sol`
+- 结论方向：比同门 sol 便宜一半、比 astra 便宜 10 倍、比 Opus 5.5 便宜 4 倍；
+  覆盖只有两项，没有 GPQA / HLE / DeepSWE / AutomationBench，所以**只列出、不排名**
+- series：GPT-6 产品线新增成员 `terra`（version 6.1，tier fast），
+  pair URL `/series/gpt-6/terra-vs-astra`
+- 发布日期出处：OpenAI 开发者更新 changelog `https://developers.openai.com/changelog`
+  （2026-10-26 条目）
+- source：OpenAI 发布公告 `https://openai.com/index/introducing-gpt-6-1-terra/`，
+  title「OpenAI — Introducing GPT-6.1 Terra」（中文页
+  `https://openai.com/zh-Hans-CN/index/introducing-gpt-6-1-terra/`，
+  title「OpenAI — 推出 GPT-6.1 Terra」；抓取脚本认的是中文页）
 
 ## 6. 校验（必须有测试）
 

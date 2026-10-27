@@ -6,4 +6,4 @@
  * `scripts/prices/version.ts`) — the release contract lives in
  * `src/features/releases/README.md` and is enforced by its own tests.
  */
-export const SCRIPT_VERSION = '0.1.0'
+export const SCRIPT_VERSION = '0.2.0'

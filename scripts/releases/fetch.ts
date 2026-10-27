@@ -21,6 +21,7 @@
  *   pnpm releases:fetch                      # all vendors → data/release-drafts
  *   pnpm releases:fetch -- --list            # show the source list and exit
  *   pnpm releases:fetch -- --only deepseek   # single vendor (debug)
+ *   pnpm releases:fetch -- --slug gpt-6-1-terra # single source (debug)
  *   pnpm releases:fetch -- --force           # overwrite existing drafts
  */
 import { relative, resolve, sep } from 'node:path'
@@ -29,13 +30,15 @@ import { buildChangelogDraft, buildChangelogPayload } from './changelog.ts'
 import { buildDraftMarkdown, buildFactsPayload } from './draft.ts'
 import { assertOutputDirSafe, DEFAULT_OUT_DIR, writeDraftFiles } from './output.ts'
 import { launchBrowser } from '../shared/browser.ts'
-import { RELEASE_SCRAPERS, RELEASE_SOURCES, VENDOR_IDS } from './sources.ts'
+import { RELEASE_SCRAPERS, RELEASE_SOURCES, VENDOR_IDS, findSourceBySlug } from './sources.ts'
 import { truncateText } from './text.ts'
 import type { ReleaseFacts, ReleaseSource, SourceResult, VendorId } from './types.ts'
 import { SCRIPT_VERSION } from './version.ts'
 
 interface CliArgs {
   only?: VendorId
+  /** Slug of a single source to scrape (a vendor may have several). */
+  slug?: string
   out: string
   force: boolean
   maxChars: number
@@ -62,6 +65,10 @@ function parseArgs(argv: string[]): CliArgs {
         throw new Error(`--only expects one of: ${VENDOR_IDS.join(', ')}`)
       }
       out.only = next as VendorId
+    } else if (arg === '--slug') {
+      const next = argv[++i]
+      if (!next) throw new Error('--slug expects a slug')
+      out.slug = next
     } else if (arg === '--out') {
       const next = argv[++i]
       if (!next) throw new Error('--out expects a path')
@@ -91,11 +98,13 @@ function printHelp(): void {
   console.log(`Usage: pnpm releases:fetch [options]
 
 Vendors: ${VENDOR_IDS.join(', ')}
+Slugs:   ${RELEASE_SOURCES.map((s) => s.slug).join(', ')}
 Default output: ${DEFAULT_OUT_DIR}/<slug>.md + <slug>.json
 
 Options:
   --list              List the configured sources (URL, slug, caveats) and exit.
-  --only <vendor>     Scrape a single vendor (debug).
+  --only <vendor>     Scrape every source of a vendor (debug).
+  --slug <slug>       Scrape exactly one source (debug).
   --out <dir>         Write drafts to this directory (default: ${DEFAULT_OUT_DIR}).
   --max-chars <n>     Cap the scraped body text (default: ${DEFAULT_MAX_CHARS}).
   --force             Overwrite existing drafts. Without it, existing files are skipped.
@@ -104,7 +113,7 @@ Safety:
   * Drafts never land in src/content/ — the writer refuses that path.
   * No prices, benchmarks, model ids, or conclusions are filled in. Those are human-only.
   * A failed source never aborts the run: it is recorded, dumped to
-    .tmp/<vendor>-fail.{png,html}, and the next source continues.
+    .tmp/<slug>-fail.{png,html}, and the next source continues.
 
 Script version: ${SCRIPT_VERSION}
 `)
@@ -126,11 +135,32 @@ function printSourceList(sources: ReleaseSource[]): void {
   console.log(`Output:   ${DEFAULT_OUT_DIR}/<slug>.md + <slug>.json (drafts only)`)
 }
 
+/**
+ * Pick the sources this run should scrape.
+ *
+ * `--only <vendor>` scrapes *every* source of that vendor (a vendor may
+ * have several); `--slug <slug>` scrapes exactly one source. The two flags
+ * are exclusive — "one source of one vendor" is what `--slug` already says.
+ */
+function selectTargets(args: CliArgs): ReleaseSource[] {
+  if (args.slug) {
+    const source = findSourceBySlug(args.slug)
+    if (!source) {
+      throw new Error(
+        `--slug expects one of: ${RELEASE_SOURCES.map((s) => s.slug).join(', ')}`,
+      )
+    }
+    return [source]
+  }
+  if (args.only) {
+    return RELEASE_SOURCES.filter((s) => s.vendor === args.only)
+  }
+  return RELEASE_SOURCES
+}
+
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2))
-  const targets = args.only
-    ? RELEASE_SOURCES.filter((s) => s.vendor === args.only)
-    : RELEASE_SOURCES
+  const targets = selectTargets(args)
 
   if (args.list) {
     printSourceList(targets)
@@ -157,7 +187,7 @@ async function main(): Promise<void> {
     // Scrape in parallel — each source uses its own page/context and the
     // vendor sites don't share cookies, so concurrency is safe.
     const settled = await Promise.allSettled(
-      targets.map((source) => RELEASE_SCRAPERS[source.vendor](browser)),
+      targets.map((source) => RELEASE_SCRAPERS[source.slug]!(browser)),
     )
     for (let i = 0; i < settled.length; i++) {
       const outcome = settled[i]
@@ -198,7 +228,7 @@ async function main(): Promise<void> {
       continue
     }
     const facts = applyLimit(result.facts, args.maxChars)
-    writtenFacts.set(result.vendor, facts)
+    writtenFacts.set(result.slug, facts)
     const markdown = buildDraftMarkdown(facts, today)
     const payload = buildFactsPayload(facts)
     const outcome = await writeDraftFiles(outDir, result.slug, markdown, payload, args.force)
@@ -264,11 +294,13 @@ function printSummary(
   console.log('')
   for (const result of results) {
     const mark = result.ok ? '✓' : '✗'
-    const facts = writtenFacts.get(result.vendor)
+    const facts = writtenFacts.get(result.slug)
     const detail = result.ok
       ? `${facts?.charCount ?? 0} chars${facts?.truncated ? ' (cut)' : ''}`
       : (result.error ?? 'failed').split('\n')[0]!
-    console.log(`${pad(result.vendor, 10)} ${mark}  ${pad(detail, 46)} ${result.url}`)
+    // The slug, not the vendor: one vendor can have several sources, and the
+    // slug is what names the draft file.
+    console.log(`${pad(result.slug, 22)} ${mark}  ${pad(detail, 46)} ${result.url}`)
   }
 
   const errors = results.filter((r) => !r.ok)
@@ -278,8 +310,8 @@ function printSummary(
     console.log('Errors:')
     console.log('─'.repeat(72))
     for (const error of errors) {
-      console.log(`  ${error.vendor}: ${error.error}`)
-      console.log(`    debug dump: .tmp/${error.vendor}-fail.png / .tmp/${error.vendor}-fail.html`)
+      console.log(`  ${error.vendor}/${error.slug}: ${error.error}`)
+      console.log(`    debug dump: .tmp/${error.slug}-fail.png / .tmp/${error.slug}-fail.html`)
     }
   }
 

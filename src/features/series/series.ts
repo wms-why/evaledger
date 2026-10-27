@@ -123,6 +123,10 @@ export const SERIES: Series[] = [
     family: 'gpt-6',
     vendor: 'openai',
     members: [
+      // GPT-6.1 Terra is the newest version of the line, and the throughput
+      // tier of it: half of Sol's price per token and the tier OpenAI sold
+      // the launch around — speed and cost, not the top of the line.
+      { key: 'terra', version: '6.1', tier: 'fast', priceId: 'gpt-6.1-terra', scoreId: 'gpt-6.1-terra' },
       { key: 'astra', version: '6', tier: 'flagship', priceId: 'gpt-6-astra', scoreId: 'gpt-6-astra' },
       { key: 'sol', version: '6', tier: 'balanced', priceId: 'gpt-6-sol' },
       { key: 'luna', version: '6', tier: 'lite', priceId: 'gpt-6-luna' },

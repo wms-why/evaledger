@@ -134,6 +134,10 @@ export const COMPARE_PAIRS: ComparePair[] = [
   { a: 'kimi-k3.1-pro', b: 'claude-opus-5.5', kind: 'technical' },
   { a: 'kimi-k3.1-pro', b: 'kimi-k3', kind: 'plan' },
   { a: 'minimax-m3.1-flash', b: 'minimax-m3', kind: 'plan' },
+  // GPT-6.1 Terra — the newest launch, against the flagship it costs a tenth
+  // of. The pair answers the question the launch raises: what does the
+  // frontier cost when the price drops 10×?
+  { a: 'gpt-6.1-terra', b: 'gpt-6-astra', kind: 'technical' },
 ]
 
 export interface ComparePairEntry extends ComparePair {
@@ -149,6 +153,7 @@ export interface ComparePairEntry extends ComparePair {
  * derived order rather than rendering a broken link.
  */
 export const POPULAR_COMPARE_SLUGS = [
+  pairSlug('gpt-6.1-terra', 'gpt-6-astra'),
   pairSlug('claude-opus-5.5', 'gpt-6-astra'),
   pairSlug('claude-opus-5.5', 'claude-opus-5'),
   pairSlug('gemini-4-argon', 'gemini-3.1-pro'),

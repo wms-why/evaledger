@@ -11,16 +11,51 @@
  * that the two scrapers share one launcher without either depending on the
  * other's domain code.
  *
+ * ## Why the client hints matter
+ *
+ * Overriding the user agent in Playwright makes Chromium drop the
+ * `Sec-CH-UA` client hints, and a request without them is not the request a
+ * browser makes. openai.com answers such a request with a rendered-but-empty
+ * error stub — a 200 whose `<main>` says "500 / Internal Server Error." —
+ * instead of the article, while the very same URL answers a request that
+ * carries the hints with the full article. The stub is easy to mistake for
+ * "the page is broken": it has the right `<title>` and the right `og:` meta
+ * tags, and only the body is missing. So the hints are sent with every page.
+ *
  * Usage:
  *   const browser = await launchBrowser()
  *   try { ...scrape... } finally { await browser.close() }
  */
 import { chromium, type Browser } from '@playwright/test'
 
+/**
+ * The Chrome version the fake UA claims. The client hints below are derived
+ * from it, so the two can never drift apart — a mismatch is what bot
+ * detection looks for.
+ */
+const CHROME_VERSION = '124'
+
 /** Standard desktop UA + viewport so pages serve their full desktop layout. */
 const DEFAULT_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
-  '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+  `(KHTML, like Gecko) Chrome/${CHROME_VERSION}.0.0.0 Safari/537.36`
+
+/**
+ * The `Sec-CH-UA` client hints a real Chrome sends alongside that UA.
+ *
+ * They are **not optional polish**: overriding the user agent in Playwright
+ * makes Chromium drop the client hints, and a request without them is not
+ * the request a browser makes. openai.com answers such a request with a
+ * rendered-but-empty error stub — a 200 whose `<main>` says
+ * "500 / Internal Server Error." — instead of the article, while the very
+ * same URL answers a request that carries the hints with the full article.
+ * See `scripts/shared/browser.ts` § Why the hints matter.
+ */
+const DEFAULT_CLIENT_HINTS = {
+  'sec-ch-ua': `"Chromium";v="${CHROME_VERSION}", "Not=A?Brand";v="24", "Google Chrome";v="${CHROME_VERSION}"`,
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+}
 
 export async function launchBrowser(): Promise<Browser> {
   return chromium.launch({
@@ -35,6 +70,7 @@ export async function newPage(browser: Browser) {
     userAgent: DEFAULT_UA,
     viewport: { width: 1280, height: 800 },
     locale: 'en-US',
+    extraHTTPHeaders: DEFAULT_CLIENT_HINTS,
   })
   const page = await context.newPage()
   return { context, page }

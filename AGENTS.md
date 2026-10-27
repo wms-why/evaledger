@@ -91,6 +91,39 @@ pnpm deploy:prod       # CLOUDFLARE_ENV=production build + wrangler deploy
 - Never auto-merge prices. `cacheWrite` / `longContext` / `peakOffPeak` / `promo` / `status` are human-only.
 - See `scripts/prices/README.md` for selector-debugging workflow and provider mapping.
 
+## Scraping a vendor link: the standing procedure
+
+**When someone hands you a vendor URL, follow `scripts/README.md` — that file
+is the playbook, and this section is the short version of it.**
+
+1. **The browser profile is not optional.** `scripts/shared/browser.ts` sends
+   a UA **and** the `Sec-CH-UA` client hints that match it. Overriding the UA
+   in Playwright drops the hints, and openai.com answers a hint-less request
+   with HTTP 200 whose body is a "500 / Internal Server Error." stub — title
+   and `og:` meta intact, article gone. **"Page loads, body is a 500" means
+   suspect the fingerprint, not the selectors.**
+2. **Work the diagnostic ladder, cheapest first** (fingerprint → hydration →
+   selector → another locale → retry). The ladder, with the symptom table, is
+   in `scripts/README.md` §3.
+3. **Match price-table columns by header name, not by index.** A reordered
+   table silently reports the wrong price (OpenAI's is now
+   `Model / Input / Output / Cached input / 30m write / 12h write`).
+4. **Cross-check every number the announcement quotes** against the vendor's
+   pricing page (`pnpm prices:fetch -- --only <vendor>`). The announcement is
+   a claim; the pricing page is the source of record.
+5. **Land it as a draft, never as content.** `data/release-drafts/<slug>.md` +
+   `.json`, plus `data/release-drafts/changelog/<slug>.md` + `.changelog.json`.
+   The writer refuses `src/content/` — published content changes in a diff a
+   human reviews. The scraper fills no prices, no scores, no `modelId`, no
+   conclusions.
+6. **One vendor may have several links** (a pricing page *and* an
+   announcement page): the release registry is keyed by **slug**
+   (`RELEASE_SCRAPERS[slug]`), not by vendor.
+7. **Hand the human the checklist** — REGISTRY row, LEADERBOARD row (only
+   traceable scores), ledger entry, series member, release article
+   (`.md` + `.zh.md`, a native rewrite), changelog entry, then
+   `pnpm typecheck && pnpm test`. It is in `scripts/README.md` §7.
+
 ## A model launch is a changelog entry
 
 **Rule: every time new model information is scraped, a changelog record is

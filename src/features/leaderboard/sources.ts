@@ -57,6 +57,10 @@ export const SOURCES: Record<string, SourceInfo> = {
     name: 'Anthropic — Claude Opus 5.5 announcement',
     kind: 'vendor',
   },
+  'https://openai.com/index/introducing-gpt-6-1-terra/': {
+    name: 'OpenAI — Introducing GPT-6.1 Terra',
+    kind: 'vendor',
+  },
   'https://www.minimax.cn/blog/minimax-m31f': {
     name: 'MiniMax — M3.1 Flash launch post',
     kind: 'vendor',

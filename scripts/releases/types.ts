@@ -38,7 +38,7 @@ export interface ReleaseSelectors {
 
 /** One vendor source: which page to read and how to read it. */
 export interface ReleaseSource {
-  /** Vendor id (also the `.tmp/<vendor>-fail.*` artifact name). */
+  /** Vendor id — a vendor may have several sources. */
   vendor: VendorId
   /** Draft file name without extension — also the article slug. */
   slug: string

@@ -23,9 +23,30 @@
  * Read `src/features/records/README.md` for the workflow, and run
  * `pnpm records:pins` to print the entries that match the live registries.
  */
+import {
+  TERRA_AGENTS_LAST_EXAM_NOTE,
+  TERRA_TERMINAL_BENCH_NOTE,
+} from '@/features/leaderboard/models'
 import type { RecordEntry } from './types'
 
 export const LEDGER: RecordEntry[] = [
+  {
+    label: 'GPT-6.1 Terra',
+    priceId: 'gpt-6.1-terra',
+    scoreId: 'gpt-6.1-terra',
+    introduced: '2026-10-26',
+    sourceUrl: 'https://openai.com/index/introducing-gpt-6-1-terra/',
+    priceIdentity: { displayName: 'GPT-6.1 Terra' },
+    identity: { displayName: 'GPT-6.1 Terra', version: '6.1-terra' },
+    scores: {
+      'agents-last-exam': 60.0,
+      'terminal-bench-4.0': 50.3,
+    },
+    notes: {
+      'agents-last-exam': TERRA_AGENTS_LAST_EXAM_NOTE,
+      'terminal-bench-4.0': TERRA_TERMINAL_BENCH_NOTE,
+    },
+  },
   {
     label: 'Claude Opus 5.5',
     priceId: 'claude-opus-5.5',
